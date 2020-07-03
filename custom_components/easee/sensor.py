@@ -17,14 +17,13 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.util import Throttle
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
-from .easee.session import EaseeSession, Chargers, Charger, ChargerConfig, ChargerState
+from .session import EaseeSession, Chargers, Charger, ChargerConfig, ChargerState
 
 DOMAIN = "easee"
 
 _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL = timedelta(seconds=60)
-
 
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
@@ -37,29 +36,16 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     timeout = 30
 
     session = async_get_clientsession(hass)
+    username = config.get(CONF_USERNAME),
+    password = config.get(CONF_PASSWORD),
+    easee = EaseeSession(username, password)
 
-    sensors = []
-    for next_departure in config.get(CONF_NEXT_DEPARTURE):
-        sensors.append(
-            RMVDepartureSensor(
-                session,
-                next_departure[CONF_STATION],
-                next_departure.get(CONF_DESTINATIONS),
-                next_departure.get(CONF_DIRECTION),
-                next_departure.get(CONF_LINES),
-                next_departure.get(CONF_PRODUCTS),
-                next_departure.get(CONF_TIME_OFFSET),
-                next_departure.get(CONF_MAX_JOURNEYS),
-                next_departure.get(CONF_NAME),
-                timeout,
-            )
-        )
-
+    sensors = [ChargersSensor(easee, timeout)]
     tasks = [sensor.async_update() for sensor in sensors]
     if tasks:
         await asyncio.wait(tasks)
-    if not all(sensor.data.departures for sensor in sensors):
-        raise PlatformNotReady
+    # if not all(sensor.data.something for sensor in sensors):
+    #     raise PlatformNotReady
 
     async_add_entities(sensors)
 
@@ -68,12 +54,14 @@ class ChargersSensor(Entity):
     """Implementation of an RMV departure sensor."""
 
     def __init__(
-        self, session, timeout,
+        self, easeesession, timeout,
     ):
         """Initialize the sensor."""
-        self.session = session
+        self._name = "charger"
+        self._state = 88
+        self.easeesession = easeesession
         self.timeout = timeout
-        self.chargers[]
+        self.chargers = []
 
     @property
     def name(self):
@@ -96,7 +84,7 @@ class ChargersSensor(Entity):
         try:
             return {
                 "chargers": "foo",
-                "chargers": "bar",
+                "chargers2": "bar",
             }
         except IndexError:
             return {}
@@ -109,6 +97,3 @@ class ChargersSensor(Entity):
     async def async_update(self):
         """Get the latest data and update the state."""
         return
-
-
-

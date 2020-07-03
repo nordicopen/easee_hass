@@ -20,11 +20,15 @@ class EaseeSession:
 
     async def post(self, url, **kwargs):
         _LOGGER.debug("post: %s(%s)", url, kwargs)
-        return await self.session.post(f"{self.base}{url}", headers=self.headers, **kwargs)
+        return await self.session.post(
+            f"{self.base}{url}", headers=self.headers, **kwargs
+        )
 
     async def get(self, url, **kwargs):
         _LOGGER.debug("get: %s(%s)", url, kwargs)
-        return await self.session.get(f"{self.base}{url}", headers=self.headers, **kwargs)
+        return await self.session.get(
+            f"{self.base}{url}", headers=self.headers, **kwargs
+        )
 
     async def get_initial_token(self):
         data = {"userName": self.username, "password": self.password}
@@ -93,7 +97,9 @@ class Charger:
 
         res = await session.get(f"/api/chargers/{id}/config")
         config = await res.json()
-        _LOGGER.info("Charger:\n %s\n\nState:\n %s\n\nConfig: %s", record, state, config)
+        _LOGGER.info(
+            "Charger:\n %s\n\nState:\n %s\n\nConfig: %s", record, state, config
+        )
         return cls(id, record["name"], ChargerState(state), ChargerConfig(config))
 
 
