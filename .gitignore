@@ -1,9 +1,9 @@
 #Links for local development
 /__init__.py
-/spotify_token.py
 /manifest.json
 /reuse.py
 /sensor.py
+/easee.py
 /services.yaml
 
 # Byte-compiled / optimized / DLL files
