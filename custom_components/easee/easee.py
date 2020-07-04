@@ -30,9 +30,12 @@ class ChargerState:
         self.online = data["isOnline"]
         self.smart_charging = data["smartCharging"]
         self.cable_locked = data["cableLocked"]
-        self.total_power = round(data["totalPower"] * 1000)
-        self.session_energy = round(data["sessionEnergy"])
-        self.energy_hour = round(data["energyPerHour"])
+        self.total_power = round(data["totalPower"] * 1000, 5)
+        self.session_energy = round(data["sessionEnergy"], 5)
+        self.energy_hour = round(data["energyPerHour"], 5)
+        self.latest_pulse = data["latestPulse"]
+        self.firmware = data["chargerFirmware"]
+        self.latest_firmware = data["latestFirmware"]
 
 
 class ChargerConfig:
@@ -40,8 +43,21 @@ class ChargerConfig:
     {'isEnabled': True, 'lockCablePermanently': False, 'authorizationRequired': False, 'remoteStartRequired': True, 'smartButtonEnabled': False, 'wiFiSSID': 'fondberg mesh 1', 'detectedPowerGridType': 1, 'offlineChargingMode': 0, 'circuitMaxCurrentP1': 16.0, 'circuitMaxCurrentP2': 16.0, 'circuitMaxCurrentP3': 16.0, 'enableIdleCurrent': False, 'limitToSinglePhaseCharging': None, 'phaseMode': 2, 'localNodeType': 1, 'localAuthorizationRequired': False, 'localRadioChannel': 4, 'localShortAddress': 0, 'localParentAddrOrNumOfNodes': 0, 'localPreAuthorizeEnabled': None, 'localAuthorizeOfflineEnabled': None, 'allowOfflineTxForUnknownId': None, 'maxChargerCurrent': 32.0, 'ledStripBrightness': None}
     """
 
+    NODE_TYPE = {
+        1: "Master",
+        2: "Extender",
+    }
+
+    PHASE_MODE = {
+        1: "Locked to single phase",
+        2: "Auto",
+        3: "Locked to three phase",
+    }
+
     def __init__(self, data):
         self.data = data
+        self.node_type = ChargerConfig.NODE_TYPE[data["localNodeType"]]
+        self.phase_mode = ChargerConfig.PHASE_MODE[data["phaseMode"]]
 
 
 class Charger:
@@ -51,6 +67,15 @@ class Charger:
         self.session = session
         self.state: ChargerState = None
         self.config: ChargerConfig = None
+        self.last_24H_consumption = 0
+        self.last_30D_consumption = 0
+        self.last_1Y_consumption = 0
+
+    async def get_consumption_between_dates(self, from_date, to_date):
+        res = await self.session.get(
+            f"/api/sessions/charger/{self.id}/total/{from_date.isoformat()}/{to_date.isoformat()}"
+        )
+        return await res.text()
 
     async def async_update(self):
         res = await self.session.get(f"/api/chargers/{self.id}/state")
@@ -61,10 +86,35 @@ class Charger:
         config = await res.json()
         self.config = ChargerConfig(config)
 
-        _LOGGER.info("Charger:\n %s\n\nState:\n %s\n\nConfig: %s", self.name, state, config)
+        """
+        Fetch last 24H, 7 days, 1 month of consumption
+        """
+        now = datetime.datetime.now()
+        self.last_24H_consumption = await self.get_consumption_between_dates(
+            now - datetime.timedelta(0, 86400), now
+        )
+        self.last_30D_consumption = await self.get_consumption_between_dates(
+            now - datetime.timedelta(0, 86400 * 30), now
+        )
+        self.last_1Y_consumption = await self.get_consumption_between_dates(
+            now - datetime.timedelta(0, 86400 * 365), now
+        )
+        _LOGGER.debug("Charger:\n %s\n\nState:\n %s\n\nConfig: %s", self.name, state, config)
 
-    def __str__(self):
-        return f"{self.id} - {self.name} - {self.config}"
+
+async def raise_for_status(response):
+    if 400 <= response.status:
+        e = aiohttp.ClientResponseError(
+            response.request_info, response.history, code=response.status, headers=response.headers,
+        )
+
+        if "json" in response.headers.get("CONTENT-TYPE", ""):
+            data = await response.json()
+            e.message = str(data)
+        else:
+            data = await response.text()
+
+        raise Exception(data) from e
 
 
 class EaseeSession:
@@ -84,21 +134,26 @@ class EaseeSession:
             self.session = session
 
     async def post(self, url, **kwargs):
-        _LOGGER.debug("post: %s(%s)", url, kwargs)
+        _LOGGER.debug("post: %s (%s)", url, kwargs)
         await self._verify_updated_token()
-        return await self.session.post(f"{self.base}{url}", headers=self.headers, **kwargs)
+        response = await self.session.post(f"{self.base}{url}", headers=self.headers, **kwargs)
+        await raise_for_status(response)
+        return response
 
     async def get(self, url, **kwargs):
-        _LOGGER.debug("get: %s(%s)", url, kwargs)
+        _LOGGER.debug("get: %s (%s)", url, kwargs)
         await self._verify_updated_token()
-        return await self.session.get(f"{self.base}{url}", headers=self.headers, **kwargs)
+        response = await self.session.get(f"{self.base}{url}", headers=self.headers, **kwargs)
+        await raise_for_status(response)
+        return response
 
     async def _verify_updated_token(self):
         if "accessToken" not in self.token:
             return
         accessToken = self.token["accessToken"]
         self.headers["Authorization"] = f"Bearer {accessToken}"
-        self.token["expires"] < datetime.datetime.now()
+        if self.token["expires"] < datetime.datetime.now():
+            self.refresh_token()
 
     async def _handle_token_response(self, res):
         self.token = await res.json()
@@ -124,7 +179,7 @@ class EaseeSession:
             "accessToken": self.token["accessToken"],
             "refreshToken": self.token["refreshToken"],
         }
-
+        _LOGGER.debug("Refreshing access token")
         res = await self.post("/api/accounts/refresh_token", json=data)
         await self._handle_token_response(res)
 

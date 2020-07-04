@@ -26,17 +26,9 @@ _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL = timedelta(seconds=60)
 
-
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {vol.Required(CONF_USERNAME): cv.string, vol.Required(CONF_PASSWORD): cv.string}
 )
-
-
-"""
-CONFIG_FILE = ".easee-token"
-conf = load_json(hass.config.path(CONFIG_FILE))
-save_json(hass.config.path(CONFIG_FILE), conf)
-"""
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
@@ -47,6 +39,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     password = config.get(CONF_PASSWORD)
     easee = EaseeSession(username, password)
     await easee.connect()
+    hass.data[DOMAIN] = {"session": easee}
 
     sensors = []
     chargers = await easee.get_chargers()
@@ -58,8 +51,6 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     tasks = [sensor.async_update() for sensor in sensors]
     if tasks:
         await asyncio.wait(tasks)
-    # if not all(sensor.data.something for sensor in sensors):
-    #     raise PlatformNotReady
 
     async_add_entities(sensors)
 
@@ -67,7 +58,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 class ChargersSensor(Entity):
     """Implementation of an RMV departure sensor."""
 
-    def __init__(self, easeesession, charger: Charger):
+    def __init__(self, easeesession: EaseeSession, charger: Charger):
         """Initialize the sensor."""
         self.easeesession = easeesession
         self.charger = charger
@@ -88,7 +79,7 @@ class ChargersSensor(Entity):
     @property
     def state(self):
         """Return online status"""
-        return "online" if self._state else "offline"
+        return self._state
 
     @property
     def state_attributes(self):
@@ -99,9 +90,18 @@ class ChargersSensor(Entity):
                 "name": self._name,
                 "status": self.charger.state.status,
                 "total_energy": self.charger.state.total_power,
+                "energy_hour": self.charger.state.energy_hour,
                 "session_energy": self.charger.state.session_energy,
                 "smart_charging": self.charger.state.smart_charging,
                 "cable_locked": self.charger.state.cable_locked,
+                "latest_pulse": self.charger.state.latest_pulse,
+                "firmware": self.charger.state.firmware,
+                "latest_firmware": self.charger.state.latest_firmware,
+                "node_type": self.charger.config.node_type,
+                "phase_mode": self.charger.config.phase_mode,
+                "consumption_1_day": self.charger.last_24H_consumption,
+                "consumption_30_days": self.charger.last_30D_consumption,
+                "consumption_365_days": self.charger.last_1Y_consumption,
             }
         except IndexError:
             return {}
@@ -113,6 +113,6 @@ class ChargersSensor(Entity):
 
     async def async_update(self):
         """Get the latest data and update the state."""
-        _LOGGER.info("updating charger: %s", self.name)
+        _LOGGER.debug("async_update charger: %s", self.name)
         await self.charger.async_update()
-        self._state = self.charger.state.online
+        self._state = self.charger.state.status
