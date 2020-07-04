@@ -55,3 +55,7 @@ sensor:
     username: "+46111111111"
     password: <password>
 ```
+
+## License
+
+Apache 2.0
