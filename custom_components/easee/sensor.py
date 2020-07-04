@@ -14,10 +14,11 @@ from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
+from homeassistant.util.json import load_json, save_json
 from homeassistant.util import Throttle
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
-from .session import EaseeSession, Chargers, Charger, ChargerConfig, ChargerState
+from .easee import EaseeSession, Charger, ChargerConfig, ChargerState
 
 DOMAIN = "easee"
 
@@ -31,16 +32,29 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 
+"""
+CONFIG_FILE = ".easee-token"
+conf = load_json(hass.config.path(CONFIG_FILE))
+save_json(hass.config.path(CONFIG_FILE), conf)
+"""
+
+
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the Easee sensor."""
-    timeout = 30
 
     session = async_get_clientsession(hass)
-    username = config.get(CONF_USERNAME),
-    password = config.get(CONF_PASSWORD),
+    username = config.get(CONF_USERNAME)
+    password = config.get(CONF_PASSWORD)
     easee = EaseeSession(username, password)
+    await easee.connect()
 
-    sensors = [ChargersSensor(easee, timeout)]
+    sensors = []
+    chargers = await easee.get_chargers()
+    for charger in chargers:
+        await charger.async_update()
+        _LOGGER.info("Found charger: %s %s", charger.id, charger.name)
+        sensors.append(ChargersSensor(easee, charger))
+
     tasks = [sensor.async_update() for sensor in sensors]
     if tasks:
         await asyncio.wait(tasks)
@@ -53,20 +67,18 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 class ChargersSensor(Entity):
     """Implementation of an RMV departure sensor."""
 
-    def __init__(
-        self, easeesession, timeout,
-    ):
+    def __init__(self, easeesession, charger: Charger):
         """Initialize the sensor."""
-        self._name = "charger"
-        self._state = 88
         self.easeesession = easeesession
-        self.timeout = timeout
-        self.chargers = []
+        self.charger = charger
+        self.id = charger.id
+        self._name = charger.name
+        self._state = None
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        return self._name
+        return f"{DOMAIN}_charger_{self.id}"
 
     @property
     def available(self):
@@ -75,16 +87,21 @@ class ChargersSensor(Entity):
 
     @property
     def state(self):
-        """Return the next departure time."""
-        return self._state
+        """Return online status"""
+        return "online" if self._state else "offline"
 
     @property
     def state_attributes(self):
         """Return the state attributes."""
         try:
             return {
-                "chargers": "foo",
-                "chargers2": "bar",
+                "id": self.id,
+                "name": self._name,
+                "status": self.charger.state.status,
+                "total_energy": self.charger.state.total_power,
+                "session_energy": self.charger.state.session_energy,
+                "smart_charging": self.charger.state.smart_charging,
+                "cable_locked": self.charger.state.cable_locked,
             }
         except IndexError:
             return {}
@@ -96,4 +113,6 @@ class ChargersSensor(Entity):
 
     async def async_update(self):
         """Get the latest data and update the state."""
-        return
+        _LOGGER.info("updating charger: %s", self.name)
+        await self.charger.async_update()
+        self._state = self.charger.state.online
