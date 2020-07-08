@@ -19,9 +19,9 @@ async def async_setup_services(hass):
         charger_id = call.data.get(CHARGER_ID)
         chargers = hass.data[DOMAIN]["chargers"]
         # Move to use entity id later
-        charger = next((c for c in chargers if x.id == charger_id), None)
+        charger = next((c for c in chargers if c.id == charger_id), None)
         if charger:
-            return await charger.start_charger()
+            return await charger.start()
         _LOGGER.error(
             "Could not find charger %s", charger_id,
         )
