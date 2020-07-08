@@ -46,7 +46,74 @@ class Charger:
         return float(value)
 
     async def start(self):
+        """Start charging session"""
         return await self.easee.post(f"/api/chargers/{self.id}/commands/start_charging")
+
+    async def pause(self):
+        """Pause charging session"""
+        return await self.easee.post(f"/api/chargers/{self.id}/commands/pause_charging")
+
+    async def resume(self):
+        """Resume charging session"""
+        return await self.easee.post(
+            f"/api/chargers/{self.id}/commands/resume_charging"
+        )
+
+    async def stop(self):
+        """Stop charging session"""
+        return await self.easee.post(f"/api/chargers/{self.id}/commands/stop_charging")
+
+    async def toggle(self):
+        """Toggle charging session start/stop/pause/resume """
+        return await self.easee.post(
+            f"/api/chargers/{self.id}/commands/toggle_charging"
+        )
+
+    async def get_basic_charge_plan(self):
+        """Get and return charger basic charge plan setting from cloud """
+        return await self.easee.get(
+            f"/api/chargers/{self.id}/commands/basic_charge_plan"
+        )
+
+    async def set_basic_charge_plan(
+        self, id, chargeStartTime, chargeStopTime, repeat=True
+    ):
+        """Set and post charger basic charge plan setting to cloud """
+        json = {
+            "id": id,
+            "chargeStartTime": chargeStartTime,
+            "chargeStopTime": chargeStopTime,
+            "repeat": repeat,
+        }
+        return await self.easee.post(
+            f"/api/chargers/{self.id}/commands/basic_charge_plan", json=json
+        )
+
+    async def delete_basic_charge_plan(self):
+        """Delete charger basic charge plan setting from cloud """
+        return await self.easee.post(
+            f"/api/chargers/{self.id}/commands/basic_charge_plan"
+        )
+
+    async def override_schedule(self):
+        """Override scheduled charging and start charging"""
+        return await self.easee.post(
+            f"/api/chargers/{self.id}/commands/override_schedule"
+        )
+
+    async def smart_charging(self):
+        """Set charger smart charging setting"""
+        return await self.easee.post(f"/api/chargers/{self.id}/commands/smart_charging")
+
+    async def reboot(self):
+        """Reboot charger"""
+        return await self.easee.post(f"/api/chargers/{self.id}/commands/reboot")
+
+    async def update_firmware(self):
+        """Update charger firmware"""
+        return await self.easee.post(
+            f"/api/chargers/{self.id}/commands/update_firmware"
+        )
 
     async def async_update(self):
         state = await (await self.easee.get(f"/api/chargers/{self.id}/state")).json()
@@ -63,14 +130,20 @@ class Charger:
         }
 
         _LOGGER.debug(
-            "Charger:\n %s\n\nState:\n %s\n\nConfig: %s", self.name, self.state, self.config
+            "Charger:\n %s\n\nState:\n %s\n\nConfig: %s",
+            self.name,
+            self.state,
+            self.config,
         )
 
 
 async def raise_for_status(response):
     if 400 <= response.status:
         e = aiohttp.ClientResponseError(
-            response.request_info, response.history, code=response.status, headers=response.headers,
+            response.request_info,
+            response.history,
+            code=response.status,
+            headers=response.headers,
         )
 
         if "json" in response.headers.get("CONTENT-TYPE", ""):
@@ -101,14 +174,18 @@ class Easee:
     async def post(self, url, **kwargs):
         _LOGGER.debug("post: %s (%s)", url, kwargs)
         await self._verify_updated_token()
-        response = await self.session.post(f"{self.base}{url}", headers=self.headers, **kwargs)
+        response = await self.session.post(
+            f"{self.base}{url}", headers=self.headers, **kwargs
+        )
         await raise_for_status(response)
         return response
 
     async def get(self, url, **kwargs):
         _LOGGER.debug("get: %s (%s)", url, kwargs)
         await self._verify_updated_token()
-        response = await self.session.get(f"{self.base}{url}", headers=self.headers, **kwargs)
+        response = await self.session.get(
+            f"{self.base}{url}", headers=self.headers, **kwargs
+        )
         await raise_for_status(response)
         return response
 
