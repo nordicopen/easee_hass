@@ -139,7 +139,6 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     hass.data[DOMAIN]["chargers"] = chargers
 
     for charger in chargers:
-        await charger.async_update()
         _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
         for key in config[CONF_MONITORED_CONDITIONS]:
             data = SENSOR_TYPES[key]
@@ -196,7 +195,6 @@ class ChargerSensor(Entity):
     def __init__(self, charger, name, state_key, units, convert_units_func, attrs_keys, icon):
         """Initialize the sensor."""
         self.charger = charger
-        self.id = charger.id
         self._sensor_name = name
         self._state_key = state_key
         self._units = units
@@ -208,7 +206,7 @@ class ChargerSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{DOMAIN}_charger_{self.id}_{self._sensor_name}"
+        return f"{DOMAIN}_charger_{self.charger.id}_{self._sensor_name}"
 
     @property
     def unit_of_measurement(self):
@@ -229,7 +227,7 @@ class ChargerSensor(Entity):
     def state_attributes(self):
         """Return the state attributes."""
         try:
-            attrs = {"name": self.charger.name}
+            attrs = {"name": self.charger.name, "id": self.charger.id}
             for attr_key in self._attrs_keys:
                 attrs[attr_key.split(".")[1]] = self.get_value_from_key(attr_key)
             return attrs
@@ -273,7 +271,6 @@ class ChargerConsumptionSensor(Entity):
     def __init__(self, charger, name, days):
         """Initialize the sensor."""
         self.charger = charger
-        self.id = charger.id
         self._sensor_name = name
         self._days = days
         self._state = None
@@ -281,7 +278,7 @@ class ChargerConsumptionSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{DOMAIN}_charger_{self.id}_{self._sensor_name}"
+        return f"{DOMAIN}_charger_{self.charger.id}_{self._sensor_name}"
 
     @property
     def unit_of_measurement(self):
@@ -301,7 +298,7 @@ class ChargerConsumptionSensor(Entity):
     @property
     def state_attributes(self):
         """Return the state attributes."""
-        return {"name": self.charger.name}
+        return {"name": self.charger.name, "id": self.charger.id}
 
     @property
     def icon(self):
