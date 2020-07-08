@@ -20,6 +20,7 @@ from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
 from .easee import Easee, Charger
+from .services import async_setup_services
 
 DOMAIN = "easee"
 _LOGGER = logging.getLogger(__name__)
@@ -135,6 +136,8 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     _LOGGER.info("KEYS\n%s", list(SENSOR_TYPES))
     _LOGGER.debug("Found chargers: %d", len(chargers))
 
+    hass.data[DOMAIN]["chargers"] = chargers
+
     for charger in chargers:
         await charger.async_update()
         _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
@@ -163,6 +166,9 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     hass.async_add_job(charger_data.async_refresh)
     async_track_time_interval(hass, charger_data.async_refresh, SCAN_INTERVAL)
     async_add_entities(sensors)
+
+    # Setup services
+    await async_setup_services(hass)
 
 
 class ChargersData:

@@ -1,0 +1,6 @@
+start:
+  description: Starts charger
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"

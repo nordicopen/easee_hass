@@ -45,6 +45,9 @@ class Charger:
         ).text()
         return float(value)
 
+    async def start(self):
+        return await self.session.post(f"/api/chargers/{self.id}/commands/start_charging")
+
     async def async_update(self):
         state = await (await self.easee.get(f"/api/chargers/{self.id}/state")).json()
         self.state = {
