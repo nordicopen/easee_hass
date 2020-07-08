@@ -16,9 +16,10 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 from homeassistant.util.json import load_json, save_json
 from homeassistant.util import Throttle
+from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
-from .easee import EaseeSession, Charger, ChargerConfig, ChargerState
+from .easee import Easee, Charger
 
 DOMAIN = "easee"
 
@@ -37,39 +38,78 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     session = async_get_clientsession(hass)
     username = config.get(CONF_USERNAME)
     password = config.get(CONF_PASSWORD)
-    easee = EaseeSession(username, password)
-    await easee.connect()
-    hass.data[DOMAIN] = {"session": easee}
+    easee = Easee(username, password)
 
     sensors = []
     chargers = await easee.get_chargers()
+
+    _LOGGER.info("Got chargers: %d", len(chargers))
+
     for charger in chargers:
         await charger.async_update()
         _LOGGER.info("Found charger: %s %s", charger.id, charger.name)
-        sensors.append(ChargersSensor(easee, charger))
+        sensors.append(ChargerSensor(charger))
 
-    tasks = [sensor.async_update() for sensor in sensors]
-    if tasks:
-        await asyncio.wait(tasks)
+    charger_data = ChargersData(chargers, sensors)
 
+    hass.async_add_job(charger_data.async_refresh)
+    async_track_time_interval(hass, charger_data.async_refresh, SCAN_INTERVAL)
     async_add_entities(sensors)
 
 
-class ChargersSensor(Entity):
-    """Implementation of an RMV departure sensor."""
+class ChargersData:
+    """Representation of a Sensor."""
 
-    def __init__(self, easeesession: EaseeSession, charger: Charger):
+    def __init__(self, chargers, sensors):
         """Initialize the sensor."""
-        self.easeesession = easeesession
+        self._chargers = chargers
+        self._sensors = sensors
+
+    async def async_refresh(self, now=None):
+        """Fetch new state data for the sensor. """
+        _LOGGER.info("ChargersData async_refresh")
+        tasks = [charger.async_update() for charger in self._chargers]
+        if tasks:
+            await asyncio.wait(tasks)
+        # Schedule an update for all included sensors
+        for sensor in self._sensors:
+            sensor.async_schedule_update_ha_state(True)
+        _LOGGER.info("ChargersData async_refresh DONE")
+
+
+class ChargerSensor(Entity):
+    """Implementation of Easee charger sensor """
+
+    def __init__(
+        self,
+        charger,
+        state_key="state.chargerOpMode",
+        units=None,
+        attrs_keys=["state.voltage", "config.phaseMode"],
+    ):
+        """Initialize the sensor."""
         self.charger = charger
         self.id = charger.id
         self._name = charger.name
+        self._state_key = state_key
+        self._units = units
+        self._attrs_keys = attrs_keys
         self._state = None
 
     @property
     def name(self):
         """Return the name of the sensor."""
         return f"{DOMAIN}_charger_{self.id}"
+
+    @property
+    def unique_id(self):
+        """Return the unique id."""
+        return f"{self.id} {self._name}"
+
+    @property
+    def unit_of_measurement(self):
+        """Return the unit of measurement of this entity, if any."""
+        return self._units
 
     @property
     def available(self):
@@ -85,24 +125,11 @@ class ChargersSensor(Entity):
     def state_attributes(self):
         """Return the state attributes."""
         try:
-            return {
-                "id": self.id,
-                "name": self._name,
-                "status": self.charger.state.status,
-                "total_energy": self.charger.state.total_power,
-                "energy_hour": self.charger.state.energy_hour,
-                "session_energy": self.charger.state.session_energy,
-                "smart_charging": self.charger.state.smart_charging,
-                "cable_locked": self.charger.state.cable_locked,
-                "latest_pulse": self.charger.state.latest_pulse,
-                "firmware": self.charger.state.firmware,
-                "latest_firmware": self.charger.state.latest_firmware,
-                "node_type": self.charger.config.node_type,
-                "phase_mode": self.charger.config.phase_mode,
-                "consumption_1_day": self.charger.last_24H_consumption,
-                "consumption_30_days": self.charger.last_30D_consumption,
-                "consumption_365_days": self.charger.last_1Y_consumption,
-            }
+            attrs = {}
+            for attr_key in self._attrs_keys:
+                first, second = attr_key.split(".")
+                attrs[second] = self.get_value_from_key(attr_key)
+            return attrs
         except IndexError:
             return {}
 
@@ -111,8 +138,25 @@ class ChargersSensor(Entity):
         """Icon to use in the frontend, if any."""
         return "mdi:flash"
 
+    @property
+    def should_poll(self):
+        """No polling needed."""
+        return False
+
+    def get_value_from_key(self, key):
+        first, second = key.split(".")
+        if first == "config":
+            return self.charger.config[second]
+        elif first == "state":
+            return self.charger.state[second]
+        else:
+            _LOGGER.error("Unknown first part of key: %s", key)
+            raise IndexError("Unknown first part of key")
+
     async def async_update(self):
         """Get the latest data and update the state."""
-        _LOGGER.debug("async_update charger: %s", self.name)
-        await self.charger.async_update()
-        self._state = self.charger.state.status
+        _LOGGER.debug("async_update charger: %s", self._name)
+        try:
+            self._state = self.get_value_from_key(self._state_key)
+        except IndexError:
+            raise IndexError("Wrong key for sensor: %s", self._key)

@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from .easee import EaseeSession, Charger, ChargerConfig, ChargerState
+from .easee import EaseeSession, Charger
 
 
 logging.basicConfig(
@@ -11,8 +11,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def main():
-    session = EaseeSession("+461111111", "password")
-    await session.connect()
+    session = Easee("+461111111", "password")
     chargers = await session.get_chargers()
     tasks = [c.async_update() for c in chargers]
     if tasks:
