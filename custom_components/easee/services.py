@@ -2,8 +2,6 @@
 import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
 
-from .easee import Easee, Charger
-
 DOMAIN = "easee"
 CHARGER_ID = "charger_id"
 COMMAND_START = "start"

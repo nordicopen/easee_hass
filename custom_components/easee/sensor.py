@@ -19,7 +19,7 @@ from homeassistant.util import Throttle
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
-from .easee import Easee, Charger
+from easee import Easee, Charger
 from .services import async_setup_services
 
 DOMAIN = "easee"

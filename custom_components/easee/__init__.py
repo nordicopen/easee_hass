@@ -1,1 +1,1 @@
-""" Easee charger """
+""" Easee charger component """
