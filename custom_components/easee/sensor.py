@@ -19,7 +19,7 @@ from homeassistant.util import Throttle
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
-from .easee import Easee, Charger
+from easee import Easee, Charger
 from .services import async_setup_services
 
 DOMAIN = "easee"
@@ -247,9 +247,9 @@ class ChargerSensor(Entity):
     def get_value_from_key(self, key):
         first, second = key.split(".")
         if first == "config":
-            return self.charger.config[second]
+            return self.charger.get_cached_config_entry(second)
         elif first == "state":
-            return self.charger.state[second]
+            return self.charger.get_cached_state_entry(second)
         else:
             _LOGGER.error("Unknown first part of key: %s", key)
             raise IndexError("Unknown first part of key")

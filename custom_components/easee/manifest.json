@@ -1,8 +1,10 @@
 {
   "domain": "easee",
   "name": "Easee charger component",
-  "documentation": "https://github.com/fondberg/easee",
-  "requirements": [],
+  "documentation": "https://github.com/fondberg/easee_hass",
+  "requirements": [
+    "easee==0.7.3"
+  ],
   "homeassistant": "0.112.0",
   "dependencies": [],
   "codeowners": [
