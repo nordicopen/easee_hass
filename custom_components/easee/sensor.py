@@ -47,7 +47,7 @@ SENSOR_TYPES = {
     },
     "total_power": {
         "key": "state.totalPower",
-        "attrs": ["state.latestPulse"],
+        "attrs": ["state.latestPulse", "state.inCurrentT2", "state.inCurrentT3", "state.inCurrentT4", "state.inCurrentT5", "state.inVoltageT1T2", "state.inVoltageT1T3", "state.inVoltageT1T4", "state.inVoltageT1T5", "state.inVoltageT2T3", "state.inVoltageT2T4", "state.inVoltageT2T5", "state.inVoltageT3T4", "state.inVoltageT3T5", "state.inVoltageT4T5"],
         "units": "W",
         "convert_units_func": watts_to_kilowatts,
         "icon": "mdi:flash",
@@ -55,14 +55,14 @@ SENSOR_TYPES = {
     "session_energy": {
         "key": "state.sessionEnergy",
         "attrs": [],
-        "units": "W",
+        "units": "Wh",
         "convert_units_func": round_2_dec,
         "icon": "mdi:flash",
     },
     "energy_per_hour": {
         "key": "state.energyPerHour",
         "attrs": [],
-        "units": "W",
+        "units": "Wh",
         "convert_units_func": round_2_dec,
         "icon": "mdi:flash",
     },
