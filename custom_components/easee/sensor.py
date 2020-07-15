@@ -12,7 +12,6 @@ from homeassistant.const import CONF_MONITORED_CONDITIONS
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_time_interval
 
-
 from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS
 
 _LOGGER = logging.getLogger(__name__)
@@ -38,7 +37,23 @@ SENSOR_TYPES = {
     },
     "total_power": {
         "key": "state.totalPower",
-        "attrs": ["state.latestPulse", "state.inCurrentT2", "state.inCurrentT3", "state.inCurrentT4", "state.inCurrentT5", "state.inVoltageT1T2", "state.inVoltageT1T3", "state.inVoltageT1T4", "state.inVoltageT1T5", "state.inVoltageT2T3", "state.inVoltageT2T4", "state.inVoltageT2T5", "state.inVoltageT3T4", "state.inVoltageT3T5", "state.inVoltageT4T5"],
+        "attrs": [
+            "state.latestPulse",
+            "state.inCurrentT2",
+            "state.inCurrentT3",
+            "state.inCurrentT4",
+            "state.inCurrentT5",
+            "state.inVoltageT1T2",
+            "state.inVoltageT1T3",
+            "state.inVoltageT1T4",
+            "state.inVoltageT1T5",
+            "state.inVoltageT2T3",
+            "state.inVoltageT2T4",
+            "state.inVoltageT2T5",
+            "state.inVoltageT3T4",
+            "state.inVoltageT3T5",
+            "state.inVoltageT4T5",
+        ],
         "units": "W",
         "convert_units_func": watts_to_kilowatts,
         "icon": "mdi:flash",
@@ -97,17 +112,13 @@ SENSOR_TYPES = {
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the Easee sensor."""
-    chargers: List[Charger] = await hass.data[DOMAIN]["session"].get_chargers()
+    chargers: List[Charger] = hass.data[DOMAIN]["chargers"]
     config = hass.data[DOMAIN]["config"]
-
-    _LOGGER.info("config\n%s", config)
-    _LOGGER.info("KEYS\n%s", list(SENSOR_TYPES))
-    _LOGGER.debug("Found chargers: %d", len(chargers))
 
     sensors = []
     for charger in chargers:
         _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
-        for key in config[CONF_MONITORED_CONDITIONS]:
+        for key in config.options.get(CONF_MONITORED_CONDITIONS):
             data = SENSOR_TYPES[key]
             _LOGGER.debug("Adding sensor: %s for charger %s", key, charger.name)
             sensors.append(
@@ -121,10 +132,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
                     icon=data["icon"],
                 )
             )
-        for interval in config[MEASURED_CONSUMPTION_DAYS]:
-            _LOGGER.info("Will measure days: %d", interval)
+        for interval in config.options.get(MEASURED_CONSUMPTION_DAYS):
+            _LOGGER.info("Will measure days: %s", interval)
             sensors.append(
-                ChargerConsumptionSensor(charger, f"consumption_days_{interval}", interval)
+                ChargerConsumptionSensor(
+                    charger, f"consumption_days_{interval}", int(interval)
+                )
             )
 
     charger_data = ChargersData(chargers, sensors)
@@ -156,7 +169,9 @@ class ChargersData:
 class ChargerSensor(Entity):
     """Implementation of Easee charger sensor """
 
-    def __init__(self, charger, name, state_key, units, convert_units_func, attrs_keys, icon):
+    def __init__(
+        self, charger, name, state_key, units, convert_units_func, attrs_keys, icon
+    ):
         """Initialize the sensor."""
         self.charger = charger
         self._sensor_name = name
@@ -220,7 +235,9 @@ class ChargerSensor(Entity):
 
     async def async_update(self):
         """Get the latest data and update the state."""
-        _LOGGER.debug("ChargerSensor async_update : %s %s", self.charger.name, self._sensor_name)
+        _LOGGER.debug(
+            "ChargerSensor async_update : %s %s", self.charger.name, self._sensor_name
+        )
         try:
             self._state = self.get_value_from_key(self._state_key)
             if self._convert_units_func is not None:
@@ -272,7 +289,9 @@ class ChargerConsumptionSensor(Entity):
     async def async_update(self):
         """Get the latest data and update the state."""
         _LOGGER.debug(
-            "ChargerConsumptionSensor async_update : %s %s", self.charger.name, self._sensor_name,
+            "ChargerConsumptionSensor async_update : %s %s",
+            self.charger.name,
+            self._sensor_name,
         )
         now = datetime.now()
         self._state = await self.charger.get_consumption_between_dates(

@@ -41,25 +41,18 @@ _While this component can be installed by HACS, it is not included in the defaul
 
 ## Configuration
 
-Add the following to your configuration. Note that username is the phonenumber including the countrycode. It needs to be a + and can't be double zero.
+Add the following to your configuration and restart Home Assistant.
 
 ```yaml
-sensor:
-  - platform: easee
-    username: "+46111111111"
-    password: <password>
-    monitored_conditions:
-      - status
-      - total_power
-      - session_energy
-      - energy_per_hour
-      - online
-      - cable_locked
-      - phase_mode
-      - current_firmware
-      - latest_firmware
-    measured_consumption_days:
-      - 1
-      - 30
-      - 365
+easee:
+```
+
+Configuration is done through in Configuration > Integrations where you first configure it and then set the options for what you want to monitor.
+
+## Development
+
+This project uses `black` for code formatting and `flake8` for linting. Two errors should be ignored when running flake8 so run it with
+
+```
+flake8 --ignore=E501,E231 custom_components/
 ```

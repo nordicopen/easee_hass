@@ -16,5 +16,16 @@
         "title": "Connect to Easee"
       }
     }
-  }
+  },
+  "options": {
+    "step": {
+      "sensor_options": {
+        "data": {
+          "monitored_conditions": "Sensors monitored",
+          "measured_consumption_days": "Consumption monitoring days"
+        }
+      }
+    }
+  },
+  "title": "Easee EV Charger"
 }

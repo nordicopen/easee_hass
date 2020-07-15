@@ -13,7 +13,9 @@ ATTR_CHARGEPLAN_START_TIME = "chargeStartTime"
 ATTR_CHARGEPLAN_STOP_TIME = "chargeStopTime"
 ATTR_CHARGEPLAN_REPEAT = "repeat"
 
-SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema({vol.Optional(CHARGER_ID): cv.string,})
+SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
+    {vol.Optional(CHARGER_ID): cv.string,}
+)
 
 SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
     {
@@ -25,11 +27,23 @@ SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
 )
 
 SERVICE_MAP = {
-    "start": {"function_call": "start", "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,},
+    "start": {
+        "function_call": "start",
+        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
+    },
     "stop": {"function_call": "stop", "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,},
-    "pause": {"function_call": "pause", "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,},
-    "resume": {"function_call": "resume", "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,},
-    "toggle": {"function_call": "toggle", "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,},
+    "pause": {
+        "function_call": "pause",
+        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
+    },
+    "resume": {
+        "function_call": "resume",
+        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
+    },
+    "toggle": {
+        "function_call": "toggle",
+        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
+    },
     "override_schedule": {
         "function_call": "override_schedule",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
@@ -38,7 +52,10 @@ SERVICE_MAP = {
         "function_call": "smart_charging",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
-    "reboot": {"function_call": "reboot", "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,},
+    "reboot": {
+        "function_call": "reboot",
+        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
+    },
     "update_firmware": {
         "function_call": "update_firmware",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
@@ -60,13 +77,11 @@ SERVICE_MAP = {
 
 async def async_setup_services(hass):
     """ Setup services for Easee """
-
-    easee = hass.data[DOMAIN]["easee"]
+    chargers = hass.data[DOMAIN]["chargers"]
 
     async def execute_service(call):
         """Execute a service to Easee charging station. """
         charger_id = call.data.get(CHARGER_ID)
-        chargers = hass.data[DOMAIN]["chargers"]
 
         _LOGGER.debug("execute_service:" + str(call.data))
 
@@ -87,4 +102,3 @@ async def async_setup_services(hass):
         hass.services.async_register(
             DOMAIN, service, execute_service, schema=data["schema"],
         )
-
