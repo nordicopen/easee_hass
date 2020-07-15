@@ -1,5 +1,23 @@
 start:
-  description: Starts charger
+  description: Start charger
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+stop:
+  description: Stop charger
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+pause:
+  description: Pause charger
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+resume:
+  description: Resume charger
   fields:
     charger_id:
       description: "The charger id"
