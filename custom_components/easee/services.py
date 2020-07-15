@@ -1,12 +1,17 @@
 """ easee services."""
+import logging
 import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
+from homeassistant.exceptions import HomeAssistantError
+from .const import DOMAIN
 
-DOMAIN = "easee"
 CHARGER_ID = "charger_id"
 COMMAND_START = "start"
 
-SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema({vol.Optional(CHARGER_ID): cv.string,})
+SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
+    {vol.Optional(CHARGER_ID): cv.string,}
+)
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_services(hass):
@@ -26,6 +31,8 @@ async def async_setup_services(hass):
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
     hass.services.async_register(
-        DOMAIN, COMMAND_START, start_charger, schema=SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
+        DOMAIN,
+        COMMAND_START,
+        start_charger,
+        schema=SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     )
-

@@ -3,29 +3,20 @@ Support for Easee charger
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
 import asyncio
+from typing import List
 from datetime import datetime, timedelta
 import logging
+from easee import Charger
 
-import voluptuous as vol
-
-from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import CONF_MONITORED_CONDITIONS
-from homeassistant.exceptions import PlatformNotReady
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
-import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
-from homeassistant.util.json import load_json, save_json
-from homeassistant.util import Throttle
 from homeassistant.helpers.event import async_track_time_interval
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
-from easee import Easee, Charger
-from .services import async_setup_services
 
-DOMAIN = "easee"
+from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS
+
 _LOGGER = logging.getLogger(__name__)
 
-MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
 SCAN_INTERVAL = timedelta(seconds=60)
 
 
@@ -103,41 +94,17 @@ SENSOR_TYPES = {
     },
 }
 
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
-    {
-        vol.Required(CONF_USERNAME): cv.string,
-        vol.Required(CONF_PASSWORD): cv.string,
-        vol.Optional(CONF_MONITORED_CONDITIONS, default=["status"]): vol.All(
-            cv.ensure_list, [vol.In(SENSOR_TYPES)]
-        ),
-        vol.Optional(MEASURED_CONSUMPTION_DAYS, default=[]): vol.All(cv.ensure_list),
-    }
-)
 
-
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the Easee sensor."""
+    chargers: List[Charger] = await hass.data[DOMAIN]["session"].get_chargers()
+    config = hass.data[DOMAIN]["config"]
 
-    session = async_get_clientsession(hass)
-    username = config.get(CONF_USERNAME)
-    password = config.get(CONF_PASSWORD)
-
-    if DOMAIN not in hass.data:
-        hass.data[DOMAIN] = {}
-
-    if "easee" not in hass.data[DOMAIN]:
-        easee = Easee(username, password)
-        hass.data[DOMAIN] = {"easee": easee}
-    else:
-        easee = hass.data[DOMAIN]["easee"]
-
-    sensors = []
-    chargers = await easee.get_chargers()
+    _LOGGER.info("config\n%s", config)
     _LOGGER.info("KEYS\n%s", list(SENSOR_TYPES))
     _LOGGER.debug("Found chargers: %d", len(chargers))
 
-    hass.data[DOMAIN]["chargers"] = chargers
-
+    sensors = []
     for charger in chargers:
         _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
         for key in config[CONF_MONITORED_CONDITIONS]:
@@ -165,9 +132,6 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     hass.async_add_job(charger_data.async_refresh)
     async_track_time_interval(hass, charger_data.async_refresh, SCAN_INTERVAL)
     async_add_entities(sensors)
-
-    # Setup services
-    await async_setup_services(hass)
 
 
 class ChargersData:
@@ -308,10 +272,9 @@ class ChargerConsumptionSensor(Entity):
     async def async_update(self):
         """Get the latest data and update the state."""
         _LOGGER.debug(
-            "ChargerConsumptionSensor async_update : %s %s", self.charger.name, self._sensor_name
+            "ChargerConsumptionSensor async_update : %s %s", self.charger.name, self._sensor_name,
         )
         now = datetime.now()
         self._state = await self.charger.get_consumption_between_dates(
             now - timedelta(0, 86400 * self._days), now
         )
-
