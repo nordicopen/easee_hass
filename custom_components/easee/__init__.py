@@ -13,7 +13,7 @@ from homeassistant.helpers import (
     config_validation as cv,
 )
 
-from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS
+from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS, VERSION
 from .services import async_setup_services
 from .sensor import SENSOR_TYPES
 from .config_flow import EaseeConfigFlow  # noqa
@@ -50,7 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up Easee integration from a config entry."""
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
-    _LOGGER.info("BLABLABLA\n\nasync_setup_entry in __init__ %s", DOMAIN)
+    _LOGGER.debug("Setting up Easee component version %s", VERSION)
     # session = aiohttp_client.async_get_clientsession(hass) <- TODO test me
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
