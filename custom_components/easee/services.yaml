@@ -1,23 +1,91 @@
 start:
-  description: Start charger
+  description: Starts charger
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
+
 stop:
   description: Stop charger
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
+
 pause:
   description: Pause charger
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
+
 resume:
   description: Resume charger
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+
+toggle:
+  description: Toggle charger
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+
+get_basic_charge_plan:
+  description: Get basic charge plan
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+
+set_basic_charge_plan:
+  description: Set basic charge plan
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+    start_time:
+      description: "The charger id"
+      example: 23:00
+    stop_time:
+      description: "The charger id"
+      example: 07:00
+    repeat:
+      description: "The charger id"
+      example: True
+
+delete_basic_charge_plan:
+  description: Delete basic charge plan
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+
+override_schedule:
+  description: Override charger schedule and start charging
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+
+smart_charging:
+  description: Enable smart charging
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+
+reboot:
+  description: Reboot charger
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+
+update_firmware:
+  description: Update charger firmware
   fields:
     charger_id:
       description: "The charger id"
