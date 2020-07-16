@@ -7,7 +7,9 @@
   ],
   "homeassistant": "0.112.0",
   "config_flow": true,
-  "dependencies": [],
+  "dependencies": [
+    "configurator"
+  ],
   "codeowners": [
     "@fondberg"
   ]

@@ -19,7 +19,7 @@
   },
   "options": {
     "step": {
-      "sensor_options": {
+      "options_1": {
         "data": {
           "monitored_conditions": "Sensors monitored",
           "measured_consumption_days": "Consumption monitoring days"

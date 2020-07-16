@@ -114,11 +114,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the Easee sensor."""
     chargers: List[Charger] = hass.data[DOMAIN]["chargers"]
     config = hass.data[DOMAIN]["config"]
-
+    monitored_conditions = config.options.get(CONF_MONITORED_CONDITIONS, ["status"])
     sensors = []
     for charger in chargers:
         _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
-        for key in config.options.get(CONF_MONITORED_CONDITIONS):
+        for key in monitored_conditions:
             data = SENSOR_TYPES[key]
             _LOGGER.debug("Adding sensor: %s for charger %s", key, charger.name)
             sensors.append(
@@ -132,7 +132,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
                     icon=data["icon"],
                 )
             )
-        for interval in config.options.get(MEASURED_CONSUMPTION_DAYS):
+
+        monitored_days = config.options.get(MEASURED_CONSUMPTION_DAYS, [])
+        for interval in monitored_days:
             _LOGGER.info("Will measure days: %s", interval)
             sensors.append(
                 ChargerConsumptionSensor(

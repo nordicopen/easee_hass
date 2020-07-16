@@ -31,9 +31,7 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Optional(CONF_MONITORED_CONDITIONS, default=["status"]): vol.All(
                     cv.ensure_list, [vol.In(SENSOR_TYPES)]
                 ),
-                vol.Optional(MEASURED_CONSUMPTION_DAYS, default=[]): vol.All(
-                    cv.ensure_list
-                ),
+                vol.Optional(MEASURED_CONSUMPTION_DAYS, default=[]): vol.All(cv.ensure_list),
             }
         )
     },
@@ -67,9 +65,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     await async_setup_services(hass)
 
     for component in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, component)
-        )
+        hass.async_create_task(hass.config_entries.async_forward_entry_setup(entry, component))
 
     return True
 
@@ -85,6 +81,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
         )
     )
     if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id)
+        hass.data[DOMAIN] = {}
 
     return unload_ok

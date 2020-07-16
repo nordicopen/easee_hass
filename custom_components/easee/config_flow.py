@@ -75,9 +75,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input=None):
         """Manage the options."""
-        return await self.async_step_monitoring_options()
+        return await self.async_step_options_1()
 
-    async def async_step_monitoring_options(self, user_input=None):
+    async def async_step_options_1(self, user_input=None):
         """Manage the options."""
         if user_input is not None:
             self.options.update(user_input)
@@ -86,7 +86,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         sensor_multi_select = {x: x for x in list(SENSOR_TYPES)}
 
         return self.async_show_form(
-            step_id="sensor_options",
+            step_id="options_1",
             data_schema=vol.Schema(
                 {
                     vol.Optional(
