@@ -184,18 +184,6 @@ SENSOR_TYPES = {
 }
 
 
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
-    {
-        vol.Required(CONF_USERNAME): cv.string,
-        vol.Required(CONF_PASSWORD): cv.string,
-        vol.Optional(CONF_MONITORED_CONDITIONS, default=["status"]): vol.All(
-            cv.ensure_list, [vol.In(SENSOR_TYPES)]
-        ),
-        vol.Optional(MEASURED_CONSUMPTION_DAYS, default=[]): vol.All(cv.ensure_list),
-    }
-)
-
-
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the Easee sensor."""
     chargers: List[Charger] = hass.data[DOMAIN]["chargers"]
