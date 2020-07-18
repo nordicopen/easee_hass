@@ -28,32 +28,39 @@ def watts_to_kilowatts(value):
 
 
 SENSOR_TYPES = {
-    "status": {
-        "key": "state.chargerOpMode",
-        "attrs": ["state.voltage", "config.phaseMode"],
+    "smartCharging": {
+        "key": "state.smartCharging",
+        "attrs": [],
         "units": None,
         "convert_units_func": None,
         "icon": "mdi:flash",
     },
+    "cableLocked": {
+        "key": "state.cableLocked",
+        "attrs": ["state.lockCablePermanently",],
+        "units": None,
+        "convert_units_func": None,
+        "icon": "mdi:lock",
+    },
+    "status": {
+        "key": "state.chargerOpMode",
+        "attrs": [
+            "config.phaseMode",
+            "state.outputPhase",
+            "state.ledMode",
+            "state.cableRating",
+            "config.limitToSinglePhaseCharging",
+            "config.localNodeType",
+            "config.localAuthorizationRequired",
+            "config.ledStripBrightness",
+        ],
+        "units": None,
+        "convert_units_func": None,
+        "icon": "mdi:ev-station",
+    },
     "total_power": {
         "key": "state.totalPower",
-        "attrs": [
-            "state.latestPulse",
-            "state.inCurrentT2",
-            "state.inCurrentT3",
-            "state.inCurrentT4",
-            "state.inCurrentT5",
-            "state.inVoltageT1T2",
-            "state.inVoltageT1T3",
-            "state.inVoltageT1T4",
-            "state.inVoltageT1T5",
-            "state.inVoltageT2T3",
-            "state.inVoltageT2T4",
-            "state.inVoltageT2T5",
-            "state.inVoltageT3T4",
-            "state.inVoltageT3T5",
-            "state.inVoltageT4T5",
-        ],
+        "attrs": [],
         "units": "W",
         "convert_units_func": watts_to_kilowatts,
         "icon": "mdi:flash",
@@ -74,40 +81,119 @@ SENSOR_TYPES = {
     },
     "online": {
         "key": "state.isOnline",
+        "attrs": [
+            "state.latestPulse",
+            "config.wiFiSSID",
+            "state.wiFiAPEnabled",
+            "state.wiFiRSSI",
+            "state.cellRSSI",
+            "state.localRSSI",
+        ],
+        "units": "",
+        "convert_units_func": None,
+        "icon": "mdi:wifi",
+    },
+    "dynamicChargerCurrent": {
+        "key": "state.dynamicChargerCurrent",
+        "attrs": [
+            "state.dynamicCircuitCurrentP1",
+            "state.dynamicCircuitCurrentP2",
+            "state.dynamicCircuitCurrentP3",
+            "state.circuitTotalAllocatedPhaseConductorCurrentL1",
+            "state.circuitTotalAllocatedPhaseConductorCurrentL2",
+            "state.circuitTotalAllocatedPhaseConductorCurrentL3",
+            "state.circuitTotalPhaseConductorCurrentL1",
+            "state.circuitTotalPhaseConductorCurrentL2",
+            "state.circuitTotalPhaseConductorCurrentL3",
+            "state.circuitTotalPhaseConductorCurrentL3",
+        ],
+        "units": "",
+        "convert_units_func": None,
+        "icon": "mdi:sine-wave",
+    },
+    "maxChargerCurrent": {
+        "key": "state.dynamicChargerCurrent",
+        "attrs": [
+            "config.circuitMaxCurrentP1",
+            "config.circuitMaxCurrentP2",
+            "config.circuitMaxCurrentP3",
+        ],
+        "units": "",
+        "convert_units_func": None,
+        "icon": "mdi:sine-wave",
+    },
+    "current": {
+        "key": "state.outputCurrent",
+        "attrs": [
+            "state.outputCurrent",
+            "state.inCurrentT2",
+            "state.inCurrentT3",
+            "state.inCurrentT4",
+            "state.inCurrentT5",
+        ],
+        "units": "A",
+        "convert_units_func": None,
+        "icon": "mdi:current-dc",
+    },
+    "voltage": {
+        "key": "state.voltage",
+        "attrs": [
+            "state.inVoltageT1T2",
+            "state.inVoltageT1T3",
+            "state.inVoltageT1T4",
+            "state.inVoltageT1T5",
+            "state.inVoltageT2T3",
+            "state.inVoltageT2T4",
+            "state.inVoltageT2T5",
+            "state.inVoltageT3T4",
+            "state.inVoltageT3T5",
+            "state.inVoltageT4T5",
+        ],
+        "units": "",
+        "convert_units_func": round_2_dec,
+        "icon": "mdi:sine-wave",
+    },
+    "reasonForNoCurrent": {
+        "key": "state.reasonForNoCurrent",
         "attrs": [],
         "units": "",
         "convert_units_func": None,
-        "icon": "mdi:flash",
+        "icon": "mdi:alert-circle",
     },
-    "cable_locked": {
-        "key": "state.cableLocked",
+    "isEnabled": {
+        "key": "config.isEnabled",
         "attrs": [],
         "units": "",
         "convert_units_func": None,
-        "icon": "mdi:flash",
+        "icon": "mdi:power-standby",
     },
-    "phase_mode": {
-        "key": "config.phaseMode",
-        "attrs": ["config.localNodeType"],
+    "enableIdleCurrent": {
+        "key": "config.enableIdleCurrent",
+        "attrs": [],
         "units": "",
         "convert_units_func": None,
-        "icon": "mdi:flash",
+        "icon": "mdi:current-dc",
     },
-    "current_firmware": {
+    "update_available": {
         "key": "state.chargerFirmware",
-        "attrs": [],
-        "units": "",
-        "convert_units_func": None,
-        "icon": "mdi:flash",
-    },
-    "latest_firmware": {
-        "key": "state.latestFirmware",
-        "attrs": [],
+        "attrs": ["state.chargerFirmware", "state.latestFirmware",],
         "units": "",
         "convert_units_func": None,
         "icon": "mdi:flash",
     },
 }
+
+
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
+    {
+        vol.Required(CONF_USERNAME): cv.string,
+        vol.Required(CONF_PASSWORD): cv.string,
+        vol.Optional(CONF_MONITORED_CONDITIONS, default=["status"]): vol.All(
+            cv.ensure_list, [vol.In(SENSOR_TYPES)]
+        ),
+        vol.Optional(MEASURED_CONSUMPTION_DAYS, default=[]): vol.All(cv.ensure_list),
+    }
+)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
