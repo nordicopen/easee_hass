@@ -179,7 +179,8 @@ SENSOR_TYPES = {
         "attrs": ["state.chargerFirmware", "state.latestFirmware",],
         "units": "",
         "convert_units_func": None,
-        "icon": "mdi:flash",
+        "icon": "mdi:file-download",
+        "state_func": lambda state: int(state["chargerFirmware"]) < int(state["latestFirmware"]),
     },
 }
 
@@ -204,6 +205,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                     convert_units_func=data["convert_units_func"],
                     attrs_keys=data["attrs"],
                     icon=data["icon"],
+                    state_func=data.get("state_func", None),
                 )
             )
 
@@ -243,7 +245,9 @@ class ChargersData:
 class ChargerSensor(Entity):
     """Implementation of Easee charger sensor """
 
-    def __init__(self, charger, name, state_key, units, convert_units_func, attrs_keys, icon):
+    def __init__(
+        self, charger, name, state_key, units, convert_units_func, attrs_keys, icon, state_func=None
+    ):
         """Initialize the sensor."""
         self.charger = charger
         self._sensor_name = name
@@ -252,6 +256,7 @@ class ChargerSensor(Entity):
         self._convert_units_func = convert_units_func
         self._attrs_keys = attrs_keys
         self._icon = icon
+        self._state_func = state_func
         self._state = None
 
     @property
@@ -325,8 +330,12 @@ class ChargerSensor(Entity):
         _LOGGER.debug("ChargerSensor async_update : %s %s", self.charger.name, self._sensor_name)
         try:
             self._state = self.get_value_from_key(self._state_key)
+            if self._state_func is not None:
+                charger_state = await self.charger.get_state(from_cache=True)
+                self._state = self._state_func(charger_state)
             if self._convert_units_func is not None:
                 self._state = self._convert_units_func(self._state)
+
         except IndexError:
             raise IndexError("Wrong key for sensor: %s", self._key)
 
