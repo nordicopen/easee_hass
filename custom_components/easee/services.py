@@ -4,10 +4,11 @@ import logging
 from homeassistant.helpers import config_validation as cv
 from homeassistant.exceptions import HomeAssistantError
 
-DOMAIN = "easee"
+from .const import DOMAIN
+
 _LOGGER = logging.getLogger(__name__)
+
 CHARGER_ID = "charger_id"
-# COMMAND_START = "start"
 ATTR_CHARGEPLAN_START_TIME = "chargeStartTime"
 ATTR_CHARGEPLAN_STOP_TIME = "chargeStopTime"
 ATTR_CHARGEPLAN_REPEAT = "repeat"
@@ -76,26 +77,21 @@ SERVICE_MAP = {
 
 async def async_setup_services(hass):
     """ Setup services for Easee """
-
-    if "easee" not in hass.data[DOMAIN]:
-        easee = Easee(username, password)
-        hass.data[DOMAIN] = {"easee": easee}
-    else:
-        easee = hass.data[DOMAIN]["easee"]
+    chargers = hass.data[DOMAIN]["chargers"]
 
     async def execute_service(call):
         """Execute a service to Easee charging station. """
         charger_id = call.data.get(CHARGER_ID)
-        chargers = hass.data[DOMAIN]["chargers"]
 
-        _LOGGER.info("TEST:" + str(call.data))
+        _LOGGER.debug("execute_service:" + str(call.data))
 
-        # Move to use entity id later
+        # Possibly move to use entity id later
         charger = next((c for c in chargers if c.id == charger_id), None)
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
             return await function_call()
+
         _LOGGER.error(
             "Could not find charger %s", charger_id,
         )
@@ -106,21 +102,3 @@ async def async_setup_services(hass):
         hass.services.async_register(
             DOMAIN, service, execute_service, schema=data["schema"],
         )
-
-    # async def start_charger(call):
-    #     """Start charger."""
-    #     charger_id = call.data.get(CHARGER_ID)
-    #     chargers = hass.data[DOMAIN]["chargers"]
-    #     # Move to use entity id later
-    #     charger = next((c for c in chargers if c.id == charger_id), None)
-    #     if charger:
-    #         return await charger.start()
-    #     _LOGGER.error(
-    #         "Could not find charger %s", charger_id,
-    #     )
-    #     raise HomeAssistantError("Could not find charger {}".format(charger_id))
-
-    # hass.services.async_register(
-    #     DOMAIN, COMMAND_START, start_charger, schema=SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    # )
-
