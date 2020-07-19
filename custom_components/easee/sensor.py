@@ -3,29 +3,19 @@ Support for Easee charger
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
 import asyncio
+from typing import List, Dict
 from datetime import datetime, timedelta
 import logging
+from easee import Charger
 
-import voluptuous as vol
-
-from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import CONF_MONITORED_CONDITIONS
-from homeassistant.exceptions import PlatformNotReady
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
-import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
-from homeassistant.util.json import load_json, save_json
-from homeassistant.util import Throttle
 from homeassistant.helpers.event import async_track_time_interval
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 
-from easee import Easee, Charger
-from .services import async_setup_services
+from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS
 
-DOMAIN = "easee"
 _LOGGER = logging.getLogger(__name__)
 
-MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
 SCAN_INTERVAL = timedelta(seconds=60)
 
 
@@ -35,7 +25,6 @@ def round_2_dec(value):
 
 def watts_to_kilowatts(value):
     return round_2_dec(value * 1000)
-
 
 
 SENSOR_TYPES = {
@@ -190,49 +179,21 @@ SENSOR_TYPES = {
         "attrs": ["state.chargerFirmware", "state.latestFirmware",],
         "units": "",
         "convert_units_func": None,
-        "icon": "mdi:flash",
+        "icon": "mdi:file-download",
+        "state_func": lambda state: int(state["chargerFirmware"]) < int(state["latestFirmware"]),
     },
 }
 
 
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
-    {
-        vol.Required(CONF_USERNAME): cv.string,
-        vol.Required(CONF_PASSWORD): cv.string,
-        vol.Optional(CONF_MONITORED_CONDITIONS, default=["status"]): vol.All(
-            cv.ensure_list, [vol.In(SENSOR_TYPES)]
-        ),
-        vol.Optional(MEASURED_CONSUMPTION_DAYS, default=[]): vol.All(cv.ensure_list),
-    }
-)
-
-
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the Easee sensor."""
-
-    session = async_get_clientsession(hass)
-    username = config.get(CONF_USERNAME)
-    password = config.get(CONF_PASSWORD)
-
-    if DOMAIN not in hass.data:
-        hass.data[DOMAIN] = {}
-
-    if "easee" not in hass.data[DOMAIN]:
-        easee = Easee(username, password)
-        hass.data[DOMAIN] = {"easee": easee}
-    else:
-        easee = hass.data[DOMAIN]["easee"]
-
+    chargers: List[Charger] = hass.data[DOMAIN]["chargers"]
+    config = hass.data[DOMAIN]["config"]
+    monitored_conditions = config.options.get(CONF_MONITORED_CONDITIONS, ["status"])
     sensors = []
-    chargers = await easee.get_chargers()
-    _LOGGER.info("KEYS\n%s", list(SENSOR_TYPES))
-    _LOGGER.debug("Found chargers: %d", len(chargers))
-
-    hass.data[DOMAIN]["chargers"] = chargers
-
     for charger in chargers:
         _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
-        for key in config[CONF_MONITORED_CONDITIONS]:
+        for key in monitored_conditions:
             data = SENSOR_TYPES[key]
             _LOGGER.debug("Adding sensor: %s for charger %s", key, charger.name)
             sensors.append(
@@ -244,14 +205,15 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
                     convert_units_func=data["convert_units_func"],
                     attrs_keys=data["attrs"],
                     icon=data["icon"],
+                    state_func=data.get("state_func", None),
                 )
             )
-        for interval in config[MEASURED_CONSUMPTION_DAYS]:
-            _LOGGER.info("Will measure days: %d", interval)
+
+        monitored_days = config.options.get(MEASURED_CONSUMPTION_DAYS, [])
+        for interval in monitored_days:
+            _LOGGER.info("Will measure days: %s", interval)
             sensors.append(
-                ChargerConsumptionSensor(
-                    charger, f"consumption_days_{interval}", interval
-                )
+                ChargerConsumptionSensor(charger, f"consumption_days_{interval}", int(interval))
             )
 
     charger_data = ChargersData(chargers, sensors)
@@ -259,9 +221,6 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     hass.async_add_job(charger_data.async_refresh)
     async_track_time_interval(hass, charger_data.async_refresh, SCAN_INTERVAL)
     async_add_entities(sensors)
-
-    # Setup services
-    await async_setup_services(hass)
 
 
 class ChargersData:
@@ -287,7 +246,7 @@ class ChargerSensor(Entity):
     """Implementation of Easee charger sensor """
 
     def __init__(
-        self, charger, name, state_key, units, convert_units_func, attrs_keys, icon
+        self, charger, name, state_key, units, convert_units_func, attrs_keys, icon, state_func=None
     ):
         """Initialize the sensor."""
         self.charger = charger
@@ -297,12 +256,28 @@ class ChargerSensor(Entity):
         self._convert_units_func = convert_units_func
         self._attrs_keys = attrs_keys
         self._icon = icon
+        self._state_func = state_func
         self._state = None
 
     @property
     def name(self):
         """Return the name of the sensor."""
         return f"{DOMAIN}_charger_{self.charger.id}_{self._sensor_name}"
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID."""
+        return f"{self.charger.id}_{self._sensor_name}"
+
+    @property
+    def device_info(self) -> Dict[str, any]:
+        """Return the device information."""
+        return {
+            "identifiers": {(DOMAIN, self.charger.id)},
+            "name": self.charger.name,
+            "manufacturer": "Easee",
+            "model": "Charging Robot",
+        }
 
     @property
     def unit_of_measurement(self):
@@ -352,13 +327,15 @@ class ChargerSensor(Entity):
 
     async def async_update(self):
         """Get the latest data and update the state."""
-        _LOGGER.debug(
-            "ChargerSensor async_update : %s %s", self.charger.name, self._sensor_name
-        )
+        _LOGGER.debug("ChargerSensor async_update : %s %s", self.charger.name, self._sensor_name)
         try:
             self._state = self.get_value_from_key(self._state_key)
+            if self._state_func is not None:
+                charger_state = await self.charger.get_state(from_cache=True)
+                self._state = self._state_func(charger_state)
             if self._convert_units_func is not None:
                 self._state = self._convert_units_func(self._state)
+
         except IndexError:
             raise IndexError("Wrong key for sensor: %s", self._key)
 
@@ -377,6 +354,21 @@ class ChargerConsumptionSensor(Entity):
     def name(self):
         """Return the name of the sensor."""
         return f"{DOMAIN}_charger_{self.charger.id}_{self._sensor_name}"
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID."""
+        return f"{self.charger.id}_{self._sensor_name}"
+
+    @property
+    def device_info(self) -> Dict[str, any]:
+        """Return the device information."""
+        return {
+            "identifiers": {(DOMAIN, self.charger.id)},
+            "name": self.charger.name,
+            "manufacturer": "Easee",
+            "model": "Charging Robot",
+        }
 
     @property
     def unit_of_measurement(self):
@@ -406,12 +398,9 @@ class ChargerConsumptionSensor(Entity):
     async def async_update(self):
         """Get the latest data and update the state."""
         _LOGGER.debug(
-            "ChargerConsumptionSensor async_update : %s %s",
-            self.charger.name,
-            self._sensor_name,
+            "ChargerConsumptionSensor async_update : %s %s", self.charger.name, self._sensor_name,
         )
         now = datetime.now()
         self._state = await self.charger.get_consumption_between_dates(
             now - timedelta(0, 86400 * self._days), now
         )
-

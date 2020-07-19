@@ -6,6 +6,9 @@
 /easee.py
 /services.yaml
 /services.py
+/config_flow.py
+/const.py
+/translations
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

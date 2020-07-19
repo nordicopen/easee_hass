@@ -3,10 +3,13 @@
   "name": "Easee charger component",
   "documentation": "https://github.com/fondberg/easee_hass",
   "requirements": [
-    "easee==0.7.3"
+    "easee==0.7.6"
   ],
   "homeassistant": "0.112.0",
-  "dependencies": [],
+  "config_flow": true,
+  "dependencies": [
+    "configurator"
+  ],
   "codeowners": [
     "@fondberg"
   ]
