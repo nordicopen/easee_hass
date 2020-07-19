@@ -1,0 +1,31 @@
+{
+  "config": {
+    "abort": {
+      "already_setup": "You can only configure a single Easee connection."
+    },
+    "error": {
+      "connection_failure": "Unable to connect to Easee. Check your username and password."
+    },
+    "step": {
+      "user": {
+        "data": {
+          "password": "Password",
+          "username": "Username"
+        },
+        "description": "Please enter the username and password for your Easee account.",
+        "title": "Connect to Easee"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "options_1": {
+        "data": {
+          "monitored_conditions": "Sensors monitored",
+          "measured_consumption_days": "Consumption monitoring days"
+        }
+      }
+    }
+  },
+  "title": "Easee EV Charger"
+}
