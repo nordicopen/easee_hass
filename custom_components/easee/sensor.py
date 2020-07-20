@@ -24,7 +24,6 @@ def round_2_dec(value):
     return round(value, 2)
 
 
-
 SENSOR_TYPES = {
     "smartCharging": {
         "key": "state.smartCharging",
@@ -177,7 +176,7 @@ SENSOR_TYPES = {
     },
     "reasonForNoCurrent": {
         "key": "state.reasonForNoCurrent",
-        "attrs": ["state.reasonForNoCurrent", "state.reasonForNoCurrent_desc",],
+        "attrs": ["state.reasonForNoCurrent", "state.reasonForNoCurrent",],
         "units": "",
         "convert_units_func": None,
         "icon": "mdi:alert-circle",
