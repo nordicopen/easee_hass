@@ -10,6 +10,7 @@ from easee import Charger
 from voluptuous.error import Error
 
 from homeassistant.const import CONF_MONITORED_CONDITIONS
+from homeassistant.helpers import device_registry
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_time_interval
 
@@ -242,6 +243,25 @@ async def async_setup_entry(hass, entry, async_add_entities):
     hass.async_add_job(charger_data.async_refresh)
     async_track_time_interval(hass, charger_data.async_refresh, SCAN_INTERVAL)
     async_add_entities(sensors)
+
+    # handle unsub later
+    unsub = entry.add_update_listener(config_entry_update_listener)
+
+
+async def config_entry_update_listener(hass, entry):
+    """Handle options update."""
+    await hass.config_entries.async_reload(entry.entry_id)
+
+    dev_reg = await device_registry.async_get_registry(hass)
+    devices_to_purge = []
+    for device in dev_reg.devices.values():
+        for identifier in device.identifiers:
+            if DOMAIN in identifier:
+                devices_to_purge.append(device.id)
+
+    _LOGGER.debug("Purging device: %s", devices_to_purge)
+    for device_id in devices_to_purge:
+        dev_reg.async_remove_device(device_id)
 
 
 class ChargersData:
