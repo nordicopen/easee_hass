@@ -24,9 +24,6 @@ def round_2_dec(value):
     return round(value, 2)
 
 
-def kilowatts_to_watts(value):
-    return round_2_dec(value * 1000)
-
 
 SENSOR_TYPES = {
     "smartCharging": {
@@ -62,8 +59,8 @@ SENSOR_TYPES = {
     "total_power": {
         "key": "state.totalPower",
         "attrs": [],
-        "units": "W",
-        "convert_units_func": kilowatts_to_watts,
+        "units": "kW",
+        "convert_units_func": round_2_dec,
         "icon": "mdi:flash",
     },
     "session_energy": {
