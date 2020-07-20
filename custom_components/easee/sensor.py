@@ -355,7 +355,8 @@ class ChargerSensor(Entity):
             if self._state_func is not None:
                 charger_state = await self.charger.get_state(from_cache=True)
                 charger_config = await self.charger.get_config(from_cache=True)
-                try:
+                if self._state_key.startswith("state"):
+                    self._state = self._state_func(charger_state)
                 if self._state_key.startswith("config"):
                     self._state = self._state_func(charger_config)
             if self._convert_units_func is not None:
