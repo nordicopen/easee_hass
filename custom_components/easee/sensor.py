@@ -7,6 +7,7 @@ from typing import List, Dict
 from datetime import datetime, timedelta
 import logging
 from easee import Charger
+from voluptuous.error import Error
 
 from homeassistant.const import CONF_MONITORED_CONDITIONS
 from homeassistant.helpers.entity import Entity
@@ -23,9 +24,6 @@ def round_2_dec(value):
     return round(value, 2)
 
 
-def watts_to_kilowatts(value):
-    return round_2_dec(value * 1000)
-
 
 SENSOR_TYPES = {
     "smartCharging": {
@@ -33,7 +31,7 @@ SENSOR_TYPES = {
         "attrs": [],
         "units": None,
         "convert_units_func": None,
-        "icon": "mdi:flash",
+        "icon": "mdi:auto-fix",
     },
     "cableLocked": {
         "key": "state.cableLocked",
@@ -61,21 +59,21 @@ SENSOR_TYPES = {
     "total_power": {
         "key": "state.totalPower",
         "attrs": [],
-        "units": "W",
-        "convert_units_func": watts_to_kilowatts,
+        "units": "kW",
+        "convert_units_func": round_2_dec,
         "icon": "mdi:flash",
     },
     "session_energy": {
         "key": "state.sessionEnergy",
         "attrs": [],
-        "units": "Wh",
+        "units": "kWh",
         "convert_units_func": round_2_dec,
         "icon": "mdi:flash",
     },
     "energy_per_hour": {
         "key": "state.energyPerHour",
         "attrs": [],
-        "units": "Wh",
+        "units": "kWh",
         "convert_units_func": round_2_dec,
         "icon": "mdi:flash",
     },
@@ -94,8 +92,9 @@ SENSOR_TYPES = {
         "icon": "mdi:wifi",
     },
     "dynamicChargerCurrent": {
-        "key": "state.dynamicChargerCurrent",
+        "key": "state.dynamicCircuitCurrentP1",
         "attrs": [
+            "state.dynamicChargerCurrent",
             "state.dynamicCircuitCurrentP1",
             "state.dynamicCircuitCurrentP2",
             "state.dynamicCircuitCurrentP3",
@@ -107,33 +106,56 @@ SENSOR_TYPES = {
             "state.circuitTotalPhaseConductorCurrentL3",
             "state.circuitTotalPhaseConductorCurrentL3",
         ],
-        "units": "",
-        "convert_units_func": None,
+        "units": "A",
+        "convert_units_func": round_2_dec,
         "icon": "mdi:sine-wave",
+        "state_func": lambda state: float(
+            max(
+                state["dynamicCircuitCurrentP1"],
+                state["dynamicCircuitCurrentP2"],
+                state["dynamicCircuitCurrentP3"],
+            )
+        ),
     },
     "maxChargerCurrent": {
-        "key": "state.dynamicChargerCurrent",
+        "key": "config.circuitMaxCurrentP1",
         "attrs": [
-            "config.circuitMaxCurrentP1",
-            "config.circuitMaxCurrentP2",
-            "config.circuitMaxCurrentP3",
+            "config.maxChargerCurrent",  # charger rated current (static)
+            "config.circuitMaxCurrentP1",  # dynamically set in app
+            "config.circuitMaxCurrentP2",  # dynamically set in app
+            "config.circuitMaxCurrentP3",  # dynamically set in app
         ],
-        "units": "",
-        "convert_units_func": None,
+        "units": "A",
+        "convert_units_func": round_2_dec,
         "icon": "mdi:sine-wave",
+        "state_func": lambda config: float(
+            max(
+                config["circuitMaxCurrentP1"],
+                config["circuitMaxCurrentP2"],
+                config["circuitMaxCurrentP3"],
+            )
+        ),
     },
     "current": {
-        "key": "state.outputCurrent",
+        "key": "state.inCurrentT2",
         "attrs": [
-            "state.outputCurrent",
+            "state.outputCurrent",  # outputCurrent doesn't seem to show actual current, but allowed?
             "state.inCurrentT2",
             "state.inCurrentT3",
             "state.inCurrentT4",
             "state.inCurrentT5",
         ],
         "units": "A",
-        "convert_units_func": None,
-        "icon": "mdi:current-dc",
+        "convert_units_func": round_2_dec,
+        "icon": "mdi:sine-wave",
+        "state_func": lambda state: float(
+            max(
+                state["inCurrentT2"],
+                state["inCurrentT3"],
+                state["inCurrentT4"],
+                state["inCurrentT5"],
+            )
+        ),
     },
     "voltage": {
         "key": "state.voltage",
@@ -149,13 +171,13 @@ SENSOR_TYPES = {
             "state.inVoltageT3T5",
             "state.inVoltageT4T5",
         ],
-        "units": "",
+        "units": "V",
         "convert_units_func": round_2_dec,
         "icon": "mdi:sine-wave",
     },
     "reasonForNoCurrent": {
         "key": "state.reasonForNoCurrent",
-        "attrs": [],
+        "attrs": ["state.reasonForNoCurrent", "state.reasonForNoCurrent_desc",],
         "units": "",
         "convert_units_func": None,
         "icon": "mdi:alert-circle",
@@ -332,7 +354,11 @@ class ChargerSensor(Entity):
             self._state = self.get_value_from_key(self._state_key)
             if self._state_func is not None:
                 charger_state = await self.charger.get_state(from_cache=True)
-                self._state = self._state_func(charger_state)
+                charger_config = await self.charger.get_config(from_cache=True)
+                if self._state_key.startswith("state"):
+                    self._state = self._state_func(charger_state)
+                if self._state_key.startswith("config"):
+                    self._state = self._state_func(charger_config)
             if self._convert_units_func is not None:
                 self._state = self._convert_units_func(self._state)
 
