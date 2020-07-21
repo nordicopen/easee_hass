@@ -249,7 +249,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 async def config_entry_update_listener(hass, entry):
-    """Handle options update."""
+    """Handle options update, delete device and set it up again as suggested on discord #devs_core."""
     await hass.config_entries.async_reload(entry.entry_id)
 
     dev_reg = await device_registry.async_get_registry(hass)
