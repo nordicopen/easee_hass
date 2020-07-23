@@ -2,14 +2,14 @@
 import asyncio
 import logging
 from typing import List
-from easee import Easee, Charger
+from easee import Easee, Charger, Site
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_MONITORED_CONDITIONS
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import (
-    #    aiohttp_client,
+    aiohttp_client,
     config_validation as cv,
 )
 
@@ -31,7 +31,9 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Optional(CONF_MONITORED_CONDITIONS, default=["status"]): vol.All(
                     cv.ensure_list, [vol.In(SENSOR_TYPES)]
                 ),
-                vol.Optional(MEASURED_CONSUMPTION_DAYS, default=[]): vol.All(cv.ensure_list),
+                vol.Optional(MEASURED_CONSUMPTION_DAYS, default=[]): vol.All(
+                    cv.ensure_list
+                ),
             }
         )
     },
@@ -51,21 +53,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
     _LOGGER.debug("Setting up Easee component version %s", VERSION)
-    # session = aiohttp_client.async_get_clientsession(hass) <- TODO test me
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
-    easee = Easee(username, password)
-    chargers: List[Charger] = await easee.get_chargers()
+    client_session = aiohttp_client.async_get_clientsession(hass)
+    easee = Easee(username, password, client_session)
+    sites: List[Site] = await easee.get_sites()
 
     hass.data[DOMAIN]["session"] = easee
     hass.data[DOMAIN]["config"] = entry
-    hass.data[DOMAIN]["chargers"] = chargers
+    hass.data[DOMAIN]["sites"] = sites
+    hass.data[DOMAIN]["chargers"] = []
+    for site in sites:
+        for circuit in site.get_circuits():
+            for charger in circuit.get_chargers():
+                hass.data[DOMAIN]["chargers"].append(charger)
 
     # Setup services
     await async_setup_services(hass)
 
     for component in PLATFORMS:
-        hass.async_create_task(hass.config_entries.async_forward_entry_setup(entry, component))
+        hass.async_create_task(
+            hass.config_entries.async_forward_entry_setup(entry, component)
+        )
 
     return True
 

@@ -6,7 +6,9 @@ import asyncio
 from typing import List, Dict, Callable, Any
 from datetime import datetime, timedelta
 import logging
-from easee import Charger, ChargerState, ChargerConfig
+
+from easee import Charger, ChargerState, ChargerConfig, Site, Circuit
+
 from voluptuous.error import Error
 
 from homeassistant.const import CONF_MONITORED_CONDITIONS
@@ -210,40 +212,46 @@ SENSOR_TYPES = {
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the Easee sensor."""
-    chargers: List[Charger] = hass.data[DOMAIN]["chargers"]
     config = hass.data[DOMAIN]["config"]
     monitored_conditions = config.options.get(CONF_MONITORED_CONDITIONS, ["status"])
+
+    sites: List[Site] = hass.data[DOMAIN]["sites"]
+
     sensors = []
     charger_data_list = []
 
-    for charger in chargers:
-        _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
-        for key in monitored_conditions:
-            data = SENSOR_TYPES[key]
-            _LOGGER.debug("Adding sensor: %s for charger %s", key, charger.name)
-            charger_data = ChargerData(charger)
-            charger_data_list.append(charger_data)
-            sensors.append(
-                ChargerSensor(
-                    charger_data=charger_data,
-                    name=key,
-                    state_key=data["key"],
-                    units=data["units"],
-                    convert_units_func=data["convert_units_func"],
-                    attrs_keys=data["attrs"],
-                    icon=data["icon"],
-                    state_func=data.get("state_func", None),
-                )
-            )
+    for site in sites:
+        _LOGGER.debug("Found site: %s %s", site.id, site["name"])
+        for circuit in site.get_circuits():
+            _LOGGER.debug("Found circuit: %s %s", circuit.id, circuit["panelName"])
+            for charger in circuit.get_chargers():
+                _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
+                for key in monitored_conditions:
+                    data = SENSOR_TYPES[key]
+                    _LOGGER.debug("Adding sensor: %s for charger %s", key, charger.name)
+                    charger_data = ChargerData(charger)
+                    charger_data_list.append(charger_data)
+                    sensors.append(
+                        ChargerSensor(
+                            charger_data=charger_data,
+                            name=key,
+                            state_key=data["key"],
+                            units=data["units"],
+                            convert_units_func=data["convert_units_func"],
+                            attrs_keys=data["attrs"],
+                            icon=data["icon"],
+                            state_func=data.get("state_func", None),
+                        )
+                    )
 
-        monitored_days = config.options.get(MEASURED_CONSUMPTION_DAYS, [])
-        for interval in monitored_days:
-            _LOGGER.info("Will measure days: %s", interval)
-            sensors.append(
-                ChargerConsumptionSensor(
-                    charger, f"consumption_days_{interval}", int(interval)
-                )
-            )
+                monitored_days = config.options.get(MEASURED_CONSUMPTION_DAYS, [])
+                for interval in monitored_days:
+                    _LOGGER.info("Will measure days: %s", interval)
+                    sensors.append(
+                        ChargerConsumptionSensor(
+                            charger, f"consumption_days_{interval}", int(interval)
+                        )
+                    )
 
     chargers_data = ChargersData(charger_data_list, sensors)
 
