@@ -53,6 +53,11 @@ SENSOR_TYPES = {
             "config.localNodeType",
             "config.localAuthorizationRequired",
             "config.ledStripBrightness",
+            "site.id",
+            "site.name",
+            "site.siteKey",
+            "circuit.id",
+            "circuit.ratedCurrent",
         ],
         "units": None,
         "convert_units_func": None,
@@ -226,11 +231,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
             _LOGGER.debug("Found circuit: %s %s", circuit.id, circuit["panelName"])
             for charger in circuit.get_chargers():
                 _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
+                charger_data = ChargerData(charger, circuit, site)
+                charger_data_list.append(charger_data)
+
                 for key in monitored_conditions:
                     data = SENSOR_TYPES[key]
                     _LOGGER.debug("Adding sensor: %s for charger %s", key, charger.name)
-                    charger_data = ChargerData(charger)
-                    charger_data_list.append(charger_data)
                     sensors.append(
                         ChargerSensor(
                             charger_data=charger_data,
@@ -280,8 +286,10 @@ async def config_entry_update_listener(hass, entry):
 
 
 class ChargerData:
-    def __init__(self, charger):
+    def __init__(self, charger: Charger, circuit: Circuit, site: Site):
         self.charger: Charger = charger
+        self.circuit: Circuit = circuit
+        self.site: Site = site
         self.state: List[ChargerState] = {}
         self.config: List[ChargerConfig] = {}
 
@@ -378,7 +386,11 @@ class ChargerSensor(Entity):
                 "id": self.charger_data.charger.id,
             }
             for attr_key in self._attrs_keys:
-                attrs[attr_key.split(".")[1]] = self.get_value_from_key(attr_key)
+                key = attr_key
+                if "site" in attr_key or "circuit" in attr_key:
+                    # maybe for everything?
+                    key = attr_key.replace(".", "_")
+                attrs[key] = self.get_value_from_key(attr_key)
             return attrs
         except IndexError:
             return {}
@@ -399,6 +411,10 @@ class ChargerSensor(Entity):
             return self.charger_data.config[second]
         elif first == "state":
             return self.charger_data.state[second]
+        elif first == "circuit":
+            return self.charger_data.circuit[second]
+        elif first == "site":
+            return self.charger_data.site[second]
         else:
             _LOGGER.error("Unknown first part of key: %s", key)
             raise IndexError("Unknown first part of key")
