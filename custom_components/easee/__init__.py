@@ -67,7 +67,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     for site in sites:
         for circuit in site.get_circuits():
             hass.data[DOMAIN]["circuits"].append(circuit)
-            circuit.set_dynamic_current(10, 10, 10)
             for charger in circuit.get_chargers():
                 hass.data[DOMAIN]["chargers"].append(charger)
 

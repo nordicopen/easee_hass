@@ -152,7 +152,7 @@ async def async_setup_services(hass):
    
     for service in SERVICE_MAP:
         data = SERVICE_MAP[service]
-        function = locals()[data["handler"]]
+        handler = locals()[data["handler"]]
         hass.services.async_register(
-            DOMAIN, service, function, schema=data["schema"],
+            DOMAIN, service, handler, schema=data["schema"],
         )
