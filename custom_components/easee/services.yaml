@@ -90,3 +90,17 @@ update_firmware:
     charger_id:
       description: "The charger id"
       example: "EH123456"
+
+set_dynamic_current:
+  description: Set circuit dynamic current
+  fields:
+    circuit_id:
+      description: "The circuit id"
+      example: "11000"
+    currentP1:
+      description: "Phase 1 current"
+    currentP2:
+      description: "Phase 2 current"
+    currentP3:
+      description: "Phase 3 current"
+ 
