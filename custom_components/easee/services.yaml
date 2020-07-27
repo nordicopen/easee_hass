@@ -91,7 +91,7 @@ update_firmware:
       description: "The charger id"
       example: "EH123456"
 
-set_dynamic_current:
+set_circuit_dynamic_current:
   description: Set circuit dynamic current
   fields:
     circuit_id:
@@ -99,12 +99,15 @@ set_dynamic_current:
       example: "11000"
     currentP1:
       description: "Phase 1 current"
+      example: 10
     currentP2:
       description: "Phase 2 current (Optional)"
+      example: 10
     currentP3:
       description: "Phase 3 current (Optional)"
+      example: 10
 
-set_max_current:
+set_circuit_max_current:
   description: Set circuit max current
   fields:
     circuit_id:
@@ -112,7 +115,42 @@ set_max_current:
       example: "11000"
     currentP1:
       description: "Phase 1 current"
+      example: 10
     currentP2:
       description: "Phase 2 current (Optional)"
+      example: 10
     currentP3:
       description: "Phase 3 current (Optional)"
+      example: 10
+
+set_charger_dynamic_current:
+  description: Set circuit dynamic current
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+    currentP1:
+      description: "Phase 1 current"
+      example: 10
+    currentP2:
+      description: "Phase 2 current (Optional)"
+      example: 10
+    currentP3:
+      description: "Phase 3 current (Optional)"
+      example: 10
+
+set_charger_max_current:
+  description: Set circuit max current
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+    currentP1:
+      description: "Phase 1 current"
+      example: 10
+    currentP2:
+      description: "Phase 2 current (Optional)"
+      example: 10
+    currentP3:
+      description: "Phase 3 current (Optional)"
+      example: 10
