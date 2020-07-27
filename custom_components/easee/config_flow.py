@@ -8,7 +8,11 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_MONITORED_CONDITIONS
 from homeassistant.helpers.typing import ConfigType
-import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers import (
+    aiohttp_client,
+    config_validation as cv,
+)
+
 from easee import Easee
 
 from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS
@@ -44,10 +48,10 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
             password = user_input[CONF_PASSWORD]
 
             try:
-                easee = Easee(username, password)
+                client_session = aiohttp_client.async_get_clientsession(self.hass)
+                easee = Easee(username, password, client_session)
                 # Check that login is possible
                 await easee.get_chargers()
-                await easee.close()
                 return self.async_create_entry(title=username, data=user_input)
             except Exception:
                 errors["base"] = "connection_failure"
