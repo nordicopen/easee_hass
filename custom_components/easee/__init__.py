@@ -62,9 +62,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN]["session"] = easee
     hass.data[DOMAIN]["config"] = entry
     hass.data[DOMAIN]["sites"] = sites
+    hass.data[DOMAIN]["circuits"] = []
     hass.data[DOMAIN]["chargers"] = []
     for site in sites:
         for circuit in site.get_circuits():
+            hass.data[DOMAIN]["circuits"].append(circuit)
             for charger in circuit.get_chargers():
                 hass.data[DOMAIN]["chargers"].append(charger)
 
