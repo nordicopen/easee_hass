@@ -13,9 +13,9 @@ CIRCUIT_ID = "circuit_id"
 ATTR_CHARGEPLAN_START_TIME = "chargeStartTime"
 ATTR_CHARGEPLAN_STOP_TIME = "chargeStopTime"
 ATTR_CHARGEPLAN_REPEAT = "repeat"
-ATTR_SET_DYNAMIC_CURRENTP1 = "currentP1"
-ATTR_SET_DYNAMIC_CURRENTP2 = "currentP2"
-ATTR_SET_DYNAMIC_CURRENTP3 = "currentP3"
+ATTR_SET_CURRENTP1 = "currentP1"
+ATTR_SET_CURRENTP2 = "currentP2"
+ATTR_SET_CURRENTP3 = "currentP3"
 
 SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
     {vol.Optional(CHARGER_ID): cv.string,}
@@ -30,12 +30,12 @@ SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
     }
 )
 
-SERVICE_CIRCUIT_SET_DYNAMIC_CURRENT_SCHEMA = vol.Schema(
+SERVICE_SET_CURRENT_SCHEMA = vol.Schema(
     {
         vol.Required(CIRCUIT_ID): cv.positive_int,
-        vol.Optional(ATTR_SET_DYNAMIC_CURRENTP1): cv.positive_int,
-        vol.Optional(ATTR_SET_DYNAMIC_CURRENTP2): cv.positive_int,
-        vol.Optional(ATTR_SET_DYNAMIC_CURRENTP3): cv.positive_int,
+        vol.Required(ATTR_SET_CURRENTP1): cv.positive_int,
+        vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
+        vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
     }
 )
 
@@ -103,9 +103,15 @@ SERVICE_MAP = {
     "set_dynamic_current": {
         "handler": "circuit_execute_set_dynamic_current",
         "function_call": "set_dynamic_current",
-        "schema": SERVICE_CIRCUIT_SET_DYNAMIC_CURRENT_SCHEMA,
+        "schema": SERVICE_SET_CURRENT_SCHEMA,
+    },
+    "set_max_current": {
+        "handler": "circuit_execute_set_max_current",
+        "function_call": "set_max_current",
+        "schema": SERVICE_SET_CURRENT_SCHEMA,
     },
 }
+
 
 async def async_setup_services(hass):
     """ Setup services for Easee """
@@ -133,9 +139,9 @@ async def async_setup_services(hass):
     async def circuit_execute_set_dynamic_current(call):
         """Execute a service to Easee circuit. """
         circuit_id = call.data.get(CIRCUIT_ID)
-        currentP1 = call.data.get(ATTR_SET_DYNAMIC_CURRENTP1)
-        currentP2 = call.data.get(ATTR_SET_DYNAMIC_CURRENTP2)
-        currentP3 = call.data.get(ATTR_SET_DYNAMIC_CURRENTP3)
+        currentP1 = call.data.get(ATTR_SET_CURRENTP1)
+        currentP2 = call.data.get(ATTR_SET_CURRENTP2)
+        currentP3 = call.data.get(ATTR_SET_CURRENTP3)
 
         _LOGGER.debug("execute_service:" + str(call.data))
 
@@ -149,7 +155,27 @@ async def async_setup_services(hass):
             "Could not find circuit %s", circuit_id,
         )
         raise HomeAssistantError("Could not find circuit {}".format(circuit_id))
-   
+
+    async def circuit_execute_set_max_current(call):
+        """Execute a service to Easee circuit. """
+        circuit_id = call.data.get(CIRCUIT_ID)
+        currentP1 = call.data.get(ATTR_SET_CURRENTP1)
+        currentP2 = call.data.get(ATTR_SET_CURRENTP2)
+        currentP3 = call.data.get(ATTR_SET_CURRENTP3)
+
+        _LOGGER.debug("execute_service:" + str(call.data))
+
+        circuit = next((c for c in circuits if c.id == circuit_id), None)
+        if circuit:
+            function_name = SERVICE_MAP[call.service]
+            function_call = getattr(circuit, function_name["function_call"])
+            return await function_call(currentP1, currentP2, currentP3)
+
+        _LOGGER.error(
+            "Could not find circuit %s", circuit_id,
+        )
+        raise HomeAssistantError("Could not find circuit {}".format(circuit_id))
+
     for service in SERVICE_MAP:
         data = SERVICE_MAP[service]
         handler = locals()[data["handler"]]
