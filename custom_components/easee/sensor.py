@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 import logging
 
 from easee import Charger, ChargerState, ChargerConfig, Site, Circuit
+from easee.charger import ChargerSchedule
+from easee.utils import validate_iso8601
 
 from voluptuous.error import Error
 
@@ -15,6 +17,7 @@ from homeassistant.const import CONF_MONITORED_CONDITIONS
 from homeassistant.helpers import device_registry
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.util import dt as dt
 
 from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS
 
@@ -212,6 +215,19 @@ SENSOR_TYPES = {
         "state_func": lambda state: int(state["chargerFirmware"])
         < int(state["latestFirmware"]),
     },
+    "basic_schedule": {
+        "key": "schedule.id",
+        "attrs": [
+            "schedule.id",
+            "schedule.chargeStartTime",
+            "schedule.chargeStopTime",
+            "schedule.repeat",
+        ],
+        "units": "",
+        "convert_units_func": None,
+        "icon": "mdi:clock-check",
+        "state_func": lambda schedule: bool(schedule["id"]),
+    },
 }
 
 
@@ -292,10 +308,12 @@ class ChargerData:
         self.site: Site = site
         self.state: List[ChargerState] = {}
         self.config: List[ChargerConfig] = {}
+        self.schedule: List[ChargerSchedule] = {}
 
     async def async_refresh(self, now=None):
         self.state = await self.charger.get_state()
         self.config = await self.charger.get_config()
+        self.schedule = await self.charger.get_basic_charge_plan()
 
 
 class ChargersData:
@@ -391,6 +409,11 @@ class ChargerSensor(Entity):
                     # maybe for everything?
                     key = attr_key.replace(".", "_")
                 attrs[key] = self.get_value_from_key(attr_key)
+
+                # Dirty fix to get local time for schedule, could be moved later
+                if "chargeStartTime" in attr_key or "chargeStopTime" in attr_key:
+                    if type(attrs[key]) is datetime:
+                        attrs[key] = dt.as_local(attrs[key])
             return attrs
         except IndexError:
             return {}
@@ -415,6 +438,8 @@ class ChargerSensor(Entity):
             return self.charger_data.circuit[second]
         elif first == "site":
             return self.charger_data.site[second]
+        elif first == "schedule":
+            return self.charger_data.schedule[second]
         else:
             _LOGGER.error("Unknown first part of key: %s", key)
             raise IndexError("Unknown first part of key")
@@ -433,6 +458,8 @@ class ChargerSensor(Entity):
                     self._state = self._state_func(self.charger_data.state)
                 if self._state_key.startswith("config"):
                     self._state = self._state_func(self.charger_data.config)
+                if self._state_key.startswith("schedule"):
+                    self._state = self._state_func(self.charger_data.schedule)
             if self._convert_units_func is not None:
                 self._state = self._convert_units_func(self._state)
 
