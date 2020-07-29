@@ -3,6 +3,7 @@ import voluptuous as vol
 import logging
 from homeassistant.helpers import config_validation as cv
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.util import dt as dt
 
 from .const import DOMAIN
 
@@ -10,8 +11,8 @@ _LOGGER = logging.getLogger(__name__)
 
 CHARGER_ID = "charger_id"
 CIRCUIT_ID = "circuit_id"
-ATTR_CHARGEPLAN_START_TIME = "chargeStartTime"
-ATTR_CHARGEPLAN_STOP_TIME = "chargeStopTime"
+ATTR_CHARGEPLAN_START_TIME = "start_time"
+ATTR_CHARGEPLAN_STOP_TIME = "stop_time"
 ATTR_CHARGEPLAN_REPEAT = "repeat"
 ATTR_SET_CURRENTP1 = "currentP1"
 ATTR_SET_CURRENTP2 = "currentP2"
@@ -24,8 +25,8 @@ SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
 SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
     {
         vol.Required(CHARGER_ID): cv.string,
-        vol.Optional(ATTR_CHARGEPLAN_START_TIME): cv.time,
-        vol.Optional(ATTR_CHARGEPLAN_STOP_TIME): cv.time,
+        vol.Optional(ATTR_CHARGEPLAN_START_TIME): cv.datetime,
+        vol.Optional(ATTR_CHARGEPLAN_STOP_TIME): cv.datetime,
         vol.Optional(ATTR_CHARGEPLAN_REPEAT): cv.boolean,
     }
 )
@@ -100,13 +101,13 @@ SERVICE_MAP = {
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
     "set_basic_charge_plan": {
-        "handler": "charger_execute_service",
-        "function_call": "get_basic_charge_plan",
+        "handler": "charger_set_schedule",
+        "function_call": "set_basic_charge_plan",
         "schema": SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA,
     },
     "delete_basic_charge_plan": {
         "handler": "charger_execute_service",
-        "function_call": "get_basic_charge_plan",
+        "function_call": "delete_basic_charge_plan",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
     "set_circuit_dynamic_current": {
@@ -149,6 +150,29 @@ async def async_setup_services(hass):
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
             return await function_call()
+
+        _LOGGER.error(
+            "Could not find charger %s", charger_id,
+        )
+        raise HomeAssistantError("Could not find charger {}".format(charger_id))
+
+    async def charger_set_schedule(call):
+        """Execute a set schedule call to Easee charging station. """
+        charger_id = call.data.get(CHARGER_ID)
+        schedule_id = charger_id  # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
+        start_time = call.data.get(ATTR_CHARGEPLAN_START_TIME)
+        stop_time = call.data.get(ATTR_CHARGEPLAN_STOP_TIME)
+        repeat = call.data.get(ATTR_CHARGEPLAN_REPEAT)
+
+        _LOGGER.debug("execute_service:" + str(call.data))
+
+        charger = next((c for c in chargers if c.id == charger_id), None)
+        if charger:
+            function_name = SERVICE_MAP[call.service]
+            function_call = getattr(charger, function_name["function_call"])
+            return await function_call(
+                schedule_id, dt.as_utc(start_time), dt.as_utc(stop_time), repeat,
+            )
 
         _LOGGER.error(
             "Could not find charger %s", charger_id,
