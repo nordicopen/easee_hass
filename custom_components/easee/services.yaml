@@ -47,13 +47,13 @@ set_basic_charge_plan:
       description: "The charger id"
       example: "EH123456"
     start_time:
-      description: "The charger id"
+      description: "Plan start time"
       example: 23:00
     stop_time:
-      description: "The charger id"
+      description: "Plan stop time"
       example: 07:00
     repeat:
-      description: "The charger id"
+      description: "Repeat plan"
       example: True
 
 delete_basic_charge_plan:
@@ -91,7 +91,7 @@ update_firmware:
       description: "The charger id"
       example: "EH123456"
 
-set_dynamic_current:
+set_circuit_dynamic_current:
   description: Set circuit dynamic current
   fields:
     circuit_id:
@@ -99,8 +99,58 @@ set_dynamic_current:
       example: "11000"
     currentP1:
       description: "Phase 1 current"
+      example: 10
     currentP2:
-      description: "Phase 2 current"
+      description: "Phase 2 current (Optional)"
+      example: 10
     currentP3:
-      description: "Phase 3 current"
- 
+      description: "Phase 3 current (Optional)"
+      example: 10
+
+set_circuit_max_current:
+  description: Set circuit max current
+  fields:
+    circuit_id:
+      description: "The circuit id"
+      example: "11000"
+    currentP1:
+      description: "Phase 1 current"
+      example: 10
+    currentP2:
+      description: "Phase 2 current (Optional)"
+      example: 10
+    currentP3:
+      description: "Phase 3 current (Optional)"
+      example: 10
+
+set_charger_dynamic_current:
+  description: Set circuit dynamic current
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+    currentP1:
+      description: "Phase 1 current"
+      example: 10
+    currentP2:
+      description: "Phase 2 current (Optional)"
+      example: 10
+    currentP3:
+      description: "Phase 3 current (Optional)"
+      example: 10
+
+set_charger_max_current:
+  description: Set circuit max current
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+    currentP1:
+      description: "Phase 1 current"
+      example: 10
+    currentP2:
+      description: "Phase 2 current (Optional)"
+      example: 10
+    currentP3:
+      description: "Phase 3 current (Optional)"
+      example: 10
