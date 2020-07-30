@@ -11,8 +11,8 @@ _LOGGER = logging.getLogger(__name__)
 
 CHARGER_ID = "charger_id"
 CIRCUIT_ID = "circuit_id"
-ATTR_CHARGEPLAN_START_TIME = "start_time"
-ATTR_CHARGEPLAN_STOP_TIME = "stop_time"
+ATTR_CHARGEPLAN_START_DATETIME = "start_datetime"
+ATTR_CHARGEPLAN_STOP_DATETIME = "stop_datetime"
 ATTR_CHARGEPLAN_REPEAT = "repeat"
 ATTR_SET_CURRENTP1 = "currentP1"
 ATTR_SET_CURRENTP2 = "currentP2"
@@ -25,8 +25,8 @@ SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
 SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
     {
         vol.Required(CHARGER_ID): cv.string,
-        vol.Optional(ATTR_CHARGEPLAN_START_TIME): cv.datetime,
-        vol.Optional(ATTR_CHARGEPLAN_STOP_TIME): cv.datetime,
+        vol.Optional(ATTR_CHARGEPLAN_START_DATETIME): cv.datetime,
+        vol.Optional(ATTR_CHARGEPLAN_STOP_DATETIME): cv.datetime,
         vol.Optional(ATTR_CHARGEPLAN_REPEAT): cv.boolean,
     }
 )
@@ -160,8 +160,8 @@ async def async_setup_services(hass):
         """Execute a set schedule call to Easee charging station. """
         charger_id = call.data.get(CHARGER_ID)
         schedule_id = charger_id  # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
-        start_time = call.data.get(ATTR_CHARGEPLAN_START_TIME)
-        stop_time = call.data.get(ATTR_CHARGEPLAN_STOP_TIME)
+        start_datetime = call.data.get(ATTR_CHARGEPLAN_START_DATETIME)
+        stop_datetime = call.data.get(ATTR_CHARGEPLAN_STOP_DATETIME)
         repeat = call.data.get(ATTR_CHARGEPLAN_REPEAT)
 
         _LOGGER.debug("execute_service:" + str(call.data))
@@ -171,7 +171,7 @@ async def async_setup_services(hass):
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
             return await function_call(
-                schedule_id, dt.as_utc(start_time), dt.as_utc(stop_time), repeat,
+                schedule_id, dt.as_utc(start_datetime), dt.as_utc(stop_datetime), repeat,
             )
 
         _LOGGER.error(
