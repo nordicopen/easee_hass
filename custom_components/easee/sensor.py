@@ -16,7 +16,7 @@ from homeassistant.const import CONF_MONITORED_CONDITIONS
 from homeassistant.helpers import device_registry
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_time_interval
-from homeassistant.util import dt as dt
+from homeassistant.util import dt
 
 from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS
 
