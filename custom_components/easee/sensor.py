@@ -9,7 +9,6 @@ import logging
 
 from easee import Charger, ChargerState, ChargerConfig, Site, Circuit
 from easee.charger import ChargerSchedule
-from easee.utils import validate_iso8601
 
 from voluptuous.error import Error
 
