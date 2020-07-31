@@ -3,7 +3,7 @@ import voluptuous as vol
 import logging
 from homeassistant.helpers import config_validation as cv
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.util import dt as dt
+from homeassistant.util import dt
 
 from .const import DOMAIN
 
