@@ -33,13 +33,6 @@ toggle:
       description: "The charger id"
       example: "EH123456"
 
-get_basic_charge_plan:
-  description: Get basic charge plan
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-
 set_basic_charge_plan:
   description: Set basic charge plan
   fields:

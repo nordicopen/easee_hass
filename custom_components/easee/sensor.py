@@ -313,6 +313,7 @@ class ChargerData:
         self.state = await self.charger.get_state()
         self.config = await self.charger.get_config()
         self.schedule = await self.charger.get_basic_charge_plan()
+        _LOGGER.debug("Schedule: %s", self.schedule.get_data())
 
 
 class ChargersData:
@@ -409,10 +410,6 @@ class ChargerSensor(Entity):
                     key = attr_key.replace(".", "_")
                 attrs[key] = self.get_value_from_key(attr_key)
 
-                # Dirty fix to get local time for schedule, could be moved later
-                if "chargeStartTime" in attr_key or "chargeStopTime" in attr_key:
-                    if type(attrs[key]) is datetime:
-                        attrs[key] = dt.as_local(attrs[key])
             return attrs
         except IndexError:
             return {}
@@ -429,19 +426,24 @@ class ChargerSensor(Entity):
 
     def get_value_from_key(self, key):
         first, second = key.split(".")
+        value = None
         if first == "config":
-            return self.charger_data.config[second]
+            value = self.charger_data.config[second]
         elif first == "state":
-            return self.charger_data.state[second]
+            value = self.charger_data.state[second]
         elif first == "circuit":
-            return self.charger_data.circuit[second]
+            value = self.charger_data.circuit[second]
         elif first == "site":
-            return self.charger_data.site[second]
+            value = self.charger_data.site[second]
         elif first == "schedule":
-            return self.charger_data.schedule[second]
+            value = self.charger_data.schedule[second]
         else:
             _LOGGER.error("Unknown first part of key: %s", key)
             raise IndexError("Unknown first part of key")
+
+        if type(value) is datetime:
+            value = dt.as_local(value)
+        return value
 
     async def async_update(self):
         """Get the latest data and update the state."""

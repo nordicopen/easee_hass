@@ -95,11 +95,6 @@ SERVICE_MAP = {
         "function_call": "update_firmware",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
-    "get_basic_charge_plan": {
-        "handler": "charger_execute_service",
-        "function_call": "get_basic_charge_plan",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    },
     "set_basic_charge_plan": {
         "handler": "charger_set_schedule",
         "function_call": "set_basic_charge_plan",
