@@ -166,7 +166,10 @@ async def async_setup_services(hass):
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
             return await function_call(
-                schedule_id, dt.as_utc(start_datetime), dt.as_utc(stop_datetime), repeat,
+                schedule_id,
+                dt.as_utc(start_datetime),
+                dt.as_utc(stop_datetime),
+                repeat,
             )
 
         _LOGGER.error(
