@@ -123,7 +123,7 @@ set_circuit_max_current:
       description: "Phase 3 current (Optional)"
       example: 10
 
-set_charger_dynamic_current:
+set_charger_circuit_dynamic_current:
   description: Set circuit dynamic current
   fields:
     charger_id:
@@ -139,7 +139,7 @@ set_charger_dynamic_current:
       description: "Phase 3 current (Optional)"
       example: 10
 
-set_charger_max_current:
+set_charger_circuit_max_current:
   description: Set circuit max current
   fields:
     charger_id:
@@ -154,3 +154,39 @@ set_charger_max_current:
     currentP3:
       description: "Phase 3 current (Optional)"
       example: 10
+
+set_charger_dynamic_current:
+  description: Set charger dynamic current
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+    current:
+      description: "Charger current"
+      example: 10
+
+set_charger_max_current:
+  description: Set charger max current
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+    current:
+      description: "Charger current"
+      example: 10
+
+set_charging_cost:
+  description: Set charging cost per kwh for charger site
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+    cost_per_kwh:
+      description: "Cost per kWh"
+      example: 0.3
+    vat:
+      description: "VAT (Optional)"
+      example: 25.0
+    currency_id:
+      description: "Currency"
+      example: "EUR"

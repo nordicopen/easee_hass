@@ -100,55 +100,17 @@ SENSOR_TYPES = {
         "convert_units_func": None,
         "icon": "mdi:wifi",
     },
-    "dynamicChargerCurrent": {
-        "key": "state.dynamicCircuitCurrentP1",
-        "attrs": [
-            "state.dynamicChargerCurrent",
-            "state.dynamicCircuitCurrentP1",
-            "state.dynamicCircuitCurrentP2",
-            "state.dynamicCircuitCurrentP3",
-            "state.circuitTotalAllocatedPhaseConductorCurrentL1",
-            "state.circuitTotalAllocatedPhaseConductorCurrentL2",
-            "state.circuitTotalAllocatedPhaseConductorCurrentL3",
-            "state.circuitTotalPhaseConductorCurrentL1",
-            "state.circuitTotalPhaseConductorCurrentL2",
-            "state.circuitTotalPhaseConductorCurrentL3",
-            "state.circuitTotalPhaseConductorCurrentL3",
-        ],
+    "outputCurrent": {
+        "key": "state.outputCurrent",
+        "attrs": [],
         "units": "A",
         "convert_units_func": round_2_dec,
         "icon": "mdi:sine-wave",
-        "state_func": lambda state: float(
-            max(
-                state["dynamicCircuitCurrentP1"],
-                state["dynamicCircuitCurrentP2"],
-                state["dynamicCircuitCurrentP3"],
-            )
-        ),
     },
-    "maxChargerCurrent": {
-        "key": "config.circuitMaxCurrentP1",
-        "attrs": [
-            "config.maxChargerCurrent",  # charger rated current (static)
-            "config.circuitMaxCurrentP1",  # dynamically set in app
-            "config.circuitMaxCurrentP2",  # dynamically set in app
-            "config.circuitMaxCurrentP3",  # dynamically set in app
-        ],
-        "units": "A",
-        "convert_units_func": round_2_dec,
-        "icon": "mdi:sine-wave",
-        "state_func": lambda config: float(
-            max(
-                config["circuitMaxCurrentP1"],
-                config["circuitMaxCurrentP2"],
-                config["circuitMaxCurrentP3"],
-            )
-        ),
-    },
-    "current": {
+    "inCurrent": {
         "key": "state.inCurrentT2",
         "attrs": [
-            "state.outputCurrent",  # outputCurrent doesn't seem to show actual current, but allowed?
+            "state.outputCurrent",
             "state.inCurrentT2",
             "state.inCurrentT3",
             "state.inCurrentT4",
@@ -165,6 +127,89 @@ SENSOR_TYPES = {
                 state["inCurrentT5"],
             )
         ),
+    },
+    "circuitCurrent": {
+        "key": "state.circuitTotalPhaseConductorCurrentL1",
+        "attrs": [
+            "circuit.id",
+            "circuit.circuitPanelId",
+            "circuit.panelName",
+            "circuit.ratedCurrent",
+            "state.circuitTotalAllocatedPhaseConductorCurrentL1",
+            "state.circuitTotalAllocatedPhaseConductorCurrentL2",
+            "state.circuitTotalAllocatedPhaseConductorCurrentL3",
+            "state.circuitTotalPhaseConductorCurrentL1",
+            "state.circuitTotalPhaseConductorCurrentL2",
+            "state.circuitTotalPhaseConductorCurrentL3",
+        ],
+        "units": "A",
+        "convert_units_func": round_2_dec,
+        "icon": "mdi:sine-wave",
+        "state_func": lambda state: float(
+            max(
+                state["circuitTotalPhaseConductorCurrentL1"],
+                state["circuitTotalPhaseConductorCurrentL2"],
+                state["circuitTotalPhaseConductorCurrentL3"],
+            )
+        ),
+    },
+    "dynamicCircuitCurrent": {
+        "key": "state.dynamicCircuitCurrentP1",
+        "attrs": [
+            "circuit.id",
+            "circuit.circuitPanelId",
+            "circuit.panelName",
+            "circuit.ratedCurrent",
+            "state.dynamicCircuitCurrentP1",
+            "state.dynamicCircuitCurrentP2",
+            "state.dynamicCircuitCurrentP3",
+        ],
+        "units": "A",
+        "convert_units_func": round_2_dec,
+        "icon": "mdi:sine-wave",
+        "state_func": lambda state: float(
+            max(
+                state["dynamicCircuitCurrentP1"],
+                state["dynamicCircuitCurrentP2"],
+                state["dynamicCircuitCurrentP3"],
+            )
+        ),
+    },
+    "maxCircuitCurrent": {
+        "key": "config.circuitMaxCurrentP1",
+        "attrs": [
+            "circuit.id",
+            "circuit.circuitPanelId",
+            "circuit.panelName",
+            "circuit.ratedCurrent",
+            "config.circuitMaxCurrentP1",
+            "config.circuitMaxCurrentP2",
+            "config.circuitMaxCurrentP3",
+        ],
+        "units": "A",
+        "convert_units_func": round_2_dec,
+        "icon": "mdi:sine-wave",
+        "state_func": lambda config: float(
+            max(
+                config["circuitMaxCurrentP1"],
+                config["circuitMaxCurrentP2"],
+                config["circuitMaxCurrentP3"],
+            )
+        ),
+    },
+    "dynamicChargerCurrent": {
+        "key": "state.dynamicChargerCurrent",
+        "attrs": ["state.dynamicChargerCurrent",],
+        "units": "A",
+        "convert_units_func": round_2_dec,
+        "icon": "mdi:sine-wave",
+    },
+    "maxChargerCurrent": {
+        "key": "config.maxChargerCurrent",
+        "attrs": ["config.maxChargerCurrent",],
+        "units": "A",
+        "convert_units_func": round_2_dec,
+        "icon": "mdi:sine-wave",
     },
     "voltage": {
         "key": "state.voltage",
@@ -226,6 +271,19 @@ SENSOR_TYPES = {
         "convert_units_func": None,
         "icon": "mdi:clock-check",
         "state_func": lambda schedule: bool(schedule["id"]),
+    },
+    "costPerKWh": {
+        "key": "site.costPerKWh",
+        "attrs": [
+            "site.costPerKWh",
+            "site.costPerKwhExcludeVat",
+            "site.vat",
+            "site.costPerKwhExcludeVat",
+            "site.currencyId",
+        ],
+        "units": "",
+        "convert_units_func": None,
+        "icon": "mdi:currency-usd",
     },
 }
 
