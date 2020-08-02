@@ -3,6 +3,7 @@ import voluptuous as vol
 import logging
 from homeassistant.helpers import config_validation as cv
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.util import dt
 
 from .const import DOMAIN
 
@@ -10,12 +11,12 @@ _LOGGER = logging.getLogger(__name__)
 
 CHARGER_ID = "charger_id"
 CIRCUIT_ID = "circuit_id"
-ATTR_CHARGEPLAN_START_TIME = "chargeStartTime"
-ATTR_CHARGEPLAN_STOP_TIME = "chargeStopTime"
+ATTR_CHARGEPLAN_START_DATETIME = "start_datetime"
+ATTR_CHARGEPLAN_STOP_DATETIME = "stop_datetime"
 ATTR_CHARGEPLAN_REPEAT = "repeat"
-ATTR_SET_DYNAMIC_CURRENTP1 = "currentP1"
-ATTR_SET_DYNAMIC_CURRENTP2 = "currentP2"
-ATTR_SET_DYNAMIC_CURRENTP3 = "currentP3"
+ATTR_SET_CURRENTP1 = "currentP1"
+ATTR_SET_CURRENTP2 = "currentP2"
+ATTR_SET_CURRENTP3 = "currentP3"
 
 SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
     {vol.Optional(CHARGER_ID): cv.string,}
@@ -24,18 +25,27 @@ SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
 SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
     {
         vol.Required(CHARGER_ID): cv.string,
-        vol.Optional(ATTR_CHARGEPLAN_START_TIME): cv.time,
-        vol.Optional(ATTR_CHARGEPLAN_STOP_TIME): cv.time,
+        vol.Optional(ATTR_CHARGEPLAN_START_DATETIME): cv.datetime,
+        vol.Optional(ATTR_CHARGEPLAN_STOP_DATETIME): cv.datetime,
         vol.Optional(ATTR_CHARGEPLAN_REPEAT): cv.boolean,
     }
 )
 
-SERVICE_CIRCUIT_SET_DYNAMIC_CURRENT_SCHEMA = vol.Schema(
+SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
     {
         vol.Required(CIRCUIT_ID): cv.positive_int,
-        vol.Optional(ATTR_SET_DYNAMIC_CURRENTP1): cv.positive_int,
-        vol.Optional(ATTR_SET_DYNAMIC_CURRENTP2): cv.positive_int,
-        vol.Optional(ATTR_SET_DYNAMIC_CURRENTP3): cv.positive_int,
+        vol.Required(ATTR_SET_CURRENTP1): cv.positive_int,
+        vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
+        vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
+    }
+)
+
+SERVICE_SET_CHARGER_CURRENT_SCHEMA = vol.Schema(
+    {
+        vol.Required(CHARGER_ID): cv.string,
+        vol.Required(ATTR_SET_CURRENTP1): cv.positive_int,
+        vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
+        vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
     }
 )
 
@@ -85,25 +95,35 @@ SERVICE_MAP = {
         "function_call": "update_firmware",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
-    "get_basic_charge_plan": {
-        "handler": "charger_execute_service",
-        "function_call": "get_basic_charge_plan",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    },
     "set_basic_charge_plan": {
-        "handler": "charger_execute_service",
-        "function_call": "get_basic_charge_plan",
+        "handler": "charger_set_schedule",
+        "function_call": "set_basic_charge_plan",
         "schema": SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA,
     },
     "delete_basic_charge_plan": {
         "handler": "charger_execute_service",
-        "function_call": "get_basic_charge_plan",
+        "function_call": "delete_basic_charge_plan",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
-    "set_dynamic_current": {
-        "handler": "circuit_execute_set_dynamic_current",
+    "set_circuit_dynamic_current": {
+        "handler": "circuit_execute_set_current",
         "function_call": "set_dynamic_current",
-        "schema": SERVICE_CIRCUIT_SET_DYNAMIC_CURRENT_SCHEMA,
+        "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
+    },
+    "set_circuit_max_current": {
+        "handler": "circuit_execute_set_current",
+        "function_call": "set_max_current",
+        "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
+    },
+    "set_charger_dynamic_current": {
+        "handler": "charger_execute_set_current",
+        "function_call": "set_dynamic_current",
+        "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA,
+    },
+    "set_charger_max_current": {
+        "handler": "charger_execute_set_current",
+        "function_call": "set_max_current",
+        "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA,
     },
 }
 
@@ -130,12 +150,38 @@ async def async_setup_services(hass):
         )
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
-    async def circuit_execute_set_dynamic_current(call):
+    async def charger_set_schedule(call):
+        """Execute a set schedule call to Easee charging station. """
+        charger_id = call.data.get(CHARGER_ID)
+        schedule_id = charger_id  # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
+        start_datetime = call.data.get(ATTR_CHARGEPLAN_START_DATETIME)
+        stop_datetime = call.data.get(ATTR_CHARGEPLAN_STOP_DATETIME)
+        repeat = call.data.get(ATTR_CHARGEPLAN_REPEAT)
+
+        _LOGGER.debug("execute_service:" + str(call.data))
+
+        charger = next((c for c in chargers if c.id == charger_id), None)
+        if charger:
+            function_name = SERVICE_MAP[call.service]
+            function_call = getattr(charger, function_name["function_call"])
+            return await function_call(
+                schedule_id,
+                dt.as_utc(start_datetime),
+                dt.as_utc(stop_datetime),
+                repeat,
+            )
+
+        _LOGGER.error(
+            "Could not find charger %s", charger_id,
+        )
+        raise HomeAssistantError("Could not find charger {}".format(charger_id))
+
+    async def circuit_execute_set_current(call):
         """Execute a service to Easee circuit. """
         circuit_id = call.data.get(CIRCUIT_ID)
-        currentP1 = call.data.get(ATTR_SET_DYNAMIC_CURRENTP1)
-        currentP2 = call.data.get(ATTR_SET_DYNAMIC_CURRENTP2)
-        currentP3 = call.data.get(ATTR_SET_DYNAMIC_CURRENTP3)
+        currentP1 = call.data.get(ATTR_SET_CURRENTP1)
+        currentP2 = call.data.get(ATTR_SET_CURRENTP2)
+        currentP3 = call.data.get(ATTR_SET_CURRENTP3)
 
         _LOGGER.debug("execute_service:" + str(call.data))
 
@@ -149,7 +195,27 @@ async def async_setup_services(hass):
             "Could not find circuit %s", circuit_id,
         )
         raise HomeAssistantError("Could not find circuit {}".format(circuit_id))
-   
+
+    async def charger_execute_set_current(call):
+        """Execute a service to Easee circuit for specific charger. """
+        charger_id = call.data.get(CHARGER_ID)
+        currentP1 = call.data.get(ATTR_SET_CURRENTP1)
+        currentP2 = call.data.get(ATTR_SET_CURRENTP2)
+        currentP3 = call.data.get(ATTR_SET_CURRENTP3)
+
+        _LOGGER.debug("execute_service:" + str(call.data))
+
+        charger = next((c for c in chargers if c.id == charger_id), None)
+        if charger:
+            function_name = SERVICE_MAP[call.service]
+            function_call = getattr(charger, function_name["function_call"])
+            return await function_call(currentP1, currentP2, currentP3)
+
+        _LOGGER.error(
+            "Could not find charger %s", charger_id,
+        )
+        raise HomeAssistantError("Could not find charger {}".format(charger_id))
+
     for service in SERVICE_MAP:
         data = SERVICE_MAP[service]
         handler = locals()[data["handler"]]
