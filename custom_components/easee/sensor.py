@@ -270,7 +270,20 @@ SENSOR_TYPES = {
         "units": "",
         "convert_units_func": None,
         "icon": "mdi:clock-check",
-        "state_func": lambda schedule: bool(schedule["id"]),
+        "state_func": lambda schedule: True if schedule is not None else False,
+    },
+    "costPerKWh": {
+        "key": "site.costPerKWh",
+        "attrs": [
+            "site.costPerKWh",
+            "site.costPerKwhExcludeVat",
+            "site.vat",
+            "site.costPerKwhExcludeVat",
+            "site.currencyId",
+        ],
+        "units": "",
+        "convert_units_func": None,
+        "icon": "mdi:currency-usd",
     },
     "costPerKWh": {
         "key": "site.costPerKWh",
@@ -371,7 +384,7 @@ class ChargerData:
         self.state = await self.charger.get_state()
         self.config = await self.charger.get_config()
         self.schedule = await self.charger.get_basic_charge_plan()
-        _LOGGER.debug("Schedule: %s", self.schedule.get_data())
+        _LOGGER.debug("Schedule: %s", self.schedule)
 
 
 class ChargersData:
@@ -494,7 +507,8 @@ class ChargerSensor(Entity):
         elif first == "site":
             value = self.charger_data.site[second]
         elif first == "schedule":
-            value = self.charger_data.schedule[second]
+            if self.charger_data.schedule is not None:
+                value = self.charger_data.schedule[second]
         else:
             _LOGGER.error("Unknown first part of key: %s", key)
             raise IndexError("Unknown first part of key")
