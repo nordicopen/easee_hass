@@ -298,19 +298,6 @@ SENSOR_TYPES = {
         "convert_units_func": None,
         "icon": "mdi:currency-usd",
     },
-    "costPerKWh": {
-        "key": "site.costPerKWh",
-        "attrs": [
-            "site.costPerKWh",
-            "site.costPerKwhExcludeVat",
-            "site.vat",
-            "site.costPerKwhExcludeVat",
-            "site.currencyId",
-        ],
-        "units": "",
-        "convert_units_func": None,
-        "icon": "mdi:currency-usd",
-    },
 }
 
 
