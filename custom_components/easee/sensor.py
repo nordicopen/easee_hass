@@ -147,9 +147,15 @@ SENSOR_TYPES = {
         "icon": "mdi:sine-wave",
         "state_func": lambda state: float(
             max(
-                state["circuitTotalPhaseConductorCurrentL1"],
-                state["circuitTotalPhaseConductorCurrentL2"],
-                state["circuitTotalPhaseConductorCurrentL3"],
+                state["circuitTotalPhaseConductorCurrentL1"]
+                if state["circuitTotalPhaseConductorCurrentL1"] is not None
+                else 0.0,
+                state["circuitTotalPhaseConductorCurrentL2"]
+                if state["circuitTotalPhaseConductorCurrentL2"] is not None
+                else 0.0,
+                state["circuitTotalPhaseConductorCurrentL3"]
+                if state["circuitTotalPhaseConductorCurrentL3"] is not None
+                else 0.0,
             )
         ),
     },
