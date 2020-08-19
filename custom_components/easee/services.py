@@ -14,9 +14,13 @@ CIRCUIT_ID = "circuit_id"
 ATTR_CHARGEPLAN_START_DATETIME = "start_datetime"
 ATTR_CHARGEPLAN_STOP_DATETIME = "stop_datetime"
 ATTR_CHARGEPLAN_REPEAT = "repeat"
+ATTR_SET_CURRENT = "current"
 ATTR_SET_CURRENTP1 = "currentP1"
 ATTR_SET_CURRENTP2 = "currentP2"
 ATTR_SET_CURRENTP3 = "currentP3"
+ATTR_COST_PER_KWH = "cost_per_kwh"
+ATTR_COST_CURRENCY = "currency_id"
+ATTR_COST_VAT = "vat"
 
 SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
     {vol.Optional(CHARGER_ID): cv.string,}
@@ -40,12 +44,28 @@ SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
     }
 )
 
-SERVICE_SET_CHARGER_CURRENT_SCHEMA = vol.Schema(
+SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
     {
         vol.Required(CHARGER_ID): cv.string,
         vol.Required(ATTR_SET_CURRENTP1): cv.positive_int,
         vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
         vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
+    }
+)
+
+SERVICE_SET_CHARGER_CURRENT_SCHEMA = vol.Schema(
+    {
+        vol.Required(CHARGER_ID): cv.string,
+        vol.Required(ATTR_SET_CURRENT): cv.positive_int,
+    }
+)
+
+SERVICE_SET_SITE_CHARGING_COST_SCHEMA = vol.Schema(
+    {
+        vol.Required(CHARGER_ID): cv.string,
+        vol.Required(ATTR_COST_PER_KWH): vol.All(vol.Coerce(float)),
+        vol.Optional(ATTR_COST_CURRENCY): cv.string,
+        vol.Optional(ATTR_COST_VAT): vol.All(vol.Coerce(float)),
     }
 )
 
@@ -115,25 +135,40 @@ SERVICE_MAP = {
         "function_call": "set_max_current",
         "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
     },
+    "set_charger_circuit_dynamic_current": {
+        "handler": "charger_execute_set_circuit_current",
+        "function_call": "set_dynamic_charger_circuit_current",
+        "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
+    },
+    "set_charger_circuit_max_current": {
+        "handler": "charger_execute_set_circuit_current",
+        "function_call": "set_max_charger_circuit_current",
+        "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
+    },
     "set_charger_dynamic_current": {
         "handler": "charger_execute_set_current",
-        "function_call": "set_dynamic_current",
+        "function_call": "set_dynamic_charger_current",
         "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA,
     },
     "set_charger_max_current": {
         "handler": "charger_execute_set_current",
-        "function_call": "set_max_current",
+        "function_call": "set_max_charger_current",
         "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA,
+    },
+    "set_charging_cost": {
+        "handler": "charger_execute_set_charging_cost",
+        "function_call": "set_price",
+        "schema": SERVICE_SET_SITE_CHARGING_COST_SCHEMA,
     },
 }
 
 async def async_setup_services(hass):
-    """ Setup services for Easee """
+    """Setup services for Easee."""
     chargers = hass.data[DOMAIN]["chargers"]
     circuits = hass.data[DOMAIN]["circuits"]
 
     async def charger_execute_service(call):
-        """Execute a service to Easee charging station. """
+        """Execute a service to Easee charging station."""
         charger_id = call.data.get(CHARGER_ID)
 
         _LOGGER.debug("execute_service:" + str(call.data))
@@ -151,7 +186,7 @@ async def async_setup_services(hass):
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
     async def charger_set_schedule(call):
-        """Execute a set schedule call to Easee charging station. """
+        """Execute a set schedule call to Easee charging station."""
         charger_id = call.data.get(CHARGER_ID)
         schedule_id = charger_id  # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
         start_datetime = call.data.get(ATTR_CHARGEPLAN_START_DATETIME)
@@ -177,7 +212,7 @@ async def async_setup_services(hass):
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
     async def circuit_execute_set_current(call):
-        """Execute a service to Easee circuit. """
+        """Execute a service to set currents for Easee circuit."""
         circuit_id = call.data.get(CIRCUIT_ID)
         currentP1 = call.data.get(ATTR_SET_CURRENTP1)
         currentP2 = call.data.get(ATTR_SET_CURRENTP2)
@@ -196,8 +231,8 @@ async def async_setup_services(hass):
         )
         raise HomeAssistantError("Could not find circuit {}".format(circuit_id))
 
-    async def charger_execute_set_current(call):
-        """Execute a service to Easee circuit for specific charger. """
+    async def charger_execute_set_circuit_current(call):
+        """Execute a service to set currents for Easee circuit for specific charger."""
         charger_id = call.data.get(CHARGER_ID)
         currentP1 = call.data.get(ATTR_SET_CURRENTP1)
         currentP2 = call.data.get(ATTR_SET_CURRENTP2)
@@ -210,6 +245,44 @@ async def async_setup_services(hass):
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
             return await function_call(currentP1, currentP2, currentP3)
+
+        _LOGGER.error(
+            "Could not find charger %s", charger_id,
+        )
+        raise HomeAssistantError("Could not find charger {}".format(charger_id))
+
+    async def charger_execute_set_current(call):
+        """Execute a service to set currents for Easee charger."""
+        charger_id = call.data.get(CHARGER_ID)
+        current = call.data.get(ATTR_SET_CURRENT)
+
+        _LOGGER.debug("execute_service:" + str(call.data))
+
+        charger = next((c for c in chargers if c.id == charger_id), None)
+        if charger:
+            function_name = SERVICE_MAP[call.service]
+            function_call = getattr(charger, function_name["function_call"])
+            return await function_call(current)
+
+        _LOGGER.error(
+            "Could not find charger %s", charger_id,
+        )
+        raise HomeAssistantError("Could not find charger {}".format(charger_id))
+
+    async def charger_execute_set_charging_cost(call):
+        """Execute a service to set charging cost per kwh for Easee charger site."""
+        charger_id = call.data.get(CHARGER_ID)
+        cost_per_kwh = call.data.get(ATTR_COST_PER_KWH)
+        currency = call.data.get(ATTR_COST_CURRENCY)
+        vat = call.data.get(ATTR_COST_VAT)
+
+        _LOGGER.debug("execute_service:" + str(call.data))
+
+        charger = next((c for c in chargers if c.id == charger_id), None)
+        if charger:
+            function_name = SERVICE_MAP[call.service]
+            function_call = getattr(charger.site, function_name["function_call"])
+            return await function_call(cost_per_kwh, vat, currency)
 
         _LOGGER.error(
             "Could not find charger %s", charger_id,
