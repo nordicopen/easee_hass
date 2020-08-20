@@ -108,7 +108,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         default=self.config_entry.options.get(
                             MEASURED_CONSUMPTION_DAYS, ["1"]
                         ),
-                    ): cv.multi_select({"1": "1", "30": "30", "365": "365"}),
+                    ): cv.multi_select(
+                        {"1": "1", "7": "7", "14": "14", "30": "30", "365": "365"}
+                    ),
                     vol.Optional(
                         CONF_MONITORED_SITES,
                         default=self.config_entry.options.get(
