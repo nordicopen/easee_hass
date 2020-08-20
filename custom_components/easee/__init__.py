@@ -13,7 +13,7 @@ from homeassistant.helpers import (
     config_validation as cv,
 )
 
-from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS, VERSION
+from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS, VERSION, CONF_MONITORED_SITES
 from .services import async_setup_services
 from .sensor import SENSOR_TYPES
 from .config_flow import EaseeConfigFlow  # noqa
@@ -55,6 +55,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     _LOGGER.debug("Setting up Easee component version %s", VERSION)
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
+    
     client_session = aiohttp_client.async_get_clientsession(hass)
     easee = Easee(username, password, client_session)
     sites: List[Site] = await easee.get_sites()

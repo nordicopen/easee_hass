@@ -18,7 +18,7 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.util import dt
 
-from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS
+from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS, CONF_MONITORED_SITES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,6 +28,8 @@ SCAN_INTERVAL = timedelta(seconds=60)
 def round_2_dec(value):
     return round(value, 2)
 
+def mult1k_round_0_dec(value):
+    return round(value*1000, 0)
 
 SENSOR_TYPES = {
     "smartCharging": {
@@ -68,8 +70,8 @@ SENSOR_TYPES = {
     "total_power": {
         "key": "state.totalPower",
         "attrs": [],
-        "units": "kW",
-        "convert_units_func": round_2_dec,
+        "units": "W",
+        "convert_units_func": mult1k_round_0_dec,
         "icon": "mdi:flash",
     },
     "session_energy": {
@@ -307,43 +309,49 @@ async def async_setup_entry(hass, entry, async_add_entities):
     monitored_conditions = config.options.get(CONF_MONITORED_CONDITIONS, ["status"])
 
     sites: List[Site] = hass.data[DOMAIN]["sites"]
+    all_sites = []
+    for site in sites:
+        all_sites.append(site["name"])
+    monitored_sites = config.options.get(CONF_MONITORED_SITES, all_sites)
 
     sensors = []
     charger_data_list = []
 
     for site in sites:
         _LOGGER.debug("Found site: %s %s", site.id, site["name"])
-        for circuit in site.get_circuits():
-            _LOGGER.debug("Found circuit: %s %s", circuit.id, circuit["panelName"])
-            for charger in circuit.get_chargers():
-                _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
-                charger_data = ChargerData(charger, circuit, site)
-                charger_data_list.append(charger_data)
+        if site["name"] in monitored_sites:
+            for circuit in site.get_circuits():
+                _LOGGER.debug("Found circuit: %s %s", circuit.id, circuit["panelName"])
+                for charger in circuit.get_chargers():
+                    _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
+                    charger_data = ChargerData(charger, circuit, site)
+                    charger_data_list.append(charger_data)
 
-                for key in monitored_conditions:
-                    data = SENSOR_TYPES[key]
-                    _LOGGER.debug("Adding sensor: %s for charger %s", key, charger.name)
-                    sensors.append(
-                        ChargerSensor(
-                            charger_data=charger_data,
-                            name=key,
-                            state_key=data["key"],
-                            units=data["units"],
-                            convert_units_func=data["convert_units_func"],
-                            attrs_keys=data["attrs"],
-                            icon=data["icon"],
-                            state_func=data.get("state_func", None),
-                        )
-                    )
+                    for key in monitored_conditions:
+                        if key in SENSOR_TYPES:
+                            data = SENSOR_TYPES[key]
+                            _LOGGER.debug("Adding sensor: %s for charger %s", key, charger.name)
+                            sensors.append(
+                                ChargerSensor(
+                                    charger_data=charger_data,
+                                    name=key,
+                                    state_key=data["key"],
+                                    units=data["units"],
+                                    convert_units_func=data["convert_units_func"],
+                                    attrs_keys=data["attrs"],
+                                    icon=data["icon"],
+                                    state_func=data.get("state_func", None),
+                                )
+                            )
 
-                monitored_days = config.options.get(MEASURED_CONSUMPTION_DAYS, [])
-                for interval in monitored_days:
-                    _LOGGER.info("Will measure days: %s", interval)
-                    sensors.append(
-                        ChargerConsumptionSensor(
-                            charger, f"consumption_days_{interval}", int(interval)
+                    monitored_days = config.options.get(MEASURED_CONSUMPTION_DAYS, [])
+                    for interval in monitored_days:
+                        _LOGGER.info("Will measure days: %s", interval)
+                        sensors.append(
+                            ChargerConsumptionSensor(
+                                charger, f"consumption_days_{interval}", int(interval)
+                            )
                         )
-                    )
 
     chargers_data = ChargersData(charger_data_list, sensors)
 
