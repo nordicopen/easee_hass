@@ -1,4 +1,4 @@
-"""Easee charger switch"""
+"""Easee charger switch."""
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.const import CONF_MONITORED_CONDITIONS

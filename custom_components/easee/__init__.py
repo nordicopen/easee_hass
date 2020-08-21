@@ -1,8 +1,9 @@
-""" Easee charger component """
+"""Easee charger component."""
 import asyncio
 import logging
-from typing import List, Dict, Callable, Any
-from easee import Easee, Charger, ChargerState, ChargerConfig, Site, Circuit
+from typing import List
+from datetime import timedelta
+from easee import Easee, Site
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
@@ -13,10 +14,7 @@ from homeassistant.helpers import (
     config_validation as cv,
     device_registry,
 )
-from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_time_interval
-from homeassistant.util import dt
-from datetime import datetime, timedelta
 
 from .const import (
     DOMAIN,
@@ -27,8 +25,6 @@ from .const import (
     SCAN_INTERVAL_SECONDS,
 )
 from .services import async_setup_services
-from .sensor import ChargerSensor, ChargerConsumptionSensor
-from .switch import ChargerSwitch
 from .entity import ChargerData, ChargersData
 from .config_flow import EaseeConfigFlow  # noqa
 
@@ -92,8 +88,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
                 charger_data = ChargerData(charger, circuit, site)
                 charger_data_list.append(charger_data)
 
-    config = hass.data[DOMAIN]["config"]
-    monitored_conditions = config.options.get(CONF_MONITORED_CONDITIONS, ["status"])
+    # config = hass.data[DOMAIN]["config"]
+    # monitored_conditions = config.options.get(CONF_MONITORED_CONDITIONS, ["status"])
 
     chargers_data = ChargersData(charger_data_list, entities)
     hass.data[DOMAIN]["chargers_data"] = chargers_data

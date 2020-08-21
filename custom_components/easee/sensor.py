@@ -3,18 +3,11 @@ Easee charger sensor
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
 import asyncio
-from typing import List, Dict, Callable, Any
+from typing import Dict
 from datetime import datetime, timedelta
-from easee import Charger, ChargerState, ChargerConfig, Site, Circuit
-from easee.charger import ChargerSchedule
-
-from voluptuous.error import Error
 
 from homeassistant.const import CONF_MONITORED_CONDITIONS
-from homeassistant.helpers import device_registry
 from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.event import async_track_time_interval
-from homeassistant.util import dt
 
 from .entity import ChargerEntity, convert_units_funcs, round_2_dec
 from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS, EASEE_ENTITIES
@@ -72,16 +65,16 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class ChargerSensor(ChargerEntity):
-    """Implementation of Easee charger sensor """
+    """Implementation of Easee charger sensor."""
 
     @property
     def state(self):
-        """Return status"""
+        """Return status."""
         return self._state
 
 
 class ChargerConsumptionSensor(Entity):
-    """Implementation of Easee charger sensor """
+    """Implementation of Easee charger sensor."""
 
     def __init__(self, charger, name, days):
         """Initialize the sensor."""
@@ -122,7 +115,7 @@ class ChargerConsumptionSensor(Entity):
 
     @property
     def state(self):
-        """Return online status"""
+        """Return online status."""
         return round_2_dec(self._state)
 
     @property

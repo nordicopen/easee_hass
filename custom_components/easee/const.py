@@ -1,4 +1,4 @@
-""" Easee Charger constants """
+"""Easee Charger constants."""
 DOMAIN = "easee"
 MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
 VERSION = "0.9.11"
@@ -123,7 +123,6 @@ EASEE_ENTITIES = {
         ],
         "units": "A",
         "convert_units_func": "round_2_dec",
-        "convert_units_func": None,
         "icon": "mdi:sine-wave",
         "state_func": lambda state: float(
             max(

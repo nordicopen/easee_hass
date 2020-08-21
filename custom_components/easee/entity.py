@@ -1,20 +1,15 @@
 """
-Easee Charger base entity class
+Easee Charger base entity class.
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
 import asyncio
 from typing import List, Dict, Callable, Any
-from datetime import datetime, timedelta
-import logging
+from datetime import datetime
 
 from easee import Charger, ChargerState, ChargerConfig, Site, Circuit
 from easee.charger import ChargerSchedule
 
-from voluptuous.error import Error
-from homeassistant.const import CONF_MONITORED_CONDITIONS
-from homeassistant.helpers import device_registry
 from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.util import dt
 
 from .const import DOMAIN
@@ -25,6 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def round_2_dec(value):
+    """Round to two decimals."""
     return round(value, 2)
 
 
@@ -34,7 +30,10 @@ convert_units_funcs = {
 
 
 class ChargerData:
+    """Representation charger data."""
+
     def __init__(self, charger: Charger, circuit: Circuit, site: Site):
+        """Initialize the charger data."""
         self.charger: Charger = charger
         self.circuit: Circuit = circuit
         self.site: Site = site
@@ -50,15 +49,15 @@ class ChargerData:
 
 
 class ChargersData:
-    """Representation chargers data"""
+    """Representation chargers data."""
 
     def __init__(self, chargers: List[ChargerData], entities: List[Any]):
-        """Initialize the entity."""
+        """Initialize the chargers data."""
         self._chargers = chargers
         self._entities = entities
 
     async def async_refresh(self, now=None):
-        """Fetch new state data for the entities. """
+        """Fetch new state data for the entities."""
         tasks = [charger.async_refresh() for charger in self._chargers]
         if tasks:
             await asyncio.wait(tasks)
@@ -69,7 +68,7 @@ class ChargersData:
 
 
 class ChargerEntity(Entity):
-    """Implementation of Easee charger entity """
+    """Implementation of Easee charger entity."""
 
     def __init__(
         self,
