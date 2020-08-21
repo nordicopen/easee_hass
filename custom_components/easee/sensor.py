@@ -147,9 +147,15 @@ SENSOR_TYPES = {
         "icon": "mdi:sine-wave",
         "state_func": lambda state: float(
             max(
-                state["circuitTotalPhaseConductorCurrentL1"],
-                state["circuitTotalPhaseConductorCurrentL2"],
-                state["circuitTotalPhaseConductorCurrentL3"],
+                state["circuitTotalPhaseConductorCurrentL1"]
+                if state["circuitTotalPhaseConductorCurrentL1"] is not None
+                else 0.0,
+                state["circuitTotalPhaseConductorCurrentL2"]
+                if state["circuitTotalPhaseConductorCurrentL2"] is not None
+                else 0.0,
+                state["circuitTotalPhaseConductorCurrentL3"]
+                if state["circuitTotalPhaseConductorCurrentL3"] is not None
+                else 0.0,
             )
         ),
     },
@@ -271,19 +277,6 @@ SENSOR_TYPES = {
         "convert_units_func": None,
         "icon": "mdi:clock-check",
         "state_func": lambda schedule: True if schedule is not None else False,
-    },
-    "costPerKWh": {
-        "key": "site.costPerKWh",
-        "attrs": [
-            "site.costPerKWh",
-            "site.costPerKwhExcludeVat",
-            "site.vat",
-            "site.costPerKwhExcludeVat",
-            "site.currencyId",
-        ],
-        "units": "",
-        "convert_units_func": None,
-        "icon": "mdi:currency-usd",
     },
     "costPerKWh": {
         "key": "site.costPerKWh",
