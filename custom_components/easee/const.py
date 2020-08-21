@@ -277,4 +277,3 @@ EASEE_ENTITIES = {
         "icon": "mdi:currency-usd",
     },
 }
-
