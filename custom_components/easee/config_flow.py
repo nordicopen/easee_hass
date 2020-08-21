@@ -14,9 +14,7 @@ from homeassistant.helpers import (
 )
 
 from easee import Easee
-
-from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS
-from .sensor import SENSOR_TYPES
+from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS, EASEE_ENTITIES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -87,7 +85,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             self.options.update(user_input)
             return await self._update_options()
 
-        sensor_multi_select = {x: x for x in list(SENSOR_TYPES)}
+        sensor_multi_select = {x: x for x in list(EASEE_ENTITIES)}
 
         return self.async_show_form(
             step_id="options_1",
