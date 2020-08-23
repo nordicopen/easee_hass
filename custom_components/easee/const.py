@@ -1,9 +1,25 @@
 """Easee Charger constants."""
 DOMAIN = "easee"
 MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
+CUSTOM_UNITS = "custom_units"
 VERSION = "0.9.11"
 PLATFORMS = ("sensor", "switch")
 SCAN_INTERVAL_SECONDS = 60
+MEASURED_CONSUMPTION_OPTIONS = {
+    "1": "1",
+    "7": "7",
+    "14": "14",
+    "30": "30",
+    "365": "365",
+}
+CUSTOM_UNITS_OPTIONS = {
+    "kW": "Power kW to W",
+    "kWh": "Energy kWh to Wh",
+}
+CUSTOM_UNITS_TABLE = {
+    "kW": "W",
+    "kWh": "Wh",
+}
 EASEE_ENTITIES = {
     "smartCharging": {
         "type": "switch",
