@@ -88,9 +88,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
                 charger_data = ChargerData(charger, circuit, site)
                 charger_data_list.append(charger_data)
 
-    # config = hass.data[DOMAIN]["config"]
-    # monitored_conditions = config.options.get(CONF_MONITORED_CONDITIONS, ["status"])
-
     chargers_data = ChargersData(charger_data_list, entities)
     hass.data[DOMAIN]["chargers_data"] = chargers_data
 
