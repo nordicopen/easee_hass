@@ -28,9 +28,6 @@ SCAN_INTERVAL = timedelta(seconds=60)
 def round_2_dec(value):
     return round(value, 2)
 
-def mult1k_round_0_dec(value):
-    return round(value*1000, 0)
-
 SENSOR_TYPES = {
     "smartCharging": {
         "key": "state.smartCharging",
@@ -70,8 +67,8 @@ SENSOR_TYPES = {
     "total_power": {
         "key": "state.totalPower",
         "attrs": [],
-        "units": "W",
-        "convert_units_func": mult1k_round_0_dec,
+        "units": "kW",
+        "convert_units_func": round_2_dec,
         "icon": "mdi:flash",
     },
     "session_energy": {
