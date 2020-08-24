@@ -15,7 +15,7 @@ from homeassistant.helpers import (
 
 from easee import Easee
 
-from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS
+from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS, CONF_MONITORED_SITES
 from .sensor import SENSOR_TYPES
 
 _LOGGER = logging.getLogger(__name__)
@@ -88,6 +88,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             return await self._update_options()
 
         sensor_multi_select = {x: x for x in list(SENSOR_TYPES)}
+        sites: List[Site] = self.hass.data[DOMAIN]["sites"]
+        sites_multi_select = []
+        for site in sites:
+            sites_multi_select.append(site["name"])
 
         return self.async_show_form(
             step_id="options_1",
@@ -107,6 +111,12 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     ): cv.multi_select(
                         {"1": "1", "7": "7", "14": "14", "30": "30", "365": "365"}
                     ),
+                    vol.Optional(
+                        CONF_MONITORED_SITES,
+                        default=self.config_entry.options.get(
+                            CONF_MONITORED_SITES, sites_multi_select
+                        ),
+                    ): cv.multi_select(sites_multi_select),
                 }
             ),
         )
