@@ -127,11 +127,6 @@ class ChargerEntity(Entity):
         """Return True if entity is available."""
         return self._state is not None
 
-    # @property
-    # def state(self):
-    #     """Return status"""
-    #     return self._state
-
     @property
     def state_attributes(self):
         """Return the state attributes."""

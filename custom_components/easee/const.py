@@ -1,8 +1,9 @@
 """Easee Charger constants."""
 DOMAIN = "easee"
 MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
+VERSION = "0.9.12"
+CONF_MONITORED_SITES = "monitored_sites"
 CUSTOM_UNITS = "custom_units"
-VERSION = "0.9.11"
 PLATFORMS = ("sensor", "switch")
 SCAN_INTERVAL_SECONDS = 60
 MEASURED_CONSUMPTION_OPTIONS = {

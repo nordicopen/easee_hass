@@ -21,6 +21,7 @@ from .const import (
     CUSTOM_UNITS,
     CUSTOM_UNITS_OPTIONS,
     EASEE_ENTITIES,
+    CONF_MONITORED_SITES,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -93,11 +94,21 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             return await self._update_options()
 
         sensor_multi_select = {x: x for x in list(EASEE_ENTITIES)}
+        sites: List[Site] = self.hass.data[DOMAIN]["sites"]
+        sites_multi_select = []
+        for site in sites:
+            sites_multi_select.append(site["name"])
 
         return self.async_show_form(
             step_id="options_1",
             data_schema=vol.Schema(
                 {
+                    vol.Optional(
+                        CONF_MONITORED_SITES,
+                        default=self.config_entry.options.get(
+                            CONF_MONITORED_SITES, sites_multi_select
+                        ),
+                    ): cv.multi_select(sites_multi_select),
                     vol.Optional(
                         CONF_MONITORED_CONDITIONS,
                         default=self.config_entry.options.get(

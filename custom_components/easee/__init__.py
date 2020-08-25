@@ -23,6 +23,7 @@ from .const import (
     PLATFORMS,
     EASEE_ENTITIES,
     SCAN_INTERVAL_SECONDS,
+    CONF_MONITORED_SITES,
 )
 from .services import async_setup_services
 from .entity import ChargerData, ChargersData
@@ -64,7 +65,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     _LOGGER.debug("Setting up Easee component version %s", VERSION)
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
-
     client_session = aiohttp_client.async_get_clientsession(hass)
     easee = Easee(username, password, client_session)
     sites: List[Site] = await easee.get_sites()
@@ -76,20 +76,26 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN]["chargers"] = []
     entities = []
     charger_data_list = []
+    all_sites = []
 
     for site in sites:
-        _LOGGER.debug("Found site: %s %s", site.id, site["name"])
-        for circuit in site.get_circuits():
-            _LOGGER.debug("Found circuit: %s %s", circuit.id, circuit["panelName"])
-            hass.data[DOMAIN]["circuits"].append(circuit)
-            for charger in circuit.get_chargers():
-                _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
-                hass.data[DOMAIN]["chargers"].append(charger)
-                charger_data = ChargerData(charger, circuit, site)
-                charger_data_list.append(charger_data)
+        all_sites.append(site["name"])
+    config = hass.data[DOMAIN]["config"]
+    monitored_sites = config.options.get(CONF_MONITORED_SITES, all_sites)
 
-    # config = hass.data[DOMAIN]["config"]
-    # monitored_conditions = config.options.get(CONF_MONITORED_CONDITIONS, ["status"])
+    for site in sites:
+        if not site["name"] in monitored_sites:
+            _LOGGER.debug("Found site (unmonitored): %s %s", site.id, site["name"])
+        else:
+            _LOGGER.debug("Found site (monitored): %s %s", site.id, site["name"])
+            for circuit in site.get_circuits():
+                _LOGGER.debug("Found circuit: %s %s", circuit.id, circuit["panelName"])
+                hass.data[DOMAIN]["circuits"].append(circuit)
+                for charger in circuit.get_chargers():
+                    _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
+                    hass.data[DOMAIN]["chargers"].append(charger)
+                    charger_data = ChargerData(charger, circuit, site)
+                    charger_data_list.append(charger_data)
 
     chargers_data = ChargersData(charger_data_list, entities)
     hass.data[DOMAIN]["chargers_data"] = chargers_data

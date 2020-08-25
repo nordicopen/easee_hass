@@ -2,13 +2,11 @@
 Easee charger sensor
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
-import asyncio
 from typing import Dict
 from datetime import datetime, timedelta
 
 from homeassistant.const import CONF_MONITORED_CONDITIONS
 from homeassistant.helpers.entity import Entity
-
 from .entity import ChargerEntity, convert_units_funcs, round_2_dec
 from .const import (
     DOMAIN,
@@ -19,7 +17,6 @@ from .const import (
 )
 
 import logging
-
 
 _LOGGER = logging.getLogger(__name__)
 
