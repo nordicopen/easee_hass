@@ -162,6 +162,7 @@ SERVICE_MAP = {
     },
 }
 
+
 async def async_setup_services(hass):
     """Setup services for Easee."""
     chargers = hass.data[DOMAIN]["chargers"]
