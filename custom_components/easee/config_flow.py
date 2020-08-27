@@ -14,9 +14,15 @@ from homeassistant.helpers import (
 )
 
 from easee import Easee
-
-from .const import DOMAIN, MEASURED_CONSUMPTION_DAYS
-from .sensor import SENSOR_TYPES
+from .const import (
+    DOMAIN,
+    MEASURED_CONSUMPTION_DAYS,
+    MEASURED_CONSUMPTION_OPTIONS,
+    CUSTOM_UNITS,
+    CUSTOM_UNITS_OPTIONS,
+    EASEE_ENTITIES,
+    CONF_MONITORED_SITES,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -87,12 +93,22 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             self.options.update(user_input)
             return await self._update_options()
 
-        sensor_multi_select = {x: x for x in list(SENSOR_TYPES)}
+        sensor_multi_select = {x: x for x in list(EASEE_ENTITIES)}
+        sites: List[Site] = self.hass.data[DOMAIN]["sites"]
+        sites_multi_select = []
+        for site in sites:
+            sites_multi_select.append(site["name"])
 
         return self.async_show_form(
             step_id="options_1",
             data_schema=vol.Schema(
                 {
+                    vol.Optional(
+                        CONF_MONITORED_SITES,
+                        default=self.config_entry.options.get(
+                            CONF_MONITORED_SITES, sites_multi_select
+                        ),
+                    ): cv.multi_select(sites_multi_select),
                     vol.Optional(
                         CONF_MONITORED_CONDITIONS,
                         default=self.config_entry.options.get(
@@ -104,9 +120,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         default=self.config_entry.options.get(
                             MEASURED_CONSUMPTION_DAYS, ["1"]
                         ),
-                    ): cv.multi_select(
-                        {"1": "1", "7": "7", "14": "14", "30": "30", "365": "365"}
-                    ),
+                    ): cv.multi_select(MEASURED_CONSUMPTION_OPTIONS),
+                    vol.Optional(
+                        CUSTOM_UNITS,
+                        default=self.config_entry.options.get(CUSTOM_UNITS, None),
+                    ): cv.multi_select(CUSTOM_UNITS_OPTIONS),
                 }
             ),
         )
