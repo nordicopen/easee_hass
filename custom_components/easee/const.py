@@ -22,6 +22,8 @@ EASEE_ENTITIES = {
         "units": None,
         "convert_units_func": None,
         "icon": "mdi:lock",
+        "state_func": lambda state: state["lockCablePermanently"]
+        or state["cableLocked"],
         "switch_func": "lockCablePermanently",
     },
     "status": {
