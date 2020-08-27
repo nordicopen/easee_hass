@@ -214,7 +214,6 @@ EASEE_ENTITIES = {
         "units": "A",
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
-        "switch_func": "set_max_charger_current",
     },
     "voltage": {
         "key": "state.voltage",
