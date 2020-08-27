@@ -17,6 +17,9 @@ from easee import Easee
 from .const import (
     DOMAIN,
     MEASURED_CONSUMPTION_DAYS,
+    MEASURED_CONSUMPTION_OPTIONS,
+    CUSTOM_UNITS,
+    CUSTOM_UNITS_OPTIONS,
     EASEE_ENTITIES,
     CONF_MONITORED_SITES,
 )
@@ -117,9 +120,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         default=self.config_entry.options.get(
                             MEASURED_CONSUMPTION_DAYS, ["1"]
                         ),
-                    ): cv.multi_select(
-                        {"1": "1", "7": "7", "14": "14", "30": "30", "365": "365"}
-                    ),
+                    ): cv.multi_select(MEASURED_CONSUMPTION_OPTIONS),
+                    vol.Optional(
+                        CUSTOM_UNITS,
+                        default=self.config_entry.options.get(CUSTOM_UNITS, None),
+                    ): cv.multi_select(CUSTOM_UNITS_OPTIONS),
                 }
             ),
         )

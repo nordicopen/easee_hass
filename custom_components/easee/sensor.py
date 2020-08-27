@@ -12,6 +12,8 @@ from .const import (
     DOMAIN,
     MEASURED_CONSUMPTION_DAYS,
     EASEE_ENTITIES,
+    CUSTOM_UNITS,
+    CUSTOM_UNITS_TABLE,
 )
 
 import logging
@@ -24,6 +26,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     config = hass.data[DOMAIN]["config"]
     chargers_data = hass.data[DOMAIN]["chargers_data"]
     monitored_conditions = config.options.get(CONF_MONITORED_CONDITIONS, ["status"])
+    custom_units = config.options.get(CUSTOM_UNITS, {})
     entities = []
     for charger_data in chargers_data._chargers:
         for key in monitored_conditions:
@@ -37,6 +40,10 @@ async def async_setup_entry(hass, entry, async_add_entities):
                     entity_type,
                     charger_data.charger.name,
                 )
+
+                if data["units"] in custom_units:
+                    data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
+
                 entities.append(
                     ChargerSensor(
                         charger_data=charger_data,
@@ -53,11 +60,19 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 )
 
         monitored_days = config.options.get(MEASURED_CONSUMPTION_DAYS, [])
+        consumption_unit = (
+            CUSTOM_UNITS_TABLE[data["units"]]
+            if data["units"] in custom_units
+            else data["units"]
+        )
         for interval in monitored_days:
             _LOGGER.info("Will measure days: %s", interval)
             entities.append(
                 ChargerConsumptionSensor(
-                    charger_data.charger, f"consumption_days_{interval}", int(interval),
+                    charger_data.charger,
+                    f"consumption_days_{interval}",
+                    int(interval),
+                    consumption_unit,
                 )
             )
 
@@ -77,12 +92,13 @@ class ChargerSensor(ChargerEntity):
 class ChargerConsumptionSensor(Entity):
     """Implementation of Easee charger sensor."""
 
-    def __init__(self, charger, name, days):
+    def __init__(self, charger, name, days, units):
         """Initialize the sensor."""
         self.charger = charger
         self._sensor_name = name
         self._days = days
         self._state = None
+        self._units = units
 
     @property
     def name(self):
@@ -107,7 +123,7 @@ class ChargerConsumptionSensor(Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement of this entity, if any."""
-        return "kWh"
+        return self._units
 
     @property
     def available(self):
@@ -117,7 +133,7 @@ class ChargerConsumptionSensor(Entity):
     @property
     def state(self):
         """Return online status."""
-        return round_2_dec(self._state)
+        return round_2_dec(self._state, self._units)
 
     @property
     def state_attributes(self):

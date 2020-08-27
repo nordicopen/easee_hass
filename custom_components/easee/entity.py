@@ -19,8 +19,10 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 
-def round_2_dec(value):
+def round_2_dec(value, unit=None):
     """Round to two decimals."""
+    if unit == "W" or unit == "Wh":
+        value = value * 1000
     return round(value, 2)
 
 
@@ -193,7 +195,7 @@ class ChargerEntity(Entity):
                 if self._state_key.startswith("schedule"):
                     self._state = self._state_func(self.charger_data.schedule)
             if self._convert_units_func is not None:
-                self._state = self._convert_units_func(self._state)
+                self._state = self._convert_units_func(self._state, self._units)
 
         except IndexError:
             raise IndexError("Wrong key for entity: %s", self._state_key)

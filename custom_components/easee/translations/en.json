@@ -23,7 +23,8 @@
         "data": {
           "monitored_conditions": "Sensors monitored",
           "measured_consumption_days": "Consumption monitoring days",
-	  "monitored_sites": "Sites to include"   
+          "custom_units": "Custom units",
+          "monitored_sites": "Sites to include"
         }
       }
     }
