@@ -60,10 +60,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 )
 
         monitored_days = config.options.get(MEASURED_CONSUMPTION_DAYS, [])
-        consumption_unit = "kWh"
-        if consumption_unit in custom_units:
-            consumption_unit = CUSTOM_UNITS_TABLE[consumption_unit]
-
+        consumption_unit = (
+            CUSTOM_UNITS_TABLE[data["units"]]
+            if data["units"] in custom_units
+            else data["units"]
+        )
         for interval in monitored_days:
             _LOGGER.info("Will measure days: %s", interval)
             entities.append(
