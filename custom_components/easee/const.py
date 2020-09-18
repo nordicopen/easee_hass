@@ -278,7 +278,7 @@ EASEE_ENTITIES = {
         "units": "",
         "convert_units_func": None,
         "icon": "mdi:clock-check",
-        "state_func": lambda schedule: True if schedule is not None else False,
+        "state_func": lambda schedule: bool(schedule) or False,
     },
     "costPerKWh": {
         "key": "site.costPerKWh",
