@@ -17,17 +17,16 @@ from homeassistant.helpers import (
 from homeassistant.helpers.event import async_track_time_interval
 
 from .const import (
+    CONF_MONITORED_SITES,
     DOMAIN,
+    EASEE_ENTITIES,
+    LISTENER_FN_CLOSE,
     MEASURED_CONSUMPTION_DAYS,
     VERSION,
     PLATFORMS,
-    EASEE_ENTITIES,
     SCAN_INTERVAL_SECONDS,
-    CONF_MONITORED_SITES,
 )
-from .services import async_setup_services
 from .entity import ChargerData, ChargersData
-from .config_flow import EaseeConfigFlow  # noqa
 
 _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL = timedelta(seconds=SCAN_INTERVAL_SECONDS)
@@ -53,8 +52,6 @@ CONFIG_SCHEMA = vol.Schema(
 
 async def async_setup(hass: HomeAssistant, config: dict):
     """Set up the Easee integration component."""
-    if DOMAIN not in hass.data:
-        hass.data[DOMAIN] = {}
     return True
 
 
@@ -100,8 +97,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     chargers_data = ChargersData(charger_data_list, entities)
     hass.data[DOMAIN]["chargers_data"] = chargers_data
 
-    # Setup services
-    await async_setup_services(hass)
     for component in PLATFORMS:
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(entry, component)
@@ -109,8 +104,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.async_add_job(chargers_data.async_refresh)
     async_track_time_interval(hass, chargers_data.async_refresh, SCAN_INTERVAL)
 
-    # handle unsub later
-    unsub = entry.add_update_listener(config_entry_update_listener)
+    undo_listener = entry.add_update_listener(config_entry_update_listener)
+
+    hass.data[DOMAIN][entry.entry_id] = {
+        LISTENER_FN_CLOSE: undo_listener,
+    }
     return True
 
 
@@ -125,12 +123,13 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
         )
     )
     if unload_ok:
+        hass.data[DOMAIN][entry.entry_id][LISTENER_FN_CLOSE]()
         hass.data[DOMAIN] = {}
 
     return unload_ok
 
 
-async def config_entry_update_listener(hass, entry):
+async def config_entry_update_listener(hass: HomeAssistant, entry: ConfigEntry):
     """Handle options update, delete device and set it up again as suggested on discord #devs_core."""
     await hass.config_entries.async_reload(entry.entry_id)
 
