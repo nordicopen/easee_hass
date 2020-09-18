@@ -31,15 +31,20 @@ EASEE_ENTITIES = {
         "icon": "mdi:auto-fix",
         "switch_func": "smart_charging",
     },
-    "cableLocked": {
+    "cableLockedCar": {
+        "key": "state.cableLocked",
+        "attrs": ["state.lockCablePermanently", "state.cableLocked",],
+        "units": None,
+        "convert_units_func": None,
+        "icon": "mdi:lock",
+    },
+    "cablePermanentlyLockedCharger  ": {
         "type": "switch",
         "key": "state.lockCablePermanently",
         "attrs": ["state.lockCablePermanently", "state.cableLocked",],
         "units": None,
         "convert_units_func": None,
         "icon": "mdi:lock",
-        "state_func": lambda state: state["lockCablePermanently"]
-        or state["cableLocked"],
         "switch_func": "lockCablePermanently",
     },
     "status": {
