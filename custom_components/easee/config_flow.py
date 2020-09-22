@@ -1,7 +1,8 @@
-"""Config flow to configure zone component."""
-from typing import Optional
+"""Config flow to configure Easee component."""
 import logging
+from typing import List, Optional
 
+from easee import AuthorizationFailedException, Easee, Site
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -13,7 +14,7 @@ from homeassistant.helpers import (
     config_validation as cv,
 )
 
-from easee import Easee
+
 from .const import (
     DOMAIN,
     MEASURED_CONSUMPTION_DAYS,
@@ -57,9 +58,9 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
                 client_session = aiohttp_client.async_get_clientsession(self.hass)
                 easee = Easee(username, password, client_session)
                 # Check that login is possible
-                await easee.get_chargers()
+                await easee.connect()
                 return self.async_create_entry(title=username, data=user_input)
-            except Exception:
+            except AuthorizationFailedException:
                 errors["base"] = "connection_failure"
 
         return self.async_show_form(
@@ -118,12 +119,12 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Optional(
                         MEASURED_CONSUMPTION_DAYS,
                         default=self.config_entry.options.get(
-                            MEASURED_CONSUMPTION_DAYS, ["1"]
+                            MEASURED_CONSUMPTION_DAYS, []
                         ),
                     ): cv.multi_select(MEASURED_CONSUMPTION_OPTIONS),
                     vol.Optional(
                         CUSTOM_UNITS,
-                        default=self.config_entry.options.get(CUSTOM_UNITS, None),
+                        default=self.config_entry.options.get(CUSTOM_UNITS, []),
                     ): cv.multi_select(CUSTOM_UNITS_OPTIONS),
                 }
             ),
