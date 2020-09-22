@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 
 from homeassistant.const import CONF_MONITORED_CONDITIONS
 from homeassistant.helpers.entity import Entity
+from homeassistant.const import ENERGY_KILO_WATT_HOUR, ENERGY_WATT_HOUR
 from .entity import ChargerEntity, convert_units_funcs, round_2_dec
 from .const import (
     DOMAIN,
@@ -60,7 +61,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 )
 
         monitored_days = config.options.get(MEASURED_CONSUMPTION_DAYS, [])
-        consumption_unit = CUSTOM_UNITS_TABLE["kWh"] if "kWh" in custom_units else "kWh"
+        consumption_unit = (
+            CUSTOM_UNITS_TABLE[ENERGY_KILO_WATT_HOUR]
+            if ENERGY_KILO_WATT_HOUR in custom_units
+            else ENERGY_KILO_WATT_HOUR
+        )
         for interval in monitored_days:
             _LOGGER.info("Will measure days: %s", interval)
             entities.append(

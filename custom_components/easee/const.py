@@ -1,4 +1,13 @@
 """Easee Charger constants."""
+from homeassistant.const import (
+    POWER_KILO_WATT,
+    POWER_WATT,
+    ELECTRICAL_CURRENT_AMPERE,
+    ENERGY_KILO_WATT_HOUR,
+    ENERGY_WATT_HOUR,
+    VOLT,
+)
+
 DOMAIN = "easee"
 MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
 VERSION = "0.9.14"
@@ -14,12 +23,12 @@ MEASURED_CONSUMPTION_OPTIONS = {
     "365": "365",
 }
 CUSTOM_UNITS_OPTIONS = {
-    "kW": "Power kW to W",
-    "kWh": "Energy kWh to Wh",
+    POWER_KILO_WATT: f"Power {POWER_KILO_WATT} to {POWER_WATT}",
+    ENERGY_KILO_WATT_HOUR: f"Energy {ENERGY_KILO_WATT_HOUR} to {ENERGY_WATT_HOUR}",
 }
 CUSTOM_UNITS_TABLE = {
-    "kW": "W",
-    "kWh": "Wh",
+    POWER_KILO_WATT: POWER_WATT,
+    ENERGY_KILO_WATT_HOUR: ENERGY_WATT_HOUR,
 }
 EASEE_ENTITIES = {
     "smartCharging": {
@@ -41,7 +50,10 @@ EASEE_ENTITIES = {
     "cablePermanentlyLockedCharger  ": {
         "type": "switch",
         "key": "state.lockCablePermanently",
-        "attrs": ["state.lockCablePermanently", "state.cableLocked",],
+        "attrs": [
+            "state.lockCablePermanently",
+            "state.cableLocked",
+        ],
         "units": None,
         "convert_units_func": None,
         "icon": "mdi:lock",
@@ -71,21 +83,21 @@ EASEE_ENTITIES = {
     "total_power": {
         "key": "state.totalPower",
         "attrs": [],
-        "units": "kW",
+        "units": POWER_KILO_WATT,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:flash",
     },
     "session_energy": {
         "key": "state.sessionEnergy",
         "attrs": [],
-        "units": "kWh",
+        "units": ENERGY_KILO_WATT_HOUR,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:flash",
     },
     "energy_per_hour": {
         "key": "state.energyPerHour",
         "attrs": [],
-        "units": "kWh",
+        "units": ENERGY_KILO_WATT_HOUR,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:flash",
     },
@@ -99,14 +111,14 @@ EASEE_ENTITIES = {
             "state.cellRSSI",
             "state.localRSSI",
         ],
-        "units": "",
+        "units": None,
         "convert_units_func": None,
         "icon": "mdi:wifi",
     },
     "outputCurrent": {
         "key": "state.outputCurrent",
         "attrs": [],
-        "units": "A",
+        "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
     },
@@ -119,7 +131,7 @@ EASEE_ENTITIES = {
             "state.inCurrentT4",
             "state.inCurrentT5",
         ],
-        "units": "A",
+        "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
         "state_func": lambda state: float(
@@ -145,7 +157,7 @@ EASEE_ENTITIES = {
             "state.circuitTotalPhaseConductorCurrentL2",
             "state.circuitTotalPhaseConductorCurrentL3",
         ],
-        "units": "A",
+        "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
         "state_func": lambda state: float(
@@ -173,7 +185,7 @@ EASEE_ENTITIES = {
             "state.dynamicCircuitCurrentP2",
             "state.dynamicCircuitCurrentP3",
         ],
-        "units": "A",
+        "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
         "state_func": lambda state: float(
@@ -195,7 +207,7 @@ EASEE_ENTITIES = {
             "config.circuitMaxCurrentP2",
             "config.circuitMaxCurrentP3",
         ],
-        "units": "A",
+        "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
         "state_func": lambda config: float(
@@ -208,15 +220,19 @@ EASEE_ENTITIES = {
     },
     "dynamicChargerCurrent": {
         "key": "state.dynamicChargerCurrent",
-        "attrs": ["state.dynamicChargerCurrent",],
-        "units": "A",
+        "attrs": [
+            "state.dynamicChargerCurrent",
+        ],
+        "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
     },
     "maxChargerCurrent": {
         "key": "config.maxChargerCurrent",
-        "attrs": ["config.maxChargerCurrent",],
-        "units": "A",
+        "attrs": [
+            "config.maxChargerCurrent",
+        ],
+        "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
     },
@@ -234,13 +250,16 @@ EASEE_ENTITIES = {
             "state.inVoltageT3T5",
             "state.inVoltageT4T5",
         ],
-        "units": "V",
+        "units": VOLT,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
     },
     "reasonForNoCurrent": {
         "key": "state.reasonForNoCurrent",
-        "attrs": ["state.reasonForNoCurrent", "state.reasonForNoCurrent",],
+        "attrs": [
+            "state.reasonForNoCurrent",
+            "state.reasonForNoCurrent",
+        ],
         "units": "",
         "convert_units_func": None,
         "icon": "mdi:alert-circle",
@@ -249,7 +268,7 @@ EASEE_ENTITIES = {
         "type": "switch",
         "key": "config.isEnabled",
         "attrs": [],
-        "units": "",
+        "units": None,
         "convert_units_func": None,
         "icon": "mdi:power-standby",
         "switch_func": "enable_charger",
@@ -258,15 +277,18 @@ EASEE_ENTITIES = {
         "type": "switch",
         "key": "config.enableIdleCurrent",
         "attrs": [],
-        "units": "",
+        "units": None,
         "convert_units_func": None,
         "icon": "mdi:current-dc",
         "switch_func": "enable_idle_current",
     },
     "update_available": {
         "key": "state.chargerFirmware",
-        "attrs": ["state.chargerFirmware", "state.latestFirmware",],
-        "units": "",
+        "attrs": [
+            "state.chargerFirmware",
+            "state.latestFirmware",
+        ],
+        "units": None,
         "convert_units_func": None,
         "icon": "mdi:file-download",
         "state_func": lambda state: int(state["chargerFirmware"])
@@ -280,7 +302,7 @@ EASEE_ENTITIES = {
             "schedule.chargeStopTime",
             "schedule.repeat",
         ],
-        "units": "",
+        "units": None,
         "convert_units_func": None,
         "icon": "mdi:clock-check",
         "state_func": lambda schedule: True if schedule is not None else False,
@@ -294,7 +316,7 @@ EASEE_ENTITIES = {
             "site.costPerKwhExcludeVat",
             "site.currencyId",
         ],
-        "units": "",
+        "units": None,
         "convert_units_func": None,
         "icon": "mdi:currency-usd",
     },
