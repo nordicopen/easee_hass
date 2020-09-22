@@ -32,7 +32,7 @@ CUSTOM_UNITS_TABLE = {
     ENERGY_KILO_WATT_HOUR: ENERGY_WATT_HOUR,
 }
 EASEE_ENTITIES = {
-    "smartCharging": {
+    "smart_charging": {
         "type": "switch",
         "key": "state.smartCharging",
         "attrs": [],
@@ -41,14 +41,17 @@ EASEE_ENTITIES = {
         "icon": "mdi:auto-fix",
         "switch_func": "smart_charging",
     },
-    "cableLockedCar": {
+    "cable_locked_car": {
         "key": "state.cableLocked",
-        "attrs": ["state.lockCablePermanently", "state.cableLocked",],
+        "attrs": [
+            "state.lockCablePermanently",
+            "state.cableLocked",
+        ],
         "units": None,
         "convert_units_func": None,
         "icon": "mdi:lock",
     },
-    "cablePermanentlyLockedCharger  ": {
+    "cable_permanently_locked_charger  ": {
         "type": "switch",
         "key": "state.lockCablePermanently",
         "attrs": [
@@ -116,14 +119,14 @@ EASEE_ENTITIES = {
         "convert_units_func": None,
         "icon": "mdi:wifi",
     },
-    "outputCurrent": {
+    "output_current": {
         "key": "state.outputCurrent",
         "attrs": [],
         "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
     },
-    "inCurrent": {
+    "in_current": {
         "key": "state.inCurrentT2",
         "attrs": [
             "state.outputCurrent",
@@ -144,7 +147,7 @@ EASEE_ENTITIES = {
             )
         ),
     },
-    "circuitCurrent": {
+    "circuit_current": {
         "key": "state.circuitTotalPhaseConductorCurrentL1",
         "attrs": [
             "circuit.id",
@@ -175,7 +178,7 @@ EASEE_ENTITIES = {
             )
         ),
     },
-    "dynamicCircuitCurrent": {
+    "dynamic_circuit_current": {
         "key": "state.dynamicCircuitCurrentP1",
         "attrs": [
             "circuit.id",
@@ -197,7 +200,7 @@ EASEE_ENTITIES = {
             )
         ),
     },
-    "maxCircuitCurrent": {
+    "max_circuit_current": {
         "key": "config.circuitMaxCurrentP1",
         "attrs": [
             "circuit.id",
@@ -219,7 +222,7 @@ EASEE_ENTITIES = {
             )
         ),
     },
-    "dynamicChargerCurrent": {
+    "dynamic_charger_current": {
         "key": "state.dynamicChargerCurrent",
         "attrs": [
             "state.dynamicChargerCurrent",
@@ -228,7 +231,7 @@ EASEE_ENTITIES = {
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
     },
-    "maxChargerCurrent": {
+    "max_charger_current": {
         "key": "config.maxChargerCurrent",
         "attrs": [
             "config.maxChargerCurrent",
@@ -255,7 +258,7 @@ EASEE_ENTITIES = {
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
     },
-    "reasonForNoCurrent": {
+    "reason_for_no_current": {
         "key": "state.reasonForNoCurrent",
         "attrs": [
             "state.reasonForNoCurrent",
@@ -265,7 +268,7 @@ EASEE_ENTITIES = {
         "convert_units_func": None,
         "icon": "mdi:alert-circle",
     },
-    "isEnabled": {
+    "is_enabled": {
         "type": "switch",
         "key": "config.isEnabled",
         "attrs": [],
@@ -274,7 +277,7 @@ EASEE_ENTITIES = {
         "icon": "mdi:power-standby",
         "switch_func": "enable_charger",
     },
-    "enableIdleCurrent": {
+    "enable_idle_current": {
         "type": "switch",
         "key": "config.enableIdleCurrent",
         "attrs": [],
@@ -308,7 +311,7 @@ EASEE_ENTITIES = {
         "icon": "mdi:clock-check",
         "state_func": lambda schedule: bool(schedule) or False,
     },
-    "costPerKWh": {
+    "cost_per_kwh": {
         "key": "site.costPerKWh",
         "attrs": [
             "site.costPerKWh",
