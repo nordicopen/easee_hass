@@ -6,16 +6,28 @@
 
 Custom component to support Easee EV chargers.
 
-# Minimal Configuration
-
-#### Single account
-
-Add the following to your config
+The status sensor is the default sensor and has the following values
 
 ```
+STANDBY
+PAUSED
+CHARGING
+READY_TO_CHARGE
+CAR_CONNECTED
+```
+
+**_Important_**
+This component quite new and uses the (easee library)[https://github.com/fondberg/easee].
+Please help me test and preferbly suggest the fixes as a PR or technical note in an issue.
+
+## Configuration
+
+Add the following to your configuration and restart Home Assistant.
+
+```yaml
 easee:
-  username: "+46111111111"
-  password: <password>
 ```
+
+Configuration is done through in Configuration > Integrations where you first configure it and then set the options for what you want to monitor.
 
 For full configuration documentation see [README](https://github.com/fondberg/easee_hass)
