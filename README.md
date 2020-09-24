@@ -17,8 +17,7 @@ CAR_CONNECTED
 ```
 
 **_Important_**
-This component quite new and uses the (easee library)[https://github.com/fondberg/easee].
-Please help me test and preferbly suggest the fixes as a PR or technical note in an issue.
+This component is on the way to make it into HA as an official component. Help out by liking the PR -> https://github.com/home-assistant/core/pull/40162
 
 ## Installation
 
