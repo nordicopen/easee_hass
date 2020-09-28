@@ -291,7 +291,7 @@ async def async_setup_services(hass):
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
     async def charger_execute_set_access(call):
-        """Execute a service to set se cost per kwh for Easee charger site."""
+        """Execute a service to set access level on a charger"""
         charger_id = call.data.get(CHARGER_ID)
         access_level = call.data.get(ACCESS_LEVEL)
 
