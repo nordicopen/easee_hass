@@ -26,6 +26,7 @@ from .const import (
     PLATFORMS,
     SCAN_INTERVAL_SECONDS,
 )
+from .services import async_setup_services
 from .entity import ChargerData, ChargersData
 
 _LOGGER = logging.getLogger(__name__)
@@ -101,6 +102,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(entry, component)
         )
+
+    # Setup services
+    await async_setup_services(hass)
+
     hass.async_add_job(chargers_data.async_refresh)
     async_track_time_interval(hass, chargers_data.async_refresh, SCAN_INTERVAL)
 
