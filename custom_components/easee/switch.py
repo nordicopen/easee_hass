@@ -18,31 +18,32 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entities = []
     for charger_data in chargers_data._chargers:
         for key in monitored_conditions:
-            data = EASEE_ENTITIES[key]
-            entity_type = data.get("type", "sensor")
+            if key in EASEE_ENTITIES:
+                data = EASEE_ENTITIES[key]
+                entity_type = data.get("type", "sensor")
 
-            if entity_type == "switch":
-                _LOGGER.debug(
-                    "Adding entity: %s (%s) for charger %s",
-                    key,
-                    entity_type,
-                    charger_data.charger.name,
-                )
-                entities.append(
-                    ChargerSwitch(
-                        charger_data=charger_data,
-                        name=key,
-                        state_key=data["key"],
-                        units=data["units"],
-                        convert_units_func=convert_units_funcs.get(
-                            data["convert_units_func"], None
-                        ),
-                        attrs_keys=data["attrs"],
-                        icon=data["icon"],
-                        state_func=data.get("state_func", None),
-                        switch_func=data.get("switch_func", None),
+                if entity_type == "switch":
+                    _LOGGER.debug(
+                        "Adding entity: %s (%s) for charger %s",
+                        key,
+                        entity_type,
+                        charger_data.charger.name,
                     )
-                )
+                    entities.append(
+                        ChargerSwitch(
+                            charger_data=charger_data,
+                            name=key,
+                            state_key=data["key"],
+                            units=data["units"],
+                            convert_units_func=convert_units_funcs.get(
+                                data["convert_units_func"], None
+                            ),
+                            attrs_keys=data["attrs"],
+                            icon=data["icon"],
+                            state_func=data.get("state_func", None),
+                            switch_func=data.get("switch_func", None),
+                        )
+                    )
 
     chargers_data._entities.extend(entities)
     async_add_entities(entities)
