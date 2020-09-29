@@ -73,7 +73,7 @@ SERVICE_SET_SITE_CHARGING_COST_SCHEMA = vol.Schema(
 
 
 SERVICE_SET_ACCESS_SHCEMA = vol.Schema(
-    {vol.Required(CHARGER_ID): cv.string, vol.Required("access"): vol.Any(int, str)}
+    {vol.Required(CHARGER_ID): cv.string, vol.Required(ACCESS_LEVEL): vol.Any(int, str)}
 )
 
 
