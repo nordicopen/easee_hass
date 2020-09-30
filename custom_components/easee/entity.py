@@ -2,20 +2,13 @@
 Easee Charger base entity class.
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
-import asyncio
-from typing import List, Dict, Callable, Any
+from typing import Callable, Dict, List
 from datetime import datetime
-
-from easee import Charger, ChargerState, ChargerConfig, Site, Circuit
-from easee.charger import ChargerSchedule
 
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import dt
 
 from .const import DOMAIN
-
-from .controller import ChargerData
-
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -38,7 +31,7 @@ class ChargerEntity(Entity):
 
     def __init__(
         self,
-        charger_data: ChargerData,
+        charger_data,
         name: str,
         state_key: str,
         units: str,

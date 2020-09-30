@@ -1,27 +1,34 @@
 """ Easee Connector class """
 import asyncio
-from typing import List, Dict, Callable, Any
-from datetime import datetime, timedelta
+from typing import Any, List
+from datetime import timedelta
 
 from easee import Easee, Charger, ChargerState, ChargerConfig, Site, Circuit
+from easee.charger import ChargerSchedule
 
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.entity import Entity
-from homeassistant.util import dt
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.const import (
+    CONF_MONITORED_CONDITIONS,
+    ENERGY_KILO_WATT_HOUR,
+)
 
 from .const import (
     CONF_MONITORED_SITES,
     DOMAIN,
     EASEE_ENTITIES,
-    LISTENER_FN_CLOSE,
     MEASURED_CONSUMPTION_DAYS,
-    VERSION,
-    PLATFORMS,
     SCAN_INTERVAL_SECONDS,
+    CUSTOM_UNITS,
+    CUSTOM_UNITS_TABLE,
 )
+
+from .sensor import ChargerSensor, ChargerConsumptionSensor
+from .switch import ChargerSwitch
+
+from .entity import convert_units_funcs
 
 import logging
 
@@ -94,11 +101,9 @@ class Controller:
         entities = []
         charger_data_list = []
 
-        all_sites = []
-        for site in self.sites:
-            all_sites.append(site["name"])
-
-        monitored_sites = self.config.options.get(CONF_MONITORED_SITES, all_sites)
+        monitored_sites = self.config.options.get(
+            CONF_MONITORED_SITES, [site["name"] for site in self.sites]
+        )
 
         for site in self.sites:
             if not site["name"] in monitored_sites:
@@ -118,6 +123,7 @@ class Controller:
 
         self.chargers_data = ChargersData(charger_data_list, entities)
 
+        self.hass.data[DOMAIN]["sites"] = self.sites
         self.hass.data[DOMAIN]["chargers_data"] = self.chargers_data
         self.hass.data[DOMAIN]["chargers"] = self.chargers
         self.hass.data[DOMAIN]["circuits"] = self.circuits
@@ -125,7 +131,101 @@ class Controller:
         self.hass.data[DOMAIN]["chargers"] = self.chargers
         self.hass.data[DOMAIN]["circuits"] = self.circuits
 
+    async def add_schedulers(self):
         self.hass.async_add_job(self.chargers_data.async_refresh)
         async_track_time_interval(
             self.hass, self.chargers_data.async_refresh, SCAN_INTERVAL
         )
+
+    async def get_sensor_entities(self):
+        config = self.hass.data[DOMAIN]["config"]
+        chargers_data = self.hass.data[DOMAIN]["chargers_data"]
+        monitored_conditions = config.options.get(CONF_MONITORED_CONDITIONS, ["status"])
+        custom_units = config.options.get(CUSTOM_UNITS, {})
+        entities = []
+        for charger_data in chargers_data._chargers:
+            for key in monitored_conditions:
+                data = EASEE_ENTITIES[key]
+                entity_type = data.get("type", "sensor")
+
+                if entity_type == "sensor":
+                    _LOGGER.debug(
+                        "Adding entity: %s (%s) for charger %s",
+                        key,
+                        entity_type,
+                        charger_data.charger.name,
+                    )
+
+                    if data["units"] in custom_units:
+                        data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
+
+                    entities.append(
+                        ChargerSensor(
+                            charger_data=charger_data,
+                            name=key,
+                            state_key=data["key"],
+                            units=data["units"],
+                            convert_units_func=convert_units_funcs.get(
+                                data["convert_units_func"], None
+                            ),
+                            attrs_keys=data["attrs"],
+                            icon=data["icon"],
+                            state_func=data.get("state_func", None),
+                        )
+                    )
+
+            monitored_days = config.options.get(MEASURED_CONSUMPTION_DAYS, [])
+            consumption_unit = (
+                CUSTOM_UNITS_TABLE[ENERGY_KILO_WATT_HOUR]
+                if ENERGY_KILO_WATT_HOUR in custom_units
+                else ENERGY_KILO_WATT_HOUR
+            )
+            for interval in monitored_days:
+                _LOGGER.info("Will measure days: %s", interval)
+                entities.append(
+                    ChargerConsumptionSensor(
+                        charger_data.charger,
+                        f"consumption_days_{interval}",
+                        int(interval),
+                        consumption_unit,
+                    )
+                )
+
+        chargers_data._entities.extend(entities)
+        return entities
+
+    async def get_switch_entities(self):
+        config = self.hass.data[DOMAIN]["config"]
+        chargers_data = self.hass.data[DOMAIN]["chargers_data"]
+        monitored_conditions = config.options.get(CONF_MONITORED_CONDITIONS, ["status"])
+        entities = []
+        for charger_data in chargers_data._chargers:
+            for key in monitored_conditions:
+                data = EASEE_ENTITIES[key]
+                entity_type = data.get("type", "sensor")
+
+                if entity_type == "switch":
+                    _LOGGER.debug(
+                        "Adding entity: %s (%s) for charger %s",
+                        key,
+                        entity_type,
+                        charger_data.charger.name,
+                    )
+                    entities.append(
+                        ChargerSwitch(
+                            charger_data=charger_data,
+                            name=key,
+                            state_key=data["key"],
+                            units=data["units"],
+                            convert_units_func=convert_units_funcs.get(
+                                data["convert_units_func"], None
+                            ),
+                            attrs_keys=data["attrs"],
+                            icon=data["icon"],
+                            state_func=data.get("state_func", None),
+                            switch_func=data.get("switch_func", None),
+                        )
+                    )
+
+        chargers_data._entities.extend(entities)
+        return entities

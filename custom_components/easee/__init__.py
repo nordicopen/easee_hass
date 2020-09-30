@@ -1,30 +1,23 @@
 """Easee charger component."""
 import asyncio
 import logging
-from typing import List
-from datetime import timedelta
-from easee import Easee, Site
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_MONITORED_CONDITIONS
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import (
-    aiohttp_client,
     config_validation as cv,
     device_registry,
 )
-from homeassistant.helpers.event import async_track_time_interval
 
 from .const import (
-    CONF_MONITORED_SITES,
     DOMAIN,
     EASEE_ENTITIES,
     LISTENER_FN_CLOSE,
     MEASURED_CONSUMPTION_DAYS,
     VERSION,
     PLATFORMS,
-    SCAN_INTERVAL_SECONDS,
 )
 from .services import async_setup_services
 from .controller import Controller
@@ -80,6 +73,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN][entry.entry_id] = {
         LISTENER_FN_CLOSE: undo_listener,
     }
+
+    await controller.add_schedulers()
     return True
 
 

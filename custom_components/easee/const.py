@@ -43,10 +43,7 @@ EASEE_ENTITIES = {
     },
     "cable_locked_car": {
         "key": "state.cableLocked",
-        "attrs": [
-            "state.lockCablePermanently",
-            "state.cableLocked",
-        ],
+        "attrs": ["state.lockCablePermanently", "state.cableLocked",],
         "units": None,
         "convert_units_func": None,
         "icon": "mdi:lock",
@@ -54,10 +51,7 @@ EASEE_ENTITIES = {
     "cable_permanently_locked_charger  ": {
         "type": "switch",
         "key": "state.lockCablePermanently",
-        "attrs": [
-            "state.lockCablePermanently",
-            "state.cableLocked",
-        ],
+        "attrs": ["state.lockCablePermanently", "state.cableLocked",],
         "units": None,
         "convert_units_func": None,
         "icon": "mdi:lock",
@@ -224,18 +218,14 @@ EASEE_ENTITIES = {
     },
     "dynamic_charger_current": {
         "key": "state.dynamicChargerCurrent",
-        "attrs": [
-            "state.dynamicChargerCurrent",
-        ],
+        "attrs": ["state.dynamicChargerCurrent",],
         "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
     },
     "max_charger_current": {
         "key": "config.maxChargerCurrent",
-        "attrs": [
-            "config.maxChargerCurrent",
-        ],
+        "attrs": ["config.maxChargerCurrent",],
         "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_2_dec",
         "icon": "mdi:sine-wave",
@@ -260,10 +250,7 @@ EASEE_ENTITIES = {
     },
     "reason_for_no_current": {
         "key": "state.reasonForNoCurrent",
-        "attrs": [
-            "state.reasonForNoCurrent",
-            "state.reasonForNoCurrent",
-        ],
+        "attrs": ["state.reasonForNoCurrent", "state.reasonForNoCurrent",],
         "units": "",
         "convert_units_func": None,
         "icon": "mdi:alert-circle",
@@ -288,10 +275,7 @@ EASEE_ENTITIES = {
     },
     "update_available": {
         "key": "state.chargerFirmware",
-        "attrs": [
-            "state.chargerFirmware",
-            "state.latestFirmware",
-        ],
+        "attrs": ["state.chargerFirmware", "state.latestFirmware",],
         "units": None,
         "convert_units_func": None,
         "icon": "mdi:file-download",
