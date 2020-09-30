@@ -46,20 +46,20 @@ async def async_setup_entry(hass, entry, async_add_entities):
                     if data["units"] in custom_units:
                         data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
 
-                        entities.append(
-                            ChargerSensor(
-                                charger_data=charger_data,
-                                name=key,
-                                state_key=data["key"],
-                                units=data["units"],
-                                convert_units_func=convert_units_funcs.get(
-                                    data["convert_units_func"], None
-                                ),
-                                attrs_keys=data["attrs"],
-                                icon=data["icon"],
-                                state_func=data.get("state_func", None),
-                            )
+                    entities.append(
+                        ChargerSensor(
+                            charger_data=charger_data,
+                            name=key,
+                            state_key=data["key"],
+                            units=data["units"],
+                            convert_units_func=convert_units_funcs.get(
+                                data["convert_units_func"], None
+                            ),
+                            attrs_keys=data["attrs"],
+                            icon=data["icon"],
+                            state_func=data.get("state_func", None),
                         )
+                    )
 
         monitored_days = config.options.get(MEASURED_CONSUMPTION_DAYS, [])
         consumption_unit = (
