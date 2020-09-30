@@ -14,7 +14,6 @@ VERSION = "0.9.15"
 CONF_MONITORED_SITES = "monitored_sites"
 CUSTOM_UNITS = "custom_units"
 PLATFORMS = ("sensor", "switch")
-SCAN_INTERVAL_SECONDS = 60
 LISTENER_FN_CLOSE = "update_listener_close_fn"
 MEASURED_CONSUMPTION_OPTIONS = {
     "1": "1",

@@ -20,7 +20,6 @@ from .const import (
     DOMAIN,
     EASEE_ENTITIES,
     MEASURED_CONSUMPTION_DAYS,
-    SCAN_INTERVAL_SECONDS,
     CUSTOM_UNITS,
     CUSTOM_UNITS_TABLE,
 )
@@ -34,7 +33,7 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL = timedelta(seconds=SCAN_INTERVAL_SECONDS)
+SCAN_INTERVAL_SECONDS = 60
 
 
 class ChargerData:
@@ -134,7 +133,9 @@ class Controller:
     async def add_schedulers(self):
         self.hass.async_add_job(self.chargers_data.async_refresh)
         async_track_time_interval(
-            self.hass, self.chargers_data.async_refresh, SCAN_INTERVAL
+            self.hass,
+            self.chargers_data.async_refresh,
+            timedelta(seconds=SCAN_INTERVAL_SECONDS),
         )
 
     async def get_sensor_entities(self):

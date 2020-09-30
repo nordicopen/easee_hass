@@ -14,6 +14,8 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
+SCAN_INTERVAL = timedelta(minutes=15)
+
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Setup sensor platform."""
