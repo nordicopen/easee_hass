@@ -94,8 +94,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             self.options.update(user_input)
             return await self._update_options()
 
+        constroller = self.hass.data[DOMAIN]["controller"]
         sensor_multi_select = {x: x for x in list(EASEE_ENTITIES)}
-        sites: List[Site] = self.hass.data[DOMAIN]["sites"]
+        sites: List[Site] = constroller.get_sites()
         sites_multi_select = []
         for site in sites:
             sites_multi_select.append(site["name"])

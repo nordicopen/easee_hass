@@ -12,7 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass, entry, async_add_entities):
     """Setup switch platform."""
     controller = hass.data[DOMAIN]["controller"]
-    entities = await controller.get_switch_entities()
+    entities = controller.get_switch_entities()
     async_add_entities(entities)
 
 

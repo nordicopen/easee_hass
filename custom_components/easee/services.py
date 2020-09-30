@@ -165,8 +165,9 @@ SERVICE_MAP = {
 
 async def async_setup_services(hass):
     """Setup services for Easee."""
-    chargers = hass.data[DOMAIN]["chargers"]
-    circuits = hass.data[DOMAIN]["circuits"]
+    controller = hass.data[DOMAIN]["controller"]
+    chargers = controller.get_chargers()
+    circuits = controller.get_circuits()
 
     async def charger_execute_service(call):
         """Execute a service to Easee charging station."""

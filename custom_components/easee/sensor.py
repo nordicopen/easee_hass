@@ -20,7 +20,7 @@ SCAN_INTERVAL = timedelta(minutes=15)
 async def async_setup_entry(hass, entry, async_add_entities):
     """Setup sensor platform."""
     controller = hass.data[DOMAIN]["controller"]
-    entities = await controller.get_sensor_entities()
+    entities = controller.get_sensor_entities()
 
     async_add_entities(entities)
 
