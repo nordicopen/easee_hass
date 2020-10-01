@@ -1,9 +1,10 @@
 """ Easee Connector class """
 import asyncio
-from typing import Any, List
+from typing import List
 from datetime import timedelta
 
 from easee import Easee, Charger, ChargerState, ChargerConfig, Site, Circuit
+from easee.exceptions import NotFoundException
 from easee.charger import ChargerSchedule
 
 from homeassistant.core import HomeAssistant
@@ -32,8 +33,8 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL_OFTEN_SECONDS = 60
-SCAN_INTERVAL_SELDOM_SECONDS = 600
+SCAN_INTERVAL_STATE_SECONDS = 60
+SCAN_INTERVAL_SCHEDULES_SECONDS = 600
 
 
 class ChargerData:
@@ -48,43 +49,13 @@ class ChargerData:
         self.config: List[ChargerConfig] = []
         self.schedule: List[ChargerSchedule] = []
 
-    async def state_async_refresh(self):
-        self.state = await self.charger.get_state()
+    async def schedules_async_refresh(self):
+        try:
+            self.schedule = await self.charger.get_basic_charge_plan()
+        except NotFoundException:
+            self.schedule = None
 
-    async def config_async_refresh(self):
-        self.config = await self.charger.get_config()
-        self.schedule = await self.charger.get_basic_charge_plan()
         _LOGGER.debug("Schedule: %s", self.schedule)
-
-
-class ChargersData:
-    """Representation chargers data."""
-
-    def __init__(self, chargers: List[ChargerData], entities: List[Any]):
-        """Initialize the chargers data."""
-        self._chargers = chargers
-        self._entities = entities
-
-    def update_ha_state(self):
-        # Schedule an update for all included entities
-        for entity in self._entities:
-            entity.async_schedule_update_ha_state(True)
-
-    async def state_async_refresh(self, update_ha_state=True):
-        """Fetch state. """
-        tasks = [charger.state_async_refresh() for charger in self._chargers]
-        if tasks:
-            await asyncio.wait(tasks)
-        if update_ha_state:
-            self.update_ha_state()
-
-    async def config_async_refresh(self, update_ha_state=True):
-        """Fetch config and schedules data."""
-        tasks = [charger.config_async_refresh() for charger in self._chargers]
-        if tasks:
-            await asyncio.wait(tasks)
-        if update_ha_state:
-            self.update_ha_state()
 
 
 class Controller:
@@ -97,21 +68,21 @@ class Controller:
         self.password = password
         self.hass = hass
         self.config = entry
-        self.session: Easee = None
+        self.easee: Easee = None
         self.sites: List[Site] = []
         self.circuits: List[Circuit] = []
         self.chargers: List[Charger] = []
-        self.chargers_data: ChargersData = None
+        self.chargers_data: List[ChargerData] = []
+        self.switch_entities = []
+        self.sensor_entities = []
 
     async def initialize(self):
         """ initialize the session and get initial data """
         client_session = aiohttp_client.async_get_clientsession(self.hass)
         self.easee = Easee(self.username, self.password, client_session)
+        await self.easee.connect()
 
         self.sites: List[Site] = await self.easee.get_sites()
-
-        entities = []
-        charger_data_list = []
 
         monitored_sites = self.config.options.get(
             CONF_MONITORED_SITES, [site["name"] for site in self.sites]
@@ -131,33 +102,70 @@ class Controller:
                         _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
                         self.chargers.append(charger)
                         charger_data = ChargerData(charger, circuit, site)
-                        charger_data_list.append(charger_data)
-
-        self.chargers_data = ChargersData(charger_data_list, entities)
+                        self.chargers_data.append(charger_data)
 
         self._create_entitites()
 
-    async def _first_update(self):
-        await self.chargers_data.state_async_refresh(update_ha_state=False)
-        await self.chargers_data.config_async_refresh(update_ha_state=True)
+    def update_ha_state(self):
+        # Schedule an update for all included entities
+        all_entities = (
+            self.switch_entities
+            + self.sensor_entities
+            + self.consumption_sensor_entities
+        )
+
+        for entity in all_entities:
+            entity.async_schedule_update_ha_state(True)
 
     async def add_schedulers(self):
+        """ Add schedules to udpate data """
         # first update
-        self.hass.async_add_job(self._first_update)
+        self.hass.async_add_job(self.refresh_schedules)
+        self.hass.async_add_job(self.refresh_sites_state)
 
-        # Add interval refresh for often interval
+        # Add interval refresh for site state interval
         async_track_time_interval(
             self.hass,
-            self.chargers_data.state_async_refresh,
-            timedelta(seconds=SCAN_INTERVAL_OFTEN_SECONDS),
+            self.refresh_sites_state,
+            timedelta(seconds=SCAN_INTERVAL_STATE_SECONDS),
         )
 
-        # Add interval refresh for seldom interval
+        # Add interval refresh for schedules interval
         async_track_time_interval(
             self.hass,
-            self.chargers_data.config_async_refresh,
-            timedelta(seconds=SCAN_INTERVAL_SELDOM_SECONDS),
+            self.refresh_schedules,
+            timedelta(seconds=SCAN_INTERVAL_SCHEDULES_SECONDS),
         )
+
+    async def refresh_schedules(self, now=None):
+        """ Refreshes the charging schedules data """
+        tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
+        if tasks:
+            await asyncio.wait(tasks)
+        self.update_ha_state()
+
+    async def refresh_sites_state(self, now=None):
+        """ gets site state for all sites and updates the chargers state and config """
+        sites_state = {}
+
+        for site in self.get_sites():
+            _LOGGER.debug("Getting state for site %s", site.id)
+            sites_state[site.id] = await self.easee.get_site_state(site.id)
+
+        for charger_data in self.chargers_data:
+            if charger_data.site.id not in sites_state:
+                _LOGGER.error(
+                    "Site %s from charger not found in site states",
+                    charger_data.state.id,
+                )
+                continue
+            charger_id = charger_data.charger.id
+            site_state = sites_state[charger_data.site.id]
+
+            charger_data.state = site_state.get_charger_state(charger_id)
+            charger_data.config = site_state.get_charger_config(charger_id)
+
+        self.update_ha_state()
 
     def get_sites(self):
         return self.sites
@@ -175,16 +183,15 @@ class Controller:
         return self.switch_entities
 
     def _create_entitites(self):
-        chargers_data = self.chargers_data
         monitored_conditions = self.config.options.get(
             CONF_MONITORED_CONDITIONS, ["status"]
         )
         custom_units = self.config.options.get(CUSTOM_UNITS, {})
-        sensor_entities = []
-        switch_entities = []
-        consumption_sensor_entities = []
+        self.sensor_entities = []
+        self.switch_entities = []
+        self.consumption_sensor_entities = []
 
-        for charger_data in chargers_data._chargers:
+        for charger_data in self.chargers_data:
             for key in monitored_conditions:
                 data = EASEE_ENTITIES[key]
                 entity_type = data.get("type", "sensor")
@@ -200,7 +207,7 @@ class Controller:
                     if data["units"] in custom_units:
                         data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
 
-                    sensor_entities.append(
+                    self.sensor_entities.append(
                         ChargerSensor(
                             charger_data=charger_data,
                             name=key,
@@ -221,7 +228,7 @@ class Controller:
                         entity_type,
                         charger_data.charger.name,
                     )
-                    switch_entities.append(
+                    self.switch_entities.append(
                         ChargerSwitch(
                             charger_data=charger_data,
                             name=key,
@@ -246,7 +253,7 @@ class Controller:
             )
             for interval in monitored_days:
                 _LOGGER.info("Will measure days: %s", interval)
-                consumption_sensor_entities.append(
+                self.consumption_sensor_entities.append(
                     ChargerConsumptionSensor(
                         charger_data.charger,
                         f"consumption_days_{interval}",
@@ -254,13 +261,3 @@ class Controller:
                         consumption_unit,
                     )
                 )
-
-        self.sensor_entities = sensor_entities
-        self.consumption_sensor_entities = consumption_sensor_entities
-        self.switch_entities = switch_entities
-
-        chargers_data._entities.extend(sensor_entities)
-        chargers_data._entities.extend(switch_entities)
-
-        # this should not be polled by our refresh but it seems the update it slow so need to check it
-        # chargers_data._entities.extend(consumption_sensor_entities)
