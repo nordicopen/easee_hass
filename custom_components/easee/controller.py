@@ -32,7 +32,8 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL_SECONDS = 60
+SCAN_INTERVAL_OFTEN_SECONDS = 60
+SCAN_INTERVAL_SELDOM_SECONDS = 600
 
 
 class ChargerData:
@@ -47,8 +48,10 @@ class ChargerData:
         self.config: List[ChargerConfig] = []
         self.schedule: List[ChargerSchedule] = []
 
-    async def async_refresh(self, now=None):
+    async def state_async_refresh(self):
         self.state = await self.charger.get_state()
+
+    async def config_async_refresh(self):
         self.config = await self.charger.get_config()
         self.schedule = await self.charger.get_basic_charge_plan()
         _LOGGER.debug("Schedule: %s", self.schedule)
@@ -62,15 +65,26 @@ class ChargersData:
         self._chargers = chargers
         self._entities = entities
 
-    async def async_refresh(self, now=None):
-        """Fetch new state data for the entities."""
-        tasks = [charger.async_refresh() for charger in self._chargers]
-        if tasks:
-            await asyncio.wait(tasks)
-
+    def update_ha_state(self):
         # Schedule an update for all included entities
         for entity in self._entities:
             entity.async_schedule_update_ha_state(True)
+
+    async def state_async_refresh(self, update_ha_state=True):
+        """Fetch state. """
+        tasks = [charger.state_async_refresh() for charger in self._chargers]
+        if tasks:
+            await asyncio.wait(tasks)
+        if update_ha_state:
+            self.update_ha_state()
+
+    async def config_async_refresh(self, update_ha_state=True):
+        """Fetch config and schedules data."""
+        tasks = [charger.config_async_refresh() for charger in self._chargers]
+        if tasks:
+            await asyncio.wait(tasks)
+        if update_ha_state:
+            self.update_ha_state()
 
 
 class Controller:
@@ -123,15 +137,26 @@ class Controller:
 
         self._create_entitites()
 
+    async def _first_update(self):
+        await self.chargers_data.state_async_refresh(update_ha_state=False)
+        await self.chargers_data.config_async_refresh(update_ha_state=True)
+
     async def add_schedulers(self):
         # first update
-        self.hass.async_add_job(self.chargers_data.async_refresh)
+        self.hass.async_add_job(self._first_update)
 
-        # Add interval refresh for chargers
+        # Add interval refresh for often interval
         async_track_time_interval(
             self.hass,
-            self.chargers_data.async_refresh,
-            timedelta(seconds=SCAN_INTERVAL_SECONDS),
+            self.chargers_data.state_async_refresh,
+            timedelta(seconds=SCAN_INTERVAL_OFTEN_SECONDS),
+        )
+
+        # Add interval refresh for seldom interval
+        async_track_time_interval(
+            self.hass,
+            self.chargers_data.config_async_refresh,
+            timedelta(seconds=SCAN_INTERVAL_SELDOM_SECONDS),
         )
 
     def get_sites(self):
