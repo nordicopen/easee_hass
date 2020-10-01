@@ -193,6 +193,9 @@ class Controller:
 
         for charger_data in self.chargers_data:
             for key in monitored_conditions:
+                # Fix renamed entities previously configured
+                if key not in EASEE_ENTITIES:
+                    continue
                 data = EASEE_ENTITIES[key]
                 entity_type = data.get("type", "sensor")
 
