@@ -1,14 +1,16 @@
 """ easee services."""
-import voluptuous as vol
 import logging
-from homeassistant.helpers import config_validation as cv
+
+import voluptuous as vol
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers import config_validation as cv
 from homeassistant.util import dt
 
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
+ACCESS_LEVEL = "access_level"
 CHARGER_ID = "charger_id"
 CIRCUIT_ID = "circuit_id"
 ATTR_CHARGEPLAN_START_DATETIME = "start_datetime"
@@ -23,7 +25,7 @@ ATTR_COST_CURRENCY = "currency_id"
 ATTR_COST_VAT = "vat"
 
 SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
-    {vol.Optional(CHARGER_ID): cv.string,}
+    {vol.Optional(CHARGER_ID): cv.string}
 )
 
 SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
@@ -68,6 +70,12 @@ SERVICE_SET_SITE_CHARGING_COST_SCHEMA = vol.Schema(
         vol.Optional(ATTR_COST_VAT): vol.All(vol.Coerce(float)),
     }
 )
+
+
+SERVICE_SET_ACCESS_SHCEMA = vol.Schema(
+    {vol.Required(CHARGER_ID): cv.string, vol.Required(ACCESS_LEVEL): vol.Any(int, str)}
+)
+
 
 SERVICE_MAP = {
     "start": {
@@ -160,6 +168,11 @@ SERVICE_MAP = {
         "function_call": "set_price",
         "schema": SERVICE_SET_SITE_CHARGING_COST_SCHEMA,
     },
+    "set_charger_access": {
+        "handler": "charger_execute_set_access",
+        "function_call": "set_access",
+        "schema": SERVICE_SET_ACCESS_SHCEMA,
+    },
 }
 
 
@@ -182,15 +195,15 @@ async def async_setup_services(hass):
             function_call = getattr(charger, function_name["function_call"])
             return await function_call()
 
-        _LOGGER.error(
-            "Could not find charger %s", charger_id,
-        )
+        _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
     async def charger_set_schedule(call):
         """Execute a set schedule call to Easee charging station."""
         charger_id = call.data.get(CHARGER_ID)
-        schedule_id = charger_id  # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
+        schedule_id = (
+            charger_id
+        )  # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
         start_datetime = call.data.get(ATTR_CHARGEPLAN_START_DATETIME)
         stop_datetime = call.data.get(ATTR_CHARGEPLAN_STOP_DATETIME)
         repeat = call.data.get(ATTR_CHARGEPLAN_REPEAT)
@@ -202,15 +215,10 @@ async def async_setup_services(hass):
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
             return await function_call(
-                schedule_id,
-                dt.as_utc(start_datetime),
-                dt.as_utc(stop_datetime),
-                repeat,
+                schedule_id, dt.as_utc(start_datetime), dt.as_utc(stop_datetime), repeat
             )
 
-        _LOGGER.error(
-            "Could not find charger %s", charger_id,
-        )
+        _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
     async def circuit_execute_set_current(call):
@@ -228,9 +236,7 @@ async def async_setup_services(hass):
             function_call = getattr(circuit, function_name["function_call"])
             return await function_call(currentP1, currentP2, currentP3)
 
-        _LOGGER.error(
-            "Could not find circuit %s", circuit_id,
-        )
+        _LOGGER.error("Could not find circuit %s", circuit_id)
         raise HomeAssistantError("Could not find circuit {}".format(circuit_id))
 
     async def charger_execute_set_circuit_current(call):
@@ -248,9 +254,7 @@ async def async_setup_services(hass):
             function_call = getattr(charger, function_name["function_call"])
             return await function_call(currentP1, currentP2, currentP3)
 
-        _LOGGER.error(
-            "Could not find charger %s", charger_id,
-        )
+        _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
     async def charger_execute_set_current(call):
@@ -266,9 +270,7 @@ async def async_setup_services(hass):
             function_call = getattr(charger, function_name["function_call"])
             return await function_call(current)
 
-        _LOGGER.error(
-            "Could not find charger %s", charger_id,
-        )
+        _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
     async def charger_execute_set_charging_cost(call):
@@ -286,14 +288,23 @@ async def async_setup_services(hass):
             function_call = getattr(charger.site, function_name["function_call"])
             return await function_call(cost_per_kwh, vat, currency)
 
-        _LOGGER.error(
-            "Could not find charger %s", charger_id,
-        )
+        _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
+
+    async def charger_execute_set_access(call):
+        """Execute a service to set access level on a charger"""
+        charger_id = call.data.get(CHARGER_ID)
+        access_level = call.data.get(ACCESS_LEVEL)
+
+        _LOGGER.debug("execute_service:" + str(call.data))
+
+        charger = next((c for c in chargers if c.id == charger_id), None)
+        if charger:
+            function_name = SERVICE_MAP[call.service]
+            function_call = getattr(charger, function_name["function_call"])
+            return await function_call(access_level)
 
     for service in SERVICE_MAP:
         data = SERVICE_MAP[service]
         handler = locals()[data["handler"]]
-        hass.services.async_register(
-            DOMAIN, service, handler, schema=data["schema"],
-        )
+        hass.services.async_register(DOMAIN, service, handler, schema=data["schema"])
