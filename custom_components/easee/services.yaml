@@ -183,3 +183,14 @@ set_charging_cost:
     currency_id:
       description: "Currency"
       example: "EUR"
+
+set_charger_access:
+  description: Set access level on the charger
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+    access_level:
+      description: "1: Open for all, 2: Require easee account, 3: whitelist"
+      example: 1
+
