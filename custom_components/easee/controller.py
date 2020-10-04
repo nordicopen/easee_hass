@@ -14,6 +14,7 @@ from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.const import (
     CONF_MONITORED_CONDITIONS,
     ENERGY_KILO_WATT_HOUR,
+    POWER_KILO_WATT
 )
 
 from .const import (
@@ -24,7 +25,7 @@ from .const import (
     CUSTOM_UNITS_TABLE,
 )
 
-from .sensor import ChargerSensor, ChargerConsumptionSensor
+from .sensor import ChargerSensor, ChargerConsumptionSensor, EqualizerSensor
 from .switch import ChargerSwitch
 
 from .entity import convert_units_funcs
@@ -73,8 +74,10 @@ class Controller:
         self.circuits: List[Circuit] = []
         self.chargers: List[Charger] = []
         self.chargers_data: List[ChargerData] = []
+        self.equalizers: List[Equalizer] = []
         self.switch_entities = []
         self.sensor_entities = []
+        self.equalizer_entities = []
 
     async def initialize(self):
         """ initialize the session and get initial data """
@@ -84,15 +87,20 @@ class Controller:
 
         self.sites: List[Site] = await self.easee.get_sites()
 
-        monitored_sites = self.config.options.get(
+        self.monitored_sites = self.config.options.get(
             CONF_MONITORED_SITES, [site["name"] for site in self.sites]
         )
 
         for site in self.sites:
-            if not site["name"] in monitored_sites:
+            if not site["name"] in self.monitored_sites:
                 _LOGGER.debug("Found site (unmonitored): %s %s", site.id, site["name"])
             else:
                 _LOGGER.debug("Found site (monitored): %s %s", site.id, site["name"])
+                for equalizer in site.get_equalizers():
+                    _LOGGER.debug(
+                        "Found equalizer: %s %s", equalizer.id, equalizer["name"]
+                    )
+                    self.equalizers.append(equalizer)
                 for circuit in site.get_circuits():
                     _LOGGER.debug(
                         "Found circuit: %s %s", circuit.id, circuit["panelName"]
@@ -112,6 +120,7 @@ class Controller:
             self.switch_entities
             + self.sensor_entities
             + self.consumption_sensor_entities
+            + self.equalizer_entities
         )
 
         for entity in all_entities:
@@ -149,8 +158,9 @@ class Controller:
         sites_state = {}
 
         for site in self.get_sites():
-            _LOGGER.debug("Getting state for site %s", site.id)
-            sites_state[site.id] = await self.easee.get_site_state(site.id)
+            if site["name"] in self.monitored_sites:
+                _LOGGER.debug("Getting state for site %s", site.id)
+                sites_state[site.id] = await self.easee.get_site_state(site.id)
 
         for charger_data in self.chargers_data:
             if charger_data.site.id not in sites_state:
@@ -177,7 +187,7 @@ class Controller:
         return self.circuits
 
     def get_sensor_entities(self):
-        return self.sensor_entities + self.consumption_sensor_entities
+        return self.sensor_entities + self.consumption_sensor_entities + self.equalizer_entities
 
     def get_switch_entities(self):
         return self.switch_entities
@@ -190,6 +200,7 @@ class Controller:
         self.sensor_entities = []
         self.switch_entities = []
         self.consumption_sensor_entities = []
+        self.equalizer_sensor_entities = []
 
         for charger_data in self.chargers_data:
             for key in monitored_conditions:
@@ -264,3 +275,21 @@ class Controller:
                         consumption_unit,
                     )
                 )
+
+        power_unit = (
+            CUSTOM_UNITS_TABLE[POWER_KILO_WATT]
+            if POWER_KILO_WATT in custom_units
+            else POWER_KILO_WATT
+        )
+        for equalizer in self.equalizers:
+            _LOGGER.debug(
+                "Adding sensor entity: power (sensor) for equalizer %s",
+                equalizer.id,
+            )
+            self.equalizer_entities.append(
+                EqualizerSensor(
+                    equalizer,
+                    f"power",
+                    power_unit,
+                )
+            )
