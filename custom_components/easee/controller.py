@@ -144,7 +144,9 @@ class Controller:
     async def add_schedulers(self):
         """ Add schedules to udpate data """
         # first update
-        self.hass.async_add_job(self.refresh_schedules)
+        tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
+        if tasks:
+            await asyncio.wait(tasks)
         self.hass.async_add_job(self.refresh_sites_state)
 
         # Add interval refresh for site state interval
