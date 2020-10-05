@@ -86,12 +86,17 @@ class ChargerConsumptionSensor(Entity):
         return {
             "name": self.charger.name,
             "id": self.charger.id,
-         }
+        }
 
     @property
     def icon(self):
         """Icon to use in the frontend, if any."""
         return "mdi:flash"
+
+    @property
+    def should_poll(self):
+        """No polling needed."""
+        return False
 
     async def async_update(self):
         """Get the latest data and update the state."""
@@ -104,6 +109,7 @@ class ChargerConsumptionSensor(Entity):
         self._state = await self.charger.get_consumption_between_dates(
             now - timedelta(0, 86400 * self._days), now
         )
+
 
 class EqualizerSensor(Entity):
     """Implementation of Easee equalizer sensor."""
@@ -185,17 +191,18 @@ class EqualizerSensor(Entity):
         """Icon to use in the frontend, if any."""
         return "mdi:flash"
 
+    @property
+    def should_poll(self):
+        """No polling needed."""
+        return False
+
     async def async_update(self):
         """Get the latest data and update the state."""
         _LOGGER.debug(
-            "Equalizer async_update : %s %s",
-            self.equalizer["name"],
-            self._sensor_name,
+            "Equalizer async_update : %s %s", self.equalizer["name"], self._sensor_name,
         )
         self.data = await self.equalizer.get_state()
         self._state = self.data["activePowerImport"]
         _LOGGER.debug(
-            "Equalizer state : %s",
-            self._state,
+            "Equalizer state : %s", self._state,
         )
-        

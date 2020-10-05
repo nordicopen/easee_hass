@@ -3,7 +3,7 @@ import asyncio
 from typing import List
 from datetime import timedelta
 
-from easee import Easee, Charger, ChargerState, ChargerConfig, Site, Circuit
+from easee import Easee, Charger, ChargerState, ChargerConfig, Equalizer, Site, Circuit
 from easee.exceptions import NotFoundException
 from easee.charger import ChargerSchedule
 
@@ -14,7 +14,7 @@ from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.const import (
     CONF_MONITORED_CONDITIONS,
     ENERGY_KILO_WATT_HOUR,
-    POWER_KILO_WATT
+    POWER_KILO_WATT,
 )
 
 from .const import (
@@ -35,6 +35,7 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL_STATE_SECONDS = 60
+SCAN_INTERVAL_CONSUMPTION_SECONDS = 120
 SCAN_INTERVAL_SCHEDULES_SECONDS = 600
 
 
@@ -79,7 +80,7 @@ class Controller:
         self.sensor_entities = []
         self.equalizer_entities = []
         self.next_consumption_sensor = 1
-        
+
     async def initialize(self):
         """ initialize the session and get initial data """
         client_session = aiohttp_client.async_get_clientsession(self.hass)
@@ -115,7 +116,7 @@ class Controller:
 
         self._create_entitites()
 
-    def update_ha_state(self):
+    def update_consumption_sensors(self, now=None):
         # Schedule update of exactly one consumption sensor
         max_consumption_sensor = len(self.consumption_sensor_entities)
         counter = 0
@@ -123,19 +124,18 @@ class Controller:
             counter += 1
             if counter != self.next_consumption_sensor:
                 continue
-            
+
             consumption_sensor.async_schedule_update_ha_state(True)
             self.next_consumption_sensor += 1
             if self.next_consumption_sensor > max_consumption_sensor:
                 self.next_consumption_sensor = 1
-                
+
             break
 
+    def update_ha_state(self):
         # Schedule an update for all other included entities
         all_entities = (
-            self.switch_entities
-            + self.sensor_entities
-            + self.equalizer_entities
+            self.switch_entities + self.sensor_entities + self.equalizer_entities
         )
 
         for entity in all_entities:
@@ -146,7 +146,7 @@ class Controller:
         # first update
         self.hass.async_add_job(self.refresh_schedules)
         self.hass.async_add_job(self.refresh_sites_state)
-        
+
         # Add interval refresh for site state interval
         async_track_time_interval(
             self.hass,
@@ -154,11 +154,18 @@ class Controller:
             timedelta(seconds=SCAN_INTERVAL_STATE_SECONDS),
         )
 
-        # Add interval refresh for schedules interval
+        # Add interval refresh for schedules
         async_track_time_interval(
             self.hass,
             self.refresh_schedules,
             timedelta(seconds=SCAN_INTERVAL_SCHEDULES_SECONDS),
+        )
+
+        # Add interval refresh for consumption sensors
+        async_track_time_interval(
+            self.hass,
+            self.update_consumption_sensors,
+            timedelta(seconds=SCAN_INTERVAL_CONSUMPTION_SECONDS),
         )
 
     async def refresh_schedules(self, now=None):
@@ -202,7 +209,11 @@ class Controller:
         return self.circuits
 
     def get_sensor_entities(self):
-        return self.sensor_entities + self.consumption_sensor_entities + self.equalizer_entities
+        return (
+            self.sensor_entities
+            + self.consumption_sensor_entities
+            + self.equalizer_entities
+        )
 
     def get_switch_entities(self):
         return self.switch_entities
@@ -298,13 +309,8 @@ class Controller:
         )
         for equalizer in self.equalizers:
             _LOGGER.debug(
-                "Adding sensor entity: power (sensor) for equalizer %s",
-                equalizer.id,
+                "Adding sensor entity: power (sensor) for equalizer %s", equalizer.id,
             )
             self.equalizer_entities.append(
-                EqualizerSensor(
-                    equalizer,
-                    f"power",
-                    power_unit,
-                )
+                EqualizerSensor(equalizer, "power", power_unit,)
             )
