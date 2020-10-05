@@ -309,8 +309,13 @@ class Controller:
         )
         for equalizer in self.equalizers:
             _LOGGER.debug(
-                "Adding sensor entity: power (sensor) for equalizer %s", equalizer.id,
+                "Adding sensor entity: power (sensor) for equalizer %s",
+                equalizer.id,
             )
             self.equalizer_entities.append(
-                EqualizerSensor(equalizer, "power", power_unit,)
+                EqualizerSensor(
+                    equalizer,
+                    "power",
+                    power_unit,
+                )
             )

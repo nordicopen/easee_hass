@@ -5,7 +5,7 @@ bump:
 
 lint:
 	black custom_components
-	flake8 --ignore=E501,E231,W503 custom_components
+	flake8 custom_components
 
 install_dev:
 	pip install -r requirements-dev.txt
