@@ -78,7 +78,8 @@ class Controller:
         self.switch_entities = []
         self.sensor_entities = []
         self.equalizer_entities = []
-
+        self.next_consumption_sensor = 1
+        
     async def initialize(self):
         """ initialize the session and get initial data """
         client_session = aiohttp_client.async_get_clientsession(self.hass)
@@ -115,11 +116,25 @@ class Controller:
         self._create_entitites()
 
     def update_ha_state(self):
-        # Schedule an update for all included entities
+        # Schedule update of exactly one consumption sensor
+        max_consumption_sensor = len(self.consumption_sensor_entities)
+        counter = 0
+        for consumption_sensor in self.consumption_sensor_entities:
+            counter += 1
+            if counter != self.next_consumption_sensor:
+                continue
+            
+            consumption_sensor.async_schedule_update_ha_state(True)
+            self.next_consumption_sensor += 1
+            if self.next_consumption_sensor > max_consumption_sensor:
+                self.next_consumption_sensor = 1
+                
+            break
+
+        # Schedule an update for all other included entities
         all_entities = (
             self.switch_entities
             + self.sensor_entities
-            + self.consumption_sensor_entities
             + self.equalizer_entities
         )
 
@@ -131,7 +146,7 @@ class Controller:
         # first update
         self.hass.async_add_job(self.refresh_schedules)
         self.hass.async_add_job(self.refresh_sites_state)
-
+        
         # Add interval refresh for site state interval
         async_track_time_interval(
             self.hass,
