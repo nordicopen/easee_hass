@@ -27,6 +27,7 @@ from .const import (
 
 from .sensor import ChargerSensor, ChargerConsumptionSensor, EqualizerSensor
 from .switch import ChargerSwitch
+from .binary_sensor import ChargerBinarySensor
 
 from .entity import convert_units_funcs
 
@@ -135,7 +136,10 @@ class Controller:
     def update_ha_state(self):
         # Schedule an update for all other included entities
         all_entities = (
-            self.switch_entities + self.sensor_entities + self.equalizer_entities
+            self.switch_entities
+            + self.sensor_entities
+            + self.binary_sensor_entities
+            + self.equalizer_entities
         )
 
         for entity in all_entities:
@@ -210,6 +214,9 @@ class Controller:
     def get_circuits(self):
         return self.circuits
 
+    def get_binary_sensor_entities(self):
+        return self.binary_sensor_entities
+
     def get_sensor_entities(self):
         return (
             self.sensor_entities
@@ -227,6 +234,7 @@ class Controller:
         custom_units = self.config.options.get(CUSTOM_UNITS, {})
         self.sensor_entities = []
         self.switch_entities = []
+        self.binary_sensor_entities = []
         self.consumption_sensor_entities = []
         self.equalizer_sensor_entities = []
 
@@ -283,6 +291,27 @@ class Controller:
                             icon=data["icon"],
                             state_func=data.get("state_func", None),
                             switch_func=data.get("switch_func", None),
+                        )
+                    )
+                elif entity_type == "binary_sensor":
+                    _LOGGER.debug(
+                        "Adding binary sensor entity: %s (%s) for charger %s",
+                        key,
+                        entity_type,
+                        charger_data.charger.name,
+                    )
+                    self.binary_sensor_entities.append(
+                        ChargerBinarySensor(
+                            charger_data=charger_data,
+                            name=key,
+                            state_key=data["key"],
+                            units=data["units"],
+                            convert_units_func=convert_units_funcs.get(
+                                data["convert_units_func"], None
+                            ),
+                            attrs_keys=data["attrs"],
+                            icon=data["icon"],
+                            state_func=data.get("state_func", None),
                         )
                     )
 
