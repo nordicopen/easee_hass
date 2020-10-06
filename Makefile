@@ -1,4 +1,4 @@
-__VERSION__ = "0.9.16"
+__VERSION__ = "0.9.17"
 
 bump:
 	bump2version --current-version $(__VERSION__) patch Makefile custom_components/easee/const.py
