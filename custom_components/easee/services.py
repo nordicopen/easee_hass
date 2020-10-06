@@ -178,8 +178,9 @@ SERVICE_MAP = {
 
 async def async_setup_services(hass):
     """Setup services for Easee."""
-    chargers = hass.data[DOMAIN]["chargers"]
-    circuits = hass.data[DOMAIN]["circuits"]
+    controller = hass.data[DOMAIN]["controller"]
+    chargers = controller.get_chargers()
+    circuits = controller.get_circuits()
 
     async def charger_execute_service(call):
         """Execute a service to Easee charging station."""
@@ -200,9 +201,7 @@ async def async_setup_services(hass):
     async def charger_set_schedule(call):
         """Execute a set schedule call to Easee charging station."""
         charger_id = call.data.get(CHARGER_ID)
-        schedule_id = (
-            charger_id
-        )  # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
+        schedule_id = charger_id  # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
         start_datetime = call.data.get(ATTR_CHARGEPLAN_START_DATETIME)
         stop_datetime = call.data.get(ATTR_CHARGEPLAN_STOP_DATETIME)
         repeat = call.data.get(ATTR_CHARGEPLAN_REPEAT)

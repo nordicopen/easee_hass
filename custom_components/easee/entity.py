@@ -2,18 +2,13 @@
 Easee Charger base entity class.
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
-import asyncio
-from typing import List, Dict, Callable, Any
+from typing import Callable, Dict, List
 from datetime import datetime
-
-from easee import Charger, ChargerState, ChargerConfig, Site, Circuit
-from easee.charger import ChargerSchedule
 
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import dt
 
 from .const import DOMAIN
-
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,50 +26,12 @@ convert_units_funcs = {
 }
 
 
-class ChargerData:
-    """Representation charger data."""
-
-    def __init__(self, charger: Charger, circuit: Circuit, site: Site):
-        """Initialize the charger data."""
-        self.charger: Charger = charger
-        self.circuit: Circuit = circuit
-        self.site: Site = site
-        self.state: List[ChargerState] = {}
-        self.config: List[ChargerConfig] = {}
-        self.schedule: List[ChargerSchedule] = {}
-
-    async def async_refresh(self, now=None):
-        self.state = await self.charger.get_state()
-        self.config = await self.charger.get_config()
-        self.schedule = await self.charger.get_basic_charge_plan()
-        _LOGGER.debug("Schedule: %s", self.schedule)
-
-
-class ChargersData:
-    """Representation chargers data."""
-
-    def __init__(self, chargers: List[ChargerData], entities: List[Any]):
-        """Initialize the chargers data."""
-        self._chargers = chargers
-        self._entities = entities
-
-    async def async_refresh(self, now=None):
-        """Fetch new state data for the entities."""
-        tasks = [charger.async_refresh() for charger in self._chargers]
-        if tasks:
-            await asyncio.wait(tasks)
-
-        # Schedule an update for all included entities
-        for entity in self._entities:
-            entity.async_schedule_update_ha_state(True)
-
-
 class ChargerEntity(Entity):
     """Implementation of Easee charger entity."""
 
     def __init__(
         self,
-        charger_data: ChargerData,
+        charger_data,
         name: str,
         state_key: str,
         units: str,

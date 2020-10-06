@@ -13,8 +13,7 @@ MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
 VERSION = "0.9.16"
 CONF_MONITORED_SITES = "monitored_sites"
 CUSTOM_UNITS = "custom_units"
-PLATFORMS = ("sensor", "switch")
-SCAN_INTERVAL_SECONDS = 60
+PLATFORMS = ("sensor", "switch", "binary_sensor")
 LISTENER_FN_CLOSE = "update_listener_close_fn"
 MEASURED_CONSUMPTION_OPTIONS = {
     "1": "1",
@@ -42,6 +41,7 @@ EASEE_ENTITIES = {
         "switch_func": "smart_charging",
     },
     "cable_locked_car": {
+        "type": "binary_sensor",
         "key": "state.cableLocked",
         "attrs": [
             "state.lockCablePermanently",
@@ -106,6 +106,7 @@ EASEE_ENTITIES = {
         "icon": "mdi:flash",
     },
     "online": {
+        "type": "binary_sensor",
         "key": "state.isOnline",
         "attrs": [
             "state.latestPulse",
@@ -287,6 +288,7 @@ EASEE_ENTITIES = {
         "switch_func": "enable_idle_current",
     },
     "update_available": {
+        "type": "binary_sensor",
         "key": "state.chargerFirmware",
         "attrs": [
             "state.chargerFirmware",
@@ -299,6 +301,7 @@ EASEE_ENTITIES = {
         < int(state["latestFirmware"]),
     },
     "basic_schedule": {
+        "type": "binary_sensor",
         "key": "schedule.id",
         "attrs": [
             "schedule.id",
