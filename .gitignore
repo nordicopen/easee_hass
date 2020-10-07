@@ -9,6 +9,9 @@
 /config_flow.py
 /const.py
 /translations
+/controller.py
+/entity.py
+/switch.py
 
 todo
 

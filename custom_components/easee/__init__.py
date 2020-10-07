@@ -1,36 +1,28 @@
 """Easee charger component."""
 import asyncio
 import logging
-from typing import List
-from datetime import timedelta
-from easee import Easee, Site
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_MONITORED_CONDITIONS
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import (
-    aiohttp_client,
     config_validation as cv,
     device_registry,
 )
-from homeassistant.helpers.event import async_track_time_interval
 
 from .const import (
-    CONF_MONITORED_SITES,
     DOMAIN,
     EASEE_ENTITIES,
     LISTENER_FN_CLOSE,
     MEASURED_CONSUMPTION_DAYS,
     VERSION,
     PLATFORMS,
-    SCAN_INTERVAL_SECONDS,
 )
 from .services import async_setup_services
-from .entity import ChargerData, ChargersData
+from .controller import Controller
 
 _LOGGER = logging.getLogger(__name__)
-SCAN_INTERVAL = timedelta(seconds=SCAN_INTERVAL_SECONDS)
 
 CONFIG_SCHEMA = vol.Schema(
     {
@@ -63,40 +55,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     _LOGGER.debug("Setting up Easee component version %s", VERSION)
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
-    client_session = aiohttp_client.async_get_clientsession(hass)
-    easee = Easee(username, password, client_session)
-    sites: List[Site] = await easee.get_sites()
 
-    hass.data[DOMAIN]["session"] = easee
-    hass.data[DOMAIN]["config"] = entry
-    hass.data[DOMAIN]["sites"] = sites
-    hass.data[DOMAIN]["circuits"] = []
-    hass.data[DOMAIN]["chargers"] = []
-    entities = []
-    charger_data_list = []
-    all_sites = []
-
-    for site in sites:
-        all_sites.append(site["name"])
-    config = hass.data[DOMAIN]["config"]
-    monitored_sites = config.options.get(CONF_MONITORED_SITES, all_sites)
-
-    for site in sites:
-        if not site["name"] in monitored_sites:
-            _LOGGER.debug("Found site (unmonitored): %s %s", site.id, site["name"])
-        else:
-            _LOGGER.debug("Found site (monitored): %s %s", site.id, site["name"])
-            for circuit in site.get_circuits():
-                _LOGGER.debug("Found circuit: %s %s", circuit.id, circuit["panelName"])
-                hass.data[DOMAIN]["circuits"].append(circuit)
-                for charger in circuit.get_chargers():
-                    _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
-                    hass.data[DOMAIN]["chargers"].append(charger)
-                    charger_data = ChargerData(charger, circuit, site)
-                    charger_data_list.append(charger_data)
-
-    chargers_data = ChargersData(charger_data_list, entities)
-    hass.data[DOMAIN]["chargers_data"] = chargers_data
+    controller = Controller(username, password, hass, entry)
+    await controller.initialize()
+    hass.data[DOMAIN]["controller"] = controller
 
     for component in PLATFORMS:
         hass.async_create_task(
@@ -106,14 +68,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     # Setup services
     await async_setup_services(hass)
 
-    hass.async_add_job(chargers_data.async_refresh)
-    async_track_time_interval(hass, chargers_data.async_refresh, SCAN_INTERVAL)
-
     undo_listener = entry.add_update_listener(config_entry_update_listener)
 
     hass.data[DOMAIN][entry.entry_id] = {
         LISTENER_FN_CLOSE: undo_listener,
     }
+
+    await controller.add_schedulers()
     return True
 
 
