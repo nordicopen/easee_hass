@@ -13,7 +13,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
     """Setup switch platform."""
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_switch_entities()
-
     async_add_entities(entities)
 
 
