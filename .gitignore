@@ -12,6 +12,7 @@
 /controller.py
 /entity.py
 /switch.py
+/binary_sensor.py
 
 todo
 
