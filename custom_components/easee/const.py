@@ -10,7 +10,7 @@ from homeassistant.const import (
 
 DOMAIN = "easee"
 MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
-VERSION = "0.9.17"
+VERSION = "0.9.18"
 CONF_MONITORED_SITES = "monitored_sites"
 CUSTOM_UNITS = "custom_units"
 PLATFORMS = ("sensor", "switch", "binary_sensor")
