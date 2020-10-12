@@ -8,8 +8,6 @@ from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_MONITORED_CON
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import (
     config_validation as cv,
-    device_registry,
-    entity_registry,
 )
 
 from .const import (
