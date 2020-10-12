@@ -9,6 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import (
     config_validation as cv,
     device_registry,
+    entity_registry,
 )
 
 from .const import (
@@ -52,6 +53,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up Easee integration from a config entry."""
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
+    hass.data[DOMAIN]["entities"] = []
     _LOGGER.debug("Setting up Easee component version %s", VERSION)
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
@@ -96,16 +98,5 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 
 async def config_entry_update_listener(hass: HomeAssistant, entry: ConfigEntry):
-    """Handle options update, delete device and set it up again as suggested on discord #devs_core."""
+
     await hass.config_entries.async_reload(entry.entry_id)
-
-    dev_reg = await device_registry.async_get_registry(hass)
-    devices_to_purge = []
-    for device in dev_reg.devices.values():
-        for identifier in device.identifiers:
-            if DOMAIN in identifier:
-                devices_to_purge.append(device.id)
-
-    _LOGGER.debug("Purging device: %s", devices_to_purge)
-    for device_id in devices_to_purge:
-        dev_reg.async_remove_device(device_id)

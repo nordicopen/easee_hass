@@ -5,6 +5,7 @@ Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 from typing import Callable, Dict, List
 from datetime import datetime
 
+from homeassistant.helpers import entity_registry
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import dt
 
@@ -53,6 +54,16 @@ class ChargerEntity(Entity):
         self._state_func = state_func
         self._state = None
         self._switch_func = switch_func
+
+    async def async_added_to_hass(self) -> None:
+        """Entity created."""
+        self.hass.data[DOMAIN]["entities"].append({self._entity_name: self.entity_id})
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Disconnect object when removed."""
+        ent_reg = await entity_registry.async_get_registry(self.hass)
+        if self._entity_name in self.hass.data[DOMAIN]["entities_to_remove"]:
+            ent_reg.async_remove(self.entity_id)
 
     @property
     def name(self):
