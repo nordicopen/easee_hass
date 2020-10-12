@@ -12,20 +12,22 @@
           "password": "Password",
           "username": "Username"
         },
-        "description": "Please enter the username and password for your Easee account.",
+        "description": "Please enter the username and password for your Easee account",
         "title": "Connect to Easee"
       }
     }
   },
   "options": {
     "step": {
-      "options_1": {
+      "init": {
         "data": {
           "monitored_conditions": "Sensors monitored",
           "measured_consumption_days": "Consumption monitoring days",
           "custom_units": "Custom units",
           "monitored_sites": "Sites to include"
-        }
+        },
+        "description": "Select options",
+        "title": "Easee EV Charger"
       }
     }
   },

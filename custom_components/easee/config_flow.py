@@ -86,10 +86,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input=None):
         """Manage the options."""
-        return await self.async_step_options_1()
-
-    async def async_step_options_1(self, user_input=None):
-        """Manage the options."""
         if user_input is not None:
             self.options.update(user_input)
             return await self._update_options()
@@ -102,7 +98,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             sites_multi_select.append(site["name"])
 
         return self.async_show_form(
-            step_id="options_1",
+            step_id="init",
             data_schema=vol.Schema(
                 {
                     vol.Optional(
