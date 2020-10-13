@@ -13,15 +13,31 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
+""" TODO Quick fix to handle rounding: Cleanup and collapse later """
 
-def round_2_dec(value, unit=None):
-    """Round to two decimals."""
+def round_to_dec(value, decimals=None, unit=None):
+    """Round to selected no of decimals."""
     if unit == "W" or unit == "Wh":
         value = value * 1000
-    return round(value, 2)
+        decimals = None
+    try:
+        return round(value, decimals)
+    except TypeError:
+        pass
+    return value
 
+def round_2_dec(value, unit=None):
+    return round_to_dec(value, 2, unit)
+
+def round_1_dec(value, unit=None):
+    return round_to_dec(value, 1, unit)
+
+def round_0_dec(value, unit=None):
+    return round_to_dec(value, None, unit)
 
 convert_units_funcs = {
+    "round_0_dec": round_0_dec,
+    "round_1_dec": round_1_dec,
     "round_2_dec": round_2_dec,
 }
 
@@ -99,7 +115,12 @@ class ChargerEntity(Entity):
                 if "site" in attr_key or "circuit" in attr_key:
                     # maybe for everything?
                     key = attr_key.replace(".", "_")
-                attrs[key] = self.get_value_from_key(attr_key)
+                if "voltage" in key.lower():
+                    attrs[key] = round_0_dec(self.get_value_from_key(attr_key))
+                elif "current" in key.lower():
+                    attrs[key] = round_1_dec(self.get_value_from_key(attr_key))
+                else:
+                    attrs[key] = self.get_value_from_key(attr_key)
 
             return attrs
         except IndexError:

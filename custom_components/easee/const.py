@@ -88,21 +88,21 @@ EASEE_ENTITIES = {
         "key": "state.totalPower",
         "attrs": [],
         "units": POWER_KILO_WATT,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "icon": "mdi:flash",
     },
     "session_energy": {
         "key": "state.sessionEnergy",
         "attrs": [],
         "units": ENERGY_KILO_WATT_HOUR,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "icon": "mdi:flash",
     },
     "energy_per_hour": {
         "key": "state.energyPerHour",
         "attrs": [],
         "units": ENERGY_KILO_WATT_HOUR,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "icon": "mdi:flash",
     },
     "online": {
@@ -124,7 +124,7 @@ EASEE_ENTITIES = {
         "key": "state.outputCurrent",
         "attrs": [],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "icon": "mdi:sine-wave",
     },
     "in_current": {
@@ -137,7 +137,7 @@ EASEE_ENTITIES = {
             "state.inCurrentT5",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "icon": "mdi:sine-wave",
         "state_func": lambda state: float(
             max(
@@ -163,7 +163,7 @@ EASEE_ENTITIES = {
             "state.circuitTotalPhaseConductorCurrentL3",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "icon": "mdi:sine-wave",
         "state_func": lambda state: float(
             max(
@@ -191,7 +191,7 @@ EASEE_ENTITIES = {
             "state.dynamicCircuitCurrentP3",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "icon": "mdi:sine-wave",
         "state_func": lambda state: float(
             max(
@@ -213,7 +213,7 @@ EASEE_ENTITIES = {
             "config.circuitMaxCurrentP3",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "icon": "mdi:sine-wave",
         "state_func": lambda config: float(
             max(
@@ -229,7 +229,7 @@ EASEE_ENTITIES = {
             "state.dynamicChargerCurrent",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "icon": "mdi:sine-wave",
     },
     "max_charger_current": {
@@ -238,7 +238,7 @@ EASEE_ENTITIES = {
             "config.maxChargerCurrent",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "icon": "mdi:sine-wave",
     },
     "voltage": {
@@ -256,7 +256,7 @@ EASEE_ENTITIES = {
             "state.inVoltageT4T5",
         ],
         "units": VOLT,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_0_dec",
         "icon": "mdi:sine-wave",
     },
     "reason_for_no_current": {
