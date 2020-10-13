@@ -15,8 +15,9 @@ from homeassistant.const import (
 )
 
 DOMAIN = "easee"
+TIMEOUT = 30
 MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
-VERSION = "0.9.17"
+VERSION = "0.9.18"
 CONF_MONITORED_SITES = "monitored_sites"
 CUSTOM_UNITS = "custom_units"
 PLATFORMS = ("sensor", "switch", "binary_sensor")
@@ -98,7 +99,7 @@ EASEE_ENTITIES = {
         "key": "state.totalPower",
         "attrs": [],
         "units": POWER_KILO_WATT,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_POWER,
         "icon": None,
     },
@@ -106,7 +107,7 @@ EASEE_ENTITIES = {
         "key": "state.sessionEnergy",
         "attrs": [],
         "units": ENERGY_KILO_WATT_HOUR,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": None,
     },
@@ -114,7 +115,7 @@ EASEE_ENTITIES = {
         "key": "state.energyPerHour",
         "attrs": [],
         "units": ENERGY_KILO_WATT_HOUR,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": None,
     },
@@ -138,7 +139,7 @@ EASEE_ENTITIES = {
         "key": "state.outputCurrent",
         "attrs": [],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
     },
@@ -152,7 +153,7 @@ EASEE_ENTITIES = {
             "state.inCurrentT5",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
         "state_func": lambda state: float(
@@ -179,7 +180,7 @@ EASEE_ENTITIES = {
             "state.circuitTotalPhaseConductorCurrentL3",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
         "state_func": lambda state: float(
@@ -208,7 +209,7 @@ EASEE_ENTITIES = {
             "state.dynamicCircuitCurrentP3",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
         "state_func": lambda state: float(
@@ -231,7 +232,7 @@ EASEE_ENTITIES = {
             "config.circuitMaxCurrentP3",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
         "state_func": lambda config: float(
@@ -248,7 +249,7 @@ EASEE_ENTITIES = {
             "state.dynamicChargerCurrent",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
     },
@@ -258,7 +259,7 @@ EASEE_ENTITIES = {
             "config.maxChargerCurrent",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
     },
@@ -277,7 +278,7 @@ EASEE_ENTITIES = {
             "state.inVoltageT4T5",
         ],
         "units": VOLT,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_VOLTAGE,
         "icon": None,
     },
@@ -382,7 +383,7 @@ EASEE_ENTITIES = {
             "state.maxPowerImport",
         ],
         "units": POWER_KILO_WATT,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_POWER,
         "icon": None,
     },
@@ -398,7 +399,7 @@ EASEE_ENTITIES = {
             "state.voltageL2L3",
         ],
         "units": VOLT,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_VOLTAGE,
         "icon": None,
     },
@@ -411,7 +412,7 @@ EASEE_ENTITIES = {
             "state.currentL3",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
     },
@@ -425,7 +426,7 @@ EASEE_ENTITIES = {
             "state.cumulativeReactivePowerExport",
         ],
         "units": ENERGY_KILO_WATT_HOUR,
-        "convert_units_func": "round_2_dec",
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": None,
     },

@@ -24,7 +24,7 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         _LOGGER.debug("%s Switch turn on" % self._entity_name)
         function_call = getattr(self.charger_data.charger, self._switch_func)
         await function_call(True)
-        await self.charger_data.async_refresh()
+        await self.controller.refresh_sites_state()
         await self.async_update()
 
     async def async_turn_off(self, **kwargs):  # pylint: disable=unused-argument
@@ -32,7 +32,7 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         _LOGGER.debug("%s Switch turn off" % self._entity_name)
         function_call = getattr(self.charger_data.charger, self._switch_func)
         await function_call(False)
-        await self.charger_data.async_refresh()
+        await self.controller.refresh_sites_state()
         await self.async_update()
 
     @property
