@@ -23,7 +23,7 @@ from pyeasee.charger import ChargerSchedule
 
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.const import (
@@ -119,7 +119,7 @@ class Controller:
             raise ConfigEntryNotReady from err
         except AuthorizationFailedException as err:
             _LOGGER.error("Authorization failed to easee")
-            return None
+            raise Unauthorized from err
         except Exception:  # pylint: disable=broad-except
             _LOGGER.error("Unexpected error creating device")
             return None
