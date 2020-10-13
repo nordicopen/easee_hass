@@ -60,7 +60,7 @@ class ChargerEntity(Entity):
     @property
     def name(self):
         """Return the name of the entity."""
-        return f"{DOMAIN}_charger_{self.charger_data.charger.id}_{self._entity_name}"
+        return f"{self.charger_data.charger.name} {self._entity_name}".capitalize().replace('_', ' ')
 
     @property
     def unique_id(self) -> str:

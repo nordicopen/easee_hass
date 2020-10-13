@@ -36,7 +36,7 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL_STATE_SECONDS = 60
-SCAN_INTERVAL_EQUALIZERS_SECONDS = 20
+SCAN_INTERVAL_EQUALIZERS_SECONDS = 60
 SCAN_INTERVAL_CONSUMPTION_SECONDS = 120
 SCAN_INTERVAL_SCHEDULES_SECONDS = 600
 
@@ -152,10 +152,14 @@ class Controller:
             self.switch_entities
             + self.sensor_entities
             + self.binary_sensor_entities
-            + self.equalizer_entities
         )
 
         for entity in all_entities:
+            entity.async_schedule_update_ha_state(True)
+
+    def update_equalizers_state(self):
+        # Schedule an update for all equalizer entities
+        for entity in self.equalizer_entities:
             entity.async_schedule_update_ha_state(True)
 
     async def add_schedulers(self):
@@ -165,6 +169,7 @@ class Controller:
         if tasks:
             await asyncio.wait(tasks)
         self.hass.async_add_job(self.refresh_sites_state)
+        self.hass.async_add_job(self.refresh_equalizers_state)
 
         # Add interval refresh for site state interval
         async_track_time_interval(
@@ -226,15 +231,16 @@ class Controller:
         self.update_ha_state()
 
     async def refresh_equalizers_state(self, now=None):
-        """ gets site state for all sites and updates the chargers state and config """
-        equalizers_state = {}
+        """ gets equalizer state for all equalziers """
 
-        for equalizer in self.equalizers:
-            equalizers_state[equalizer.id] = await equalizer.get_state()
-            self.equalizers_data[equalizer.id].charger.id = equalizer.id
-            self.equalizers_data[equalizer.id].state = equalizers_state
+        for equalizer_data in self.equalizers_data:
+            equalizer_data.state = await equalizer_data.equalizer.get_state()
+            if equalizer_data.state["isOnline"]:
+                equalizer_data.state["isOnline"] = "ONLINE"
+            else:
+                equalizer_data.state["isOnline"] = "OFFLINE"
 
-        self.update_ha_state()
+        self.update_equalizers_state()
 
     def get_sites(self):
         return self.sites
@@ -375,7 +381,7 @@ class Controller:
                 data = EASEE_ENTITIES[key]
                 entity_type = data.get("type", "sensor")
 
-                if entity_type == "equalizer_sensor":
+                if entity_type == "eq_sensor":
                     _LOGGER.debug(
                         "Adding sensor entity: %s (%s) for equalizer %s",
                         key,
