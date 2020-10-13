@@ -31,6 +31,7 @@ class ChargerEntity(Entity):
 
     def __init__(
         self,
+        controller,
         charger_data,
         name: str,
         state_key: str,
@@ -43,6 +44,7 @@ class ChargerEntity(Entity):
     ):
 
         """Initialize the entity."""
+        self.controller = controller
         self.charger_data = charger_data
         self._entity_name = name
         self._state_key = state_key

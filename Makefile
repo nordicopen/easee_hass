@@ -1,7 +1,7 @@
-__VERSION__ = "0.9.17"
+__VERSION__ = "0.9.18"
 
 bump:
-	bump2version --current-version $(__VERSION__) patch Makefile custom_components/easee/const.py
+	bump2version --allow-dirty --current-version $(__VERSION__) patch Makefile custom_components/easee/const.py
 
 lint:
 	black custom_components

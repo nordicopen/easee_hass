@@ -117,22 +117,6 @@ class Controller:
 
         self._create_entitites()
 
-    def update_consumption_sensors(self, now=None):
-        # Schedule update of exactly one consumption sensor
-        max_consumption_sensor = len(self.consumption_sensor_entities)
-        counter = 0
-        for consumption_sensor in self.consumption_sensor_entities:
-            counter += 1
-            if counter != self.next_consumption_sensor:
-                continue
-
-            consumption_sensor.async_schedule_update_ha_state(True)
-            self.next_consumption_sensor += 1
-            if self.next_consumption_sensor > max_consumption_sensor:
-                self.next_consumption_sensor = 1
-
-            break
-
     def update_ha_state(self):
         # Schedule an update for all other included entities
         all_entities = (
@@ -170,9 +154,25 @@ class Controller:
         # Add interval refresh for consumption sensors
         async_track_time_interval(
             self.hass,
-            self.update_consumption_sensors,
+            self.refresh_consumption_sensors,
             timedelta(seconds=SCAN_INTERVAL_CONSUMPTION_SECONDS),
         )
+
+    def refresh_consumption_sensors(self, now=None):
+        # Schedule update of exactly one consumption sensor
+        max_consumption_sensor = len(self.consumption_sensor_entities)
+        counter = 0
+        for consumption_sensor in self.consumption_sensor_entities:
+            counter += 1
+            if counter != self.next_consumption_sensor:
+                continue
+
+            consumption_sensor.async_schedule_update_ha_state(True)
+            self.next_consumption_sensor += 1
+            if self.next_consumption_sensor > max_consumption_sensor:
+                self.next_consumption_sensor = 1
+
+            break
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """
@@ -259,6 +259,7 @@ class Controller:
 
                     self.sensor_entities.append(
                         ChargerSensor(
+                            controller=self,
                             charger_data=charger_data,
                             name=key,
                             state_key=data["key"],
@@ -280,6 +281,7 @@ class Controller:
                     )
                     self.switch_entities.append(
                         ChargerSwitch(
+                            controller=self,
                             charger_data=charger_data,
                             name=key,
                             state_key=data["key"],
@@ -302,6 +304,7 @@ class Controller:
                     )
                     self.binary_sensor_entities.append(
                         ChargerBinarySensor(
+                            controller=self,
                             charger_data=charger_data,
                             name=key,
                             state_key=data["key"],
