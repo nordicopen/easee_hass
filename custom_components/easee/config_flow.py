@@ -83,6 +83,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize options flow."""
         self.config_entry = config_entry
         self.options = dict(config_entry.options)
+        self.prev_options = dict(config_entry.options)
 
     async def async_step_init(self, user_input=None):
         """Manage the options."""
@@ -129,4 +130,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def _update_options(self):
         """Update config entry options."""
+        to_remove = []
+        for cond in self.prev_options[CONF_MONITORED_CONDITIONS]:
+            if cond not in self.options[CONF_MONITORED_CONDITIONS]:
+                to_remove.append(cond)
+        self.hass.data[DOMAIN]["entities_to_remove"] = to_remove
         return self.async_create_entry(title="", data=self.options)
