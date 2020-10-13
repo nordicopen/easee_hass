@@ -130,9 +130,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def _update_options(self):
         """Update config entry options."""
-        to_remove = []
-        for cond in self.prev_options[CONF_MONITORED_CONDITIONS]:
-            if cond not in self.options[CONF_MONITORED_CONDITIONS]:
-                to_remove.append(cond)
-        self.hass.data[DOMAIN]["entities_to_remove"] = to_remove
+        self.hass.data[DOMAIN]["entities_to_remove"] =
+            [cond for cond in self.prev_options[CONF_MONITORED_CONDITIONS]
+            if cond not in self.options[CONF_MONITORED_CONDITIONS]]
         return self.async_create_entry(title="", data=self.options)
