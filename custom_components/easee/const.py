@@ -9,6 +9,7 @@ from homeassistant.const import (
 )
 
 DOMAIN = "easee"
+TIMEOUT = 30
 MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
 VERSION = "0.9.18"
 CONF_MONITORED_SITES = "monitored_sites"

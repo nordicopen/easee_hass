@@ -2,7 +2,7 @@
 import logging
 from typing import List, Optional
 
-from easee import AuthorizationFailedException, Easee, Site
+from pyeasee import AuthorizationFailedException, Easee, Site
 import voluptuous as vol
 
 from homeassistant import config_entries

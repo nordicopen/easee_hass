@@ -1,14 +1,29 @@
 """ Easee Connector class """
 import asyncio
+from async_timeout import timeout
 from typing import List
 from datetime import timedelta
 
-from easee import Easee, Charger, ChargerState, ChargerConfig, Equalizer, Site, Circuit
-from easee.exceptions import NotFoundException
-from easee.charger import ChargerSchedule
+from pyeasee import (
+    Easee,
+    Charger,
+    ChargerState,
+    ChargerConfig,
+    Equalizer,
+    Site,
+    Circuit,
+)
+from pyeasee.exceptions import (
+    NotFoundException,
+    AuthorizationFailedException,
+    ServerFailureException,
+    TooManyRequestsException,
+)
+from pyeasee.charger import ChargerSchedule
 
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.const import (
@@ -23,6 +38,7 @@ from .const import (
     MEASURED_CONSUMPTION_DAYS,
     CUSTOM_UNITS,
     CUSTOM_UNITS_TABLE,
+    TIMEOUT,
 )
 
 from .sensor import ChargerSensor, ChargerConsumptionSensor, EqualizerSensor
@@ -55,6 +71,8 @@ class ChargerData:
     async def schedules_async_refresh(self):
         try:
             self.schedule = await self.charger.get_basic_charge_plan()
+        except (TooManyRequestsException, ServerFailureException) as err:
+            _LOGGER.debug("Got server error while fetching schedule")
         except NotFoundException:
             self.schedule = None
 
@@ -86,7 +104,25 @@ class Controller:
         """ initialize the session and get initial data """
         client_session = aiohttp_client.async_get_clientsession(self.hass)
         self.easee = Easee(self.username, self.password, client_session)
-        await self.easee.connect()
+
+        try:
+            with timeout(TIMEOUT):
+                await self.easee.connect()
+        except asyncio.TimeoutError as err:
+            _LOGGER.debug("Connection to easee login timed out")
+            raise ConfigEntryNotReady from err
+        except ServerFailureException as err:
+            _LOGGER.debug("Easee server failure")
+            raise ConfigEntryNotReady from err
+        except TooManyRequestsException as err:
+            _LOGGER.debug("Easee server too many requests")
+            raise ConfigEntryNotReady from err
+        except AuthorizationFailedException as err:
+            _LOGGER.error("Authorization failed to easee")
+            return None
+        except Exception:  # pylint: disable=broad-except
+            _LOGGER.error("Unexpected error creating device")
+            return None
 
         self.sites: List[Site] = await self.easee.get_sites()
 
