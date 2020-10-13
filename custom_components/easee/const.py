@@ -309,8 +309,8 @@ EASEE_ENTITIES = {
         "attrs": [],
         "units": None,
         "convert_units_func": None,
-        "device_class": DEVICE_CLASS_CURRENT,
-        "icon": "mdi:current-dc",
+        "device_class": None,
+        "icon": "mdi:current-ac",
         "switch_func": "enable_idle_current",
     },
     "update_available": {

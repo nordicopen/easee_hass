@@ -198,7 +198,7 @@ class Controller:
             timedelta(seconds=SCAN_INTERVAL_STATE_SECONDS),
         )
 
-        # Add interval refresh for site state interval
+        # Add interval refresh for equalizer state interval
         async_track_time_interval(
             self.hass,
             self.refresh_equalizers_state,
@@ -433,6 +433,7 @@ class Controller:
 
                     self.sensor_entities.append(
                         EqualizerSensor(
+                            controller=self,
                             charger_data=equalizer_data,
                             name=key,
                             state_key=data["key"],

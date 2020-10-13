@@ -55,7 +55,7 @@ class ChargerConsumptionSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{DOMAIN}_charger_{self.charger.id}_{self._sensor_name}"
+        return f"{self.charger.name} {self._sensor_name}".capitalize().replace('_', ' ')
 
     @property
     def unique_id(self) -> str:
