@@ -14,6 +14,12 @@ from homeassistant.const import (
     DEVICE_CLASS_TIMESTAMP,
 )
 
+from homeassistant.components.binary_sensor import (
+    DEVICE_CLASS_CONNECTIVITY,
+    DEVICE_CLASS_LOCK,
+    DEVICE_CLASS_PLUG,
+)
+
 DOMAIN = "easee"
 TIMEOUT = 30
 MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
@@ -132,8 +138,8 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "device_class": DEVICE_CLASS_SIGNAL_STRENGTH,
-        "icon": "mdi:wifi",
+        "device_class": DEVICE_CLASS_CONNECTIVITY,
+        "icon": None,
     },
     "output_current": {
         "key": "state.outputCurrent",
@@ -338,7 +344,7 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "device_class": DEVICE_CLASS_TIMESTAMP,
+        "device_class": None,
         "icon": "mdi:clock-check",
         "state_func": lambda schedule: bool(schedule) or False,
     },

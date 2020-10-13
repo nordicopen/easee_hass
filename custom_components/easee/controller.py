@@ -52,7 +52,7 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL_STATE_SECONDS = 60
-SCAN_INTERVAL_EQUALIZERS_SECONDS = 60
+SCAN_INTERVAL_EQUALIZERS_SECONDS = 20
 SCAN_INTERVAL_CONSUMPTION_SECONDS = 120
 SCAN_INTERVAL_SCHEDULES_SECONDS = 600
 
@@ -222,10 +222,11 @@ class Controller:
     def refresh_consumption_sensors(self, now=None):
         # Schedule update of exactly one consumption sensor
         max_consumption_sensor = len(self.consumption_sensor_entities)
-        self.consumption_sensor_entities[self.next_consumption_sensor].async_schedule_update_ha_state(True)
-        self.next_consumption_sensor += 1
-        if self.next_consumption_sensor >= max_consumption_sensor:
-            self.next_consumption_sensor = 0
+        if max_consumption_sensor > 0:
+            self.consumption_sensor_entities[self.next_consumption_sensor].async_schedule_update_ha_state(True)
+            self.next_consumption_sensor += 1
+            if self.next_consumption_sensor >= max_consumption_sensor:
+                self.next_consumption_sensor = 0
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """
@@ -423,7 +424,7 @@ class Controller:
                     if data["units"] in custom_units:
                         data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
 
-                    self.sensor_entities.append(
+                    self.equalizer_entities.append(
                         EqualizerSensor(
                             controller=self,
                             charger_data=equalizer_data,
