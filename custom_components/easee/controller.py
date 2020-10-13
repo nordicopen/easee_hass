@@ -109,7 +109,7 @@ class Controller:
         self.switch_entities = []
         self.sensor_entities = []
         self.equalizer_entities = []
-        self.next_consumption_sensor = 1
+        self.next_consumption_sensor = 0
 
     async def initialize(self):
         """ initialize the session and get initial data """
@@ -222,18 +222,10 @@ class Controller:
     def refresh_consumption_sensors(self, now=None):
         # Schedule update of exactly one consumption sensor
         max_consumption_sensor = len(self.consumption_sensor_entities)
-        counter = 0
-        for consumption_sensor in self.consumption_sensor_entities:
-            counter += 1
-            if counter != self.next_consumption_sensor:
-                continue
-
-            consumption_sensor.async_schedule_update_ha_state(True)
-            self.next_consumption_sensor += 1
-            if self.next_consumption_sensor > max_consumption_sensor:
-                self.next_consumption_sensor = 1
-
-            break
+        self.consumption_sensor_entities[self.next_consumption_sensor].async_schedule_update_ha_state(True)
+        self.next_consumption_sensor += 1
+        if self.next_consumption_sensor >= max_consumption_sensor:
+            self.next_consumption_sensor = 0
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """
