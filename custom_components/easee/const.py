@@ -402,6 +402,28 @@ EASEE_ENTITIES = {
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_VOLTAGE,
         "icon": None,
+        "state_func": lambda state: float(
+            max(
+                state["voltageNL1"]
+                if state["voltageNL1"] is not None
+                else 0.0,
+                state["voltageNL2"]
+                if state["voltageNL2"] is not None
+                else 0.0,
+                state["voltageNL3"]
+                if state["voltageNL3"] is not None
+                else 0.0,
+                state["voltageL1L2"]
+                if state["voltageL1L2"] is not None
+                else 0.0,
+                state["voltageL1L3"]
+                if state["voltageL1L3"] is not None
+                else 0.0,
+                state["voltageL2L3"]
+                if state["voltageL2L3"] is not None
+                else 0.0,
+            )
+        ),
     },
     "eq_current": {
         "type": "eq_sensor",
@@ -415,6 +437,13 @@ EASEE_ENTITIES = {
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
+        "state_func": lambda state: float(
+            max(
+                state["currentL1"],
+                state["currentL2"],
+                state["currentL3"],
+            )
+        ),
     },
     "eq_energy": {
         "type": "eq_sensor",
