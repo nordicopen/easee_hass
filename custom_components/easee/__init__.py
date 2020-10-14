@@ -52,6 +52,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
     hass.data[DOMAIN]["entities"] = []
+    hass.data[DOMAIN]["entities_to_remove"] = []
+    hass.data[DOMAIN]["sites_to_remove"] = []
+    hass.data[DOMAIN]["days_to_remove"] = []
     _LOGGER.debug("Setting up Easee component version %s", VERSION)
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)

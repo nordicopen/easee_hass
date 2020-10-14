@@ -14,6 +14,8 @@ from homeassistant.helpers import (
     config_validation as cv,
 )
 
+from aiohttp import ClientConnectionError
+
 
 from .const import (
     DOMAIN,
@@ -60,8 +62,18 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
                 # Check that login is possible
                 await easee.connect()
                 return self.async_create_entry(title=username, data=user_input)
+
             except AuthorizationFailedException:
+                errors["base"] = "auth_failure"
+                _LOGGER.debug("AuthorizationFailed")
+
+            except (ConnectionRefusedError):
+                errors["base"] = "refused_failure"
+                _LOGGER.debug("ConnectionRefusedError")
+
+            except (ClientConnectionError):
                 errors["base"] = "connection_failure"
+                _LOGGER.debug("ClientConnectionError")
 
         return self.async_show_form(
             step_id="user",
@@ -130,9 +142,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def _update_options(self):
         """Update config entry options."""
-        to_remove = []
-        for cond in self.prev_options[CONF_MONITORED_CONDITIONS]:
-            if cond not in self.options[CONF_MONITORED_CONDITIONS]:
-                to_remove.append(cond)
-        self.hass.data[DOMAIN]["entities_to_remove"] = to_remove
+        if CONF_MONITORED_CONDITIONS in self.prev_options:
+            self.hass.data[DOMAIN]["entities_to_remove"] = [cond for cond in self.prev_options[CONF_MONITORED_CONDITIONS]
+                if cond not in self.options[CONF_MONITORED_CONDITIONS]]
+            self.hass.data[DOMAIN]["sites_to_remove"] = [cond for cond in self.prev_options[CONF_MONITORED_SITES]
+                if cond not in self.options[CONF_MONITORED_SITES]]
+            self.hass.data[DOMAIN]["days_to_remove"] = [cond for cond in self.prev_options[MEASURED_CONSUMPTION_DAYS]
+                if cond not in self.options[MEASURED_CONSUMPTION_DAYS]]
         return self.async_create_entry(title="", data=self.options)

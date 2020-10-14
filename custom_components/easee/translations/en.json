@@ -4,7 +4,9 @@
       "already_setup": "You can only configure a single Easee connection."
     },
     "error": {
-      "connection_failure": "Unable to connect to Easee. Check your username and password."
+      "auth_failure": "Unable to connect to Easee. Check your username and password.",
+      "connection_failure": "Unable to connect to Easee. Test again later.",
+      "refused_failure": "Connection refused to Easee. Test again later."
     },
     "step": {
       "user": {
