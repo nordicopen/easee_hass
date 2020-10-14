@@ -6,9 +6,6 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_MONITORED_CONDITIONS
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import (
-    config_validation as cv,
-)
 
 from .const import (
     DOMAIN,
@@ -22,25 +19,6 @@ from .services import async_setup_services
 from .controller import Controller
 
 _LOGGER = logging.getLogger(__name__)
-
-CONFIG_SCHEMA = vol.Schema(
-    {
-        DOMAIN: vol.Schema(
-            {
-                vol.Optional(CONF_USERNAME): cv.string,
-                vol.Optional(CONF_PASSWORD): cv.string,
-                vol.Optional(CONF_MONITORED_CONDITIONS, default=["status"]): vol.All(
-                    cv.ensure_list, [vol.In(EASEE_ENTITIES)]
-                ),
-                vol.Optional(MEASURED_CONSUMPTION_DAYS, default=[]): vol.All(
-                    cv.ensure_list
-                ),
-            }
-        )
-    },
-    extra=vol.ALLOW_EXTRA,
-)
-
 
 async def async_setup(hass: HomeAssistant, config: dict):
     """Set up the Easee integration component."""
