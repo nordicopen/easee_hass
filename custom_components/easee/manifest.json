@@ -3,7 +3,7 @@
   "name": "Easee EV charger",
   "documentation": "https://github.com/fondberg/easee_hass",
   "requirements": [
-    "pyeasee==0.7.24"
+    "pyeasee==0.7.25"
   ],
   "homeassistant": "0.113.0",
   "config_flow": true,
