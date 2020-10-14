@@ -80,7 +80,8 @@ class ChargerEntity(Entity):
     async def async_will_remove_from_hass(self) -> None:
         """Disconnect object when removed."""
         ent_reg = await entity_registry.async_get_registry(self.hass)
-        if self._entity_name in self.hass.data[DOMAIN]["entities_to_remove"]:
+        if (self._entity_name in self.hass.data[DOMAIN]["entities_to_remove"] or
+            self.charger_data.charger.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]):
             ent_reg.async_remove(self.entity_id)
 
     @property
