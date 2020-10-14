@@ -14,6 +14,8 @@ from homeassistant.helpers import (
     config_validation as cv,
 )
 
+from aiohttp import ClientConnectionError
+
 
 from .const import (
     DOMAIN,
@@ -60,8 +62,18 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
                 # Check that login is possible
                 await easee.connect()
                 return self.async_create_entry(title=username, data=user_input)
+
             except AuthorizationFailedException:
+                errors["base"] = "auth_failure"
+                _LOGGER.debug("AuthorizationFailed")
+
+            except (ConnectionRefusedError):
+                errors["base"] = "refused_failure"
+                _LOGGER.debug("ConnectionRefusedError")
+
+            except (ClientConnectionError):
                 errors["base"] = "connection_failure"
+                _LOGGER.debug("ClientConnectionError")
 
         return self.async_show_form(
             step_id="user",

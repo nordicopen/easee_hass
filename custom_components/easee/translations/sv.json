@@ -4,7 +4,9 @@
       "already_setup": "Endast en anslutning för Easee kan konfigureras."
     },
     "error": {
-      "connection_failure": "Kan inte ansluta till Easee. Kontrollera användarnamn och lösenord."
+      "auth_failure": "Kan inte ansluta till Easee. Kontrollera användarnamn och lösenord.",
+      "connection_failure": "Kan inte ansluta till Easee. Försök igen senare.",
+      "refused_failure": "Anslutning nekades till Easee. Försök igen senare."
     },
     "step": {
       "user": {
