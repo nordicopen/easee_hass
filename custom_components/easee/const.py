@@ -63,8 +63,9 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "device_class": None,
-        "icon": "mdi:lock",
+        "device_class": DEVICE_CLASS_LOCK,
+        "icon": None,
+        "state_func": lambda state: not bool(state["cableLocked"]),
     },
     "cable_permanently_locked_charger": {
         "type": "switch",
@@ -410,24 +411,12 @@ EASEE_ENTITIES = {
         "icon": None,
         "state_func": lambda state: float(
             max(
-                state["voltageNL1"]
-                if state["voltageNL1"] is not None
-                else 0.0,
-                state["voltageNL2"]
-                if state["voltageNL2"] is not None
-                else 0.0,
-                state["voltageNL3"]
-                if state["voltageNL3"] is not None
-                else 0.0,
-                state["voltageL1L2"]
-                if state["voltageL1L2"] is not None
-                else 0.0,
-                state["voltageL1L3"]
-                if state["voltageL1L3"] is not None
-                else 0.0,
-                state["voltageL2L3"]
-                if state["voltageL2L3"] is not None
-                else 0.0,
+                state["voltageNL1"] or 0.0,
+                state["voltageNL2"] or 0.0,
+                state["voltageNL3"] or 0.0,
+                state["voltageL1L2"] or 0.0,
+                state["voltageL1L3"] or 0.0,
+                state["voltageL2L3"] or 0.0,
             )
         ),
     },
