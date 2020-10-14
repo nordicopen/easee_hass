@@ -5,6 +5,7 @@ Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 from typing import Callable, Dict, List
 from datetime import datetime
 
+from homeassistant.helpers import entity_registry
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import dt
 
@@ -13,15 +14,31 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
+""" TODO Quick fix to handle rounding: Cleanup and collapse later """
 
-def round_2_dec(value, unit=None):
-    """Round to two decimals."""
+def round_to_dec(value, decimals=None, unit=None):
+    """Round to selected no of decimals."""
     if unit == "W" or unit == "Wh":
         value = value * 1000
-    return round(value, 2)
+        decimals = None
+    try:
+        return round(value, decimals)
+    except TypeError:
+        pass
+    return value
 
+def round_2_dec(value, unit=None):
+    return round_to_dec(value, 2, unit)
+
+def round_1_dec(value, unit=None):
+    return round_to_dec(value, 1, unit)
+
+def round_0_dec(value, unit=None):
+    return round_to_dec(value, None, unit)
 
 convert_units_funcs = {
+    "round_0_dec": round_0_dec,
+    "round_1_dec": round_1_dec,
     "round_2_dec": round_2_dec,
 }
 
@@ -31,6 +48,7 @@ class ChargerEntity(Entity):
 
     def __init__(
         self,
+        controller,
         charger_data,
         name: str,
         state_key: str,
@@ -43,6 +61,7 @@ class ChargerEntity(Entity):
     ):
 
         """Initialize the entity."""
+        self.controller = controller
         self.charger_data = charger_data
         self._entity_name = name
         self._state_key = state_key
@@ -53,6 +72,16 @@ class ChargerEntity(Entity):
         self._state_func = state_func
         self._state = None
         self._switch_func = switch_func
+
+    async def async_added_to_hass(self) -> None:
+        """Entity created."""
+        self.hass.data[DOMAIN]["entities"].append({self._entity_name: self.entity_id})
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Disconnect object when removed."""
+        ent_reg = await entity_registry.async_get_registry(self.hass)
+        if self._entity_name in self.hass.data[DOMAIN]["entities_to_remove"]:
+            ent_reg.async_remove(self.entity_id)
 
     @property
     def name(self):
@@ -97,7 +126,12 @@ class ChargerEntity(Entity):
                 if "site" in attr_key or "circuit" in attr_key:
                     # maybe for everything?
                     key = attr_key.replace(".", "_")
-                attrs[key] = self.get_value_from_key(attr_key)
+                if "voltage" in key.lower():
+                    attrs[key] = round_0_dec(self.get_value_from_key(attr_key))
+                elif "current" in key.lower():
+                    attrs[key] = round_1_dec(self.get_value_from_key(attr_key))
+                else:
+                    attrs[key] = self.get_value_from_key(attr_key)
 
             return attrs
         except IndexError:

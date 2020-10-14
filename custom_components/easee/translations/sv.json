@@ -1,0 +1,35 @@
+{
+  "config": {
+    "abort": {
+      "already_setup": "Endast en anslutning för Easee kan konfigureras."
+    },
+    "error": {
+      "connection_failure": "Kan inte ansluta till Easee. Kontrollera användarnamn och lösenord."
+    },
+    "step": {
+      "user": {
+        "data": {
+          "password": "Lösenord",
+          "username": "Användarnamn"
+        },
+        "description": "Ange användarnamn och lösenord för ditt Easee-konto",
+        "title": "Anslut till Easee"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "monitored_conditions": "Monitorerade sensorer",
+          "measured_consumption_days": "Förbrukning - antal dagar",
+          "custom_units": "Anpassade enheter",
+          "monitored_sites": "Platser att inkludera"
+        },
+        "description": "Välj inställningar",
+        "title": "Easee EV Charger"
+      }
+    }
+  },
+  "title": "Easee EV Charger"
+}

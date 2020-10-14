@@ -2,7 +2,7 @@
 import logging
 from typing import List, Optional
 
-from easee import AuthorizationFailedException, Easee, Site
+from pyeasee import AuthorizationFailedException, Easee, Site
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -83,12 +83,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize options flow."""
         self.config_entry = config_entry
         self.options = dict(config_entry.options)
+        self.prev_options = dict(config_entry.options)
 
     async def async_step_init(self, user_input=None):
-        """Manage the options."""
-        return await self.async_step_options_1()
-
-    async def async_step_options_1(self, user_input=None):
         """Manage the options."""
         if user_input is not None:
             self.options.update(user_input)
@@ -102,7 +99,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             sites_multi_select.append(site["name"])
 
         return self.async_show_form(
-            step_id="options_1",
+            step_id="init",
             data_schema=vol.Schema(
                 {
                     vol.Optional(
@@ -133,4 +130,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def _update_options(self):
         """Update config entry options."""
+        to_remove = []
+        for cond in self.prev_options[CONF_MONITORED_CONDITIONS]:
+            if cond not in self.options[CONF_MONITORED_CONDITIONS]:
+                to_remove.append(cond)
+        self.hass.data[DOMAIN]["entities_to_remove"] = to_remove
         return self.async_create_entry(title="", data=self.options)
