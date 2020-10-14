@@ -8,6 +8,7 @@ from datetime import datetime
 from homeassistant.helpers import entity_registry
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import dt
+from homeassistant.const import DEVICE_CLASS_POWER
 
 from .const import DOMAIN
 import logging
@@ -55,6 +56,7 @@ class ChargerEntity(Entity):
         units: str,
         convert_units_func: Callable,
         attrs_keys: List[str],
+        device_class: str,
         icon: str,
         state_func=None,
         switch_func=None,
@@ -68,6 +70,7 @@ class ChargerEntity(Entity):
         self._units = units
         self._convert_units_func = convert_units_func
         self._attrs_keys = attrs_keys
+        self._device_class = device_class
         self._icon = icon
         self._state_func = state_func
         self._state = None
@@ -87,7 +90,7 @@ class ChargerEntity(Entity):
     @property
     def name(self):
         """Return the name of the entity."""
-        return f"{DOMAIN}_charger_{self.charger_data.charger.id}_{self._entity_name}"
+        return f"{self.charger_data.charger.name} {self._entity_name}".capitalize().replace('_', ' ')
 
     @property
     def unique_id(self) -> str:
@@ -143,6 +146,11 @@ class ChargerEntity(Entity):
         """Icon to use in the frontend, if any."""
         return self._icon
 
+    @property
+    def device_class(self):
+        """Device class of sensor."""
+        return self._device_class
+    
     @property
     def should_poll(self):
         """No polling needed."""

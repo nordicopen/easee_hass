@@ -26,7 +26,7 @@
           "monitored_conditions": "Sensors monitored",
           "measured_consumption_days": "Consumption monitoring days",
           "custom_units": "Custom units",
-          "monitored_sites": "Sites to include"
+          "monitored_sites": "Sites monitored"
         },
         "description": "Select options",
         "title": "Easee EV Charger"
