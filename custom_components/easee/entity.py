@@ -5,7 +5,8 @@ Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 from typing import Callable, Dict, List
 from datetime import datetime
 
-from homeassistant.helpers import entity_registry
+from homeassistant.helpers import entity_registry, device_registry
+from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import dt
 
@@ -80,8 +81,17 @@ class ChargerEntity(Entity):
     async def async_will_remove_from_hass(self) -> None:
         """Disconnect object when removed."""
         ent_reg = await entity_registry.async_get_registry(self.hass)
+        entity_entry = ent_reg.async_get(self.entity_id)
+
+        dev_reg = await device_registry.async_get_registry(self.hass)
+        device_entry = dev_reg.async_get(entity_entry.device_id)
+
         if (self._entity_name in self.hass.data[DOMAIN]["entities_to_remove"] or
             self.charger_data.charger.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]):
+            if len(async_entries_for_device(ent_reg, entity_entry.device_id)) == 1:
+                dev_reg.async_remove_device(device_entry.id)
+                return
+
             ent_reg.async_remove(self.entity_id)
 
     @property
