@@ -1,9 +1,9 @@
 {
   "domain": "easee",
-  "name": "Easee charger component",
+  "name": "Easee EV charger",
   "documentation": "https://github.com/fondberg/easee_hass",
   "requirements": [
-    "easee==0.7.20"
+    "pyeasee==0.7.24"
   ],
   "homeassistant": "0.113.0",
   "config_flow": true,
@@ -11,6 +11,9 @@
     "configurator"
   ],
   "codeowners": [
-    "@fondberg"
+    "@fondberg",
+    "@tmjo",
+    "@olalid",
+    "@astrandb"
   ]
 }
