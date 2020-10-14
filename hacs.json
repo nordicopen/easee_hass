@@ -1,0 +1,7 @@
+{
+  "name": "Easee CV Charger",
+  "domains": ["binary_sensor", "sensor", "switch"],
+  "homeassistant": "0.103",
+  "persistent_directory": "userfiles",
+  "iot_class": ["Cloud Polling"]
+}
