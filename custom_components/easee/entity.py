@@ -91,10 +91,13 @@ class ChargerEntity(Entity):
 
         if (self._entity_name in self.hass.data[DOMAIN]["entities_to_remove"] or
             self.charger_data.charger.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]):
+
             if len(async_entries_for_device(ent_reg, entity_entry.device_id)) == 1:
+                _LOGGER.debug("Removing device: %s", entity_entry.device_entry.id)
                 dev_reg.async_remove_device(device_entry.id)
                 return
 
+            _LOGGER.debug("Removing entity: %s", self.entity_id)
             ent_reg.async_remove(self.entity_id)
 
     @property
@@ -160,7 +163,7 @@ class ChargerEntity(Entity):
     def device_class(self):
         """Device class of sensor."""
         return self._device_class
-    
+
     @property
     def should_poll(self):
         """No polling needed."""
