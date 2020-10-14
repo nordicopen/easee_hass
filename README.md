@@ -40,12 +40,6 @@ _While this component can be installed by HACS, it is not included in the defaul
 
 ## Configuration
 
-Add the following to your configuration and restart Home Assistant.
-
-```yaml
-easee:
-```
-
 Configuration is done through in Configuration > Integrations where you first configure it and then set the options for what you want to monitor.
 
 ## Development
