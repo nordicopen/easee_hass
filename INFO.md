@@ -32,3 +32,4 @@ Please help me test and preferbly suggest the fixes as a PR or technical note in
 Configuration is done through in Configuration > Integrations where you first configure it and then set the options for what you want to monitor.
 
 For full configuration documentation see [README](https://github.com/fondberg/easee_hass)
+

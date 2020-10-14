@@ -39,7 +39,6 @@ _While this component can be installed by HACS, it is not included in the defaul
 5. Run `bash links.sh`
 
 ## Configuration
-
 Configuration is done through in Configuration > Integrations where you first configure it and then set the options for what you want to monitor.
 
 ## Development
