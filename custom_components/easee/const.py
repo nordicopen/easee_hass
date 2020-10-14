@@ -6,6 +6,18 @@ from homeassistant.const import (
     ENERGY_KILO_WATT_HOUR,
     ENERGY_WATT_HOUR,
     VOLT,
+    DEVICE_CLASS_POWER,
+    DEVICE_CLASS_CURRENT,
+    DEVICE_CLASS_ENERGY,
+    DEVICE_CLASS_VOLTAGE,
+    DEVICE_CLASS_SIGNAL_STRENGTH,
+    DEVICE_CLASS_TIMESTAMP,
+)
+
+from homeassistant.components.binary_sensor import (
+    DEVICE_CLASS_CONNECTIVITY,
+    DEVICE_CLASS_LOCK,
+    DEVICE_CLASS_PLUG,
 )
 
 DOMAIN = "easee"
@@ -38,6 +50,7 @@ EASEE_ENTITIES = {
         "attrs": [],
         "units": None,
         "convert_units_func": None,
+        "device_class": None,
         "icon": "mdi:auto-fix",
         "switch_func": "smart_charging",
     },
@@ -50,9 +63,11 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "icon": "mdi:lock",
+        "device_class": DEVICE_CLASS_LOCK,
+        "icon": None,
+        "state_func": lambda state: not bool(state["cableLocked"]),
     },
-    "cable_permanently_locked_charger  ": {
+    "cable_permanently_locked_charger": {
         "type": "switch",
         "key": "state.lockCablePermanently",
         "attrs": [
@@ -61,6 +76,7 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
+        "device_class": None,
         "icon": "mdi:lock",
         "switch_func": "lockCablePermanently",
     },
@@ -83,6 +99,7 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
+        "device_class": None,
         "icon": "mdi:ev-station",
     },
     "total_power": {
@@ -90,21 +107,24 @@ EASEE_ENTITIES = {
         "attrs": [],
         "units": POWER_KILO_WATT,
         "convert_units_func": "round_1_dec",
-        "icon": "mdi:flash",
+        "device_class": DEVICE_CLASS_POWER,
+        "icon": None,
     },
     "session_energy": {
         "key": "state.sessionEnergy",
         "attrs": [],
         "units": ENERGY_KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
-        "icon": "mdi:flash",
+        "device_class": DEVICE_CLASS_ENERGY,
+        "icon": None,
     },
     "energy_per_hour": {
         "key": "state.energyPerHour",
         "attrs": [],
         "units": ENERGY_KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
-        "icon": "mdi:flash",
+        "device_class": DEVICE_CLASS_ENERGY,
+        "icon": None,
     },
     "online": {
         "type": "binary_sensor",
@@ -119,14 +139,16 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "icon": "mdi:wifi",
+        "device_class": DEVICE_CLASS_CONNECTIVITY,
+        "icon": None,
     },
     "output_current": {
         "key": "state.outputCurrent",
         "attrs": [],
         "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
-        "icon": "mdi:sine-wave",
+        "device_class": DEVICE_CLASS_CURRENT,
+        "icon": None,
     },
     "in_current": {
         "key": "state.inCurrentT2",
@@ -139,7 +161,8 @@ EASEE_ENTITIES = {
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
-        "icon": "mdi:sine-wave",
+        "device_class": DEVICE_CLASS_CURRENT,
+        "icon": None,
         "state_func": lambda state: float(
             max(
                 state["inCurrentT2"],
@@ -165,7 +188,8 @@ EASEE_ENTITIES = {
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
-        "icon": "mdi:sine-wave",
+        "device_class": DEVICE_CLASS_CURRENT,
+        "icon": None,
         "state_func": lambda state: float(
             max(
                 state["circuitTotalPhaseConductorCurrentL1"]
@@ -193,7 +217,8 @@ EASEE_ENTITIES = {
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
-        "icon": "mdi:sine-wave",
+        "device_class": DEVICE_CLASS_CURRENT,
+        "icon": None,
         "state_func": lambda state: float(
             max(
                 state["dynamicCircuitCurrentP1"],
@@ -215,7 +240,8 @@ EASEE_ENTITIES = {
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
-        "icon": "mdi:sine-wave",
+        "device_class": DEVICE_CLASS_CURRENT,
+        "icon": None,
         "state_func": lambda config: float(
             max(
                 config["circuitMaxCurrentP1"],
@@ -231,7 +257,8 @@ EASEE_ENTITIES = {
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
-        "icon": "mdi:sine-wave",
+        "device_class": DEVICE_CLASS_CURRENT,
+        "icon": None,
     },
     "max_charger_current": {
         "key": "config.maxChargerCurrent",
@@ -240,7 +267,8 @@ EASEE_ENTITIES = {
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
-        "icon": "mdi:sine-wave",
+        "device_class": DEVICE_CLASS_CURRENT,
+        "icon": None,
     },
     "voltage": {
         "key": "state.voltage",
@@ -258,7 +286,8 @@ EASEE_ENTITIES = {
         ],
         "units": VOLT,
         "convert_units_func": "round_0_dec",
-        "icon": "mdi:sine-wave",
+        "device_class": DEVICE_CLASS_VOLTAGE,
+        "icon": None,
     },
     "reason_for_no_current": {
         "key": "state.reasonForNoCurrent",
@@ -268,6 +297,7 @@ EASEE_ENTITIES = {
         ],
         "units": "",
         "convert_units_func": None,
+        "device_class": None,
         "icon": "mdi:alert-circle",
     },
     "is_enabled": {
@@ -276,6 +306,7 @@ EASEE_ENTITIES = {
         "attrs": [],
         "units": None,
         "convert_units_func": None,
+        "device_class": None,
         "icon": "mdi:power-standby",
         "switch_func": "enable_charger",
     },
@@ -285,7 +316,8 @@ EASEE_ENTITIES = {
         "attrs": [],
         "units": None,
         "convert_units_func": None,
-        "icon": "mdi:current-dc",
+        "device_class": None,
+        "icon": "mdi:current-ac",
         "switch_func": "enable_idle_current",
     },
     "update_available": {
@@ -297,6 +329,7 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
+        "device_class": None,
         "icon": "mdi:file-download",
         "state_func": lambda state: int(state["chargerFirmware"])
         < int(state["latestFirmware"]),
@@ -312,6 +345,7 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
+        "device_class": None,
         "icon": "mdi:clock-check",
         "state_func": lambda schedule: bool(schedule) or False,
     },
@@ -326,6 +360,99 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
+        "device_class": None,
         "icon": "mdi:currency-usd",
     },
+    "eq_status": {
+        "type": "eq_sensor",
+        "key": "state.isOnline",
+        "attrs": [
+            "state.latestPulse",
+            "state.clockAndDateMeter",
+            "state.rcpi",
+            "state.localRSSI",
+            "state.softwareRelease",
+            "state.latestFirmware",
+        ],
+        "units": None,
+        "convert_units_func": None,
+        "device_class": DEVICE_CLASS_SIGNAL_STRENGTH,
+        "icon": None,
+    },
+    "eq_power": {
+        "type": "eq_sensor",
+        "key": "state.activePowerImport",
+        "attrs": [
+            "state.activePowerImport",
+            "state.activePowerExport",
+            "state.reactivePowerImport",
+            "state.reactivePowerExport",
+            "state.maxPowerImport",
+        ],
+        "units": POWER_KILO_WATT,
+        "convert_units_func": "round_1_dec",
+        "device_class": DEVICE_CLASS_POWER,
+        "icon": None,
+    },
+    "eq_voltage": {
+        "type": "eq_sensor",
+        "key": "state.voltageNL1",
+        "attrs": [
+            "state.voltageNL1",
+            "state.voltageNL2",
+            "state.voltageNL3",
+            "state.voltageL1L2",
+            "state.voltageL1L3",
+            "state.voltageL2L3",
+        ],
+        "units": VOLT,
+        "convert_units_func": "round_1_dec",
+        "device_class": DEVICE_CLASS_VOLTAGE,
+        "icon": None,
+        "state_func": lambda state: float(
+            max(
+                state["voltageNL1"] or 0.0,
+                state["voltageNL2"] or 0.0,
+                state["voltageNL3"] or 0.0,
+                state["voltageL1L2"] or 0.0,
+                state["voltageL1L3"] or 0.0,
+                state["voltageL2L3"] or 0.0,
+            )
+        ),
+    },
+    "eq_current": {
+        "type": "eq_sensor",
+        "key": "state.currentL1",
+        "attrs": [
+            "state.currentL1",
+            "state.currentL2",
+            "state.currentL3",
+        ],
+        "units": ELECTRICAL_CURRENT_AMPERE,
+        "convert_units_func": "round_1_dec",
+        "device_class": DEVICE_CLASS_CURRENT,
+        "icon": None,
+        "state_func": lambda state: float(
+            max(
+                state["currentL1"],
+                state["currentL2"],
+                state["currentL3"],
+            )
+        ),
+    },
+    "eq_energy": {
+        "type": "eq_sensor",
+        "key": "state.cumulativeActivePowerImport",
+        "attrs": [
+            "state.cumulativeActivePowerImport",
+            "state.cumulativeActivePowerExport",
+            "state.cumulativeReactivePowerImport",
+            "state.cumulativeReactivePowerExport",
+        ],
+        "units": ENERGY_KILO_WATT_HOUR,
+        "convert_units_func": "round_1_dec",
+        "device_class": DEVICE_CLASS_ENERGY,
+        "icon": None,
+    },
+
 }

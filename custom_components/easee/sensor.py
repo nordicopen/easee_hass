@@ -9,6 +9,13 @@ from homeassistant.helpers.entity import Entity
 
 from .entity import ChargerEntity, round_2_dec
 from .const import DOMAIN
+from homeassistant.const import (
+    DEVICE_CLASS_POWER,
+    DEVICE_CLASS_CURRENT,
+    DEVICE_CLASS_ENERGY,
+    DEVICE_CLASS_VOLTAGE,
+    DEVICE_CLASS_SIGNAL_STRENGTH,    
+)
 
 import logging
 
@@ -48,7 +55,7 @@ class ChargerConsumptionSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{DOMAIN}_charger_{self.charger.id}_{self._sensor_name}"
+        return f"{self.charger.name} {self._sensor_name}".capitalize().replace('_', ' ')
 
     @property
     def unique_id(self) -> str:
@@ -89,10 +96,10 @@ class ChargerConsumptionSensor(Entity):
         }
 
     @property
-    def icon(self):
-        """Icon to use in the frontend, if any."""
-        return "mdi:flash"
-
+    def device_class(self):
+        """Device class of sensor."""
+        return DEVICE_CLASS_ENERGY
+    
     @property
     def should_poll(self):
         """No polling needed."""
@@ -111,101 +118,69 @@ class ChargerConsumptionSensor(Entity):
         )
 
 
-class EqualizerSensor(Entity):
+class EqualizerSensor(ChargerEntity):
     """Implementation of Easee equalizer sensor."""
 
-    def __init__(self, equalizer, name, units):
-        """Initialize the sensor."""
-        self.equalizer = equalizer
-        self._sensor_name = name
-        self._state = None
-        self._units = units
+    @property
+    def state(self):
+        """Return status."""
+        return self._state
 
     @property
     def name(self):
-        """Return the name of the sensor."""
-        return f"{DOMAIN}_equalizer_{self.equalizer.id}_{self._sensor_name}"
+        """Return the name of the entity."""
+        return f"{self.charger_data.equalizer['name']}_{self._entity_name}".capitalize().replace('_', ' ')
 
     @property
     def unique_id(self) -> str:
         """Return a unique ID."""
-        return f"{self.equalizer.id}_{self._sensor_name}"
+        return f"{self.charger_data.equalizer['name']}_{self._entity_name}"
 
     @property
     def device_info(self) -> Dict[str, any]:
         """Return the device information."""
         return {
-            "identifiers": {(DOMAIN, self.equalizer.id)},
-            "name": self.equalizer["name"],
+            "identifiers": {(DOMAIN, self.charger_data.equalizer.id)},
+            "name": self.charger_data.equalizer["name"],
             "manufacturer": "Easee",
             "model": "Equalizer",
         }
 
-    @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement of this entity, if any."""
-        return self._units
+    async def async_update(self):
+        """Get the latest data and update the state."""
+        _LOGGER.debug(
+            "EqualizerEntity async_update : %s %s",
+            self.charger_data.equalizer.id,
+            self._entity_name,
+        )
+        try:
+            self._state = self.get_value_from_key(self._state_key)
+            if self._state_func is not None:
+                if self._state_key.startswith("state"):
+                    self._state = self._state_func(self.charger_data.state)
+                if self._state_key.startswith("config"):
+                    self._state = self._state_func(self.charger_data.config)
+            if self._convert_units_func is not None:
+                self._state = self._convert_units_func(self._state, self._units)
 
-    @property
-    def available(self):
-        """Return True if entity is available."""
-        return self._state is not None
-
-    @property
-    def state(self):
-        """Return online status."""
-        return round_2_dec(self._state, self._units)
+        except IndexError:
+            raise IndexError("Wrong key for entity: %s", self._state_key)
 
     @property
     def state_attributes(self):
         """Return the state attributes."""
-        return {
-            "name": self.equalizer["name"],
-            "id": self.equalizer.id,
-            "isOnline": self.data["isOnline"],
-            "softwareRelease": self.data["softwareRelease"],
-            "latestFirmware": self.data["latestFirmware"],
-            "localRSSI": self.data["localRSSI"],
-            "rcpi": self.data["rcpi"],
-            "activePowerImport": self.data["activePowerImport"],
-            "activePowerExport": self.data["activePowerExport"],
-            "reactivePowerImport": self.data["reactivePowerImport"],
-            "reactivePowerExport": self.data["reactivePowerExport"],
-            "voltageNL1": self.data["voltageNL1"],
-            "voltageNL2": self.data["voltageNL2"],
-            "voltageNL3": self.data["voltageNL3"],
-            "voltageL1L2": self.data["voltageL1L2"],
-            "voltageL1L3": self.data["voltageL1L3"],
-            "voltageL2L3": self.data["voltageL2L3"],
-            "currentL1": self.data["currentL1"],
-            "currentL2": self.data["currentL2"],
-            "currentL3": self.data["currentL3"],
-            "activeEnergyImport": self.data["cumulativeActivePowerImport"],
-            "activeEnergyExport": self.data["cumulativeActivePowerExport"],
-            "reactiveEnergyImport": self.data["cumulativeReactivePowerImport"],
-            "reactiveEnergyExport": self.data["cumulativeReactivePowerExport"],
-        }
+        try:
+            attrs = {
+		"name": self.charger_data.equalizer["name"],
+                "id": self.charger_data.equalizer.id,
+            }
+            for attr_key in self._attrs_keys:
+                key = attr_key
+                if "site" in attr_key or "circuit" in attr_key:
+                    # maybe for everything?
+                    key = attr_key.replace(".", "_")
+                attrs[key] = self.get_value_from_key(attr_key)
 
-    @property
-    def icon(self):
-        """Icon to use in the frontend, if any."""
-        return "mdi:flash"
-
-    @property
-    def should_poll(self):
-        """No polling needed."""
-        return False
-
-    async def async_update(self):
-        """Get the latest data and update the state."""
-        _LOGGER.debug(
-            "Equalizer async_update : %s %s",
-            self.equalizer["name"],
-            self._sensor_name,
-        )
-        self.data = await self.equalizer.get_state()
-        self._state = self.data["activePowerImport"]
-        _LOGGER.debug(
-            "Equalizer state : %s",
-            self._state,
-        )
+            return attrs
+        except IndexError:
+            return {}

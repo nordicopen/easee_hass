@@ -52,9 +52,19 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL_STATE_SECONDS = 60
+SCAN_INTERVAL_EQUALIZERS_SECONDS = 20
 SCAN_INTERVAL_CONSUMPTION_SECONDS = 120
 SCAN_INTERVAL_SCHEDULES_SECONDS = 600
 
+class EqualizerData:
+    """Representation equalizer data."""
+
+    def __init__(self, equalizer: Equalizer, site: Site):
+        """Initialize the charger data."""
+        self.equalizer: Equalzier = equalizer
+        self.site: Site = site
+        self.state = []
+        self.config = []
 
 class ChargerData:
     """Representation charger data."""
@@ -95,10 +105,11 @@ class Controller:
         self.chargers: List[Charger] = []
         self.chargers_data: List[ChargerData] = []
         self.equalizers: List[Equalizer] = []
+        self.equalizers_data: List[EqualizerData] = []
         self.switch_entities = []
         self.sensor_entities = []
         self.equalizer_entities = []
-        self.next_consumption_sensor = 1
+        self.next_consumption_sensor = 0
 
     async def initialize(self):
         """ initialize the session and get initial data """
@@ -140,6 +151,8 @@ class Controller:
                         "Found equalizer: %s %s", equalizer.id, equalizer["name"]
                     )
                     self.equalizers.append(equalizer)
+                    equalizer_data = EqualizerData(equalizer, site)
+                    self.equalizers_data.append(equalizer_data)
                 for circuit in site.get_circuits():
                     _LOGGER.debug(
                         "Found circuit: %s %s", circuit.id, circuit["panelName"]
@@ -159,10 +172,14 @@ class Controller:
             self.switch_entities
             + self.sensor_entities
             + self.binary_sensor_entities
-            + self.equalizer_entities
         )
 
         for entity in all_entities:
+            entity.async_schedule_update_ha_state(True)
+
+    def update_equalizers_state(self):
+        # Schedule an update for all equalizer entities
+        for entity in self.equalizer_entities:
             entity.async_schedule_update_ha_state(True)
 
     async def add_schedulers(self):
@@ -172,12 +189,20 @@ class Controller:
         if tasks:
             await asyncio.wait(tasks)
         self.hass.async_add_job(self.refresh_sites_state)
+        self.hass.async_add_job(self.refresh_equalizers_state)
 
         # Add interval refresh for site state interval
         async_track_time_interval(
             self.hass,
             self.refresh_sites_state,
             timedelta(seconds=SCAN_INTERVAL_STATE_SECONDS),
+        )
+
+        # Add interval refresh for equalizer state interval
+        async_track_time_interval(
+            self.hass,
+            self.refresh_equalizers_state,
+            timedelta(seconds=SCAN_INTERVAL_EQUALIZERS_SECONDS),
         )
 
         # Add interval refresh for schedules
@@ -197,18 +222,11 @@ class Controller:
     def refresh_consumption_sensors(self, now=None):
         # Schedule update of exactly one consumption sensor
         max_consumption_sensor = len(self.consumption_sensor_entities)
-        counter = 0
-        for consumption_sensor in self.consumption_sensor_entities:
-            counter += 1
-            if counter != self.next_consumption_sensor:
-                continue
-
-            consumption_sensor.async_schedule_update_ha_state(True)
+        if max_consumption_sensor > 0:
+            self.consumption_sensor_entities[self.next_consumption_sensor].async_schedule_update_ha_state(True)
             self.next_consumption_sensor += 1
-            if self.next_consumption_sensor > max_consumption_sensor:
-                self.next_consumption_sensor = 1
-
-            break
+            if self.next_consumption_sensor >= max_consumption_sensor:
+                self.next_consumption_sensor = 0
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """
@@ -240,6 +258,18 @@ class Controller:
             charger_data.config = site_state.get_charger_config(charger_id)
 
         self.update_ha_state()
+
+    async def refresh_equalizers_state(self, now=None):
+        """ gets equalizer state for all equalziers """
+
+        for equalizer_data in self.equalizers_data:
+            equalizer_data.state = await equalizer_data.equalizer.get_state()
+            if equalizer_data.state["isOnline"]:
+                equalizer_data.state["isOnline"] = "ONLINE"
+            else:
+                equalizer_data.state["isOnline"] = "OFFLINE"
+
+        self.update_equalizers_state()
 
     def get_sites(self):
         return self.sites
@@ -304,6 +334,7 @@ class Controller:
                                 data["convert_units_func"], None
                             ),
                             attrs_keys=data["attrs"],
+                            device_class=data["device_class"],
                             icon=data["icon"],
                             state_func=data.get("state_func", None),
                         )
@@ -326,6 +357,7 @@ class Controller:
                                 data["convert_units_func"], None
                             ),
                             attrs_keys=data["attrs"],
+                            device_class=data["device_class"],
                             icon=data["icon"],
                             state_func=data.get("state_func", None),
                             switch_func=data.get("switch_func", None),
@@ -349,6 +381,7 @@ class Controller:
                                 data["convert_units_func"], None
                             ),
                             attrs_keys=data["attrs"],
+                            device_class=data["device_class"],
                             icon=data["icon"],
                             state_func=data.get("state_func", None),
                         )
@@ -372,20 +405,38 @@ class Controller:
                     )
                 )
 
-        power_unit = (
-            CUSTOM_UNITS_TABLE[POWER_KILO_WATT]
-            if POWER_KILO_WATT in custom_units
-            else POWER_KILO_WATT
-        )
-        for equalizer in self.equalizers:
-            _LOGGER.debug(
-                "Adding sensor entity: power (sensor) for equalizer %s",
-                equalizer.id,
-            )
-            self.equalizer_entities.append(
-                EqualizerSensor(
-                    equalizer,
-                    "power",
-                    power_unit,
-                )
-            )
+        for equalizer_data in self.equalizers_data:
+            for key in monitored_conditions:
+                # Fix renamed entities previously configured
+                if key not in EASEE_ENTITIES:
+                    continue
+                data = EASEE_ENTITIES[key]
+                entity_type = data.get("type", "sensor")
+
+                if entity_type == "eq_sensor":
+                    _LOGGER.debug(
+                        "Adding sensor entity: %s (%s) for equalizer %s",
+                        key,
+                        entity_type,
+                        equalizer_data.equalizer["name"]
+                    )
+
+                    if data["units"] in custom_units:
+                        data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
+
+                    self.equalizer_entities.append(
+                        EqualizerSensor(
+                            controller=self,
+                            charger_data=equalizer_data,
+                            name=key,
+                            state_key=data["key"],
+                            units=data["units"],
+                            convert_units_func=convert_units_funcs.get(
+                                data["convert_units_func"], None
+                            ),
+                            attrs_keys=data["attrs"],
+                            device_class=data["device_class"],
+                            icon=data["icon"],
+                            state_func=data.get("state_func", None),
+                        )
+                    )

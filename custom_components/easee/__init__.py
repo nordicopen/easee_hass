@@ -6,9 +6,6 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_MONITORED_CONDITIONS
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import (
-    config_validation as cv,
-)
 
 from .const import (
     DOMAIN,
@@ -23,25 +20,6 @@ from .controller import Controller
 
 _LOGGER = logging.getLogger(__name__)
 
-CONFIG_SCHEMA = vol.Schema(
-    {
-        DOMAIN: vol.Schema(
-            {
-                vol.Optional(CONF_USERNAME): cv.string,
-                vol.Optional(CONF_PASSWORD): cv.string,
-                vol.Optional(CONF_MONITORED_CONDITIONS, default=["status"]): vol.All(
-                    cv.ensure_list, [vol.In(EASEE_ENTITIES)]
-                ),
-                vol.Optional(MEASURED_CONSUMPTION_DAYS, default=[]): vol.All(
-                    cv.ensure_list
-                ),
-            }
-        )
-    },
-    extra=vol.ALLOW_EXTRA,
-)
-
-
 async def async_setup(hass: HomeAssistant, config: dict):
     """Set up the Easee integration component."""
     return True
@@ -52,6 +30,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
     hass.data[DOMAIN]["entities"] = []
+    hass.data[DOMAIN]["entities_to_remove"] = []
+    hass.data[DOMAIN]["sites_to_remove"] = []
+    hass.data[DOMAIN]["days_to_remove"] = []
     _LOGGER.debug("Setting up Easee component version %s", VERSION)
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
