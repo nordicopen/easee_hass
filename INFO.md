@@ -24,7 +24,7 @@ CAR_CONNECTED
 ```
 
 **_Important_**
-This component quite new and uses the (easee library)[https://github.com/fondberg/pyeasee].
+This component quite new and uses the [pyease library](https://github.com/fondberg/pyeasee).
 Please help me test and preferbly suggest the fixes as a PR or technical note in an issue.
 
 ## Configuration
