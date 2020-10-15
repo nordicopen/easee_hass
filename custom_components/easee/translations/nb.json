@@ -1,0 +1,37 @@
+{
+  "config": {
+    "abort": {
+      "already_setup": "Du kan kun koble til en Easee konto."
+    },
+    "error": {
+      "auth_failure": "Kan ikke koble til Easee. Sjekk brukernavn og passord.",
+      "connection_failure": "Kan ikke koble til Easee. Prøv igjen senere.",
+      "refused_failure": "Tilkobling til Easee ble avvist. Prøv igjen senere."
+    },
+    "step": {
+      "user": {
+        "data": {
+          "password": "Passord",
+          "username": "Brukernavn"
+        },
+        "description": "Vennligst fyll ut brukernavn og passord for din Easee-konto.",
+        "title": "Koble til Easee"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "monitored_conditions": "Inkluderte sensorer",
+          "measured_consumption_days": "Energiforbruk - antall dager",
+          "custom_units": "Tilpassede enheter",
+          "monitored_sites": "Inkluderte lokasjoner"
+        },
+        "description": "Velg instillinger",
+        "title": "Easee EV Charger"
+      }
+    }
+  },
+  "title": "Easee EV Charger"
+}
