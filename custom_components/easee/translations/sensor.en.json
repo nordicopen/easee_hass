@@ -1,0 +1,11 @@
+{
+  "state": {
+    "easee_status": {
+      "STANDBY": "Standby",
+      "PAUSED": "Paused",
+      "READY_TO_CHARGE": "Ready to charge",
+      "CAR_CONNECTED": "Car connected",
+      "CHARGING": "Charging"
+    }
+  }
+}

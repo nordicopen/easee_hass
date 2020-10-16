@@ -8,6 +8,7 @@ from datetime import datetime
 from homeassistant.helpers import entity_registry, device_registry
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.translation import async_get_translations
 from homeassistant.util import dt
 from homeassistant.const import DEVICE_CLASS_POWER
 
@@ -79,6 +80,7 @@ class ChargerEntity(Entity):
 
     async def async_added_to_hass(self) -> None:
         """Entity created."""
+
         self.hass.data[DOMAIN]["entities"].append({self._entity_name: self.entity_id})
 
     async def async_will_remove_from_hass(self) -> None:
@@ -190,6 +192,11 @@ class ChargerEntity(Entity):
 
     async def async_update(self):
         """Get the latest data and update the state."""
+#         self._translations = await async_get_translations(
+# #                data["language"], "area", DOMAIN
+#                 "sv", "labels", DOMAIN
+#             )
+#         _LOGGER.debug("Translate status_charging: %s", self._translations[f"component.easee.labels.status_charging"])
         _LOGGER.debug(
             "ChargerEntity async_update : %s %s",
             self.charger_data.charger.id,
