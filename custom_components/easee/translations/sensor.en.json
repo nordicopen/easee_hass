@@ -5,7 +5,8 @@
       "PAUSED": "Paused",
       "READY_TO_CHARGE": "Ready to charge",
       "CAR_CONNECTED": "Car connected",
-      "CHARGING": "Charging"
+      "CHARGING": "Charging",
+      "ERROR": "Error"
     }
   }
 }

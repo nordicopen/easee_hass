@@ -5,7 +5,8 @@
       "PAUSED": "Paus",
       "READY_TO_CHARGE": "Redo att ladda",
       "CAR_CONNECTED": "Bil ansluten",
-      "CHARGING": "Laddar"
+      "CHARGING": "Laddar",
+      "ERROR": "Fel"
     }
   }
 }
