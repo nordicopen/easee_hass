@@ -87,6 +87,7 @@ EASEE_ENTITIES = {
             "state.outputPhase",
             "state.ledMode",
             "state.cableRating",
+            "config.authorizationRequired",
             "config.limitToSinglePhaseCharging",
             "config.localNodeType",
             "config.localAuthorizationRequired",
