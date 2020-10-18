@@ -192,11 +192,6 @@ class ChargerEntity(Entity):
 
     async def async_update(self):
         """Get the latest data and update the state."""
-#         self._translations = await async_get_translations(
-# #                data["language"], "area", DOMAIN
-#                 "sv", "labels", DOMAIN
-#             )
-#         _LOGGER.debug("Translate status_charging: %s", self._translations[f"component.easee.labels.status_charging"])
         _LOGGER.debug(
             "ChargerEntity async_update : %s %s",
             self.charger_data.charger.id,
