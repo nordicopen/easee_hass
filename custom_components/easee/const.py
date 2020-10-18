@@ -382,7 +382,7 @@ EASEE_EQ_ENTITIES = {
         "units": None,
         "convert_units_func": None,
         "device_class": "easee_eq_status",
-        "icon": None,
+        "icon": "mdi:server-network",
     },
     "power": {
         "type": "eq_sensor",
