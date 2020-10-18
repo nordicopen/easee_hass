@@ -55,7 +55,7 @@ class ChargerConsumptionSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self.charger.name} {self._sensor_name}".capitalize().replace('_', ' ')
+        return f"{self.charger.name} " + f"{self._sensor_name}".capitalize().replace('_', ' ')
 
     @property
     def unique_id(self) -> str:
@@ -129,7 +129,7 @@ class EqualizerSensor(ChargerEntity):
     @property
     def name(self):
         """Return the name of the entity."""
-        return f"{self.charger_data.equalizer['name']}_{self._entity_name}".capitalize().replace('_', ' ')
+        return f"{self.charger_data.equalizer['name']} " + f"{self._entity_name}".capitalize().replace('_', ' ')
 
     @property
     def unique_id(self) -> str:
