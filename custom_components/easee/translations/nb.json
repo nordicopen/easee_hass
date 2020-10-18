@@ -23,7 +23,8 @@
     "step": {
       "init": {
         "data": {
-          "monitored_conditions": "Inkluderte sensorer",
+          "monitored_conditions": "Inkluderte ?charger? sensorer",
+          "monitored_eq_conditions": "Inkluderte equalizer sensorer",
           "measured_consumption_days": "Energiforbruk - antall dager",
           "custom_units": "Tilpassede enheter",
           "monitored_sites": "Inkluderte lokasjoner"
