@@ -34,7 +34,9 @@ from homeassistant.const import (
 
 from .const import (
     CONF_MONITORED_SITES,
+    CONF_MONITORED_EQ_CONDITIONS,
     EASEE_ENTITIES,
+    EASEE_EQ_ENTITIES,
     MEASURED_CONSUMPTION_DAYS,
     CUSTOM_UNITS,
     CUSTOM_UNITS_TABLE,
@@ -297,6 +299,9 @@ class Controller:
         monitored_conditions = self.config.options.get(
             CONF_MONITORED_CONDITIONS, ["status"]
         )
+        monitored_eq_conditions = self.config.options.get(
+            CONF_MONITORED_EQ_CONDITIONS, ["status"]
+        )
         custom_units = self.config.options.get(CUSTOM_UNITS, {})
         self.sensor_entities = []
         self.switch_entities = []
@@ -406,11 +411,11 @@ class Controller:
                 )
 
         for equalizer_data in self.equalizers_data:
-            for key in monitored_conditions:
+            for key in monitored_eq_conditions:
                 # Fix renamed entities previously configured
-                if key not in EASEE_ENTITIES:
+                if key not in EASEE_EQ_ENTITIES:
                     continue
-                data = EASEE_ENTITIES[key]
+                data = EASEE_EQ_ENTITIES[key]
                 entity_type = data.get("type", "sensor")
 
                 if entity_type == "eq_sensor":

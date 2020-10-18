@@ -24,7 +24,9 @@ from .const import (
     CUSTOM_UNITS,
     CUSTOM_UNITS_OPTIONS,
     EASEE_ENTITIES,
+    EASEE_EQ_ENTITIES,
     CONF_MONITORED_SITES,
+    CONF_MONITORED_EQ_CONDITIONS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -105,6 +107,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         constroller = self.hass.data[DOMAIN]["controller"]
         sensor_multi_select = {x: x for x in list(EASEE_ENTITIES)}
+        sensor_eq_multi_select = {x: x for x in list(EASEE_EQ_ENTITIES)}
         sites: List[Site] = constroller.get_sites()
         sites_multi_select = []
         for site in sites:
@@ -127,6 +130,12 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         ),
                     ): cv.multi_select(sensor_multi_select),
                     vol.Optional(
+                        CONF_MONITORED_EQ_CONDITIONS,
+                        default=self.config_entry.options.get(
+                            CONF_MONITORED_EQ_CONDITIONS, ["status"]
+                        ),
+                    ): cv.multi_select(sensor_eq_multi_select),
+                    vol.Optional(
                         MEASURED_CONSUMPTION_DAYS,
                         default=self.config_entry.options.get(
                             MEASURED_CONSUMPTION_DAYS, []
@@ -145,6 +154,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         if CONF_MONITORED_CONDITIONS in self.prev_options:
             self.hass.data[DOMAIN]["entities_to_remove"] = [cond for cond in self.prev_options[CONF_MONITORED_CONDITIONS]
                 if cond not in self.options[CONF_MONITORED_CONDITIONS]]
+            self.hass.data[DOMAIN]["eq_entities_to_remove"] = [cond for cond in self.prev_options[CONF_MONITORED_EQ_CONDITIONS]
+                if cond not in self.options[CONF_MONITORED_EQ_CONDITIONS]]
             self.hass.data[DOMAIN]["sites_to_remove"] = [cond for cond in self.prev_options[CONF_MONITORED_SITES]
                 if cond not in self.options[CONF_MONITORED_SITES]]
             self.hass.data[DOMAIN]["days_to_remove"] = [cond for cond in self.prev_options[MEASURED_CONSUMPTION_DAYS]
