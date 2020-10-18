@@ -99,7 +99,7 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "device_class": None,
+        "device_class": "easee_status",
         "icon": "mdi:ev-station",
     },
     "total_power": {

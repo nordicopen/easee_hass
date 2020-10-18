@@ -1,0 +1,12 @@
+{
+  "state": {
+    "easee_status": {
+      "STANDBY": "Ventemodus",
+      "PAUSED": "Pause",
+      "READY_TO_CHARGE": "Klar til lading",
+      "CAR_CONNECTED": "Bil tilkoblet",
+      "CHARGING": "Lader",
+      "ERROR": "Feil"
+    }
+  }
+}
