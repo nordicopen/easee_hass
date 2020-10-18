@@ -23,7 +23,7 @@ from homeassistant.components.binary_sensor import (
 DOMAIN = "easee"
 TIMEOUT = 30
 MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
-VERSION = "0.9.19"
+VERSION = "0.9.20"
 CONF_MONITORED_SITES = "monitored_sites"
 CUSTOM_UNITS = "custom_units"
 PLATFORMS = ("sensor", "switch", "binary_sensor")
@@ -87,6 +87,7 @@ EASEE_ENTITIES = {
             "state.outputPhase",
             "state.ledMode",
             "state.cableRating",
+            "config.authorizationRequired",
             "config.limitToSinglePhaseCharging",
             "config.localNodeType",
             "config.localAuthorizationRequired",
@@ -99,7 +100,7 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "device_class": None,
+        "device_class": "easee_status",
         "icon": "mdi:ev-station",
     },
     "total_power": {
