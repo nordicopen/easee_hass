@@ -27,7 +27,7 @@
           "monitored_eq_conditions": "Monitorerade equalizer-sensorer",
           "measured_consumption_days": "Förbrukning - antal dagar",
           "custom_units": "Anpassade enheter",
-          "monitored_sites": "Monitorerade Platser"
+          "monitored_sites": "Monitorerade platser"
         },
         "description": "Välj inställningar",
         "title": "Easee EV Charger"
