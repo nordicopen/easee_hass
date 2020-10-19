@@ -8,6 +8,7 @@ from datetime import datetime
 from homeassistant.helpers import entity_registry, device_registry
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.translation import async_get_translations
 from homeassistant.util import dt
 from homeassistant.const import DEVICE_CLASS_POWER
 
@@ -79,6 +80,7 @@ class ChargerEntity(Entity):
 
     async def async_added_to_hass(self) -> None:
         """Entity created."""
+
         self.hass.data[DOMAIN]["entities"].append({self._entity_name: self.entity_id})
 
     async def async_will_remove_from_hass(self) -> None:
@@ -100,7 +102,7 @@ class ChargerEntity(Entity):
     @property
     def name(self):
         """Return the name of the entity."""
-        return f"{self.charger_data.charger.name} {self._entity_name}".capitalize().replace('_', ' ')
+        return f"{self.charger_data.charger.name} " + f"{self._entity_name}".capitalize().replace('_', ' ')
 
     @property
     def unique_id(self) -> str:
