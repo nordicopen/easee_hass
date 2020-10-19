@@ -63,7 +63,7 @@ class EqualizerData:
 
     def __init__(self, equalizer: Equalizer, site: Site):
         """Initialize the charger data."""
-        self.equalizer: Equalzier = equalizer
+        self.equalizer: Equalizer = equalizer
         self.site: Site = site
         self.state = []
         self.config = []
@@ -262,7 +262,7 @@ class Controller:
         self.update_ha_state()
 
     async def refresh_equalizers_state(self, now=None):
-        """ gets equalizer state for all equalziers """
+        """ gets equalizer state for all equalizers """
 
         for equalizer_data in self.equalizers_data:
             equalizer_data.state = await equalizer_data.equalizer.get_state()
