@@ -10,7 +10,7 @@ from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.translation import async_get_translations
 from homeassistant.util import dt
-from homeassistant.const import DEVICE_CLASS_POWER
+from homeassistant.const import DEVICE_CLASS_POWER, POWER_WATT, ENERGY_WATT_HOUR
 
 from .const import DOMAIN
 import logging
@@ -21,7 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def round_to_dec(value, decimals=None, unit=None):
     """Round to selected no of decimals."""
-    if unit == "W" or unit == "Wh":
+    if unit == POWER_WATT or unit == ENERGY_WATT_HOUR:
         value = value * 1000
         decimals = None
     try:

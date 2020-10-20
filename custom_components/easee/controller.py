@@ -34,7 +34,9 @@ from homeassistant.const import (
 
 from .const import (
     CONF_MONITORED_SITES,
+    CONF_MONITORED_EQ_CONDITIONS,
     EASEE_ENTITIES,
+    EASEE_EQ_ENTITIES,
     MEASURED_CONSUMPTION_DAYS,
     CUSTOM_UNITS,
     CUSTOM_UNITS_TABLE,
@@ -61,7 +63,7 @@ class EqualizerData:
 
     def __init__(self, equalizer: Equalizer, site: Site):
         """Initialize the charger data."""
-        self.equalizer: Equalzier = equalizer
+        self.equalizer: Equalizer = equalizer
         self.site: Site = site
         self.state = []
         self.config = []
@@ -260,7 +262,7 @@ class Controller:
         self.update_ha_state()
 
     async def refresh_equalizers_state(self, now=None):
-        """ gets equalizer state for all equalziers """
+        """ gets equalizer state for all equalizers """
 
         for equalizer_data in self.equalizers_data:
             equalizer_data.state = await equalizer_data.equalizer.get_state()
@@ -296,6 +298,9 @@ class Controller:
     def _create_entitites(self):
         monitored_conditions = self.config.options.get(
             CONF_MONITORED_CONDITIONS, ["status"]
+        )
+        monitored_eq_conditions = self.config.options.get(
+            CONF_MONITORED_EQ_CONDITIONS, ["status"]
         )
         custom_units = self.config.options.get(CUSTOM_UNITS, {})
         self.sensor_entities = []
@@ -406,11 +411,11 @@ class Controller:
                 )
 
         for equalizer_data in self.equalizers_data:
-            for key in monitored_conditions:
+            for key in monitored_eq_conditions:
                 # Fix renamed entities previously configured
-                if key not in EASEE_ENTITIES:
+                if key not in EASEE_EQ_ENTITIES:
                     continue
-                data = EASEE_ENTITIES[key]
+                data = EASEE_EQ_ENTITIES[key]
                 entity_type = data.get("type", "sensor")
 
                 if entity_type == "eq_sensor":

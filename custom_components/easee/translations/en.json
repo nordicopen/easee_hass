@@ -23,7 +23,8 @@
     "step": {
       "init": {
         "data": {
-          "monitored_conditions": "Sensors monitored",
+          "monitored_conditions": "Charger sensors monitored",
+          "monitored_eq_conditions": "Equalizer sensors monitored",
           "measured_consumption_days": "Consumption monitoring days",
           "custom_units": "Custom units",
           "monitored_sites": "Sites monitored"

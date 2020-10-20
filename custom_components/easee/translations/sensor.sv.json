@@ -7,6 +7,10 @@
       "CAR_CONNECTED": "Bil ansluten",
       "CHARGING": "Laddar",
       "ERROR": "Fel"
+    },
+    "easee_eq_status": {
+      "ONLINE": "Uppkopplad",
+      "OFFLINE": "Nedkopplad"
     }
   }
 }

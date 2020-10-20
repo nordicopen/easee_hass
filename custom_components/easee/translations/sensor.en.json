@@ -7,6 +7,10 @@
       "CAR_CONNECTED": "Car connected",
       "CHARGING": "Charging",
       "ERROR": "Error"
+    },
+    "easee_eq_status": {
+      "ONLINE": "Online",
+      "OFFLINE": "Offline"
     }
   }
 }

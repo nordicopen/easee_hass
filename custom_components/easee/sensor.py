@@ -5,17 +5,22 @@ Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 from typing import Dict
 from datetime import datetime, timedelta
 
+from homeassistant.helpers import entity_registry, device_registry
+from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.helpers.entity import Entity
 
-from .entity import ChargerEntity, round_2_dec
+from .entity import ChargerEntity, round_to_dec, round_2_dec, round_1_dec, round_0_dec
 from .const import DOMAIN
 from homeassistant.const import (
+    POWER_KILO_WATT,
+    ENERGY_KILO_WATT_HOUR,
     DEVICE_CLASS_POWER,
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_VOLTAGE,
     DEVICE_CLASS_SIGNAL_STRENGTH,    
 )
+
 
 import logging
 
@@ -146,6 +151,22 @@ class EqualizerSensor(ChargerEntity):
             "model": "Equalizer",
         }
 
+    async def async_will_remove_from_hass(self) -> None:
+        """Disconnect object when removed."""
+        ent_reg = await entity_registry.async_get_registry(self.hass)
+        entity_entry = ent_reg.async_get(self.entity_id)
+
+        dev_reg = await device_registry.async_get_registry(self.hass)
+        device_entry = dev_reg.async_get(entity_entry.device_id)
+
+        if (self._entity_name in self.hass.data[DOMAIN]["eq_entities_to_remove"] or
+            self.charger_data.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]):
+            if len(async_entries_for_device(ent_reg, entity_entry.device_id)) == 1:
+                dev_reg.async_remove_device(device_entry.id)
+                return
+
+            ent_reg.async_remove(self.entity_id)
+
     async def async_update(self):
         """Get the latest data and update the state."""
         _LOGGER.debug(
@@ -179,7 +200,16 @@ class EqualizerSensor(ChargerEntity):
                 if "site" in attr_key or "circuit" in attr_key:
                     # maybe for everything?
                     key = attr_key.replace(".", "_")
-                attrs[key] = self.get_value_from_key(attr_key)
+                if "voltage" in key.lower():
+                    attrs[key] = round_0_dec(self.get_value_from_key(attr_key))
+                elif "current" in key.lower():
+                    attrs[key] = round_1_dec(self.get_value_from_key(attr_key))
+                elif "cumulative" in key.lower():
+                    attrs[key] = round_1_dec(self.get_value_from_key(attr_key), self._units)
+                elif "power" in key.lower():
+                    attrs[key] = round_1_dec(self.get_value_from_key(attr_key), self._units)
+                else:
+                    attrs[key] = self.get_value_from_key(attr_key)
 
             return attrs
         except IndexError:
