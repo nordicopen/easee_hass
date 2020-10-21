@@ -23,7 +23,7 @@ from homeassistant.components.binary_sensor import (
 DOMAIN = "easee"
 TIMEOUT = 30
 MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
-VERSION = "0.9.20"
+VERSION = "0.9.21"
 CONF_MONITORED_SITES = "monitored_sites"
 CONF_MONITORED_EQ_CONDITIONS = "monitored_eq_conditions"
 CUSTOM_UNITS = "custom_units"
