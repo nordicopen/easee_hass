@@ -23,7 +23,8 @@ from .const import (
     MEASURED_CONSUMPTION_OPTIONS,
     CUSTOM_UNITS,
     CUSTOM_UNITS_OPTIONS,
-    EASEE_ENTITIES,
+    OPTIONAL_EASEE_ENTITIES,
+    MANDATORY_EASEE_ENTITIES,
     EASEE_EQ_ENTITIES,
     CONF_MONITORED_SITES,
     CONF_MONITORED_EQ_CONDITIONS,
@@ -105,10 +106,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             self.options.update(user_input)
             return await self._update_options()
 
-        constroller = self.hass.data[DOMAIN]["controller"]
-        sensor_multi_select = {x: x for x in list(EASEE_ENTITIES)}
+        controller = self.hass.data[DOMAIN]["controller"]
+        sensor_multi_select = {x: x for x in list(OPTIONAL_EASEE_ENTITIES)}
         sensor_eq_multi_select = {x: x for x in list(EASEE_EQ_ENTITIES)}
-        sites: List[Site] = constroller.get_sites()
+        sites: List[Site] = controller.get_sites()
         sites_multi_select = []
         for site in sites:
             sites_multi_select.append(site["name"])
@@ -126,7 +127,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Optional(
                         CONF_MONITORED_CONDITIONS,
                         default=self.config_entry.options.get(
-                            CONF_MONITORED_CONDITIONS, ["status"]
+                            CONF_MONITORED_CONDITIONS, []
                         ),
                     ): cv.multi_select(sensor_multi_select),
                     vol.Optional(
@@ -150,6 +151,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         )
 
     async def _update_options(self):
+        for x in self.options[CONF_MONITORED_CONDITIONS]:
+            if x in MANDATORY_EASEE_ENTITIES:
+                del self.options[CONF_MONITORED_CONDITIONS][x]
         """Update config entry options."""
         self.hass.data[DOMAIN]["entities_to_remove"] = [cond for cond in self.prev_options.get(CONF_MONITORED_CONDITIONS, {})
             if cond not in self.options[CONF_MONITORED_CONDITIONS]]

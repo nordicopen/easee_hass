@@ -44,7 +44,32 @@ CUSTOM_UNITS_TABLE = {
     POWER_KILO_WATT: POWER_WATT,
     ENERGY_KILO_WATT_HOUR: ENERGY_WATT_HOUR,
 }
-EASEE_ENTITIES = {
+MANDATORY_EASEE_ENTITIES = {
+    "status": {
+        "key": "state.chargerOpMode",
+        "attrs": [
+            "config.phaseMode",
+            "state.outputPhase",
+            "state.ledMode",
+            "state.cableRating",
+            "config.authorizationRequired",
+            "config.limitToSinglePhaseCharging",
+            "config.localNodeType",
+            "config.localAuthorizationRequired",
+            "config.ledStripBrightness",
+            "site.id",
+            "site.name",
+            "site.siteKey",
+            "circuit.id",
+            "circuit.ratedCurrent",
+        ],
+        "units": None,
+        "convert_units_func": None,
+        "device_class": "easee_status",
+        "icon": "mdi:ev-station",
+    },
+}
+OPTIONAL_EASEE_ENTITIES = {
     "smart_charging": {
         "type": "switch",
         "key": "state.smartCharging",
@@ -80,29 +105,6 @@ EASEE_ENTITIES = {
         "device_class": None,
         "icon": "mdi:lock",
         "switch_func": "lockCablePermanently",
-    },
-    "status": {
-        "key": "state.chargerOpMode",
-        "attrs": [
-            "config.phaseMode",
-            "state.outputPhase",
-            "state.ledMode",
-            "state.cableRating",
-            "config.authorizationRequired",
-            "config.limitToSinglePhaseCharging",
-            "config.localNodeType",
-            "config.localAuthorizationRequired",
-            "config.ledStripBrightness",
-            "site.id",
-            "site.name",
-            "site.siteKey",
-            "circuit.id",
-            "circuit.ratedCurrent",
-        ],
-        "units": None,
-        "convert_units_func": None,
-        "device_class": "easee_status",
-        "icon": "mdi:ev-station",
     },
     "total_power": {
         "key": "state.totalPower",

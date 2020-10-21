@@ -35,7 +35,8 @@ from homeassistant.const import (
 from .const import (
     CONF_MONITORED_SITES,
     CONF_MONITORED_EQ_CONDITIONS,
-    EASEE_ENTITIES,
+    OPTIONAL_EASEE_ENTITIES,
+    MANDATORY_EASEE_ENTITIES,
     EASEE_EQ_ENTITIES,
     MEASURED_CONSUMPTION_DAYS,
     CUSTOM_UNITS,
@@ -83,7 +84,7 @@ class ChargerData:
     async def schedules_async_refresh(self):
         try:
             self.schedule = await self.charger.get_basic_charge_plan()
-        except (TooManyRequestsException, ServerFailureException) as err:
+        except (TooManyRequestsException, ServerFailureException):
             _LOGGER.debug("Got server error while fetching schedule")
         except NotFoundException:
             self.schedule = None
@@ -297,8 +298,8 @@ class Controller:
 
     def _create_entitites(self):
         monitored_conditions = self.config.options.get(
-            CONF_MONITORED_CONDITIONS, ["status"]
-        )
+            CONF_MONITORED_CONDITIONS, []
+        ) + [x for x in MANDATORY_EASEE_ENTITIES]
         monitored_eq_conditions = self.config.options.get(
             CONF_MONITORED_EQ_CONDITIONS, ["status"]
         )
@@ -309,12 +310,14 @@ class Controller:
         self.consumption_sensor_entities = []
         self.equalizer_sensor_entities = []
 
+        all_easee_entities = {**MANDATORY_EASEE_ENTITIES, **OPTIONAL_EASEE_ENTITIES}
+
         for charger_data in self.chargers_data:
             for key in monitored_conditions:
                 # Fix renamed entities previously configured
-                if key not in EASEE_ENTITIES:
+                if key not in all_easee_entities:
                     continue
-                data = EASEE_ENTITIES[key]
+                data = all_easee_entities[key]
                 entity_type = data.get("type", "sensor")
 
                 if entity_type == "sensor":

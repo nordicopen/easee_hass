@@ -85,6 +85,12 @@ class ChargerEntity(Entity):
 
     async def async_will_remove_from_hass(self) -> None:
         """Disconnect object when removed."""
+        if self in self.controller.sensor_entities:
+            self.controller.sensor_entities.remove(self)
+        if self in self.controller.binary_sensor_entities:
+            self.controller.binary_sensor_entities.remove(self)
+        if self in self.controller.switch_entities:
+            self.controller.switch_entities.remove(self)
         ent_reg = await entity_registry.async_get_registry(self.hass)
         entity_entry = ent_reg.async_get(self.entity_id)
 
@@ -162,7 +168,7 @@ class ChargerEntity(Entity):
     def device_class(self):
         """Device class of sensor."""
         return self._device_class
-    
+
     @property
     def should_poll(self):
         """No polling needed."""
