@@ -102,10 +102,14 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input=None):
         """Manage the options."""
-        if user_input is not None:
-            self.options.update(user_input)
-            return await self._update_options()
 
+        errors = {}
+        if user_input is not None:
+            if len(user_input[CONF_MONITORED_SITES]) == 0:
+                errors["base"] = "no_sites"
+            else:
+                self.options.update(user_input)
+                return await self._update_options()
         controller = self.hass.data[DOMAIN]["controller"]
         sensor_multi_select = {x: x for x in list(OPTIONAL_EASEE_ENTITIES)}
         sensor_eq_multi_select = {x: x for x in list(EASEE_EQ_ENTITIES)}
@@ -148,6 +152,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     ): cv.multi_select(CUSTOM_UNITS_OPTIONS),
                 }
             ),
+            errors=errors,
         )
 
     async def _update_options(self):

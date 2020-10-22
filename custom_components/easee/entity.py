@@ -91,6 +91,10 @@ class ChargerEntity(Entity):
             self.controller.binary_sensor_entities.remove(self)
         if self in self.controller.switch_entities:
             self.controller.switch_entities.remove(self)
+        if self in self.controller.consumption_sensor_entities:
+            self.controller.consumption_sensor.remove(self)
+        if self in self.controller.equalizer_sensor_entities:
+            self.controller.equalizer_sensor.remove(self)
         ent_reg = await entity_registry.async_get_registry(self.hass)
         entity_entry = ent_reg.async_get(self.entity_id)
 
