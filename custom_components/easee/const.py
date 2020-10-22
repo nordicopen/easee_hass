@@ -27,6 +27,7 @@ VERSION = "0.9.21"
 CONF_MONITORED_SITES = "monitored_sites"
 CONF_MONITORED_EQ_CONDITIONS = "monitored_eq_conditions"
 CUSTOM_UNITS = "custom_units"
+CONSUMPTION_DAYS_PREFIX = "consumption_days_"
 PLATFORMS = ("sensor", "switch", "binary_sensor")
 LISTENER_FN_CLOSE = "update_listener_close_fn"
 MEASURED_CONSUMPTION_OPTIONS = {

@@ -38,6 +38,7 @@ from .const import (
     OPTIONAL_EASEE_ENTITIES,
     MANDATORY_EASEE_ENTITIES,
     EASEE_EQ_ENTITIES,
+    CONSUMPTION_DAYS_PREFIX,
     MEASURED_CONSUMPTION_DAYS,
     CUSTOM_UNITS,
     CUSTOM_UNITS_TABLE,
@@ -406,8 +407,9 @@ class Controller:
                 _LOGGER.info("Will measure days: %s", interval)
                 self.consumption_sensor_entities.append(
                     ChargerConsumptionSensor(
+                        self,
                         charger_data.charger,
-                        f"consumption_days_{interval}",
+                        f"{CONSUMPTION_DAYS_PREFIX}{interval}",
                         int(interval),
                         consumption_unit,
                     )
