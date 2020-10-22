@@ -34,7 +34,7 @@
       }
     },
     "error": {
-      "no_sites": "No monitored sites selected"
+      "no_sites": "Ingen lokasjon valgt"
     }
   },
   "title": "Easee EV Charger"
