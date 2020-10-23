@@ -19,11 +19,13 @@ from aiohttp import ClientConnectionError
 
 from .const import (
     DOMAIN,
+    CONSUMPTION_DAYS_PREFIX,
     MEASURED_CONSUMPTION_DAYS,
     MEASURED_CONSUMPTION_OPTIONS,
     CUSTOM_UNITS,
     CUSTOM_UNITS_OPTIONS,
-    EASEE_ENTITIES,
+    OPTIONAL_EASEE_ENTITIES,
+    MANDATORY_EASEE_ENTITIES,
     EASEE_EQ_ENTITIES,
     CONF_MONITORED_SITES,
     CONF_MONITORED_EQ_CONDITIONS,
@@ -101,14 +103,18 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input=None):
         """Manage the options."""
-        if user_input is not None:
-            self.options.update(user_input)
-            return await self._update_options()
 
-        constroller = self.hass.data[DOMAIN]["controller"]
-        sensor_multi_select = {x: x for x in list(EASEE_ENTITIES)}
+        errors = {}
+        if user_input is not None:
+            if len(user_input[CONF_MONITORED_SITES]) == 0:
+                errors["base"] = "no_sites"
+            else:
+                self.options.update(user_input)
+                return await self._update_options()
+        controller = self.hass.data[DOMAIN]["controller"]
+        sensor_multi_select = {x: x for x in list(OPTIONAL_EASEE_ENTITIES)}
         sensor_eq_multi_select = {x: x for x in list(EASEE_EQ_ENTITIES)}
-        sites: List[Site] = constroller.get_sites()
+        sites: List[Site] = controller.get_sites()
         sites_multi_select = []
         for site in sites:
             sites_multi_select.append(site["name"])
@@ -126,7 +132,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Optional(
                         CONF_MONITORED_CONDITIONS,
                         default=self.config_entry.options.get(
-                            CONF_MONITORED_CONDITIONS, ["status"]
+                            CONF_MONITORED_CONDITIONS, []
                         ),
                     ): cv.multi_select(sensor_multi_select),
                     vol.Optional(
@@ -147,9 +153,13 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     ): cv.multi_select(CUSTOM_UNITS_OPTIONS),
                 }
             ),
+            errors=errors,
         )
 
     async def _update_options(self):
+        for x in self.options[CONF_MONITORED_CONDITIONS]:
+            if x in MANDATORY_EASEE_ENTITIES:
+                del self.options[CONF_MONITORED_CONDITIONS][x]
         """Update config entry options."""
         self.hass.data[DOMAIN]["entities_to_remove"] = [cond for cond in self.prev_options.get(CONF_MONITORED_CONDITIONS, {})
             if cond not in self.options[CONF_MONITORED_CONDITIONS]]
@@ -157,6 +167,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             if cond not in self.options[CONF_MONITORED_EQ_CONDITIONS]]
         self.hass.data[DOMAIN]["sites_to_remove"] = [cond for cond in self.prev_options.get(CONF_MONITORED_SITES, {})
             if cond not in self.options[CONF_MONITORED_SITES]]
-        self.hass.data[DOMAIN]["days_to_remove"] = [cond for cond in self.prev_options.get(MEASURED_CONSUMPTION_DAYS, {})
+        self.hass.data[DOMAIN]["days_to_remove"] = [f"{CONSUMPTION_DAYS_PREFIX}{cond}" for cond in self.prev_options.get(MEASURED_CONSUMPTION_DAYS, {})
             if cond not in self.options[MEASURED_CONSUMPTION_DAYS]]
+        _LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>> Days_to_remove: %s", self.hass.data[DOMAIN]["days_to_remove"])
         return self.async_create_entry(title="", data=self.options)

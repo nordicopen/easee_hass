@@ -32,6 +32,9 @@
         "description": "Velg instillinger",
         "title": "Easee EV Charger"
       }
+    },
+    "error": {
+      "no_sites": "Ingen lokasjon valgt"
     }
   },
   "title": "Easee EV Charger"
