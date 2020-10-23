@@ -298,9 +298,9 @@ class Controller:
         return self.switch_entities
 
     def _create_entitites(self):
-        monitored_conditions = self.config.options.get(
+        monitored_conditions = list(dict.fromkeys(self.config.options.get(
             CONF_MONITORED_CONDITIONS, []
-        ) + [x for x in MANDATORY_EASEE_ENTITIES]
+        ) + [x for x in MANDATORY_EASEE_ENTITIES]))
         monitored_eq_conditions = self.config.options.get(
             CONF_MONITORED_EQ_CONDITIONS, ["status"]
         )
