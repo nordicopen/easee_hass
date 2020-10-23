@@ -23,8 +23,9 @@ from homeassistant.components.binary_sensor import (
 DOMAIN = "easee"
 TIMEOUT = 30
 MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
-VERSION = "0.9.20"
+VERSION = "0.9.21"
 CONF_MONITORED_SITES = "monitored_sites"
+CONF_MONITORED_EQ_CONDITIONS = "monitored_eq_conditions"
 CUSTOM_UNITS = "custom_units"
 PLATFORMS = ("sensor", "switch", "binary_sensor")
 LISTENER_FN_CLOSE = "update_listener_close_fn"
@@ -217,7 +218,7 @@ EASEE_ENTITIES = {
             "state.dynamicCircuitCurrentP3",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_1_dec",
+        "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
         "state_func": lambda state: float(
@@ -240,7 +241,7 @@ EASEE_ENTITIES = {
             "config.circuitMaxCurrentP3",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_1_dec",
+        "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
         "state_func": lambda config: float(
@@ -257,7 +258,7 @@ EASEE_ENTITIES = {
             "state.dynamicChargerCurrent",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_1_dec",
+        "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
     },
@@ -267,7 +268,7 @@ EASEE_ENTITIES = {
             "config.maxChargerCurrent",
         ],
         "units": ELECTRICAL_CURRENT_AMPERE,
-        "convert_units_func": "round_1_dec",
+        "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
     },
@@ -364,7 +365,10 @@ EASEE_ENTITIES = {
         "device_class": None,
         "icon": "mdi:currency-usd",
     },
-    "eq_status": {
+}
+
+EASEE_EQ_ENTITIES = {
+    "status": {
         "type": "eq_sensor",
         "key": "state.isOnline",
         "attrs": [
@@ -377,10 +381,10 @@ EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "device_class": DEVICE_CLASS_SIGNAL_STRENGTH,
-        "icon": None,
+        "device_class": "easee_eq_status",
+        "icon": "mdi:server-network",
     },
-    "eq_power": {
+    "power": {
         "type": "eq_sensor",
         "key": "state.activePowerImport",
         "attrs": [
@@ -395,7 +399,7 @@ EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_POWER,
         "icon": None,
     },
-    "eq_voltage": {
+    "voltage": {
         "type": "eq_sensor",
         "key": "state.voltageNL1",
         "attrs": [
@@ -407,7 +411,7 @@ EASEE_ENTITIES = {
             "state.voltageL2L3",
         ],
         "units": VOLT,
-        "convert_units_func": "round_1_dec",
+        "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_VOLTAGE,
         "icon": None,
         "state_func": lambda state: float(
@@ -421,7 +425,7 @@ EASEE_ENTITIES = {
             )
         ),
     },
-    "eq_current": {
+    "current": {
         "type": "eq_sensor",
         "key": "state.currentL1",
         "attrs": [
@@ -441,7 +445,7 @@ EASEE_ENTITIES = {
             )
         ),
     },
-    "eq_energy": {
+    "energy": {
         "type": "eq_sensor",
         "key": "state.cumulativeActivePowerImport",
         "attrs": [
@@ -455,5 +459,4 @@ EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": None,
     },
-
 }

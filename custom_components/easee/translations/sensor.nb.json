@@ -7,6 +7,10 @@
       "CAR_CONNECTED": "Bil tilkoblet",
       "CHARGING": "Lader",
       "ERROR": "Feil"
+    },
+    "easee_eq_status": {
+      "ONLINE": "Online",
+      "OFFLINE": "Offline"
     }
   }
 }

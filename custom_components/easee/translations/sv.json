@@ -23,10 +23,11 @@
     "step": {
       "init": {
         "data": {
-          "monitored_conditions": "Monitorerade sensorer",
+          "monitored_conditions": "Monitorerade laddbox-sensorer",
+          "monitored_eq_conditions": "Monitorerade equalizer-sensorer",
           "measured_consumption_days": "Förbrukning - antal dagar",
           "custom_units": "Anpassade enheter",
-          "monitored_sites": "Platser att inkludera"
+          "monitored_sites": "Monitorerade platser"
         },
         "description": "Välj inställningar",
         "title": "Easee EV Charger"
