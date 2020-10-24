@@ -195,6 +195,7 @@ async def async_setup_services(hass):
     chargers = controller.get_chargers()
     circuits = controller.get_circuits()
 
+    @update(controller.refresh_sites_state)
     async def charger_execute_service(call):
         """Execute a service to Easee charging station."""
         charger_id = call.data.get(CHARGER_ID)
@@ -211,6 +212,7 @@ async def async_setup_services(hass):
         _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
+    @update(controller.refresh_schedules)
     async def charger_set_schedule(call):
         """Execute a set schedule call to Easee charging station."""
         charger_id = call.data.get(CHARGER_ID)
@@ -232,6 +234,7 @@ async def async_setup_services(hass):
         _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
+    @update(controller.refresh_sites_state)
     async def circuit_execute_set_current(call):
         """Execute a service to set currents for Easee circuit."""
         circuit_id = call.data.get(CIRCUIT_ID)
@@ -269,6 +272,7 @@ async def async_setup_services(hass):
         _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
+    @update(controller.refresh_sites_state)
     async def charger_execute_set_current(call):
         """Execute a service to set currents for Easee charger."""
         charger_id = call.data.get(CHARGER_ID)
@@ -285,6 +289,7 @@ async def async_setup_services(hass):
         _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
+    @update(controller.refresh_sites_state)
     async def charger_execute_set_charging_cost(call):
         """Execute a service to set charging cost per kwh for Easee charger site."""
         charger_id = call.data.get(CHARGER_ID)
@@ -303,6 +308,7 @@ async def async_setup_services(hass):
         _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
+    @update(controller.refresh_sites_state)
     async def charger_execute_set_access(call):
         """Execute a service to set access level on a charger"""
         charger_id = call.data.get(CHARGER_ID)
