@@ -181,7 +181,7 @@ SERVICE_MAP = {
 def update(*arguments):
     def decorator(function):
         @wraps(function)
-        def wrapper(*args):
+        async def wrapper(*args):
             result = await function(*args)
             await asyncio.gather(*[func() for func in arguments])
             return result
