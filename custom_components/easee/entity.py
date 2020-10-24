@@ -92,7 +92,7 @@ class ChargerEntity(Entity):
         if self in self.controller.switch_entities:
             self.controller.switch_entities.remove(self)
         if self in self.controller.equalizer_sensor_entities:
-            self.controller.equalizer_sensor.remove(self)
+            self.controller.equalizer_sensor_entities.remove(self)
         ent_reg = await entity_registry.async_get_registry(self.hass)
         entity_entry = ent_reg.async_get(self.entity_id)
 
@@ -101,7 +101,8 @@ class ChargerEntity(Entity):
 
         _LOGGER.debug("Removing _entity_name: %s", self._entity_name)
         if (self._entity_name in self.hass.data[DOMAIN]["entities_to_remove"] or
-            self.charger_data.charger.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]):
+            self._entity_name in self.hass.data[DOMAIN]["eq_entities_to_remove"] or
+            self.charger_data.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]):
             if len(async_entries_for_device(ent_reg, entity_entry.device_id)) == 1:
                 dev_reg.async_remove_device(device_entry.id)
                 return
