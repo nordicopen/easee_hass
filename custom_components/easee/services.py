@@ -1,5 +1,7 @@
 """ easee services."""
+import asyncio
 import logging
+from functools import wraps
 
 import voluptuous as vol
 from homeassistant.exceptions import HomeAssistantError
@@ -176,6 +178,17 @@ SERVICE_MAP = {
 }
 
 
+def update(*arguments):
+    def decorator(function):
+        @wraps(function)
+        def wrapper(*args):
+            result = await function(*args)
+            await asyncio.gather(*[func() for func in arguments])
+            return result
+        return wrapper
+    return decorator
+
+
 async def async_setup_services(hass):
     """Setup services for Easee."""
     controller = hass.data[DOMAIN]["controller"]
@@ -237,6 +250,7 @@ async def async_setup_services(hass):
         _LOGGER.error("Could not find circuit %s", circuit_id)
         raise HomeAssistantError("Could not find circuit {}".format(circuit_id))
 
+    @update(controller.refresh_sites_state)
     async def charger_execute_set_circuit_current(call):
         """Execute a service to set currents for Easee circuit for specific charger."""
         charger_id = call.data.get(CHARGER_ID)
