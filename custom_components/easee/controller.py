@@ -112,7 +112,7 @@ class Controller:
         self.equalizers_data: List[EqualizerData] = []
         self.switch_entities = []
         self.sensor_entities = []
-        self.equalizer_entities = []
+        self.equalizer_sensor_entities = []
         self.next_consumption_sensor = 0
 
     async def initialize(self):
@@ -183,7 +183,7 @@ class Controller:
 
     def update_equalizers_state(self):
         # Schedule an update for all equalizer entities
-        for entity in self.equalizer_entities:
+        for entity in self.equalizer_sensor_entities:
             entity.async_schedule_update_ha_state(True)
 
     async def add_schedulers(self):
@@ -291,7 +291,7 @@ class Controller:
         return (
             self.sensor_entities
             + self.consumption_sensor_entities
-            + self.equalizer_entities
+            + self.equalizer_sensor_entities
         )
 
     def get_switch_entities(self):
@@ -434,7 +434,7 @@ class Controller:
                     if data["units"] in custom_units:
                         data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
 
-                    self.equalizer_entities.append(
+                    self.equalizer_sensor_entities.append(
                         EqualizerSensor(
                             controller=self,
                             charger_data=equalizer_data,
