@@ -138,10 +138,7 @@ class ChargerEntity(Entity):
                 "id": self.charger_data.charger.id,
             }
             for attr_key in self._attrs_keys:
-                key = attr_key
-                if "site" in attr_key or "circuit" in attr_key:
-                    # maybe for everything?
-                    key = attr_key.replace(".", "_")
+                key = attr_key.replace(".", "_")
                 if "voltage" in key.lower():
                     attrs[key] = round_0_dec(self.get_value_from_key(attr_key))
                 elif "current" in key.lower():
@@ -162,7 +159,7 @@ class ChargerEntity(Entity):
     def device_class(self):
         """Device class of sensor."""
         return self._device_class
-    
+
     @property
     def should_poll(self):
         """No polling needed."""
