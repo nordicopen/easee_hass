@@ -1,16 +1,26 @@
 {
   "state": {
     "easee_status": {
-      "STANDBY": "Ventemodus",
-      "PAUSED": "Pause",
-      "READY_TO_CHARGE": "Klar til lading",
-      "CAR_CONNECTED": "Bil tilkoblet",
-      "CHARGING": "Lader",
-      "ERROR": "Feil"
+      "standby": "Ventemodus",
+      "paused": "Pause",
+      "ready_to_charge": "Klar til lading",
+      "car_connected": "Bil tilkoblet",
+      "charging": "Lader",
+      "error": "Feil"
     },
     "easee_eq_status": {
-      "ONLINE": "Online",
-      "OFFLINE": "Offline"
+      "eq_online": "Online",
+      "eq_offline": "Offline"
+    },
+    "reason_no_current": {
+      "none": "None",
+      "no_reason": "No reason, charging or ready to charge",
+      "no_request": "Secondary unit not requesting current or no car connected",
+      "paused": "Charger paused",
+      "disabled": "Charger disabled",
+      "error_no_current": "Error - No current",
+      "schedule": "Waiting for schedule",
+      "pending_auth": "Pending auth"
     }
   }
 }

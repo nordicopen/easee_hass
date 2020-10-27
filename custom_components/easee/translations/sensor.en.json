@@ -1,16 +1,26 @@
 {
   "state": {
     "easee_status": {
-      "STANDBY": "Standby",
-      "PAUSED": "Paused",
-      "READY_TO_CHARGE": "Ready to charge",
-      "CAR_CONNECTED": "Car connected",
-      "CHARGING": "Charging",
-      "ERROR": "Error"
+      "standby": "Standby",
+      "paused": "Paused",
+      "ready_to_charge": "Ready to charge",
+      "car_connected": "Car connected",
+      "charging": "Charging",
+      "error": "Error"
     },
     "easee_eq_status": {
-      "ONLINE": "Online",
-      "OFFLINE": "Offline"
+      "eq_online": "Online",
+      "eq_offline": "Offline"
+    },
+    "reason_no_current": {
+      "none": "None",
+      "no_reason": "No reason, charging or ready to charge",
+      "no_request": "Secondary unit not requesting current or no car connected",
+      "paused": "Charger paused",
+      "disabled": "Charger disabled",
+      "error_no_current": "Error - No current",
+      "schedule": "Waiting for schedule",
+      "pending_auth": "Pending auth"
     }
   }
 }

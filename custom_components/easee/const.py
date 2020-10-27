@@ -100,7 +100,7 @@ EASEE_ENTITIES = {
             "circuit.ratedCurrent",
         ],
         "units": None,
-        "convert_units_func": None,
+        "convert_units_func": "map_ea_status",
         "device_class": "easee_status",
         "icon": "mdi:ev-station",
     },
@@ -293,13 +293,10 @@ EASEE_ENTITIES = {
     },
     "reason_for_no_current": {
         "key": "state.reasonForNoCurrent",
-        "attrs": [
-            "state.reasonForNoCurrent",
-            "state.reasonForNoCurrent",
-        ],
+        "attrs": [],
         "units": "",
-        "convert_units_func": None,
-        "device_class": None,
+        "convert_units_func": "map_reason_no_current",
+        "device_class": "reason_no_current",
         "icon": "mdi:alert-circle",
     },
     "is_enabled": {
@@ -459,4 +456,68 @@ EASEE_EQ_ENTITIES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": None,
     },
+}
+
+EQ_ONLINE = "eq_online"
+EQ_OFFLINE = "eq_offline"
+
+EA_STANDBY = "standby"
+EA_PAUSED = "paused"
+EA_READY_TO_CHARGE = "ready_to_charge"
+EA_CAR_CONNECTED = "car_connected"
+EA_CHARGING = "charging"
+EA_ERROR = "error"
+
+EASEE_STATUS = {
+    1: EA_STANDBY,
+    2: EA_PAUSED,
+    3: EA_CHARGING,
+    4: EA_READY_TO_CHARGE,
+    5: EA_ERROR,
+    6: EA_CAR_CONNECTED,
+}
+
+NT_MASTER = "master"
+NT_EXTENDER = "extender"
+
+NODE_TYPE_STATUS = {
+    1: NT_MASTER,
+    2: NT_EXTENDER,
+}
+
+PM_LOCKED_SINGLE = "locked_single"
+PM_AUTO = "auto"
+PM_LOCKED_THREE = "locked_three"
+
+PHASE_MODE_STATUS = {
+    1: PM_LOCKED_SINGLE,
+    2: PM_AUTO,
+    3: PM_LOCKED_THREE,
+}
+
+RNC_NO_REASON = "no_reason"
+RNC_NONE = "none"
+RNC_NO_REQUEST = "no_request"
+RNC_PAUSED = "paused"
+RNC_DISABLED = "disabled"
+RNC_SCHEDULE = "schedule"
+RNC_ERR_NO_CURRENT = "error_no_current"
+RNC_PENDING_AUTH = "pending_auth"
+
+REASON_NO_CURRENT = {
+    "none": RNC_NONE,
+    0: RNC_NO_REASON,
+    1: RNC_PAUSED,
+    2: RNC_PAUSED,
+    3: RNC_PAUSED,
+    4: RNC_PAUSED,
+    5: RNC_PAUSED,
+    6: RNC_PAUSED,
+    9: RNC_ERR_NO_CURRENT,
+    50: RNC_NO_REQUEST,
+    51: RNC_PAUSED,
+    52: RNC_PAUSED,
+    53: RNC_DISABLED,
+    54: RNC_SCHEDULE,
+    55: RNC_PENDING_AUTH,
 }

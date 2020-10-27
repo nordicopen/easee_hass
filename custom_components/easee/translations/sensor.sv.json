@@ -1,16 +1,26 @@
 {
   "state": {
     "easee_status": {
-      "STANDBY": "Redo",
-      "PAUSED": "Paus",
-      "READY_TO_CHARGE": "Redo att ladda",
-      "CAR_CONNECTED": "Bil ansluten",
-      "CHARGING": "Laddar",
-      "ERROR": "Fel"
+      "standby": "Redo",
+      "paused": "Paus",
+      "ready_to_charge": "Redo att ladda",
+      "car_connected": "Bil ansluten",
+      "charging": "Laddar",
+      "error": "Fel"
     },
     "easee_eq_status": {
-      "ONLINE": "Uppkopplad",
-      "OFFLINE": "Nedkopplad"
+      "eq_online": "Uppkopplad",
+      "eq_offline": "Nedkopplad"
+    },
+    "reason_no_current": {
+      "none": "Ingen",
+      "no_reason": "Ingen, laddar eller klar att ladda",
+      "no_request": "Sekundär enhet begär inte ström eller bil ej ansluten",
+      "paused": "Laddaren pausar",
+      "disabled": "Laddaren avstängd",
+      "error_no_current": "Fel - Ingen ström",
+      "schedule": "Väntar enligt schema",
+      "pending_auth": "Väntar på autentisering"
     }
   }
 }
