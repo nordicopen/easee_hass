@@ -1,12 +1,12 @@
 {
   "state": {
     "easee_status": {
-      "standby": "Redo",
-      "paused": "Paus",
-      "ready_to_charge": "Redo att ladda",
-      "car_connected": "Bil ansluten",
+      "disconnected": "Ej ansluten",
+      "awaiting_start": "Väntar på start",
       "charging": "Laddar",
-      "error": "Fel"
+      "error": "Fel",
+      "completed": "Klar",
+      "ready_to_charge": "Redo för laddning"
     },
     "easee_eq_status": {
       "eq_online": "Uppkopplad",

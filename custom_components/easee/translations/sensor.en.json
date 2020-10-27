@@ -1,12 +1,12 @@
 {
   "state": {
     "easee_status": {
-      "standby": "Standby",
-      "paused": "Paused",
-      "ready_to_charge": "Ready to charge",
-      "car_connected": "Car connected",
+      "disconnected": "Disconnected",
+      "awaiting_start": "Awaiting start",
       "charging": "Charging",
-      "error": "Error"
+      "error": "Error",
+      "completed": "Completed",
+      "ready_to_charge": "Ready to charge"
     },
     "easee_eq_status": {
       "eq_online": "Online",

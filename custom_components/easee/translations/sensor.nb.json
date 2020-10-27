@@ -1,12 +1,12 @@
 {
   "state": {
     "easee_status": {
-      "standby": "Ventemodus",
-      "paused": "Pause",
-      "ready_to_charge": "Klar til lading",
-      "car_connected": "Bil tilkoblet",
+      "disconnected": "Disconnected",
+      "awaiting_start": "Awaiting start",
       "charging": "Lader",
-      "error": "Feil"
+      "error": "Feil",
+      "completed": "Completed",
+      "ready_to_charge": "Klar til lading"
     },
     "easee_eq_status": {
       "eq_online": "Online",

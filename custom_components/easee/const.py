@@ -461,20 +461,20 @@ EASEE_EQ_ENTITIES = {
 EQ_ONLINE = "eq_online"
 EQ_OFFLINE = "eq_offline"
 
-EA_STANDBY = "standby"
-EA_PAUSED = "paused"
-EA_READY_TO_CHARGE = "ready_to_charge"
-EA_CAR_CONNECTED = "car_connected"
+EA_DISCONNECTED = "disconnected"
+EA_AWAITING_START = "awaiting_start"
 EA_CHARGING = "charging"
+EA_COMPLETED = "completed"
 EA_ERROR = "error"
+EA_READY_TO_CHARGE = "ready_to_charge"
 
 EASEE_STATUS = {
-    1: EA_STANDBY,
-    2: EA_PAUSED,
+    1: EA_DISCONNECTED,
+    2: EA_AWAITING_START,
     3: EA_CHARGING,
-    4: EA_READY_TO_CHARGE,
+    4: EA_COMPLETED,
     5: EA_ERROR,
-    6: EA_CAR_CONNECTED,
+    6: EA_READY_TO_CHARGE,
 }
 
 NT_MASTER = "master"
