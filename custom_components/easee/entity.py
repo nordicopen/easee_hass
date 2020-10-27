@@ -44,7 +44,7 @@ def round_0_dec(value, unit=None):
     return round_to_dec(value, None, unit)
 
 
-def map_ea_status(value, unit=None):
+def map_charger_status(value, unit=None):
     return EASEE_STATUS.get(value, f"unknown {value}")
 
 def map_reason_no_current(value, unit=None):
@@ -55,7 +55,7 @@ convert_units_funcs = {
     "round_0_dec": round_0_dec,
     "round_1_dec": round_1_dec,
     "round_2_dec": round_2_dec,
-    "map_ea_status": map_ea_status,
+    "map_charger_status": map_charger_status,
     "map_reason_no_current": map_reason_no_current,
 }
 

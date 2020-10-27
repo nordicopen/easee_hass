@@ -100,7 +100,7 @@ EASEE_ENTITIES = {
             "circuit.ratedCurrent",
         ],
         "units": None,
-        "convert_units_func": "map_ea_status",
+        "convert_units_func": "map_charger_status",
         "device_class": "easee_status",
         "icon": "mdi:ev-station",
     },
@@ -458,8 +458,8 @@ EASEE_EQ_ENTITIES = {
     },
 }
 
-EQ_ONLINE = "eq_online"
-EQ_OFFLINE = "eq_offline"
+ONLINE = "online"
+OFFLINE = "offline"
 
 EA_DISCONNECTED = "disconnected"
 EA_AWAITING_START = "awaiting_start"

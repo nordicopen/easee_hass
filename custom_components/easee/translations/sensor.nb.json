@@ -9,8 +9,8 @@
       "ready_to_charge": "Klar til lading"
     },
     "easee_eq_status": {
-      "eq_online": "Online",
-      "eq_offline": "Offline"
+      "online": "Online",
+      "offline": "Offline"
     },
     "reason_no_current": {
       "none": "None",

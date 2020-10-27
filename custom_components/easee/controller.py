@@ -41,6 +41,8 @@ from .const import (
     CUSTOM_UNITS,
     CUSTOM_UNITS_TABLE,
     TIMEOUT,
+    ONLINE,
+    OFFLINE,
 )
 
 from .sensor import ChargerSensor, ChargerConsumptionSensor, EqualizerSensor
@@ -258,11 +260,11 @@ class Controller:
             charger_id = charger_data.charger.id
             site_state = sites_state[charger_data.site.id]
 
-            charger_data.state = site_state.get_charger_state(charger_id, True)
+            charger_data.state = site_state.get_charger_state(charger_id, raw=True)
             _LOGGER.debug(
                 "Charger state: %s - %s", charger_id, list(charger_data.state)
             )
-            charger_data.config = site_state.get_charger_config(charger_id, True)
+            charger_data.config = site_state.get_charger_config(charger_id, raw=True)
 
         self.update_ha_state()
 
@@ -272,9 +274,9 @@ class Controller:
         for equalizer_data in self.equalizers_data:
             equalizer_data.state = await equalizer_data.equalizer.get_state()
             if equalizer_data.state["isOnline"]:
-                equalizer_data.state["isOnline"] = "eq_online"
+                equalizer_data.state["isOnline"] = ONLINE
             else:
-                equalizer_data.state["isOnline"] = "eq_offline"
+                equalizer_data.state["isOnline"] = OFFLINE
 
         self.update_equalizers_state()
 

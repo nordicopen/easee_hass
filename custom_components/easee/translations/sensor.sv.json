@@ -9,8 +9,8 @@
       "ready_to_charge": "Redo för laddning"
     },
     "easee_eq_status": {
-      "eq_online": "Uppkopplad",
-      "eq_offline": "Nedkopplad"
+      "online": "Ansluten",
+      "offline": "Ej ansluten"
     },
     "reason_no_current": {
       "none": "Ingen",
