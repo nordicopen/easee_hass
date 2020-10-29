@@ -495,29 +495,42 @@ PHASE_MODE_STATUS = {
     3: PM_LOCKED_THREE,
 }
 
-RNC_NO_REASON = "no_reason"
 RNC_NONE = "none"
-RNC_NO_REQUEST = "no_request"
-RNC_PAUSED = "paused"
-RNC_DISABLED = "disabled"
-RNC_SCHEDULE = "schedule"
-RNC_ERR_NO_CURRENT = "error_no_current"
-RNC_PENDING_AUTH = "pending_auth"
+RNC_OK = "ok"
+RNC_MAX_CIRCUIT_CURRENT_TOO_LOW = "max_circuit_current_too_low"
+RNC_MAX_DYNAMIC_CIRCUIT_CURRENT_TOO_LOW = "max_dynamic_circuit_current_too_low"
+RNC_MAX_DYNAMIC_OFFLINE_FALLBACK_CURRENT_TOO_LOW = "max_dynamic_offline_fallback_circuit_current_too_low"
+RNC_CIRCUIT_FUSE_TOO_LOW = "circuit_fuse_too_low"
+RNC_WAITING_IN_QUEUE = "waiting_in_queue"
+RNC_WAITING_IN_FULLY = "waiting_in_fully"
+RNC_ILLEGAL_GRID_TYPE = "illegal_grid_type"
+RNC_NO_CURRENT_REQUEST_RECEIVED = "no_current_request"
+RNC_NOT_REQUESTING = "not_requesting_current"
+RNC_MAX_CHARGER_CURRENT_TOO_LOW = "max_charger_current_too_low"
+RNC_MAX_DYNAMIC_CHARGER_CURRENT_TOO_LOW = "max_dynamic_charger_current_too_low"
+RNC_CHARGER_DISABLED = "charger_disabled"
+RNC_PENDING_SCHEDULE = "pending_schedule"
+RNC_PENDING_AUTHORIZATION = "pending_authorization"
+RNC_CHARGER_IN_ERROR_STATE = "charger_in_error_state"
+RNC_UNDEFINED = "undefined"
 
 REASON_NO_CURRENT = {
     "none": RNC_NONE,
-    0: RNC_NO_REASON,
-    1: RNC_PAUSED,
-    2: RNC_PAUSED,
-    3: RNC_PAUSED,
-    4: RNC_PAUSED,
-    5: RNC_PAUSED,
-    6: RNC_PAUSED,
-    9: RNC_ERR_NO_CURRENT,
-    50: RNC_NO_REQUEST,
-    51: RNC_PAUSED,
-    52: RNC_PAUSED,
-    53: RNC_DISABLED,
-    54: RNC_SCHEDULE,
-    55: RNC_PENDING_AUTH,
+    0: RNC_OK,
+    1: RNC_MAX_CIRCUIT_CURRENT_TOO_LOW,
+    2: RNC_MAX_DYNAMIC_CIRCUIT_CURRENT_TOO_LOW,
+    3: RNC_MAX_DYNAMIC_OFFLINE_FALLBACK_CURRENT_TOO_LOW,
+    4: RNC_CIRCUIT_FUSE_TOO_LOW,
+    5: RNC_WAITING_IN_QUEUE,
+    6: RNC_WAITING_IN_FULLY,
+    7: RNC_ILLEGAL_GRID_TYPE,
+    8: RNC_NO_CURRENT_REQUEST_RECEIVED,
+    50: RNC_NOT_REQUESTING,
+    51: RNC_MAX_CHARGER_CURRENT_TOO_LOW,
+    52: RNC_MAX_DYNAMIC_CHARGER_CURRENT_TOO_LOW,
+    53: RNC_CHARGER_DISABLED,
+    54: RNC_PENDING_SCHEDULE,
+    55: RNC_PENDING_AUTHORIZATION,
+    56: RNC_CHARGER_IN_ERROR_STATE,
+    100: RNC_UNDEFINED,
 }
