@@ -66,7 +66,7 @@ MANDATORY_EASEE_ENTITIES = {
             "circuit.ratedCurrent",
         ],
         "units": None,
-        "convert_units_func": None,
+        "convert_units_func": "map_charger_status",
         "device_class": "easee_status",
         "icon": "mdi:ev-station",
     },

@@ -264,8 +264,7 @@ class Controller:
 
             charger_data.state = site_state.get_charger_state(charger_id, raw=True)
             _LOGGER.debug(
-                "Charger state: %s - %s", charger_id, list(charger_data.state)
-            )
+                "Charger state: %s ", charger_id)
             charger_data.config = site_state.get_charger_config(charger_id, raw=True)
 
         self.update_ha_state()
