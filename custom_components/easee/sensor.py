@@ -200,10 +200,7 @@ class EqualizerSensor(ChargerEntity):
                 "id": self.charger_data.equalizer.id,
             }
             for attr_key in self._attrs_keys:
-                key = attr_key
-                if "site" in attr_key or "circuit" in attr_key:
-                    # maybe for everything?
-                    key = attr_key.replace(".", "_")
+                key = attr_key.replace(".", "_")
                 if "voltage" in key.lower():
                     attrs[key] = round_0_dec(self.get_value_from_key(attr_key))
                 elif "current" in key.lower():
