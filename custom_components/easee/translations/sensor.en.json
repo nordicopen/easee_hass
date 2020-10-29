@@ -1,16 +1,36 @@
 {
   "state": {
     "easee_status": {
-      "STANDBY": "Standby",
-      "PAUSED": "Paused",
-      "READY_TO_CHARGE": "Ready to charge",
-      "CAR_CONNECTED": "Car connected",
-      "CHARGING": "Charging",
-      "ERROR": "Error"
+      "disconnected": "Disconnected",
+      "awaiting_start": "Awaiting start",
+      "charging": "Charging",
+      "error": "Error",
+      "completed": "Completed",
+      "ready_to_charge": "Ready to charge"
     },
     "easee_eq_status": {
-      "ONLINE": "Online",
-      "OFFLINE": "Offline"
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "reason_no_current": {
+      "none": "None",
+      "ok": "OK",
+      "max_circuit_current_too_low": "Max circuit current too low",
+      "max_dynamic_circuit_current_too_low": "Max circuit current too low",
+      "max_dynamic_offline_fallback_circuit_current_too_low": "Max dynamic offline fallback circuit current too low",
+      "circuit_fuse_too_low": "Circuit fuse too low",
+      "waiting_in_queue": "Waiting in queue",
+      "waiting_in_fully": "Waiting in fully",
+      "illegal_grid_type": "Illegal grid type",
+      "no_current_request": "No current request",
+      "not_requesting_current": "Not requesting current",
+      "max_charger_current_too_low": "Max charger current too low",
+      "max_dynamic_charger_current_too_low": "Max dynamic charger current too low",
+      "charger_disabled": "Charger disabled",
+      "pending_schedule": "Pending schedule",
+      "pending_authorization": "Pending_authorization",
+      "charger_in_error_state": "Charger in error state",
+      "undefined": "Undefined"
     }
   }
 }

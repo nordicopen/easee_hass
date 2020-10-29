@@ -12,12 +12,13 @@ from homeassistant.helpers.translation import async_get_translations
 from homeassistant.util import dt
 from homeassistant.const import DEVICE_CLASS_POWER, POWER_WATT, ENERGY_WATT_HOUR
 
-from .const import DOMAIN
+from .const import DOMAIN, EASEE_STATUS, REASON_NO_CURRENT
 import logging
 
 _LOGGER = logging.getLogger(__name__)
 
 """ TODO Quick fix to handle rounding: Cleanup and collapse later """
+
 
 def round_to_dec(value, decimals=None, unit=None):
     """Round to selected no of decimals."""
@@ -30,21 +31,33 @@ def round_to_dec(value, decimals=None, unit=None):
         pass
     return value
 
+
 def round_2_dec(value, unit=None):
     return round_to_dec(value, 2, unit)
+
 
 def round_1_dec(value, unit=None):
     return round_to_dec(value, 1, unit)
 
+
 def round_0_dec(value, unit=None):
     return round_to_dec(value, None, unit)
+
+
+def map_charger_status(value, unit=None):
+    return EASEE_STATUS.get(value, f"unknown {value}")
+
+def map_reason_no_current(value, unit=None):
+    return REASON_NO_CURRENT.get(value, f"unknown {value}")
+
 
 convert_units_funcs = {
     "round_0_dec": round_0_dec,
     "round_1_dec": round_1_dec,
     "round_2_dec": round_2_dec,
+    "map_charger_status": map_charger_status,
+    "map_reason_no_current": map_reason_no_current,
 }
-
 
 class ChargerEntity(Entity):
     """Implementation of Easee charger entity."""
@@ -112,7 +125,10 @@ class ChargerEntity(Entity):
     @property
     def name(self):
         """Return the name of the entity."""
-        return f"{self.charger_data.charger.name} " + f"{self._entity_name}".capitalize().replace('_', ' ')
+        return (
+            f"{self.charger_data.charger.name} "
+            + f"{self._entity_name}".capitalize().replace("_", " ")
+        )
 
     @property
     def unique_id(self) -> str:
