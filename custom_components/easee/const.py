@@ -61,6 +61,7 @@ MANDATORY_EASEE_ENTITIES = {
             "site.id",
             "site.name",
             "site.siteKey",
+            "site.ratedCurrent",
             "circuit.id",
             "circuit.ratedCurrent",
         ],
