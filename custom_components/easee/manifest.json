@@ -8,9 +8,6 @@
   ],
   "homeassistant": "0.113.0",
   "config_flow": true,
-  "dependencies": [
-    "configurator"
-  ],
   "codeowners": [
     "@fondberg",
     "@tmjo",

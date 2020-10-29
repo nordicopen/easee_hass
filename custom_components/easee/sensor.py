@@ -18,7 +18,7 @@ from homeassistant.const import (
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_VOLTAGE,
-    DEVICE_CLASS_SIGNAL_STRENGTH,    
+    DEVICE_CLASS_SIGNAL_STRENGTH,
 )
 
 
@@ -49,13 +49,33 @@ class ChargerSensor(ChargerEntity):
 class ChargerConsumptionSensor(Entity):
     """Implementation of Easee charger sensor."""
 
-    def __init__(self, charger, name, days, units):
+    def __init__(self, controller, charger, name, days, units):
         """Initialize the sensor."""
+        self.controller = controller
         self.charger = charger
         self._sensor_name = name
         self._days = days
         self._state = None
         self._units = units
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Disconnect object when removed."""
+        if self in self.controller.consumption_sensor_entities:
+            self.controller.consumption_sensor_entities.remove(self)
+        ent_reg = await entity_registry.async_get_registry(self.hass)
+        entity_entry = ent_reg.async_get(self.entity_id)
+
+        dev_reg = await device_registry.async_get_registry(self.hass)
+        device_entry = dev_reg.async_get(entity_entry.device_id)
+
+        _LOGGER.debug(">>>>>>>>>>>>>> Removing _sensor_name: %s", self._sensor_name)
+        if (self._sensor_name in self.hass.data[DOMAIN]["days_to_remove"] or
+            self.charger.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]):
+            if len(async_entries_for_device(ent_reg, entity_entry.device_id)) == 1:
+                dev_reg.async_remove_device(device_entry.id)
+                return
+
+            ent_reg.async_remove(self.entity_id)
 
     @property
     def name(self):
@@ -104,7 +124,7 @@ class ChargerConsumptionSensor(Entity):
     def device_class(self):
         """Device class of sensor."""
         return DEVICE_CLASS_ENERGY
-    
+
     @property
     def should_poll(self):
         """No polling needed."""
@@ -150,22 +170,6 @@ class EqualizerSensor(ChargerEntity):
             "manufacturer": "Easee",
             "model": "Equalizer",
         }
-
-    async def async_will_remove_from_hass(self) -> None:
-        """Disconnect object when removed."""
-        ent_reg = await entity_registry.async_get_registry(self.hass)
-        entity_entry = ent_reg.async_get(self.entity_id)
-
-        dev_reg = await device_registry.async_get_registry(self.hass)
-        device_entry = dev_reg.async_get(entity_entry.device_id)
-
-        if (self._entity_name in self.hass.data[DOMAIN]["eq_entities_to_remove"] or
-            self.charger_data.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]):
-            if len(async_entries_for_device(ent_reg, entity_entry.device_id)) == 1:
-                dev_reg.async_remove_device(device_entry.id)
-                return
-
-            ent_reg.async_remove(self.entity_id)
 
     async def async_update(self):
         """Get the latest data and update the state."""
