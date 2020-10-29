@@ -32,6 +32,9 @@
         "description": "Select options",
         "title": "Easee EV Charger"
       }
+    },
+    "error": {
+      "no_sites": "No monitored sites selected"
     }
   },
   "title": "Easee EV Charger"

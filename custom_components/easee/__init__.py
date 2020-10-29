@@ -9,7 +9,6 @@ from homeassistant.core import HomeAssistant
 
 from .const import (
     DOMAIN,
-    EASEE_ENTITIES,
     LISTENER_FN_CLOSE,
     MEASURED_CONSUMPTION_DAYS,
     VERSION,

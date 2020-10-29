@@ -1,16 +1,36 @@
 {
   "state": {
     "easee_status": {
-      "STANDBY": "Redo",
-      "PAUSED": "Paus",
-      "READY_TO_CHARGE": "Redo att ladda",
-      "CAR_CONNECTED": "Bil ansluten",
-      "CHARGING": "Laddar",
-      "ERROR": "Fel"
+      "disconnected": "Ej ansluten",
+      "awaiting_start": "Väntar på start",
+      "charging": "Laddar",
+      "error": "Fel",
+      "completed": "Klar",
+      "ready_to_charge": "Redo för laddning"
     },
     "easee_eq_status": {
-      "ONLINE": "Uppkopplad",
-      "OFFLINE": "Nedkopplad"
+      "online": "Ansluten",
+      "offline": "Ej ansluten"
+    },
+    "reason_no_current": {
+      "none": "Ingen",
+      "ok": "OK",
+      "max_circuit_current_too_low": "Max kretsström för låg",
+      "max_dynamic_circuit_current_too_low": "Max dynamisk kretsström för låg",
+      "max_dynamic_offline_fallback_circuit_current_too_low": "Max dynamic offline fallback circuit current too low",
+      "circuit_fuse_too_low": "Kretssäkring för låg",
+      "waiting_in_queue": "Väntar i kö",
+      "waiting_in_fully": "Waiting in fully",
+      "illegal_grid_type": "Otillåten nättyp",
+      "no_current_request": "Ingen begäran om ström från sekundär enhet",
+      "not_requesting_current": "Sekundär enhet begär ingen ström",
+      "max_charger_current_too_low": "Laddarens maxström för låg",
+      "max_dynamic_charger_current_too_low": "Laddarens dynamiska maxström för låg",
+      "charger_disabled": "Laddaren avstängd",
+      "pending_schedule": "Inväntar schema",
+      "pending_authorization": "Inväntar autentisering",
+      "charger_in_error_state": "Laddaren i felläge",
+      "undefined": "Ej definierat"
     }
   }
 }

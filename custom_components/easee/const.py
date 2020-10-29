@@ -27,6 +27,7 @@ VERSION = "0.9.21"
 CONF_MONITORED_SITES = "monitored_sites"
 CONF_MONITORED_EQ_CONDITIONS = "monitored_eq_conditions"
 CUSTOM_UNITS = "custom_units"
+CONSUMPTION_DAYS_PREFIX = "consumption_days_"
 PLATFORMS = ("sensor", "switch", "binary_sensor")
 LISTENER_FN_CLOSE = "update_listener_close_fn"
 MEASURED_CONSUMPTION_OPTIONS = {
@@ -44,7 +45,33 @@ CUSTOM_UNITS_TABLE = {
     POWER_KILO_WATT: POWER_WATT,
     ENERGY_KILO_WATT_HOUR: ENERGY_WATT_HOUR,
 }
-EASEE_ENTITIES = {
+MANDATORY_EASEE_ENTITIES = {
+    "status": {
+        "key": "state.chargerOpMode",
+        "attrs": [
+            "config.phaseMode",
+            "state.outputPhase",
+            "state.ledMode",
+            "state.cableRating",
+            "config.authorizationRequired",
+            "config.limitToSinglePhaseCharging",
+            "config.localNodeType",
+            "config.localAuthorizationRequired",
+            "config.ledStripBrightness",
+            "site.id",
+            "site.name",
+            "site.siteKey",
+            "site.ratedCurrent",
+            "circuit.id",
+            "circuit.ratedCurrent",
+        ],
+        "units": None,
+        "convert_units_func": "map_charger_status",
+        "device_class": "easee_status",
+        "icon": "mdi:ev-station",
+    },
+}
+OPTIONAL_EASEE_ENTITIES = {
     "smart_charging": {
         "type": "switch",
         "key": "state.smartCharging",
@@ -80,29 +107,6 @@ EASEE_ENTITIES = {
         "device_class": None,
         "icon": "mdi:lock",
         "switch_func": "lockCablePermanently",
-    },
-    "status": {
-        "key": "state.chargerOpMode",
-        "attrs": [
-            "config.phaseMode",
-            "state.outputPhase",
-            "state.ledMode",
-            "state.cableRating",
-            "config.authorizationRequired",
-            "config.limitToSinglePhaseCharging",
-            "config.localNodeType",
-            "config.localAuthorizationRequired",
-            "config.ledStripBrightness",
-            "site.id",
-            "site.name",
-            "site.siteKey",
-            "circuit.id",
-            "circuit.ratedCurrent",
-        ],
-        "units": None,
-        "convert_units_func": None,
-        "device_class": "easee_status",
-        "icon": "mdi:ev-station",
     },
     "total_power": {
         "key": "state.totalPower",
@@ -293,13 +297,10 @@ EASEE_ENTITIES = {
     },
     "reason_for_no_current": {
         "key": "state.reasonForNoCurrent",
-        "attrs": [
-            "state.reasonForNoCurrent",
-            "state.reasonForNoCurrent",
-        ],
+        "attrs": [],
         "units": "",
-        "convert_units_func": None,
-        "device_class": None,
+        "convert_units_func": "map_reason_no_current",
+        "device_class": "reason_no_current",
         "icon": "mdi:alert-circle",
     },
     "is_enabled": {
@@ -459,4 +460,81 @@ EASEE_EQ_ENTITIES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": None,
     },
+}
+
+ONLINE = "online"
+OFFLINE = "offline"
+
+EA_DISCONNECTED = "disconnected"
+EA_AWAITING_START = "awaiting_start"
+EA_CHARGING = "charging"
+EA_COMPLETED = "completed"
+EA_ERROR = "error"
+EA_READY_TO_CHARGE = "ready_to_charge"
+
+EASEE_STATUS = {
+    1: EA_DISCONNECTED,
+    2: EA_AWAITING_START,
+    3: EA_CHARGING,
+    4: EA_COMPLETED,
+    5: EA_ERROR,
+    6: EA_READY_TO_CHARGE,
+}
+
+NT_MASTER = "master"
+NT_EXTENDER = "extender"
+
+NODE_TYPE_STATUS = {
+    1: NT_MASTER,
+    2: NT_EXTENDER,
+}
+
+PM_LOCKED_SINGLE = "locked_single"
+PM_AUTO = "auto"
+PM_LOCKED_THREE = "locked_three"
+
+PHASE_MODE_STATUS = {
+    1: PM_LOCKED_SINGLE,
+    2: PM_AUTO,
+    3: PM_LOCKED_THREE,
+}
+
+RNC_NONE = "none"
+RNC_OK = "ok"
+RNC_MAX_CIRCUIT_CURRENT_TOO_LOW = "max_circuit_current_too_low"
+RNC_MAX_DYNAMIC_CIRCUIT_CURRENT_TOO_LOW = "max_dynamic_circuit_current_too_low"
+RNC_MAX_DYNAMIC_OFFLINE_FALLBACK_CURRENT_TOO_LOW = "max_dynamic_offline_fallback_circuit_current_too_low"
+RNC_CIRCUIT_FUSE_TOO_LOW = "circuit_fuse_too_low"
+RNC_WAITING_IN_QUEUE = "waiting_in_queue"
+RNC_WAITING_IN_FULLY = "waiting_in_fully"
+RNC_ILLEGAL_GRID_TYPE = "illegal_grid_type"
+RNC_NO_CURRENT_REQUEST_RECEIVED = "no_current_request"
+RNC_NOT_REQUESTING = "not_requesting_current"
+RNC_MAX_CHARGER_CURRENT_TOO_LOW = "max_charger_current_too_low"
+RNC_MAX_DYNAMIC_CHARGER_CURRENT_TOO_LOW = "max_dynamic_charger_current_too_low"
+RNC_CHARGER_DISABLED = "charger_disabled"
+RNC_PENDING_SCHEDULE = "pending_schedule"
+RNC_PENDING_AUTHORIZATION = "pending_authorization"
+RNC_CHARGER_IN_ERROR_STATE = "charger_in_error_state"
+RNC_UNDEFINED = "undefined"
+
+REASON_NO_CURRENT = {
+    "none": RNC_NONE,
+    0: RNC_OK,
+    1: RNC_MAX_CIRCUIT_CURRENT_TOO_LOW,
+    2: RNC_MAX_DYNAMIC_CIRCUIT_CURRENT_TOO_LOW,
+    3: RNC_MAX_DYNAMIC_OFFLINE_FALLBACK_CURRENT_TOO_LOW,
+    4: RNC_CIRCUIT_FUSE_TOO_LOW,
+    5: RNC_WAITING_IN_QUEUE,
+    6: RNC_WAITING_IN_FULLY,
+    7: RNC_ILLEGAL_GRID_TYPE,
+    8: RNC_NO_CURRENT_REQUEST_RECEIVED,
+    50: RNC_NOT_REQUESTING,
+    51: RNC_MAX_CHARGER_CURRENT_TOO_LOW,
+    52: RNC_MAX_DYNAMIC_CHARGER_CURRENT_TOO_LOW,
+    53: RNC_CHARGER_DISABLED,
+    54: RNC_PENDING_SCHEDULE,
+    55: RNC_PENDING_AUTHORIZATION,
+    56: RNC_CHARGER_IN_ERROR_STATE,
+    100: RNC_UNDEFINED,
 }
