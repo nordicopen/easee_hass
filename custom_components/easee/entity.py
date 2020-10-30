@@ -47,6 +47,7 @@ def round_0_dec(value, unit=None):
 def map_charger_status(value, unit=None):
     return EASEE_STATUS.get(value, f"unknown {value}")
 
+
 def map_reason_no_current(value, unit=None):
     return REASON_NO_CURRENT.get(value, f"unknown {value}")
 
@@ -58,6 +59,7 @@ convert_units_funcs = {
     "map_charger_status": map_charger_status,
     "map_reason_no_current": map_reason_no_current,
 }
+
 
 class ChargerEntity(Entity):
     """Implementation of Easee charger entity."""
@@ -113,9 +115,12 @@ class ChargerEntity(Entity):
         device_entry = dev_reg.async_get(entity_entry.device_id)
 
         _LOGGER.debug("Removing _entity_name: %s", self._entity_name)
-        if (self._entity_name in self.hass.data[DOMAIN]["entities_to_remove"] or
-            self._entity_name in self.hass.data[DOMAIN]["eq_entities_to_remove"] or
-            self.charger_data.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]):
+        if (
+            self._entity_name in self.hass.data[DOMAIN]["entities_to_remove"]
+            or self._entity_name in self.hass.data[DOMAIN]["eq_entities_to_remove"]
+            or self.charger_data.site["name"]
+            in self.hass.data[DOMAIN]["sites_to_remove"]
+        ):
             if len(async_entries_for_device(ent_reg, entity_entry.device_id)) == 1:
                 dev_reg.async_remove_device(device_entry.id)
                 return

@@ -69,8 +69,10 @@ class ChargerConsumptionSensor(Entity):
         device_entry = dev_reg.async_get(entity_entry.device_id)
 
         _LOGGER.debug(">>>>>>>>>>>>>> Removing _sensor_name: %s", self._sensor_name)
-        if (self._sensor_name in self.hass.data[DOMAIN]["days_to_remove"] or
-            self.charger.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]):
+        if (
+            self._sensor_name in self.hass.data[DOMAIN]["days_to_remove"]
+            or self.charger.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]
+        ):
             if len(async_entries_for_device(ent_reg, entity_entry.device_id)) == 1:
                 dev_reg.async_remove_device(device_entry.id)
                 return
@@ -80,7 +82,9 @@ class ChargerConsumptionSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self.charger.name} " + f"{self._sensor_name}".capitalize().replace('_', ' ')
+        return f"{self.charger.name} " + f"{self._sensor_name}".capitalize().replace(
+            "_", " "
+        )
 
     @property
     def unique_id(self) -> str:
@@ -154,7 +158,10 @@ class EqualizerSensor(ChargerEntity):
     @property
     def name(self):
         """Return the name of the entity."""
-        return f"{self.charger_data.equalizer['name']} " + f"{self._entity_name}".capitalize().replace('_', ' ')
+        return (
+            f"{self.charger_data.equalizer['name']} "
+            + f"{self._entity_name}".capitalize().replace("_", " ")
+        )
 
     @property
     def unique_id(self) -> str:
@@ -196,7 +203,7 @@ class EqualizerSensor(ChargerEntity):
         """Return the state attributes."""
         try:
             attrs = {
-		"name": self.charger_data.equalizer["name"],
+                "name": self.charger_data.equalizer["name"],
                 "id": self.charger_data.equalizer.id,
             }
             for attr_key in self._attrs_keys:
@@ -206,9 +213,13 @@ class EqualizerSensor(ChargerEntity):
                 elif "current" in key.lower():
                     attrs[key] = round_1_dec(self.get_value_from_key(attr_key))
                 elif "cumulative" in key.lower():
-                    attrs[key] = round_1_dec(self.get_value_from_key(attr_key), self._units)
+                    attrs[key] = round_1_dec(
+                        self.get_value_from_key(attr_key), self._units
+                    )
                 elif "power" in key.lower():
-                    attrs[key] = round_1_dec(self.get_value_from_key(attr_key), self._units)
+                    attrs[key] = round_1_dec(
+                        self.get_value_from_key(attr_key), self._units
+                    )
                 else:
                     attrs[key] = self.get_value_from_key(attr_key)
 

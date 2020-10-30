@@ -226,15 +226,8 @@ class Controller:
         )
 
     def refresh_consumption_sensors(self, now=None):
-        # Schedule update of exactly one consumption sensor
-        max_consumption_sensor = len(self.consumption_sensor_entities)
-        if max_consumption_sensor > 0:
-            self.consumption_sensor_entities[
-                self.next_consumption_sensor
-            ].async_schedule_update_ha_state(True)
-            self.next_consumption_sensor += 1
-            if self.next_consumption_sensor >= max_consumption_sensor:
-                self.next_consumption_sensor = 0
+        for sensor in self.consumption_sensor_entities:
+            sensor.async_schedule_update_ha_state(True)
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """
@@ -263,8 +256,7 @@ class Controller:
             site_state = sites_state[charger_data.site.id]
 
             charger_data.state = site_state.get_charger_state(charger_id, raw=True)
-            _LOGGER.debug(
-                "Charger state: %s ", charger_id)
+            _LOGGER.debug("Charger state: %s ", charger_id)
             charger_data.config = site_state.get_charger_config(charger_id, raw=True)
 
         self.update_ha_state()
@@ -304,9 +296,12 @@ class Controller:
         return self.switch_entities
 
     def _create_entitites(self):
-        monitored_conditions = list(dict.fromkeys(self.config.options.get(
-            CONF_MONITORED_CONDITIONS, []
-        ) + [x for x in MANDATORY_EASEE_ENTITIES]))
+        monitored_conditions = list(
+            dict.fromkeys(
+                self.config.options.get(CONF_MONITORED_CONDITIONS, [])
+                + [x for x in MANDATORY_EASEE_ENTITIES]
+            )
+        )
         monitored_eq_conditions = self.config.options.get(
             CONF_MONITORED_EQ_CONDITIONS, ["status"]
         )

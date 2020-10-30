@@ -161,13 +161,25 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             if x in MANDATORY_EASEE_ENTITIES:
                 del self.options[CONF_MONITORED_CONDITIONS][x]
         """Update config entry options."""
-        self.hass.data[DOMAIN]["entities_to_remove"] = [cond for cond in self.prev_options.get(CONF_MONITORED_CONDITIONS, {})
-            if cond not in self.options[CONF_MONITORED_CONDITIONS]]
-        self.hass.data[DOMAIN]["eq_entities_to_remove"] = [cond for cond in self.prev_options.get(CONF_MONITORED_EQ_CONDITIONS, {})
-            if cond not in self.options[CONF_MONITORED_EQ_CONDITIONS]]
-        self.hass.data[DOMAIN]["sites_to_remove"] = [cond for cond in self.prev_options.get(CONF_MONITORED_SITES, {})
-            if cond not in self.options[CONF_MONITORED_SITES]]
-        self.hass.data[DOMAIN]["days_to_remove"] = [f"{CONSUMPTION_DAYS_PREFIX}{cond}" for cond in self.prev_options.get(MEASURED_CONSUMPTION_DAYS, {})
-            if cond not in self.options[MEASURED_CONSUMPTION_DAYS]]
+        self.hass.data[DOMAIN]["entities_to_remove"] = [
+            cond
+            for cond in self.prev_options.get(CONF_MONITORED_CONDITIONS, {})
+            if cond not in self.options[CONF_MONITORED_CONDITIONS]
+        ]
+        self.hass.data[DOMAIN]["eq_entities_to_remove"] = [
+            cond
+            for cond in self.prev_options.get(CONF_MONITORED_EQ_CONDITIONS, {})
+            if cond not in self.options[CONF_MONITORED_EQ_CONDITIONS]
+        ]
+        self.hass.data[DOMAIN]["sites_to_remove"] = [
+            cond
+            for cond in self.prev_options.get(CONF_MONITORED_SITES, {})
+            if cond not in self.options[CONF_MONITORED_SITES]
+        ]
+        self.hass.data[DOMAIN]["days_to_remove"] = [
+            f"{CONSUMPTION_DAYS_PREFIX}{cond}"
+            for cond in self.prev_options.get(MEASURED_CONSUMPTION_DAYS, {})
+            if cond not in self.options[MEASURED_CONSUMPTION_DAYS]
+        ]
         _LOGGER.debug("Days_to_remove: %s", self.hass.data[DOMAIN]["days_to_remove"])
         return self.async_create_entry(title="", data=self.options)

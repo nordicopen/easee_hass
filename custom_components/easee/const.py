@@ -503,7 +503,9 @@ RNC_NONE = "none"
 RNC_OK = "ok"
 RNC_MAX_CIRCUIT_CURRENT_TOO_LOW = "max_circuit_current_too_low"
 RNC_MAX_DYNAMIC_CIRCUIT_CURRENT_TOO_LOW = "max_dynamic_circuit_current_too_low"
-RNC_MAX_DYNAMIC_OFFLINE_FALLBACK_CURRENT_TOO_LOW = "max_dynamic_offline_fallback_circuit_current_too_low"
+RNC_MAX_DYNAMIC_OFFLINE_FALLBACK_CURRENT_TOO_LOW = (
+    "max_dynamic_offline_fallback_circuit_current_too_low"
+)
 RNC_CIRCUIT_FUSE_TOO_LOW = "circuit_fuse_too_low"
 RNC_WAITING_IN_QUEUE = "waiting_in_queue"
 RNC_WAITING_IN_FULLY = "waiting_in_fully"

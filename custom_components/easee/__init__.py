@@ -19,6 +19,7 @@ from .controller import Controller
 
 _LOGGER = logging.getLogger(__name__)
 
+
 async def async_setup(hass: HomeAssistant, config: dict):
     """Set up the Easee integration component."""
     return True
