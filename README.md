@@ -40,12 +40,16 @@ _While this component can be installed by HACS, it is not included in the defaul
 5. Run `bash links.sh`
 
 ## Configuration
+
 Configuration is done through in Configuration > Integrations where you first configure it and then set the options for what you want to monitor.
 
 ## Development
 
-This project uses `black` for code formatting and `flake8` for linting. Two errors should be ignored when running flake8 so run it with
+This project uses `black` for code formatting and `flake8` for linting.
+Always run
 
 ```
-flake8 --ignore=E501,E231 custom_components/
+make lint
 ```
+
+Before pushing your changes
