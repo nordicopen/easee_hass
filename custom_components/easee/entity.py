@@ -8,9 +8,8 @@ from datetime import datetime
 from homeassistant.helpers import entity_registry, device_registry
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.translation import async_get_translations
 from homeassistant.util import dt
-from homeassistant.const import DEVICE_CLASS_POWER, POWER_WATT, ENERGY_WATT_HOUR
+from homeassistant.const import POWER_WATT, ENERGY_WATT_HOUR
 
 from .const import DOMAIN, EASEE_STATUS, REASON_NO_CURRENT
 import logging

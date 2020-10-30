@@ -29,7 +29,6 @@ from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.const import (
     CONF_MONITORED_CONDITIONS,
     ENERGY_KILO_WATT_HOUR,
-    POWER_KILO_WATT,
 )
 
 from .const import (

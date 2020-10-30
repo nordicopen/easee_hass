@@ -2,15 +2,13 @@
 import asyncio
 import logging
 
-import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_MONITORED_CONDITIONS
+from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
 from homeassistant.core import HomeAssistant
 
 from .const import (
     DOMAIN,
     LISTENER_FN_CLOSE,
-    MEASURED_CONSUMPTION_DAYS,
     VERSION,
     PLATFORMS,
 )

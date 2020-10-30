@@ -9,16 +9,10 @@ from homeassistant.helpers import entity_registry, device_registry
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.helpers.entity import Entity
 
-from .entity import ChargerEntity, round_to_dec, round_2_dec, round_1_dec, round_0_dec
+from .entity import ChargerEntity, round_2_dec, round_1_dec, round_0_dec
 from .const import DOMAIN
 from homeassistant.const import (
-    POWER_KILO_WATT,
-    ENERGY_KILO_WATT_HOUR,
-    DEVICE_CLASS_POWER,
-    DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_ENERGY,
-    DEVICE_CLASS_VOLTAGE,
-    DEVICE_CLASS_SIGNAL_STRENGTH,
 )
 
 

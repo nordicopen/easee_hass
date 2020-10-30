@@ -10,14 +10,11 @@ from homeassistant.const import (
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_VOLTAGE,
-    DEVICE_CLASS_SIGNAL_STRENGTH,
-    DEVICE_CLASS_TIMESTAMP,
 )
 
 from homeassistant.components.binary_sensor import (
     DEVICE_CLASS_CONNECTIVITY,
     DEVICE_CLASS_LOCK,
-    DEVICE_CLASS_PLUG,
 )
 
 DOMAIN = "easee"
