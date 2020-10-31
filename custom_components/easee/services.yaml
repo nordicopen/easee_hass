@@ -101,7 +101,7 @@ set_circuit_dynamic_current:
       example: 10
 
 set_circuit_max_current:
-  description: Set circuit max current. OBS! Should not be used by automation (may wear out flash memory if set too frequently).
+  description: Set circuit max current. Caution: Should not be used by automation (may wear out flash memory if set too frequently).
   fields:
     circuit_id:
       description: "The circuit id"
@@ -133,7 +133,7 @@ set_charger_circuit_dynamic_current:
       example: 10
 
 set_charger_circuit_max_current:
-  description: Set circuit max current OBS! Should not be used by automation (may wear out flash memory if set too frequently).
+  description: Set circuit max current Caution: Should not be used by automation (may wear out flash memory if set too frequently).
   fields:
     charger_id:
       description: "The charger id"
@@ -159,7 +159,7 @@ set_charger_dynamic_current:
       example: 10
 
 set_charger_max_current:
-  description: Set charger max current OBS! Should not be used by automation (may wear out flash memory if set too frequently).
+  description: Set charger max current Caution! Should not be used by automation (may wear out flash memory if set too frequently).
   fields:
     charger_id:
       description: "The charger id"
