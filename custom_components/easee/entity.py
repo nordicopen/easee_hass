@@ -2,17 +2,17 @@
 Easee Charger base entity class.
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
-from typing import Callable, Dict, List
+import logging
 from datetime import datetime
+from typing import Callable, Dict, List
 
-from homeassistant.helpers import entity_registry, device_registry
-from homeassistant.helpers.entity_registry import async_entries_for_device
+from homeassistant.const import ENERGY_WATT_HOUR, POWER_WATT
+from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.util import dt
-from homeassistant.const import POWER_WATT, ENERGY_WATT_HOUR
 
 from .const import DOMAIN, EASEE_STATUS, REASON_NO_CURRENT
-import logging
 
 _LOGGER = logging.getLogger(__name__)
 

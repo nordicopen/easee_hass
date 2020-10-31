@@ -1,10 +1,11 @@
 """Easee charger binary sensor."""
 
+import logging
+
 from homeassistant.components.binary_sensor import BinarySensorEntity
 
-from .entity import ChargerEntity
 from .const import DOMAIN
-import logging
+from .entity import ChargerEntity
 
 _LOGGER = logging.getLogger(__name__)
 

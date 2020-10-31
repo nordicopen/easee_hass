@@ -2,21 +2,17 @@
 Easee charger sensor
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
-from typing import Dict
-from datetime import datetime, timedelta
-
-from homeassistant.helpers import entity_registry, device_registry
-from homeassistant.helpers.entity_registry import async_entries_for_device
-from homeassistant.helpers.entity import Entity
-
-from .entity import ChargerEntity, round_2_dec, round_1_dec, round_0_dec
-from .const import DOMAIN
-from homeassistant.const import (
-    DEVICE_CLASS_ENERGY,
-)
-
-
 import logging
+from datetime import datetime, timedelta
+from typing import Dict
+
+from homeassistant.const import DEVICE_CLASS_ENERGY
+from homeassistant.helpers import device_registry, entity_registry
+from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity_registry import async_entries_for_device
+
+from .const import DOMAIN
+from .entity import ChargerEntity, round_0_dec, round_1_dec, round_2_dec
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -1,10 +1,11 @@
 """Easee charger switch."""
 
+import logging
+
 from homeassistant.components.switch import SwitchEntity
 
-from .entity import ChargerEntity
 from .const import DOMAIN
-import logging
+from .entity import ChargerEntity
 
 _LOGGER = logging.getLogger(__name__)
 
