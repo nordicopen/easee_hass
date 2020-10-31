@@ -10,14 +10,11 @@ from homeassistant.const import (
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_VOLTAGE,
-    DEVICE_CLASS_SIGNAL_STRENGTH,
-    DEVICE_CLASS_TIMESTAMP,
 )
 
 from homeassistant.components.binary_sensor import (
     DEVICE_CLASS_CONNECTIVITY,
     DEVICE_CLASS_LOCK,
-    DEVICE_CLASS_PLUG,
 )
 
 DOMAIN = "easee"
@@ -503,7 +500,9 @@ RNC_NONE = "none"
 RNC_OK = "ok"
 RNC_MAX_CIRCUIT_CURRENT_TOO_LOW = "max_circuit_current_too_low"
 RNC_MAX_DYNAMIC_CIRCUIT_CURRENT_TOO_LOW = "max_dynamic_circuit_current_too_low"
-RNC_MAX_DYNAMIC_OFFLINE_FALLBACK_CURRENT_TOO_LOW = "max_dynamic_offline_fallback_circuit_current_too_low"
+RNC_MAX_DYNAMIC_OFFLINE_FALLBACK_CURRENT_TOO_LOW = (
+    "max_dynamic_offline_fallback_circuit_current_too_low"
+)
 RNC_CIRCUIT_FUSE_TOO_LOW = "circuit_fuse_too_low"
 RNC_WAITING_IN_QUEUE = "waiting_in_queue"
 RNC_WAITING_IN_FULLY = "waiting_in_fully"
