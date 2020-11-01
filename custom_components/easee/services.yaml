@@ -85,7 +85,7 @@ update_firmware:
       example: "EH123456"
 
 set_circuit_dynamic_current:
-  description: Set circuit dynamic current (current available to share by several chargers on a circuit).
+  description: Set circuit dynamic current (current available to share by all chargers on a circuit).
   fields:
     circuit_id:
       description: "The circuit id"
@@ -117,7 +117,7 @@ set_circuit_max_current:
       example: 10
 
 set_charger_circuit_dynamic_current:
-  description: Set circuit dynamic current (current available to share by several chargers on a circuit).
+  description: Set circuit dynamic current (current available to share by all chargers on a circuit).
   fields:
     charger_id:
       description: "The charger id"
