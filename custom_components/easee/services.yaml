@@ -1,33 +1,33 @@
 start:
-  description: Starts charger
+  description: Starts charger. Also authorizes if configured to use authorization.
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 stop:
-  description: Stop charger
+  description: Stop charger. Also deauthorizes if configured to use authorization.
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 pause:
-  description: Pause charger
+  description: Pause charger. Keeps current charge session authorized.
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 resume:
-  description: Resume charger
+  description: Resume charger. Keeps current charge session authorized.
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 toggle:
-  description: Toggle charger
+  description: Toggle charger. Corresponds to pause/resume if not configured to use authorization, stop/start if configured.
   fields:
     charger_id:
       description: "The charger id"
@@ -85,7 +85,7 @@ update_firmware:
       example: "EH123456"
 
 set_circuit_dynamic_current:
-  description: Set circuit dynamic current
+  description: Set circuit dynamic current (current available to share by all chargers on a circuit).
   fields:
     circuit_id:
       description: "The circuit id"
@@ -101,7 +101,7 @@ set_circuit_dynamic_current:
       example: 10
 
 set_circuit_max_current:
-  description: Set circuit max current
+  description: Set circuit max current. Caution: Should not be used by automation (may wear out flash memory if set too frequently).
   fields:
     circuit_id:
       description: "The circuit id"
@@ -117,7 +117,7 @@ set_circuit_max_current:
       example: 10
 
 set_charger_circuit_dynamic_current:
-  description: Set circuit dynamic current
+  description: Set circuit dynamic current (current available to share by all chargers on a circuit).
   fields:
     charger_id:
       description: "The charger id"
@@ -133,7 +133,7 @@ set_charger_circuit_dynamic_current:
       example: 10
 
 set_charger_circuit_max_current:
-  description: Set circuit max current
+  description: Set circuit max current Caution: Should not be used by automation (may wear out flash memory if set too frequently).
   fields:
     charger_id:
       description: "The charger id"
@@ -159,7 +159,7 @@ set_charger_dynamic_current:
       example: 10
 
 set_charger_max_current:
-  description: Set charger max current
+  description: Set charger max current Caution! Should not be used by automation (may wear out flash memory if set too frequently).
   fields:
     charger_id:
       description: "The charger id"
