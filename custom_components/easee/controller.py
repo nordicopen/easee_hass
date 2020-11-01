@@ -1,58 +1,51 @@
 """ Easee Connector class """
 import asyncio
-from async_timeout import timeout
-from typing import List
+import logging
 from datetime import timedelta
+from typing import List
 
-from pyeasee import (
-    Easee,
-    Charger,
-    ChargerState,
-    ChargerConfig,
-    Equalizer,
-    Site,
-    Circuit,
-)
-from pyeasee.exceptions import (
-    NotFoundException,
-    AuthorizationFailedException,
-    ServerFailureException,
-    TooManyRequestsException,
-)
-from pyeasee.charger import ChargerSchedule
-
-from homeassistant.core import HomeAssistant
+from async_timeout import timeout
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_MONITORED_CONDITIONS, ENERGY_KILO_WATT_HOUR
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.event import async_track_time_interval
-from homeassistant.const import (
-    CONF_MONITORED_CONDITIONS,
-    ENERGY_KILO_WATT_HOUR,
+from pyeasee import (
+    Charger,
+    ChargerConfig,
+    ChargerState,
+    Circuit,
+    Easee,
+    Equalizer,
+    Site,
+)
+from pyeasee.charger import ChargerSchedule
+from pyeasee.exceptions import (
+    AuthorizationFailedException,
+    NotFoundException,
+    ServerFailureException,
+    TooManyRequestsException,
 )
 
+from .binary_sensor import ChargerBinarySensor
 from .const import (
-    CONF_MONITORED_SITES,
     CONF_MONITORED_EQ_CONDITIONS,
-    OPTIONAL_EASEE_ENTITIES,
-    MANDATORY_EASEE_ENTITIES,
-    EASEE_EQ_ENTITIES,
+    CONF_MONITORED_SITES,
     CONSUMPTION_DAYS_PREFIX,
-    MEASURED_CONSUMPTION_DAYS,
     CUSTOM_UNITS,
     CUSTOM_UNITS_TABLE,
-    TIMEOUT,
-    ONLINE,
+    EASEE_EQ_ENTITIES,
+    MANDATORY_EASEE_ENTITIES,
+    MEASURED_CONSUMPTION_DAYS,
     OFFLINE,
+    ONLINE,
+    OPTIONAL_EASEE_ENTITIES,
+    TIMEOUT,
 )
-
-from .sensor import ChargerSensor, ChargerConsumptionSensor, EqualizerSensor
-from .switch import ChargerSwitch
-from .binary_sensor import ChargerBinarySensor
-
 from .entity import convert_units_funcs
-
-import logging
+from .sensor import ChargerConsumptionSensor, ChargerSensor, EqualizerSensor
+from .switch import ChargerSwitch
 
 _LOGGER = logging.getLogger(__name__)
 

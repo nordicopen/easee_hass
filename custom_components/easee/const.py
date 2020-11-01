@@ -1,20 +1,19 @@
 """Easee Charger constants."""
-from homeassistant.const import (
-    POWER_KILO_WATT,
-    POWER_WATT,
-    ELECTRICAL_CURRENT_AMPERE,
-    ENERGY_KILO_WATT_HOUR,
-    ENERGY_WATT_HOUR,
-    VOLT,
-    DEVICE_CLASS_POWER,
-    DEVICE_CLASS_CURRENT,
-    DEVICE_CLASS_ENERGY,
-    DEVICE_CLASS_VOLTAGE,
-)
-
 from homeassistant.components.binary_sensor import (
     DEVICE_CLASS_CONNECTIVITY,
     DEVICE_CLASS_LOCK,
+)
+from homeassistant.const import (
+    DEVICE_CLASS_CURRENT,
+    DEVICE_CLASS_ENERGY,
+    DEVICE_CLASS_POWER,
+    DEVICE_CLASS_VOLTAGE,
+    ELECTRICAL_CURRENT_AMPERE,
+    ENERGY_KILO_WATT_HOUR,
+    ENERGY_WATT_HOUR,
+    POWER_KILO_WATT,
+    POWER_WATT,
+    VOLT,
 )
 
 DOMAIN = "easee"

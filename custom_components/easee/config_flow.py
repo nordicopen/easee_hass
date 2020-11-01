@@ -2,33 +2,28 @@
 import logging
 from typing import List, Optional
 
-from pyeasee import AuthorizationFailedException, Easee, Site
 import voluptuous as vol
-
-from homeassistant import config_entries
-from homeassistant.core import callback
-from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_MONITORED_CONDITIONS
-from homeassistant.helpers.typing import ConfigType
-from homeassistant.helpers import (
-    aiohttp_client,
-    config_validation as cv,
-)
-
 from aiohttp import ClientConnectionError
-
+from homeassistant import config_entries
+from homeassistant.const import CONF_MONITORED_CONDITIONS, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.core import callback
+from homeassistant.helpers import aiohttp_client
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.typing import ConfigType
+from pyeasee import AuthorizationFailedException, Easee, Site
 
 from .const import (
-    DOMAIN,
+    CONF_MONITORED_EQ_CONDITIONS,
+    CONF_MONITORED_SITES,
     CONSUMPTION_DAYS_PREFIX,
-    MEASURED_CONSUMPTION_DAYS,
-    MEASURED_CONSUMPTION_OPTIONS,
     CUSTOM_UNITS,
     CUSTOM_UNITS_OPTIONS,
-    OPTIONAL_EASEE_ENTITIES,
-    MANDATORY_EASEE_ENTITIES,
+    DOMAIN,
     EASEE_EQ_ENTITIES,
-    CONF_MONITORED_SITES,
-    CONF_MONITORED_EQ_CONDITIONS,
+    MANDATORY_EASEE_ENTITIES,
+    MEASURED_CONSUMPTION_DAYS,
+    MEASURED_CONSUMPTION_OPTIONS,
+    OPTIONAL_EASEE_ENTITIES,
 )
 
 _LOGGER = logging.getLogger(__name__)
