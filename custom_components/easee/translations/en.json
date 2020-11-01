@@ -19,6 +19,21 @@
       }
     }
   },
+  "device_automation": {
+    "condition_type": {
+      "is_docked": "{entity_name} is docked",
+      "is_cleaning": "{entity_name} is cleaning"
+    },
+    "trigger_type": {
+      "disconnected": "Car not connected to {entity_name}",
+      "charging": "{entity_name} is charging",
+      "completed": "charging on {entity_name} is completed"
+    },
+    "action_type": {
+      "clean": "Let {entity_name} clean",
+      "dock": "Let {entity_name} return to the dock"
+    }
+  },
   "options": {
     "step": {
       "init": {
