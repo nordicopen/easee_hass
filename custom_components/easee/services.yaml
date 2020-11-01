@@ -27,7 +27,7 @@ resume:
       example: "EH123456"
 
 toggle:
-  description: "Toggle charger. Corresponds to pause/resume if not configured to use authorization, stop/start if configured.""
+  description: "Toggle charger. Corresponds to pause/resume if not configured to use authorization, stop/start if configured."
   fields:
     charger_id:
       description: "The charger id"
