@@ -2,22 +2,16 @@
 import asyncio
 import logging
 
-import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_MONITORED_CONDITIONS
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 
-from .const import (
-    DOMAIN,
-    LISTENER_FN_CLOSE,
-    MEASURED_CONSUMPTION_DAYS,
-    VERSION,
-    PLATFORMS,
-)
-from .services import async_setup_services
+from .const import DOMAIN, LISTENER_FN_CLOSE, PLATFORMS, VERSION
 from .controller import Controller
+from .services import async_setup_services
 
 _LOGGER = logging.getLogger(__name__)
+
 
 async def async_setup(hass: HomeAssistant, config: dict):
     """Set up the Easee integration component."""

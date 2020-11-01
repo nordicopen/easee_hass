@@ -2,27 +2,17 @@
 Easee charger sensor
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
-from typing import Dict
-from datetime import datetime, timedelta
-
-from homeassistant.helpers import entity_registry, device_registry
-from homeassistant.helpers.entity_registry import async_entries_for_device
-from homeassistant.helpers.entity import Entity
-
-from .entity import ChargerEntity, round_to_dec, round_2_dec, round_1_dec, round_0_dec
-from .const import DOMAIN
-from homeassistant.const import (
-    POWER_KILO_WATT,
-    ENERGY_KILO_WATT_HOUR,
-    DEVICE_CLASS_POWER,
-    DEVICE_CLASS_CURRENT,
-    DEVICE_CLASS_ENERGY,
-    DEVICE_CLASS_VOLTAGE,
-    DEVICE_CLASS_SIGNAL_STRENGTH,
-)
-
-
 import logging
+from datetime import datetime, timedelta
+from typing import Dict
+
+from homeassistant.const import DEVICE_CLASS_ENERGY
+from homeassistant.helpers import device_registry, entity_registry
+from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity_registry import async_entries_for_device
+
+from .const import DOMAIN
+from .entity import ChargerEntity, round_0_dec, round_1_dec, round_2_dec
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,8 +59,10 @@ class ChargerConsumptionSensor(Entity):
         device_entry = dev_reg.async_get(entity_entry.device_id)
 
         _LOGGER.debug(">>>>>>>>>>>>>> Removing _sensor_name: %s", self._sensor_name)
-        if (self._sensor_name in self.hass.data[DOMAIN]["days_to_remove"] or
-            self.charger.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]):
+        if (
+            self._sensor_name in self.hass.data[DOMAIN]["days_to_remove"]
+            or self.charger.site["name"] in self.hass.data[DOMAIN]["sites_to_remove"]
+        ):
             if len(async_entries_for_device(ent_reg, entity_entry.device_id)) == 1:
                 dev_reg.async_remove_device(device_entry.id)
                 return
@@ -80,7 +72,9 @@ class ChargerConsumptionSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self.charger.name} " + f"{self._sensor_name}".capitalize().replace('_', ' ')
+        return f"{self.charger.name} " + f"{self._sensor_name}".capitalize().replace(
+            "_", " "
+        )
 
     @property
     def unique_id(self) -> str:
@@ -154,7 +148,10 @@ class EqualizerSensor(ChargerEntity):
     @property
     def name(self):
         """Return the name of the entity."""
-        return f"{self.charger_data.equalizer['name']} " + f"{self._entity_name}".capitalize().replace('_', ' ')
+        return (
+            f"{self.charger_data.equalizer['name']} "
+            + f"{self._entity_name}".capitalize().replace("_", " ")
+        )
 
     @property
     def unique_id(self) -> str:
@@ -196,7 +193,7 @@ class EqualizerSensor(ChargerEntity):
         """Return the state attributes."""
         try:
             attrs = {
-		"name": self.charger_data.equalizer["name"],
+                "name": self.charger_data.equalizer["name"],
                 "id": self.charger_data.equalizer.id,
             }
             for attr_key in self._attrs_keys:
@@ -206,9 +203,13 @@ class EqualizerSensor(ChargerEntity):
                 elif "current" in key.lower():
                     attrs[key] = round_1_dec(self.get_value_from_key(attr_key))
                 elif "cumulative" in key.lower():
-                    attrs[key] = round_1_dec(self.get_value_from_key(attr_key), self._units)
+                    attrs[key] = round_1_dec(
+                        self.get_value_from_key(attr_key), self._units
+                    )
                 elif "power" in key.lower():
-                    attrs[key] = round_1_dec(self.get_value_from_key(attr_key), self._units)
+                    attrs[key] = round_1_dec(
+                        self.get_value_from_key(attr_key), self._units
+                    )
                 else:
                     attrs[key] = self.get_value_from_key(attr_key)
 
