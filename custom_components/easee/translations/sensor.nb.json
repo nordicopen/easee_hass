@@ -1,11 +1,11 @@
 {
   "state": {
     "easee_status": {
-      "disconnected": "Disconnected",
-      "awaiting_start": "Awaiting start",
+      "disconnected": "Frakoblet",
+      "awaiting_start": "Avventer start",
       "charging": "Lader",
       "error": "Feil",
-      "completed": "Completed",
+      "completed": "Fullført",
       "ready_to_charge": "Klar til lading"
     },
     "easee_eq_status": {
@@ -13,24 +13,24 @@
       "offline": "Offline"
     },
     "reason_no_current": {
-      "none": "None",
+      "none": "Ingen",
       "ok": "OK",
-      "max_circuit_current_too_low": "Max circuit current too low",
-      "max_dynamic_circuit_current_too_low": "Max circuit current too low",
-      "max_dynamic_offline_fallback_circuit_current_too_low": "Max dynamic offline fallback circuit current too low",
-      "circuit_fuse_too_low": "Circuit fuse too low",
-      "waiting_in_queue": "Waiting in queue",
-      "waiting_in_fully": "Waiting in fully",
-      "illegal_grid_type": "Illegal grid type",
-      "no_current_request": "No current request",
-      "not_requesting_current": "Not requesting current",
-      "max_charger_current_too_low": "Max charger current too low",
-      "max_dynamic_charger_current_too_low": "Max dynamic charger current too low",
-      "charger_disabled": "Charger disabled",
-      "pending_schedule": "Pending schedule",
-      "pending_authorization": "Pending_authorization",
-      "charger_in_error_state": "Charger in error state",
-      "undefined": "Undefined"
+      "max_circuit_current_too_low": "Max circuit current er for lav",
+      "max_dynamic_circuit_current_too_low": "Max circuit current er for lav",
+      "max_dynamic_offline_fallback_circuit_current_too_low": "Max dynamic offline fallback circuit current for lav",
+      "circuit_fuse_too_low": "Kurssikring for liten",
+      "waiting_in_queue": "Venter i kø",
+      "waiting_in_fully": "Venter fullt",
+      "illegal_grid_type": "Ulovlig type nett",
+      "no_current_request": "Forespørsel om null strøm",
+      "not_requesting_current": "Ingen forespørsel om strøm",
+      "max_charger_current_too_low": "Max charger current for lav",
+      "max_dynamic_charger_current_too_low": "Max dynamic charger current for lav",
+      "charger_disabled": "Lader deaktivert",
+      "pending_schedule": "Avventer tidsplan",
+      "pending_authorization": "Avventer autorisering",
+      "charger_in_error_state": "Lader i feilmodus",
+      "undefined": "Udefinert"
     }
   }
 }
