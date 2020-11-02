@@ -37,8 +37,11 @@
       "error": "Laddningsfel på {entity_name}"
     },
     "action_type": {
-      "enable": "Aktivera {entity_name}",
-      "disable": "Avaktivera {entity_name}"
+      "charger_start": "Starta laddning på {entity_name}",
+      "charger_stop": "Stoppa laddning på {entity_name}",
+      "charger_pause": "Pausa laddning på {entity_name}",
+      "charger_resume": "Återuppta laddning på {entity_name}",
+      "charger_toggle": "Växla laddning på {entity_name}"
     }
   },
   "options": {

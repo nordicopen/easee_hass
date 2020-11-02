@@ -37,8 +37,11 @@
       "error": "Charger error on {entity_name}"
     },
     "action_type": {
-      "enable": "Enable {entity_name}",
-      "disable": "Disable {entity_name}"
+      "charger_start": "Start charging on {entity_name}",
+      "charger_stop": "Stop charging on {entity_name}",
+      "charger_pause": "Pause charging on {entity_name}",
+      "charger_resume": "Resume charging on {entity_name}",
+      "charger_toggle": "Toggle charging on {entity_name}"
     }
   },
 "options": {

@@ -1,4 +1,4 @@
-"""Provides device automations for Easee."""
+"""Provides device automations for Easee EV Charger."""
 import logging
 from typing import List
 

@@ -1,4 +1,4 @@
-"""Provide the device automations for Easee."""
+"""Provide the device automations for Easee Ev Charger."""
 from typing import Dict, List
 
 import voluptuous as vol
