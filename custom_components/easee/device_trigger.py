@@ -3,7 +3,6 @@ import logging
 from typing import List
 
 import voluptuous as vol
-
 from homeassistant.components.automation import AutomationActionType
 from homeassistant.components.device_automation import TRIGGER_BASE_SCHEMA
 from homeassistant.components.homeassistant.triggers import state
@@ -15,17 +14,40 @@ from homeassistant.const import (
     CONF_TYPE,
 )
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant
-from homeassistant.helpers import config_validation as cv, entity_registry
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import entity_registry
 from homeassistant.helpers.typing import ConfigType
 
-from .const import DOMAIN, EA_DISCONNECTED, EA_CHARGING, EA_COMPLETED, EA_ERROR, EA_AWAITING_START, EA_READY_TO_CHARGE
+from .const import (
+    DOMAIN,
+    EA_AWAITING_START,
+    EA_CHARGING,
+    EA_COMPLETED,
+    EA_DISCONNECTED,
+    EA_ERROR,
+    EA_READY_TO_CHARGE,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
-EA_STATES = [EA_AWAITING_START, EA_DISCONNECTED, EA_CHARGING, EA_COMPLETED, EA_ERROR, EA_READY_TO_CHARGE]
+EA_STATES = [
+    EA_AWAITING_START,
+    EA_DISCONNECTED,
+    EA_CHARGING,
+    EA_COMPLETED,
+    EA_ERROR,
+    EA_READY_TO_CHARGE,
+]
 
 # TODO specify your supported trigger types.
-TRIGGER_TYPES = {"charging_started", "charging_completed", "car_disconnected", "awaiting_start", "ready_to_charge", "error"}
+TRIGGER_TYPES = {
+    "charging_started",
+    "charging_completed",
+    "car_disconnected",
+    "awaiting_start",
+    "ready_to_charge",
+    "error",
+}
 
 TRIGGER_SCHEMA = TRIGGER_BASE_SCHEMA.extend(
     {

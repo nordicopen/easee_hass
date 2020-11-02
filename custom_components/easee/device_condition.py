@@ -2,7 +2,6 @@
 from typing import Dict, List
 
 import voluptuous as vol
-
 from homeassistant.const import (
     ATTR_ENTITY_ID,
     CONF_CONDITION,
@@ -13,13 +12,30 @@ from homeassistant.const import (
     STATE_OFF,
 )
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import condition, config_validation as cv, entity_registry
+from homeassistant.helpers import condition
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import entity_registry
 from homeassistant.helpers.config_validation import DEVICE_CONDITION_BASE_SCHEMA
 from homeassistant.helpers.typing import ConfigType, TemplateVarsType
 
-from .const import DOMAIN, EA_CHARGING, EA_COMPLETED, EA_DISCONNECTED, EA_AWAITING_START, EA_READY_TO_CHARGE, EA_ERROR
+from .const import (
+    DOMAIN,
+    EA_AWAITING_START,
+    EA_CHARGING,
+    EA_COMPLETED,
+    EA_DISCONNECTED,
+    EA_ERROR,
+    EA_READY_TO_CHARGE,
+)
 
-CONDITION_TYPES = {"is_disconnected", "is_completed", "is_charging", "is_awaiting_start", "is_ready_to_charge", "is_error"}
+CONDITION_TYPES = {
+    "is_disconnected",
+    "is_completed",
+    "is_charging",
+    "is_awaiting_start",
+    "is_ready_to_charge",
+    "is_error",
+}
 
 CONDITION_SCHEMA = DEVICE_CONDITION_BASE_SCHEMA.extend(
     {
