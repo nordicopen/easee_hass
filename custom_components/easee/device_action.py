@@ -1,32 +1,28 @@
 """Provides device automations for Easee EV Charger."""
 from typing import List, Optional
 
+import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-
-from homeassistant.const import (
+from homeassistant.const import (  # ATTR_ENTITY_ID,; ATTR_SUPPORTED_FEATURES,; SERVICE_ALARM_ARM_AWAY,; SERVICE_ALARM_ARM_HOME,; SERVICE_ALARM_ARM_NIGHT,; SERVICE_ALARM_DISARM,; SERVICE_ALARM_TRIGGER,
     ATTR_CODE,
-    #    ATTR_ENTITY_ID,
-    #    ATTR_SUPPORTED_FEATURES,
     CONF_CODE,
     CONF_DEVICE_ID,
     CONF_DOMAIN,
     CONF_ENTITY_ID,
     CONF_TYPE,
-    #    SERVICE_ALARM_ARM_AWAY,
-    #    SERVICE_ALARM_ARM_HOME,
-    #    SERVICE_ALARM_ARM_NIGHT,
-    #    SERVICE_ALARM_DISARM,
-    #    SERVICE_ALARM_TRIGGER,
 )
 from homeassistant.core import Context, HomeAssistant
 from homeassistant.helpers import entity_registry
-import homeassistant.helpers.config_validation as cv
 
-from .const import (
-    DOMAIN,
-)
+from .const import DOMAIN
 
-ACTION_TYPES = {"charger_start", "charger_stop", "charger_pause", "charger_resume", "charger_toggle"}
+ACTION_TYPES = {
+    "charger_start",
+    "charger_stop",
+    "charger_pause",
+    "charger_resume",
+    "charger_toggle",
+}
 
 ACTION_SCHEMA = cv.DEVICE_ACTION_BASE_SCHEMA.extend(
     {
