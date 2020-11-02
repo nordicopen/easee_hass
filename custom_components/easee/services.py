@@ -183,6 +183,7 @@ def update(*arguments):
         @wraps(function)
         async def wrapper(*args):
             result = await function(*args)
+            await asyncio.sleep(3)
             await asyncio.gather(*[func() for func in arguments])
             return result
         return wrapper
