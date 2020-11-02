@@ -19,6 +19,28 @@
       }
     }
   },
+  "device_automation": {
+    "condition_type": {
+      "is_disconnected": "{entity_name} är ansluten",
+      "is_charging": "{entity_name} laddar",
+      "is_completed": "{entity_name} är färdig",
+      "is_awaiting_start": "{entity_name} väntar på start start",
+      "is_ready_to_charge": "{entity_name} klar att ladda",
+      "is_error": "{entity_name} är i felläge"
+    },
+    "trigger_type": {
+      "car_disconnected": "Bil bortkopplad från {entity_name}",
+      "charging_started": "Ladddning {entity_name} påbörjades",
+      "charging_completed": "Laddning på {entity_name} är klar",
+      "awaiting_start": "Laddare {entity_name} inväntar start",
+      "ready_to_charge": "Laddaren klar att börja på {entity_name}",
+      "error": "Laddningsfel på {entity_name}"
+    },
+    "action_type": {
+      "enable": "Aktivera {entity_name}",
+      "disable": "Avaktivera {entity_name}"
+    }
+  },
   "options": {
     "step": {
       "init": {

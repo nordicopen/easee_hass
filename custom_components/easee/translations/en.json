@@ -21,17 +21,24 @@
   },
   "device_automation": {
     "condition_type": {
-      "is_docked": "{entity_name} is docked",
-      "is_cleaning": "{entity_name} is cleaning"
+      "is_disconnected": "{entity_name} is disconnected",
+      "is_charging": "{entity_name} is charging",
+      "is_completed": "{entity_name} is completed",
+      "is_awaiting_start": "{entity_name} is awaiting start",
+      "is_ready_to_charge": "{entity_name} is ready to charge",
+      "is_error": "{entity_name} is in error state"
     },
     "trigger_type": {
-      "disconnected": "Car not connected to {entity_name}",
-      "charging": "{entity_name} is charging",
-      "completed": "charging on {entity_name} is completed"
+      "car_disconnected": "Car disconnected from {entity_name}",
+      "charging_started": "Charging on {entity_name} started",
+      "charging_completed": "Charging on {entity_name} is completed",
+      "awaiting_start": "Charger awaiting start on {entity_name}",
+      "ready_to_charge": "Charger is ready to start on {entity_name}",
+      "error": "Charger error on {entity_name}"
     },
     "action_type": {
-      "clean": "Let {entity_name} clean",
-      "dock": "Let {entity_name} return to the dock"
+      "enable": "Enable {entity_name}",
+      "disable": "Disable {entity_name}"
     }
   },
   "options": {
