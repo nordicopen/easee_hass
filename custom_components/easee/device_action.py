@@ -1,11 +1,10 @@
 """Provides device automations for Easee EV Charger."""
+import logging
 from typing import List, Optional
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-from homeassistant.const import (  # ATTR_ENTITY_ID,; ATTR_SUPPORTED_FEATURES,; SERVICE_ALARM_ARM_AWAY,; SERVICE_ALARM_ARM_HOME,; SERVICE_ALARM_ARM_NIGHT,; SERVICE_ALARM_DISARM,; SERVICE_ALARM_TRIGGER,
-    ATTR_CODE,
-    CONF_CODE,
+from homeassistant.const import (
     CONF_DEVICE_ID,
     CONF_DOMAIN,
     CONF_ENTITY_ID,
@@ -31,9 +30,11 @@ ACTION_SCHEMA = cv.DEVICE_ACTION_BASE_SCHEMA.extend(
     }
 )
 
+_LOGGER = logging.getLogger(__name__)
+
 
 async def async_get_actions(hass: HomeAssistant, device_id: str) -> List[dict]:
-    """List device actions for Alarm control panel devices."""
+    """List device actions for Easee EV Charger devices."""
     registry = await entity_registry.async_get_registry(hass)
     actions = []
 
@@ -99,8 +100,7 @@ async def async_call_action_from_config(
     config = ACTION_SCHEMA(config)
 
     service_data = {"charger_id": "EH468215"}  # config[CONF_ENTITY_ID]}
-    if CONF_CODE in config:
-        service_data[ATTR_CODE] = config[CONF_CODE]
+    _LOGGER.info("Action - Config: %s", config)
 
     if config[CONF_TYPE] == "charger_start":
         service = "easee.start"
