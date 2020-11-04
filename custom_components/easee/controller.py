@@ -15,9 +15,11 @@ from pyeasee import (
     Charger,
     ChargerConfig,
     ChargerState,
+    ChargerStreamData,
     Circuit,
     Easee,
     Equalizer,
+    EqualizerStreamData,
     Site,
 )
 from pyeasee.charger import ChargerSchedule
@@ -50,7 +52,7 @@ from .switch import ChargerSwitch
 _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL_STATE_SECONDS = 60
-SCAN_INTERVAL_EQUALIZERS_SECONDS = 20
+SCAN_INTERVAL_EQUALIZERS_SECONDS = 60
 SCAN_INTERVAL_CONSUMPTION_SECONDS = 120
 SCAN_INTERVAL_SCHEDULES_SECONDS = 600
 
@@ -64,6 +66,20 @@ class EqualizerData:
         self.site: Site = site
         self.state = []
         self.config = []
+
+    async def update_stream_data(self, data_type, data_id, value):
+        try:
+            name = EqualizerStreamData(data_id).name
+        except BaseException:
+            # Unsupported data
+            return
+
+        if "_" in name:
+            first, second = name.split("_")
+            if first == "state":
+                self.state[second] = value
+            elif first == "config":
+                self.config[second] = value
 
 
 class ChargerData:
@@ -87,6 +103,20 @@ class ChargerData:
             self.schedule = None
 
         _LOGGER.debug("Schedule: %s", self.schedule)
+
+    async def update_stream_data(self, data_type, data_id, value):
+        try:
+            name = ChargerStreamData(data_id).name
+        except BaseException:
+            # Unsupported data
+            return
+
+        if "_" in name:
+            first, second = name.split("_")
+            if first == "state":
+                self.state[second] = value
+            elif first == "config":
+                self.config[second] = value
 
 
 class Controller:
@@ -153,6 +183,7 @@ class Controller:
                     self.equalizers.append(equalizer)
                     equalizer_data = EqualizerData(equalizer, site)
                     self.equalizers_data.append(equalizer_data)
+                    await self.easee.sr_subscribe(equalizer, self.stream_callback)
                 for circuit in site.get_circuits():
                     _LOGGER.debug(
                         "Found circuit: %s %s", circuit.id, circuit["panelName"]
@@ -163,8 +194,22 @@ class Controller:
                         self.chargers.append(charger)
                         charger_data = ChargerData(charger, circuit, site)
                         self.chargers_data.append(charger_data)
+                        await self.easee.sr_subscribe(charger, self.stream_callback)
 
         self._create_entitites()
+
+    async def stream_callback(self, id, data_type, data_id, value):
+        for charger_data in self.chargers_data:
+            if charger_data.charger.id == id:
+                await charger_data.update_stream_data(data_type, data_id, value)
+                self.update_ha_state()
+                return
+
+        for equalizer_data in self.equalizers_data:
+            if equalizer_data.equalizer.id == id:
+                await equalizer_data.update_stream_data(data_type, data_id, value)
+                self.update_equalizers_state()
+                return
 
     def update_ha_state(self):
         # Schedule an update for all other included entities
