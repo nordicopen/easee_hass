@@ -67,7 +67,7 @@ def check_value(data_type, reference, value):
     ):
         return True
 
-    if abs(reference - value) > abs(reference * MIMIMUM_UPDATE):
+    if abs(reference - value) > abs(reference * MINIMUM_UPDATE):
         return True
 
     return False
