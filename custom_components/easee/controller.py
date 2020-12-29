@@ -1,7 +1,8 @@
 """ Easee Connector class """
 import asyncio
+import json
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import List
 
 from async_timeout import timeout
@@ -152,6 +153,23 @@ class ChargerData:
                 if self.config[second] != value:
                     self.config[second] = value
                     return True
+            elif first == "schedule":
+                value = json.loads(value)
+                self.schedule["id"] = value.get("Id")
+                self.schedule["chargeStartTime"] = datetime.utcfromtimestamp(
+                    value.get("StartSchedule")
+                )
+                periods = value.get("Periods")
+                self.schedule["chargeStopTime"] = datetime.utcfromtimestamp(
+                    value.get("StartSchedule") + periods[len(periods) - 1][0]
+                )
+                if value.get("ProfileKind") == "Recurring":
+                    self.schedule["repeat"] = True
+                else:
+                    self.schedule["repeat"] = False
+                return True
+            else:
+                _LOGGER.debug("Unkonwn update type: %s", first)
 
         return False
 
@@ -220,7 +238,6 @@ class Controller:
                     self.equalizers.append(equalizer)
                     equalizer_data = EqualizerData(equalizer, site)
                     self.equalizers_data.append(equalizer_data)
-                    await self.easee.sr_subscribe(equalizer, self.stream_callback)
                 for circuit in site.get_circuits():
                     _LOGGER.debug(
                         "Found circuit: %s %s", circuit.id, circuit["panelName"]
@@ -231,11 +248,16 @@ class Controller:
                         self.chargers.append(charger)
                         charger_data = ChargerData(charger, circuit, site)
                         self.chargers_data.append(charger_data)
-                        await self.easee.sr_subscribe(charger, self.stream_callback)
 
         self._first_site_poll = True
         self._first_equalizer_poll = True
+        self._first_schedule_poll = True
+
         self._create_entitites()
+        for equalizer in self.equalizers:
+            await self.easee.sr_subscribe(equalizer, self.stream_callback)
+        for charger in self.chargers:
+            await self.easee.sr_subscribe(charger, self.stream_callback)
 
     async def stream_callback(self, id, data_type, data_id, value):
         for charger_data in self.chargers_data:
@@ -309,9 +331,15 @@ class Controller:
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """
-        tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
-        if tasks:
-            await asyncio.wait(tasks)
+        if self._first_schedule_poll or not self.easee.sr_is_connected():
+            self._first_schedule_poll = False
+
+            tasks = [
+                charger.schedules_async_refresh() for charger in self.chargers_data
+            ]
+            if tasks:
+                await asyncio.wait(tasks)
+
         self.update_ha_state()
 
     async def refresh_sites_state(self, now=None):
