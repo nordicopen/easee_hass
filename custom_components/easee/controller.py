@@ -1,7 +1,8 @@
 """ Easee Connector class """
 import asyncio
+import json
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import List
 
 from async_timeout import timeout
@@ -15,9 +16,12 @@ from pyeasee import (
     Charger,
     ChargerConfig,
     ChargerState,
+    ChargerStreamData,
     Circuit,
+    DatatypesStreamData,
     Easee,
     Equalizer,
+    EqualizerStreamData,
     Site,
 )
 from pyeasee.charger import ChargerSchedule
@@ -54,6 +58,21 @@ SCAN_INTERVAL_EQUALIZERS_SECONDS = 20
 SCAN_INTERVAL_CONSUMPTION_SECONDS = 120
 SCAN_INTERVAL_SCHEDULES_SECONDS = 600
 
+MINIMUM_UPDATE = 0.05
+
+
+def check_value(data_type, reference, value):
+    if (
+        data_type != DatatypesStreamData.Double.value
+        and data_type != DatatypesStreamData.Integer.value
+    ):
+        return True
+
+    if abs(reference - value) > abs(reference * MINIMUM_UPDATE):
+        return True
+
+    return False
+
 
 class EqualizerData:
     """Representation equalizer data."""
@@ -64,6 +83,30 @@ class EqualizerData:
         self.site: Site = site
         self.state = []
         self.config = []
+
+    def update_stream_data(self, data_type, data_id, value):
+        try:
+            name = EqualizerStreamData(data_id).name
+        except ValueError:
+            # Unsupported data
+            return False
+
+        str = f"Equalizer callback {data_id} {name} {value}"
+        _LOGGER.debug(str)
+
+        if "_" in name:
+            first, second = name.split("_")
+            if first == "state":
+                oldvalue = self.state[second]
+                self.state[second] = value
+                if check_value(data_type, oldvalue, value):
+                    return True
+            elif first == "config":
+                if self.config[second] != value:
+                    self.config[second] = value
+                    return True
+
+        return False
 
 
 class ChargerData:
@@ -87,6 +130,48 @@ class ChargerData:
             self.schedule = None
 
         _LOGGER.debug("Schedule: %s", self.schedule)
+
+    def update_stream_data(self, data_type, data_id, value):
+        try:
+            name = ChargerStreamData(data_id).name
+        except ValueError:
+            # Unsupported data
+            return False
+
+        str = f"Charger callback {data_id} {name} {value}"
+        _LOGGER.debug(str)
+
+        if "_" in name:
+            first, second = name.split("_")
+
+            if first == "state":
+                oldvalue = self.state[second]
+                self.state[second] = value
+                if check_value(data_type, oldvalue, value):
+                    return True
+            elif first == "config":
+                if self.config[second] != value:
+                    self.config[second] = value
+                    return True
+            elif first == "schedule":
+                value = json.loads(value)
+                self.schedule["id"] = value.get("Id")
+                self.schedule["chargeStartTime"] = datetime.utcfromtimestamp(
+                    value.get("StartSchedule")
+                )
+                periods = value.get("Periods")
+                self.schedule["chargeStopTime"] = datetime.utcfromtimestamp(
+                    value.get("StartSchedule") + periods[len(periods) - 1][0]
+                )
+                if value.get("ProfileKind") == "Recurring":
+                    self.schedule["repeat"] = True
+                else:
+                    self.schedule["repeat"] = False
+                return True
+            else:
+                _LOGGER.debug("Unkonwn update type: %s", first)
+
+        return False
 
 
 class Controller:
@@ -164,7 +249,30 @@ class Controller:
                         charger_data = ChargerData(charger, circuit, site)
                         self.chargers_data.append(charger_data)
 
+        self._first_site_poll = True
+        self._first_equalizer_poll = True
+        self._first_schedule_poll = True
+
         self._create_entitites()
+        for equalizer in self.equalizers:
+            await self.easee.sr_subscribe(equalizer, self.stream_callback)
+        for charger in self.chargers:
+            await self.easee.sr_subscribe(charger, self.stream_callback)
+
+    async def stream_callback(self, id, data_type, data_id, value):
+        for charger_data in self.chargers_data:
+            if charger_data.charger.id == id:
+                if charger_data.update_stream_data(data_type, data_id, value):
+                    _LOGGER.debug("Scheduling charger update")
+                    self.update_ha_state()
+                    return
+
+        for equalizer_data in self.equalizers_data:
+            if equalizer_data.equalizer.id == id:
+                if equalizer_data.update_stream_data(data_type, data_id, value):
+                    _LOGGER.debug("Scheduling equalizer update")
+                    self.update_equalizers_state()
+                    return
 
     def update_ha_state(self):
         # Schedule an update for all other included entities
@@ -223,45 +331,58 @@ class Controller:
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """
-        tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
-        if tasks:
-            await asyncio.wait(tasks)
+        if self._first_schedule_poll or not self.easee.sr_is_connected():
+            self._first_schedule_poll = False
+
+            tasks = [
+                charger.schedules_async_refresh() for charger in self.chargers_data
+            ]
+            if tasks:
+                await asyncio.wait(tasks)
+
         self.update_ha_state()
 
     async def refresh_sites_state(self, now=None):
         """ gets site state for all sites and updates the chargers state and config """
         sites_state = {}
 
-        for site in self.get_sites():
-            if site["name"] in self.monitored_sites:
-                _LOGGER.debug("Getting state for site %s", site.id)
-                sites_state[site.id] = await self.easee.get_site_state(site.id)
+        if self._first_site_poll or not self.easee.sr_is_connected():
+            self._first_site_poll = False
 
-        for charger_data in self.chargers_data:
-            if charger_data.site.id not in sites_state:
-                _LOGGER.error(
-                    "Site %s from charger not found in site states",
-                    charger_data.state.id,
+            for site in self.get_sites():
+                if site["name"] in self.monitored_sites:
+                    _LOGGER.debug("Getting state for site %s", site.id)
+                    sites_state[site.id] = await self.easee.get_site_state(site.id)
+
+            for charger_data in self.chargers_data:
+                if charger_data.site.id not in sites_state:
+                    _LOGGER.error(
+                        "Site %s from charger not found in site states",
+                        charger_data.state.id,
+                    )
+                    continue
+                charger_id = charger_data.charger.id
+                site_state = sites_state[charger_data.site.id]
+
+                charger_data.state = site_state.get_charger_state(charger_id, raw=True)
+                _LOGGER.debug("Charger state: %s ", charger_id)
+                charger_data.config = site_state.get_charger_config(
+                    charger_id, raw=True
                 )
-                continue
-            charger_id = charger_data.charger.id
-            site_state = sites_state[charger_data.site.id]
-
-            charger_data.state = site_state.get_charger_state(charger_id, raw=True)
-            _LOGGER.debug("Charger state: %s ", charger_id)
-            charger_data.config = site_state.get_charger_config(charger_id, raw=True)
 
         self.update_ha_state()
 
     async def refresh_equalizers_state(self, now=None):
         """ gets equalizer state for all equalizers """
 
-        for equalizer_data in self.equalizers_data:
-            equalizer_data.state = await equalizer_data.equalizer.get_state()
-            if equalizer_data.state["isOnline"]:
-                equalizer_data.state["isOnline"] = ONLINE
-            else:
-                equalizer_data.state["isOnline"] = OFFLINE
+        if self._first_equalizer_poll or not self.easee.sr_is_connected():
+            self._first_equalizer_poll = False
+            for equalizer_data in self.equalizers_data:
+                equalizer_data.state = await equalizer_data.equalizer.get_state()
+                if equalizer_data.state["isOnline"]:
+                    equalizer_data.state["isOnline"] = ONLINE
+                else:
+                    equalizer_data.state["isOnline"] = OFFLINE
 
         self.update_equalizers_state()
 

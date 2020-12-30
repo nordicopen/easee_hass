@@ -195,6 +195,27 @@ class ChargerEntity(Entity):
         """No polling needed."""
         return False
 
+    def set_value_from_key(self, key, value):
+        first, second = key.split(".")
+        if first == "config":
+            self.charger_data.config[second] = value
+        elif first == "state":
+            self.charger_data.state[second] = value
+        elif first == "circuit":
+            self.charger_data.circuit[second] = value
+        elif first == "site":
+            self.charger_data.site[second] = value
+        elif first == "schedule":
+            if self.charger_data.schedule is not None:
+                self.charger_data.schedule[second] = value
+        else:
+            _LOGGER.error("Unknown first part of key: %s", key)
+            raise IndexError("Unknown first part of key")
+
+        if type(value) is datetime:
+            value = dt.as_local(value)
+        return value
+
     def get_value_from_key(self, key):
         first, second = key.split(".")
         value = None
