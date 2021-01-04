@@ -3,7 +3,7 @@ Easee charger sensor
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
 import logging
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from typing import Dict
 
 from homeassistant.const import DEVICE_CLASS_ENERGY
@@ -132,10 +132,16 @@ class ChargerConsumptionSensor(Entity):
             self._sensor_name,
         )
         now = datetime.now()
-        self._state = await self.charger.get_consumption_between_dates(
-            now - timedelta(0, 86400 * self._days), now
-        )
-
+        today = date.today()
+        start = datetime.combine(today, datetime.min.time())
+        if self._days == 1:
+            self._state = await self.charger.get_consumption_between_dates(
+                start, now
+            )
+        else:
+            self._state = await self.charger.get_consumption_between_dates(
+                start - timedelta(0, 86400 * self._days), now
+            )
 
 class EqualizerSensor(ChargerEntity):
     """Implementation of Easee equalizer sensor."""

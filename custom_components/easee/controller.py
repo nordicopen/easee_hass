@@ -11,7 +11,7 @@ from homeassistant.const import CONF_MONITORED_CONDITIONS, ENERGY_KILO_WATT_HOUR
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
 from homeassistant.helpers import aiohttp_client
-from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers.event import async_track_time_interval, async_track_time_change
 from pyeasee import (
     Charger,
     ChargerConfig,
@@ -120,6 +120,17 @@ class ChargerData:
         self.state: List[ChargerState] = []
         self.config: List[ChargerConfig] = []
         self.schedule: List[ChargerSchedule] = []
+        self.consumption_update = True
+        
+    def set_consumption_state(self):
+        self.consumption_update = True
+
+    def get_consumption_state(self):
+        if self.consumption_update:
+            self.consumption_update = False
+            return True
+
+        return False
 
     async def schedules_async_refresh(self):
         try:
@@ -147,6 +158,8 @@ class ChargerData:
             if first == "state":
                 oldvalue = self.state[second]
                 self.state[second] = value
+                if second == "chargerOpMode" and value == 1 and oldvalue != 1:
+                    self.set_consumption_state()
                 if check_value(data_type, oldvalue, value):
                     return True
             elif first == "config":
@@ -252,7 +265,8 @@ class Controller:
         self._first_site_poll = True
         self._first_equalizer_poll = True
         self._first_schedule_poll = True
-
+        self._first_consumption_poll = True
+        
         self._create_entitites()
         for equalizer in self.equalizers:
             await self.easee.sr_subscribe(equalizer, self.stream_callback)
@@ -291,12 +305,10 @@ class Controller:
     async def add_schedulers(self):
         """ Add schedules to udpate data """
         # first update
-        tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
-        if tasks:
-            await asyncio.wait(tasks)
+        self.hass.async_add_job(self.refresh_schedules)
         self.hass.async_add_job(self.refresh_sites_state)
         self.hass.async_add_job(self.refresh_equalizers_state)
-
+        
         # Add interval refresh for site state interval
         async_track_time_interval(
             self.hass,
@@ -325,9 +337,26 @@ class Controller:
             timedelta(seconds=SCAN_INTERVAL_CONSUMPTION_SECONDS),
         )
 
+        # Add time pattern to force comsumption sensors to update after midningt
+        async_track_time_change(
+            self.hass,
+            self.force_refresh_consumption_sensors,
+            hour = 0, minute = 0, second = 1
+        )
+
+    def force_refresh_consumption_sensors(self, now=None):
+        """ Force refresh of consumptions sensors """
+        for charger_data in self.chargers_data:
+            charger_data.set_consumption_state()
+            
     def refresh_consumption_sensors(self, now=None):
-        for sensor in self.consumption_sensor_entities:
-            sensor.async_schedule_update_ha_state(True)
+        """ Refreshes the consumption data """
+        for charger_data in self.chargers_data:
+            state = charger_data.get_consumption_state()
+            if state or not self.easee.sr_is_connected():
+                for sensor in self.consumption_sensor_entities:
+                    if charger_data.charger.id == sensor.charger.id:
+                        sensor.async_schedule_update_ha_state(True)
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """

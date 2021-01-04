@@ -124,7 +124,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "key": "state.lifetimeEnergy",
         "attrs": [],
         "units": ENERGY_KILO_WATT_HOUR,
-        "convert_units_func": None,
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": "mdi:counter",
     },
@@ -281,7 +281,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "icon": None,
     },
     "voltage": {
-        "key": "state.voltage",
+        "key": "state.inVoltageT2T3",
         "attrs": [
             "state.inVoltageT1T2",
             "state.inVoltageT1T3",
