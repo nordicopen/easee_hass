@@ -134,14 +134,9 @@ class ChargerConsumptionSensor(Entity):
         now = datetime.now()
         today = date.today()
         start = datetime.combine(today, datetime.min.time())
-        if self._days == 1:
-            self._state = await self.charger.get_consumption_between_dates(
-                start, now
-            )
-        else:
-            self._state = await self.charger.get_consumption_between_dates(
-                start - timedelta(0, 86400 * self._days), now
-            )
+        self._state = await self.charger.get_consumption_between_dates(
+            start - timedelta(0, 86400 * (self._days-1)), now
+        )
 
 class EqualizerSensor(ChargerEntity):
     """Implementation of Easee equalizer sensor."""
