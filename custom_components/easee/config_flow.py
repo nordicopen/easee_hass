@@ -15,14 +15,11 @@ from pyeasee import AuthorizationFailedException, Easee, Site
 from .const import (
     CONF_MONITORED_EQ_CONDITIONS,
     CONF_MONITORED_SITES,
-    CONSUMPTION_DAYS_PREFIX,
     CUSTOM_UNITS,
     CUSTOM_UNITS_OPTIONS,
     DOMAIN,
     EASEE_EQ_ENTITIES,
     MANDATORY_EASEE_ENTITIES,
-    MEASURED_CONSUMPTION_DAYS,
-    MEASURED_CONSUMPTION_OPTIONS,
     OPTIONAL_EASEE_ENTITIES,
 )
 
@@ -137,12 +134,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                         ),
                     ): cv.multi_select(sensor_eq_multi_select),
                     vol.Optional(
-                        MEASURED_CONSUMPTION_DAYS,
-                        default=self.config_entry.options.get(
-                            MEASURED_CONSUMPTION_DAYS, []
-                        ),
-                    ): cv.multi_select(MEASURED_CONSUMPTION_OPTIONS),
-                    vol.Optional(
                         CUSTOM_UNITS,
                         default=self.config_entry.options.get(CUSTOM_UNITS, []),
                     ): cv.multi_select(CUSTOM_UNITS_OPTIONS),
@@ -170,11 +161,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             cond
             for cond in self.prev_options.get(CONF_MONITORED_SITES, {})
             if cond not in self.options[CONF_MONITORED_SITES]
-        ]
-        self.hass.data[DOMAIN]["days_to_remove"] = [
-            f"{CONSUMPTION_DAYS_PREFIX}{cond}"
-            for cond in self.prev_options.get(MEASURED_CONSUMPTION_DAYS, {})
-            if cond not in self.options[MEASURED_CONSUMPTION_DAYS]
         ]
         _LOGGER.debug("Days_to_remove: %s", self.hass.data[DOMAIN]["days_to_remove"])
         return self.async_create_entry(title="", data=self.options)
