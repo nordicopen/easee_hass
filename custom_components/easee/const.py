@@ -18,21 +18,12 @@ from homeassistant.const import (
 
 DOMAIN = "easee"
 TIMEOUT = 30
-MEASURED_CONSUMPTION_DAYS = "measured_consumption_days"
 VERSION = "0.9.23"
 CONF_MONITORED_SITES = "monitored_sites"
 CONF_MONITORED_EQ_CONDITIONS = "monitored_eq_conditions"
 CUSTOM_UNITS = "custom_units"
-CONSUMPTION_DAYS_PREFIX = "consumption_days_"
 PLATFORMS = ("sensor", "switch", "binary_sensor")
 LISTENER_FN_CLOSE = "update_listener_close_fn"
-MEASURED_CONSUMPTION_OPTIONS = {
-    "1": "1",
-    "7": "7",
-    "14": "14",
-    "30": "30",
-    "365": "365",
-}
 CUSTOM_UNITS_OPTIONS = {
     POWER_KILO_WATT: f"Power {POWER_KILO_WATT} to {POWER_WATT}",
     ENERGY_KILO_WATT_HOUR: f"Energy {ENERGY_KILO_WATT_HOUR} to {ENERGY_WATT_HOUR}",
@@ -124,7 +115,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "key": "state.lifetimeEnergy",
         "attrs": [],
         "units": ENERGY_KILO_WATT_HOUR,
-        "convert_units_func": None,
+        "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": "mdi:counter",
     },
@@ -281,7 +272,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "icon": None,
     },
     "voltage": {
-        "key": "state.voltage",
+        "key": "state.inVoltageT2T3",
         "attrs": [
             "state.inVoltageT1T2",
             "state.inVoltageT1T3",

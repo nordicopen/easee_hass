@@ -11,7 +11,10 @@ from homeassistant.const import CONF_MONITORED_CONDITIONS, ENERGY_KILO_WATT_HOUR
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
 from homeassistant.helpers import aiohttp_client
-from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers.event import (
+    async_track_time_change,
+    async_track_time_interval,
+)
 from pyeasee import (
     Charger,
     ChargerConfig,
@@ -36,26 +39,23 @@ from .binary_sensor import ChargerBinarySensor
 from .const import (
     CONF_MONITORED_EQ_CONDITIONS,
     CONF_MONITORED_SITES,
-    CONSUMPTION_DAYS_PREFIX,
     CUSTOM_UNITS,
     CUSTOM_UNITS_TABLE,
     EASEE_EQ_ENTITIES,
     MANDATORY_EASEE_ENTITIES,
-    MEASURED_CONSUMPTION_DAYS,
     OFFLINE,
     ONLINE,
     OPTIONAL_EASEE_ENTITIES,
     TIMEOUT,
 )
 from .entity import convert_units_funcs
-from .sensor import ChargerConsumptionSensor, ChargerSensor, EqualizerSensor
+from .sensor import ChargerSensor, EqualizerSensor
 from .switch import ChargerSwitch
 
 _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL_STATE_SECONDS = 60
 SCAN_INTERVAL_EQUALIZERS_SECONDS = 20
-SCAN_INTERVAL_CONSUMPTION_SECONDS = 120
 SCAN_INTERVAL_SCHEDULES_SECONDS = 600
 
 MINIMUM_UPDATE = 0.05
@@ -194,7 +194,6 @@ class Controller:
         self.switch_entities = []
         self.sensor_entities = []
         self.equalizer_sensor_entities = []
-        self.next_consumption_sensor = 0
 
     async def initialize(self):
         """ initialize the session and get initial data """
@@ -291,9 +290,7 @@ class Controller:
     async def add_schedulers(self):
         """ Add schedules to udpate data """
         # first update
-        tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
-        if tasks:
-            await asyncio.wait(tasks)
+        self.hass.async_add_job(self.refresh_schedules)
         self.hass.async_add_job(self.refresh_sites_state)
         self.hass.async_add_job(self.refresh_equalizers_state)
 
@@ -317,17 +314,6 @@ class Controller:
             self.refresh_schedules,
             timedelta(seconds=SCAN_INTERVAL_SCHEDULES_SECONDS),
         )
-
-        # Add interval refresh for consumption sensors
-        async_track_time_interval(
-            self.hass,
-            self.refresh_consumption_sensors,
-            timedelta(seconds=SCAN_INTERVAL_CONSUMPTION_SECONDS),
-        )
-
-    def refresh_consumption_sensors(self, now=None):
-        for sensor in self.consumption_sensor_entities:
-            sensor.async_schedule_update_ha_state(True)
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """
@@ -401,7 +387,6 @@ class Controller:
     def get_sensor_entities(self):
         return (
             self.sensor_entities
-            + self.consumption_sensor_entities
             + self.equalizer_sensor_entities
         )
 
@@ -422,7 +407,6 @@ class Controller:
         self.sensor_entities = []
         self.switch_entities = []
         self.binary_sensor_entities = []
-        self.consumption_sensor_entities = []
         self.equalizer_sensor_entities = []
 
         all_easee_entities = {**MANDATORY_EASEE_ENTITIES, **OPTIONAL_EASEE_ENTITIES}
@@ -509,25 +493,6 @@ class Controller:
                             state_func=data.get("state_func", None),
                         )
                     )
-
-            # Add consumption sensors
-            monitored_days = self.config.options.get(MEASURED_CONSUMPTION_DAYS, [])
-            consumption_unit = (
-                CUSTOM_UNITS_TABLE[ENERGY_KILO_WATT_HOUR]
-                if ENERGY_KILO_WATT_HOUR in custom_units
-                else ENERGY_KILO_WATT_HOUR
-            )
-            for interval in monitored_days:
-                _LOGGER.info("Will measure days: %s", interval)
-                self.consumption_sensor_entities.append(
-                    ChargerConsumptionSensor(
-                        self,
-                        charger_data.charger,
-                        f"{CONSUMPTION_DAYS_PREFIX}{interval}",
-                        int(interval),
-                        consumption_unit,
-                    )
-                )
 
         for equalizer_data in self.equalizers_data:
             for key in monitored_eq_conditions:
