@@ -3,16 +3,11 @@ Easee charger sensor
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
 import logging
-from datetime import date, datetime, timedelta
+from datetime import timedelta
 from typing import Dict
 
-from homeassistant.const import DEVICE_CLASS_ENERGY
-from homeassistant.helpers import device_registry, entity_registry
-from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.entity_registry import async_entries_for_device
-
 from .const import DOMAIN
-from .entity import ChargerEntity, round_0_dec, round_1_dec, round_2_dec
+from .entity import ChargerEntity, round_0_dec, round_1_dec
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,6 +29,7 @@ class ChargerSensor(ChargerEntity):
     def state(self):
         """Return status."""
         return self._state
+
 
 class EqualizerSensor(ChargerEntity):
     """Implementation of Easee equalizer sensor."""

@@ -7,14 +7,11 @@ from typing import List
 
 from async_timeout import timeout
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_MONITORED_CONDITIONS, ENERGY_KILO_WATT_HOUR
+from homeassistant.const import CONF_MONITORED_CONDITIONS
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
 from homeassistant.helpers import aiohttp_client
-from homeassistant.helpers.event import (
-    async_track_time_change,
-    async_track_time_interval,
-)
+from homeassistant.helpers.event import async_track_time_interval
 from pyeasee import (
     Charger,
     ChargerConfig,
@@ -385,10 +382,7 @@ class Controller:
         return self.binary_sensor_entities
 
     def get_sensor_entities(self):
-        return (
-            self.sensor_entities
-            + self.equalizer_sensor_entities
-        )
+        return self.sensor_entities + self.equalizer_sensor_entities
 
     def get_switch_entities(self):
         return self.switch_entities
