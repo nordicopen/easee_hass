@@ -57,6 +57,8 @@ SCAN_INTERVAL_SCHEDULES_SECONDS = 600
 
 MINIMUM_UPDATE = 0.05
 
+OFFLINE_DELAY = 17 * 60
+
 
 def check_value(data_type, reference, value):
     if (
@@ -82,10 +84,12 @@ class EqualizerData:
         self.config = []
 
     def update_stream_data(self, data_type, data_id, value):
+        self.state["latestPulse"] = datetime.utcnow()
         try:
             name = EqualizerStreamData(data_id).name
         except ValueError:
             # Unsupported data
+            _LOGGER.debug(f"Unsupported data id {data_id} {value}")
             return False
 
         str = f"Equalizer callback {data_id} {name} {value}"
@@ -129,10 +133,12 @@ class ChargerData:
         _LOGGER.debug("Schedule: %s", self.schedule)
 
     def update_stream_data(self, data_type, data_id, value):
+        self.state["latestPulse"] = datetime.utcnow()
         try:
             name = ChargerStreamData(data_id).name
         except ValueError:
             # Unsupported data
+            _LOGGER.debug(f"Unsupported data id {data_id} {value}")
             return False
 
         str = f"Charger callback {data_id} {name} {value}"
@@ -329,6 +335,14 @@ class Controller:
         """ gets site state for all sites and updates the chargers state and config """
         sites_state = {}
 
+        if not self._first_site_poll:
+            for charger_data in self.chargers_data:
+                elapsed = charger_data.state["latestPulse"] - datetime.utcnow()
+                if elapsed.total_seconds() > OFFLINE_DELAY:
+                    charger_data.state["isOnline"] = False
+                else:
+                    charger_data.state["isOnline"] = True
+
         if self._first_site_poll or not self.easee.sr_is_connected():
             self._first_site_poll = False
 
@@ -357,6 +371,14 @@ class Controller:
 
     async def refresh_equalizers_state(self, now=None):
         """ gets equalizer state for all equalizers """
+
+        if not self._first_equalizer_poll:
+            for equalizer_data in self.equalizers_data:
+                elapsed = equalizer_data.state["latestPulse"] - datetime.utcnow()
+                if elapsed.total_seconds() > OFFLINE_DELAY:
+                    equalizer_data.state["isOnline"] = OFFLINE
+                else:
+                    equalizer_data.state["isOnline"] = ONLINE
 
         if self._first_equalizer_poll or not self.easee.sr_is_connected():
             self._first_equalizer_poll = False
