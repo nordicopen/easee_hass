@@ -256,10 +256,6 @@ class Controller:
         self._first_schedule_poll = True
 
         self._create_entitites()
-        for equalizer in self.equalizers:
-            await self.easee.sr_subscribe(equalizer, self.stream_callback)
-        for charger in self.chargers:
-            await self.easee.sr_subscribe(charger, self.stream_callback)
 
     async def stream_callback(self, id, data_type, data_id, value):
         for charger_data in self.chargers_data:
@@ -293,7 +289,9 @@ class Controller:
     async def add_schedulers(self):
         """ Add schedules to udpate data """
         # first update
-        self.hass.async_add_job(self.refresh_schedules)
+        tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
+        if tasks:
+            await asyncio.wait(tasks)
         self.hass.async_add_job(self.refresh_sites_state)
         self.hass.async_add_job(self.refresh_equalizers_state)
 
@@ -317,6 +315,11 @@ class Controller:
             self.refresh_schedules,
             timedelta(seconds=SCAN_INTERVAL_SCHEDULES_SECONDS),
         )
+
+        for equalizer in self.equalizers:
+            await self.easee.sr_subscribe(equalizer, self.stream_callback)
+        for charger in self.chargers:
+            await self.easee.sr_subscribe(charger, self.stream_callback)
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """
@@ -371,7 +374,6 @@ class Controller:
 
     async def refresh_equalizers_state(self, now=None):
         """ gets equalizer state for all equalizers """
-
         if not self._first_equalizer_poll:
             for equalizer_data in self.equalizers_data:
                 elapsed = equalizer_data.state["latestPulse"] - datetime.utcnow()
