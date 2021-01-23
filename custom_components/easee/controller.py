@@ -340,7 +340,10 @@ class Controller:
 
         if not self._first_site_poll:
             for charger_data in self.chargers_data:
-                elapsed = charger_data.state["latestPulse"] - datetime.utcnow()
+                elapsed = datetime.utcnow() - charger_data.state["latestPulse"]
+                _LOGGER.debug(
+                    f"Seconds since {charger_data.charger.id} lastPulse {elapsed.total_seconds()}"
+                )
                 if elapsed.total_seconds() > OFFLINE_DELAY:
                     charger_data.state["isOnline"] = False
                 else:
@@ -376,7 +379,10 @@ class Controller:
         """ gets equalizer state for all equalizers """
         if not self._first_equalizer_poll:
             for equalizer_data in self.equalizers_data:
-                elapsed = equalizer_data.state["latestPulse"] - datetime.utcnow()
+                elapsed = datetime.utcnow() - equalizer_data.state["latestPulse"]
+                _LOGGER.debug(
+                    f"Seconds since {equalizer_data.equalizer.id} lastPulse {elapsed.total_seconds()}"
+                )
                 if elapsed.total_seconds() > OFFLINE_DELAY:
                     equalizer_data.state["isOnline"] = OFFLINE
                 else:
