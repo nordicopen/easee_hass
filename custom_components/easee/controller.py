@@ -85,6 +85,7 @@ class EqualizerData:
 
     def update_stream_data(self, data_type, data_id, value):
         self.state["latestPulse"] = datetime.utcnow()
+        self.state["isOnline"] = ONLINE
         try:
             name = EqualizerStreamData(data_id).name
         except ValueError:
@@ -134,6 +135,7 @@ class ChargerData:
 
     def update_stream_data(self, data_type, data_id, value):
         self.state["latestPulse"] = datetime.utcnow()
+        self.state["isOnline"] = True
         try:
             name = ChargerStreamData(data_id).name
         except ValueError:
@@ -346,8 +348,6 @@ class Controller:
                 )
                 if elapsed.total_seconds() > OFFLINE_DELAY:
                     charger_data.state["isOnline"] = False
-                else:
-                    charger_data.state["isOnline"] = True
 
         if self._first_site_poll or not self.easee.sr_is_connected():
             self._first_site_poll = False
@@ -385,8 +385,6 @@ class Controller:
                 )
                 if elapsed.total_seconds() > OFFLINE_DELAY:
                     equalizer_data.state["isOnline"] = OFFLINE
-                else:
-                    equalizer_data.state["isOnline"] = ONLINE
 
         if self._first_equalizer_poll or not self.easee.sr_is_connected():
             self._first_equalizer_poll = False
