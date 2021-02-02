@@ -1,6 +1,6 @@
 {
   "state": {
-    "easee_status": {
+    "easee__status": {
       "disconnected": "Frakoblet",
       "awaiting_start": "Avventer start",
       "charging": "Lader",
@@ -8,11 +8,11 @@
       "completed": "Fullført",
       "ready_to_charge": "Klar til lading"
     },
-    "easee_eq_status": {
+    "easee__eq_status": {
       "online": "Online",
       "offline": "Offline"
     },
-    "reason_no_current": {
+    "easee__reason_no_current": {
       "none": "Ingen",
       "ok": "OK",
       "max_circuit_current_too_low": "Max circuit current er for lav",

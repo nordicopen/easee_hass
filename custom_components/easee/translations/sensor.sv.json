@@ -1,6 +1,6 @@
 {
   "state": {
-    "easee_status": {
+    "easee__status": {
       "disconnected": "Ej ansluten",
       "awaiting_start": "Väntar på start",
       "charging": "Laddar",
@@ -8,11 +8,11 @@
       "completed": "Klar",
       "ready_to_charge": "Redo för laddning"
     },
-    "easee_eq_status": {
+    "easee__eq_status": {
       "online": "Ansluten",
       "offline": "Ej ansluten"
     },
-    "reason_no_current": {
+    "easee__reason_no_current": {
       "none": "Ingen",
       "ok": "OK",
       "max_circuit_current_too_low": "Max kretsström för låg",

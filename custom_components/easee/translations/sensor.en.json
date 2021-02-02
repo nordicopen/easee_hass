@@ -1,6 +1,6 @@
 {
   "state": {
-    "easee_status": {
+    "easee__status": {
       "disconnected": "Disconnected",
       "awaiting_start": "Awaiting start",
       "charging": "Charging",
@@ -8,11 +8,11 @@
       "completed": "Completed",
       "ready_to_charge": "Ready to charge"
     },
-    "easee_eq_status": {
+    "easee__eq_status": {
       "online": "Online",
       "offline": "Offline"
     },
-    "reason_no_current": {
+    "easee__reason_no_current": {
       "none": "None",
       "ok": "OK",
       "max_circuit_current_too_low": "Max circuit current too low",
