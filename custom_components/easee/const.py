@@ -54,7 +54,7 @@ MANDATORY_EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": "map_charger_status",
-        "device_class": "easee_status",
+        "device_class": "easee__status",
         "icon": "mdi:ev-station",
     },
 }
@@ -295,7 +295,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "attrs": [],
         "units": "",
         "convert_units_func": "map_reason_no_current",
-        "device_class": "reason_no_current",
+        "device_class": "easee__reason_no_current",
         "icon": "mdi:alert-circle",
     },
     "is_enabled": {
@@ -377,7 +377,7 @@ EASEE_EQ_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "device_class": "easee_eq_status",
+        "device_class": "easee__eq_status",
         "icon": "mdi:server-network",
     },
     "power": {
