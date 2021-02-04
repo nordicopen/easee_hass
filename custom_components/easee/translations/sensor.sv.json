@@ -1,7 +1,7 @@
 {
   "state": {
     "easee__status": {
-      "disconnected": "Ej ansluten",
+      "disconnected": "Bil ej ansluten",
       "awaiting_start": "Väntar på start",
       "charging": "Laddar",
       "error": "Fel",

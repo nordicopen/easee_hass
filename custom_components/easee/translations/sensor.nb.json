@@ -1,7 +1,7 @@
 {
   "state": {
     "easee__status": {
-      "disconnected": "Frakoblet",
+      "disconnected": "Bil frakoblet",
       "awaiting_start": "Avventer start",
       "charging": "Lader",
       "error": "Feil",
