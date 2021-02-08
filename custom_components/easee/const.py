@@ -364,8 +364,8 @@ OPTIONAL_EASEE_ENTITIES = {
 }
 
 EASEE_EQ_ENTITIES = {
-    "status": {
-        "type": "eq_sensor",
+    "online": {
+        "type": "eq_binary_sensor",
         "key": "state.isOnline",
         "attrs": [
             "state.latestPulse",
@@ -377,8 +377,8 @@ EASEE_EQ_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "device_class": "easee__eq_status",
-        "icon": "mdi:server-network",
+        "device_class": DEVICE_CLASS_CONNECTIVITY,
+        "icon": None,
     },
     "power": {
         "type": "eq_sensor",
@@ -456,9 +456,6 @@ EASEE_EQ_ENTITIES = {
         "icon": None,
     },
 }
-
-ONLINE = "online"
-OFFLINE = "offline"
 
 EA_DISCONNECTED = "disconnected"
 EA_AWAITING_START = "awaiting_start"

@@ -8,10 +8,6 @@
       "completed": "Fullført",
       "ready_to_charge": "Klar til lading"
     },
-    "easee__eq_status": {
-      "online": "Online",
-      "offline": "Offline"
-    },
     "easee__reason_no_current": {
       "none": "Ingen",
       "ok": "OK",
