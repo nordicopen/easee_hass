@@ -41,6 +41,7 @@ from .const import (
     EASEE_EQ_ENTITIES,
     MANDATORY_EASEE_ENTITIES,
     OPTIONAL_EASEE_ENTITIES,
+    PLATFORMS,
     TIMEOUT,
 )
 from .entity import convert_units_funcs
@@ -284,7 +285,7 @@ class Controller:
         _LOGGER.debug(f"Entities {name} setup done")
         self._init_count = self._init_count + 1
 
-        if self._init_count == 3 and self.running_loop is not None:
+        if self._init_count >= len(PLATFORMS) and self.running_loop is not None:
             asyncio.run_coroutine_threadsafe(self.add_schedulers(), self.event_loop)
 
     def update_ha_state(self):
