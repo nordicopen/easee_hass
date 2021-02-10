@@ -18,8 +18,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
     """Setup sensor platform."""
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_sensor_entities()
-
     async_add_entities(entities)
+    controller.setup_done("sensor")
 
 
 class ChargerSensor(ChargerEntity):

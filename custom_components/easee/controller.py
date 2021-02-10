@@ -259,6 +259,9 @@ class Controller:
         self._first_site_poll = True
         self._first_equalizer_poll = True
         self._first_schedule_poll = True
+        self._init_count = 0
+        self.running_loop = asyncio.get_running_loop()
+        self.event_loop = asyncio.get_event_loop()
 
         self._create_entitites()
 
@@ -276,6 +279,13 @@ class Controller:
                     _LOGGER.debug("Scheduling equalizer update")
                     self.update_equalizers_state()
                     return
+
+    def setup_done(self, name):
+        _LOGGER.debug(f"Entities {name} setup done")
+        self._init_count = self._init_count + 1
+
+        if self._init_count == 3 and self.running_loop is not None:
+            asyncio.run_coroutine_threadsafe(self.add_schedulers(), self.event_loop)
 
     def update_ha_state(self):
         # Schedule an update for all other included entities

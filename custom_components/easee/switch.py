@@ -15,6 +15,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_switch_entities()
     async_add_entities(entities)
+    controller.setup_done("switch")
 
 
 class ChargerSwitch(ChargerEntity, SwitchEntity):
