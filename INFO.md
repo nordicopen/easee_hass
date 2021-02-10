@@ -16,11 +16,12 @@ Custom component to support Easee EV chargers.
 The status sensor is the default sensor and has the following values
 
 ```
-STANDBY
-PAUSED
-CHARGING
-READY_TO_CHARGE
-CAR_CONNECTED
+disconnected
+awaiting_start
+charging
+ready_to_charge
+completed
+error
 ```
 
 **_Important_**
