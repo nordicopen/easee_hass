@@ -24,8 +24,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data[DOMAIN] = {}
     hass.data[DOMAIN]["entities"] = []
     hass.data[DOMAIN]["entities_to_remove"] = []
+    hass.data[DOMAIN]["eq_entities_to_remove"] = []
     hass.data[DOMAIN]["sites_to_remove"] = []
-    hass.data[DOMAIN]["days_to_remove"] = []
     _LOGGER.debug("Setting up Easee component version %s", VERSION)
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
@@ -48,7 +48,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         LISTENER_FN_CLOSE: undo_listener,
     }
 
-    await controller.add_schedulers()
     return True
 
 

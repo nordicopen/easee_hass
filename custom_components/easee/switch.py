@@ -15,6 +15,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_switch_entities()
     async_add_entities(entities)
+    controller.setup_done("switch")
 
 
 class ChargerSwitch(ChargerEntity, SwitchEntity):
@@ -26,7 +27,7 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         self.set_value_from_key(self._state_key, True)
         self._state = True
         self.async_write_ha_state()
-        function_call = getattr(self.charger_data.charger, self._switch_func)
+        function_call = getattr(self.data.product, self._switch_func)
         await function_call(True)
 
     async def async_turn_off(self, **kwargs):  # pylint: disable=unused-argument
@@ -35,7 +36,7 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         self.set_value_from_key(self._state_key, False)
         self._state = False
         self.async_write_ha_state()
-        function_call = getattr(self.charger_data.charger, self._switch_func)
+        function_call = getattr(self.data.product, self._switch_func)
         await function_call(False)
 
     @property

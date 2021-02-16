@@ -130,7 +130,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Optional(
                         CONF_MONITORED_EQ_CONDITIONS,
                         default=self.config_entry.options.get(
-                            CONF_MONITORED_EQ_CONDITIONS, ["status"]
+                            CONF_MONITORED_EQ_CONDITIONS, ["online"]
                         ),
                     ): cv.multi_select(sensor_eq_multi_select),
                     vol.Optional(
@@ -162,5 +162,4 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             for cond in self.prev_options.get(CONF_MONITORED_SITES, {})
             if cond not in self.options[CONF_MONITORED_SITES]
         ]
-        _LOGGER.debug("Days_to_remove: %s", self.hass.data[DOMAIN]["days_to_remove"])
         return self.async_create_entry(title="", data=self.options)
