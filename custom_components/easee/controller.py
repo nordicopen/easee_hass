@@ -12,10 +12,9 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.util import dt
 from pyeasee import (
     Charger,
-    ChargerConfig,
-    ChargerState,
     ChargerStreamData,
     Circuit,
     DatatypesStreamData,
@@ -24,7 +23,6 @@ from pyeasee import (
     EqualizerStreamData,
     Site,
 )
-from pyeasee.charger import ChargerSchedule
 from pyeasee.exceptions import (
     AuthorizationFailedException,
     NotFoundException,
@@ -59,70 +57,18 @@ MINIMUM_UPDATE = 0.05
 OFFLINE_DELAY = 17 * 60
 
 
-def check_value(data_type, reference, value):
-    if (
-        data_type != DatatypesStreamData.Double.value
-        and data_type != DatatypesStreamData.Integer.value
-    ):
-        return True
+class ProductData:
+    """Representation product data."""
 
-    if abs(reference - value) > abs(reference * MINIMUM_UPDATE):
-        return True
-
-    return False
-
-
-class EqualizerData:
-    """Representation equalizer data."""
-
-    def __init__(self, equalizer: Equalizer, site: Site):
-        """Initialize the charger data."""
-        self.product: Equalizer = equalizer
+    def __init__(self, product, site: Site, streamdata, circuit: Circuit = None):
+        """Initialize the product data."""
+        self.product = product
+        self.circuit: Circuit = circuit
         self.site: Site = site
         self.state = []
         self.config = []
-
-    def update_stream_data(self, data_type, data_id, value):
-        now = datetime.utcnow().replace(microsecond=0)
-        self.state["latestPulse"] = now
-        _LOGGER.debug(f"Equalizer latestPulse update {now}")
-        self.state["isOnline"] = True
-        try:
-            name = EqualizerStreamData(data_id).name
-        except ValueError:
-            # Unsupported data
-            _LOGGER.debug(f"Unsupported data id {data_id} {value}")
-            return False
-
-        str = f"Equalizer callback {data_id} {name} {value}"
-        _LOGGER.debug(str)
-
-        if "_" in name:
-            first, second = name.split("_")
-            if first == "state":
-                oldvalue = self.state[second]
-                self.state[second] = value
-                if check_value(data_type, oldvalue, value):
-                    return True
-            elif first == "config":
-                if self.config[second] != value:
-                    self.config[second] = value
-                    return True
-
-        return False
-
-
-class ChargerData:
-    """Representation charger data."""
-
-    def __init__(self, charger: Charger, circuit: Circuit, site: Site):
-        """Initialize the charger data."""
-        self.product: Charger = charger
-        self.circuit: Circuit = circuit
-        self.site: Site = site
-        self.state: List[ChargerState] = []
-        self.config: List[ChargerConfig] = []
-        self.schedule: List[ChargerSchedule] = []
+        self.schedule = []
+        self.streamdata = streamdata
 
     async def schedules_async_refresh(self):
         try:
@@ -134,19 +80,41 @@ class ChargerData:
 
         _LOGGER.debug("Schedule: %s", self.schedule)
 
+    def check_value(self, data_type, reference, value):
+        if (
+            data_type != DatatypesStreamData.Double.value
+            and data_type != DatatypesStreamData.Integer.value
+        ):
+            return True
+
+        if abs(reference - value) > abs(reference * MINIMUM_UPDATE):
+            return True
+
+        return False
+
+    def check_latest_pulse(self):
+        now = datetime.utcnow().replace(microsecond=0)
+        if type(self.state["latestPulse"]) is datetime:
+            elapsed = now - self.state["latestPulse"]
+        else:
+            elapsed = now - dt.as_utc(self.state["latestPulse"])
+
+        if elapsed.total_seconds() > OFFLINE_DELAY:
+            self.state["isOnline"] = False
+            _LOGGER.debug(f"Product {self.product.id} marked offline")
+
     def update_stream_data(self, data_type, data_id, value):
         now = datetime.utcnow().replace(microsecond=0)
         self.state["latestPulse"] = now
-        _LOGGER.debug(f"Charger latestPulse update {now}")
         self.state["isOnline"] = True
         try:
-            name = ChargerStreamData(data_id).name
+            name = self.streamdata(data_id).name
         except ValueError:
             # Unsupported data
             _LOGGER.debug(f"Unsupported data id {data_id} {value}")
             return False
 
-        str = f"Charger callback {data_id} {name} {value}"
+        str = f"Callback {self.product.id} {data_id} {name} {value}"
         _LOGGER.debug(str)
 
         if "_" in name:
@@ -155,7 +123,7 @@ class ChargerData:
             if first == "state":
                 oldvalue = self.state[second]
                 self.state[second] = value
-                if check_value(data_type, oldvalue, value):
+                if self.check_value(data_type, oldvalue, value):
                     return True
             elif first == "config":
                 if self.config[second] != value:
@@ -196,9 +164,9 @@ class Controller:
         self.sites: List[Site] = []
         self.circuits: List[Circuit] = []
         self.chargers: List[Charger] = []
-        self.chargers_data: List[ChargerData] = []
+        self.chargers_data: List[ProductData] = []
         self.equalizers: List[Equalizer] = []
-        self.equalizers_data: List[EqualizerData] = []
+        self.equalizers_data: List[ProductData] = []
         self.switch_entities = []
         self.sensor_entities = []
         self.equalizer_sensor_entities = []
@@ -244,7 +212,7 @@ class Controller:
                         "Found equalizer: %s %s", equalizer.id, equalizer.name
                     )
                     self.equalizers.append(equalizer)
-                    equalizer_data = EqualizerData(equalizer, site)
+                    equalizer_data = ProductData(equalizer, site, EqualizerStreamData)
                     self.equalizers_data.append(equalizer_data)
                 for circuit in site.get_circuits():
                     _LOGGER.debug(
@@ -254,7 +222,9 @@ class Controller:
                     for charger in circuit.get_chargers():
                         _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
                         self.chargers.append(charger)
-                        charger_data = ChargerData(charger, circuit, site)
+                        charger_data = ProductData(
+                            charger, site, ChargerStreamData, circuit
+                        )
                         self.chargers_data.append(charger_data)
 
         self._first_site_poll = True
@@ -359,12 +329,7 @@ class Controller:
 
         if not self._first_site_poll:
             for charger_data in self.chargers_data:
-                elapsed = datetime.utcnow() - charger_data.state["latestPulse"]
-                _LOGGER.debug(
-                    f"Seconds since {charger_data.product.id} latestPulse {elapsed.total_seconds()}"
-                )
-                if elapsed.total_seconds() > OFFLINE_DELAY:
-                    charger_data.state["isOnline"] = False
+                charger_data.check_latest_pulse()
 
         if self._first_site_poll or not self.easee.sr_is_connected():
             self._first_site_poll = False
@@ -396,12 +361,7 @@ class Controller:
         """ gets equalizer state for all equalizers """
         if not self._first_equalizer_poll:
             for equalizer_data in self.equalizers_data:
-                elapsed = datetime.utcnow() - equalizer_data.state["latestPulse"]
-                _LOGGER.debug(
-                    f"Seconds since {equalizer_data.product.id} latestPulse {elapsed.total_seconds()}"
-                )
-                if elapsed.total_seconds() > OFFLINE_DELAY:
-                    equalizer_data.state["isOnline"] = False
+                equalizer_data.check_latest_pulse()
 
         if self._first_equalizer_poll or not self.easee.sr_is_connected():
             self._first_equalizer_poll = False
