@@ -69,6 +69,16 @@ class ProductData:
         self.config = []
         self.schedule = []
         self.streamdata = streamdata
+        self.dirty = False
+
+    def is_dirty(self):
+        return self.dirty
+
+    def mark_clean(self):
+        self.dirty = False
+
+    def mark_dirty(self):
+        self.dirty = True
 
     async def schedules_async_refresh(self):
         try:
@@ -93,18 +103,21 @@ class ProductData:
         return False
 
     def check_latest_pulse(self):
-        now = datetime.utcnow().replace(microsecond=0)
+        now = dt.utcnow().replace(microsecond=0)
         if type(self.state["latestPulse"]) is datetime:
             elapsed = now - self.state["latestPulse"]
         else:
-            elapsed = now - dt.as_utc(self.state["latestPulse"])
+            elapsed = now - dt.parse_datetime(self.state["latestPulse"])
 
         if elapsed.total_seconds() > OFFLINE_DELAY:
-            self.state["isOnline"] = False
-            _LOGGER.debug(f"Product {self.product.id} marked offline")
+            if self.state["isOnline"] != True:
+                self.dirty = True
+                self.state["isOnline"] = False
+                _LOGGER.debug(f"Product {self.product.id} marked offline")
 
     def update_stream_data(self, data_type, data_id, value):
-        now = datetime.utcnow().replace(microsecond=0)
+        self.dirty = True
+        now = dt.utcnow().replace(microsecond=0)
         self.state["latestPulse"] = now
         self.state["isOnline"] = True
         try:
@@ -237,18 +250,13 @@ class Controller:
         self._create_entitites()
 
     async def stream_callback(self, id, data_type, data_id, value):
-        for charger_data in self.chargers_data:
-            if charger_data.product.id == id:
-                if charger_data.update_stream_data(data_type, data_id, value):
-                    _LOGGER.debug("Scheduling charger update")
-                    self.update_ha_state()
-                    return
+        all_data = self.chargers_data + self.equalizers_data
 
-        for equalizer_data in self.equalizers_data:
-            if equalizer_data.product.id == id:
-                if equalizer_data.update_stream_data(data_type, data_id, value):
-                    _LOGGER.debug("Scheduling equalizer update")
-                    self.update_equalizers_state()
+        for data in all_data:
+            if data.product.id == id:
+                if data.update_stream_data(data_type, data_id, value):
+                    _LOGGER.debug("Scheduling update")
+                    self.update_ha_state()
                     return
 
     def setup_done(self, name):
@@ -261,19 +269,19 @@ class Controller:
     def update_ha_state(self):
         # Schedule an update for all other included entities
         all_entities = (
-            self.switch_entities + self.sensor_entities + self.binary_sensor_entities
+            self.switch_entities
+            + self.sensor_entities
+            + self.binary_sensor_entities
+            + self.equalizer_sensor_entities
+            + self.equalizer_binary_sensor_entities
         )
 
         for entity in all_entities:
-            entity.async_schedule_update_ha_state(True)
+            if entity.data.is_dirty():
+                entity.async_schedule_update_ha_state(True)
 
-    def update_equalizers_state(self):
-        # Schedule an update for all equalizer entities
-        all_entities = (
-            self.equalizer_sensor_entities + self.equalizer_binary_sensor_entities
-        )
         for entity in all_entities:
-            entity.async_schedule_update_ha_state(True)
+            entity.data.mark_clean()
 
     async def add_schedulers(self):
         """ Add schedules to udpate data """
@@ -305,6 +313,9 @@ class Controller:
             timedelta(seconds=SCAN_INTERVAL_SCHEDULES_SECONDS),
         )
 
+        # Let other tasks run
+        asyncio.sleep(0)
+        
         for equalizer in self.equalizers:
             await self.easee.sr_subscribe(equalizer, self.stream_callback)
         for charger in self.chargers:
@@ -354,7 +365,8 @@ class Controller:
                 charger_data.config = site_state.get_charger_config(
                     charger_id, raw=True
                 )
-
+                charger_data.mark_dirty()
+                
         self.update_ha_state()
 
     async def refresh_equalizers_state(self, now=None):
@@ -367,8 +379,9 @@ class Controller:
             self._first_equalizer_poll = False
             for equalizer_data in self.equalizers_data:
                 equalizer_data.state = await equalizer_data.product.get_state()
+                equalizer_data.mark_dirty()
 
-        self.update_equalizers_state()
+        self.update_ha_state()
 
     def get_sites(self):
         return self.sites
