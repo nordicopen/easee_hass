@@ -127,8 +127,7 @@ class ProductData:
             _LOGGER.debug(f"Unsupported data id {data_id} {value}")
             return False
 
-        str = f"Callback {self.product.id} {data_id} {name} {value}"
-        _LOGGER.debug(str)
+        _LOGGER.debug(f"Callback {self.product.id} {data_id} {name} {value}")
 
         if "_" in name:
             first, second = name.split("_")
