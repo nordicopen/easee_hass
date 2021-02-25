@@ -420,9 +420,7 @@ class Controller:
         if data["units"] in custom_units:
             data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
 
-        _LOGGER.debug(f"_create_entity object_type: {object_type}")
         entity_type_name = ENTITY_TYPES[object_type]
-        _LOGGER.debug(f"entity_type_name: {entity_type_name}")
 
         entity = entity_type_name(
             controller=controller,
@@ -439,7 +437,6 @@ class Controller:
             state_func=data.get("state_func", None),
             switch_func=data.get("switch_func", None),
         )
-        _LOGGER.debug(f"entity: {entity}")
         _LOGGER.debug(
             "Adding entity: %s (%s) for product %s",
             name,
