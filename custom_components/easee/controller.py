@@ -46,6 +46,13 @@ from .entity import convert_units_funcs
 from .sensor import ChargerSensor, EqualizerSensor
 from .switch import ChargerSwitch
 
+ENTITY_TYPES = {
+    "sensor": ChargerSensor,
+    "binary_sensor": ChargerBinarySensor,
+    "switch": ChargerSwitch,
+    "eq_sensor": EqualizerSensor,
+    "eq_binary_sensor": EqualizerBinarySensor,
+}
 _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL_STATE_SECONDS = 60
@@ -110,7 +117,7 @@ class ProductData:
             elapsed = now - dt.parse_datetime(self.state["latestPulse"])
 
         if elapsed.total_seconds() > OFFLINE_DELAY:
-            if self.state["isOnline"] != True:
+            if self.state["isOnline"] is True:
                 self.dirty = True
                 self.state["isOnline"] = False
                 _LOGGER.debug(f"Product {self.product.id} marked offline")
@@ -314,7 +321,7 @@ class Controller:
 
         # Let other tasks run
         asyncio.sleep(0)
-        
+
         for equalizer in self.equalizers:
             await self.easee.sr_subscribe(equalizer, self.stream_callback)
         for charger in self.chargers:
@@ -365,7 +372,7 @@ class Controller:
                     charger_id, raw=True
                 )
                 charger_data.mark_dirty()
-                
+
         self.update_ha_state()
 
     async def refresh_equalizers_state(self, now=None):
@@ -400,6 +407,63 @@ class Controller:
     def get_switch_entities(self):
         return self.switch_entities
 
+    def _create_entity(
+        self,
+        object_type,
+        controller,
+        data,
+        name,
+        state_key,
+        units,
+        convert_units_func,
+        attrs_keys,
+        device_class,
+        icon,
+        state_func=None,
+        switch_func=None,
+    ):
+
+        _LOGGER.debug(f"_create_entity object_type: {object_type}")
+        entity_type_name = ENTITY_TYPES[object_type]
+        _LOGGER.debug(f"entity_type_name: {entity_type_name}")
+        entity = entity_type_name(
+            controller=controller,
+            data=data,
+            name=name,
+            state_key=state_key,
+            units=units,
+            convert_units_func=convert_units_func,
+            attrs_keys=attrs_keys,
+            device_class=device_class,
+            icon=icon,
+            state_func=state_func,
+            switch_func=switch_func,
+        )
+        _LOGGER.debug(f"entity: {entity}")
+        _LOGGER.debug(
+            "Adding %s entity: %s (%s) for product %s",
+            object_type,
+            name,
+            object_type,
+            data.product.name,
+        )
+        if object_type == "sensor":
+            self.sensor_entities.append(entity)
+            
+        elif object_type == "switch":
+            self.switch_entities.append(entity)
+
+        elif object_type == "binary_sensor":
+            self.binary_sensor_entities.append(entity)
+
+        elif object_type == "eq_sensor":
+            self.equalizer_sensor_entities.append(entity)
+
+        elif object_type == "eq_binary_sensor":
+            self.equalizer_binary_sensor_entities.append(entity)
+
+        return entity
+
     def _create_entitites(self):
         monitored_conditions = list(
             dict.fromkeys(
@@ -426,81 +490,25 @@ class Controller:
                     continue
                 data = all_easee_entities[key]
                 entity_type = data.get("type", "sensor")
+                if data["units"] in custom_units:
+                    data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
 
-                if entity_type == "sensor":
-                    _LOGGER.debug(
-                        "Adding sensor entity: %s (%s) for charger %s",
-                        key,
-                        entity_type,
-                        charger_data.product.name,
-                    )
-
-                    if data["units"] in custom_units:
-                        data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
-
-                    self.sensor_entities.append(
-                        ChargerSensor(
-                            controller=self,
-                            data=charger_data,
-                            name=key,
-                            state_key=data["key"],
-                            units=data["units"],
-                            convert_units_func=convert_units_funcs.get(
-                                data["convert_units_func"], None
-                            ),
-                            attrs_keys=data["attrs"],
-                            device_class=data["device_class"],
-                            icon=data["icon"],
-                            state_func=data.get("state_func", None),
-                        )
-                    )
-                elif entity_type == "switch":
-                    _LOGGER.debug(
-                        "Adding switch entity: %s (%s) for charger %s",
-                        key,
-                        entity_type,
-                        charger_data.product.name,
-                    )
-                    self.switch_entities.append(
-                        ChargerSwitch(
-                            controller=self,
-                            data=charger_data,
-                            name=key,
-                            state_key=data["key"],
-                            units=data["units"],
-                            convert_units_func=convert_units_funcs.get(
-                                data["convert_units_func"], None
-                            ),
-                            attrs_keys=data["attrs"],
-                            device_class=data["device_class"],
-                            icon=data["icon"],
-                            state_func=data.get("state_func", None),
-                            switch_func=data.get("switch_func", None),
-                        )
-                    )
-                elif entity_type == "binary_sensor":
-                    _LOGGER.debug(
-                        "Adding binary sensor entity: %s (%s) for charger %s",
-                        key,
-                        entity_type,
-                        charger_data.product.name,
-                    )
-                    self.binary_sensor_entities.append(
-                        ChargerBinarySensor(
-                            controller=self,
-                            data=charger_data,
-                            name=key,
-                            state_key=data["key"],
-                            units=data["units"],
-                            convert_units_func=convert_units_funcs.get(
-                                data["convert_units_func"], None
-                            ),
-                            attrs_keys=data["attrs"],
-                            device_class=data["device_class"],
-                            icon=data["icon"],
-                            state_func=data.get("state_func", None),
-                        )
-                    )
+                entity = self._create_entity(
+                    entity_type,
+                    controller=self,
+                    data=charger_data,
+                    name=key,
+                    state_key=data["key"],
+                    units=data["units"],
+                    convert_units_func=convert_units_funcs.get(
+                        data["convert_units_func"], None
+                    ),
+                    attrs_keys=data["attrs"],
+                    device_class=data["device_class"],
+                    icon=data["icon"],
+                    state_func=data.get("state_func", None),
+                    switch_func=data.get("switch_func", None),
+                )
 
         for equalizer_data in self.equalizers_data:
             for key in monitored_eq_conditions:
@@ -508,60 +516,24 @@ class Controller:
                 if key not in EASEE_EQ_ENTITIES:
                     continue
                 data = EASEE_EQ_ENTITIES[key]
-                entity_type = data.get("type", "sensor")
+                entity_type = data.get("type", "eq_sensor")
+                if data["units"] in custom_units:
+                    data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
 
-                if entity_type == "eq_sensor":
-                    _LOGGER.debug(
-                        "Adding sensor entity: %s (%s) for equalizer %s",
-                        key,
-                        entity_type,
-                        equalizer_data.product.name,
-                    )
+                entity = self._create_entity(
+                    entity_type,
+                    controller=self,
+                    data=equalizer_data,
+                    name=key,
+                    state_key=data["key"],
+                    units=data["units"],
+                    convert_units_func=convert_units_funcs.get(
+                        data["convert_units_func"], None
+                    ),
+                    attrs_keys=data["attrs"],
+                    device_class=data["device_class"],
+                    icon=data["icon"],
+                    state_func=data.get("state_func", None),
+                    switch_func=data.get("switch_func", None),
+                )
 
-                    if data["units"] in custom_units:
-                        data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
-
-                    self.equalizer_sensor_entities.append(
-                        EqualizerSensor(
-                            controller=self,
-                            data=equalizer_data,
-                            name=key,
-                            state_key=data["key"],
-                            units=data["units"],
-                            convert_units_func=convert_units_funcs.get(
-                                data["convert_units_func"], None
-                            ),
-                            attrs_keys=data["attrs"],
-                            device_class=data["device_class"],
-                            icon=data["icon"],
-                            state_func=data.get("state_func", None),
-                        )
-                    )
-
-                elif entity_type == "eq_binary_sensor":
-                    _LOGGER.debug(
-                        "Adding binary sensor entity: %s (%s) for equalizer %s",
-                        key,
-                        entity_type,
-                        equalizer_data.product.name,
-                    )
-
-                    if data["units"] in custom_units:
-                        data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
-
-                    self.equalizer_binary_sensor_entities.append(
-                        EqualizerBinarySensor(
-                            controller=self,
-                            data=equalizer_data,
-                            name=key,
-                            state_key=data["key"],
-                            units=data["units"],
-                            convert_units_func=convert_units_funcs.get(
-                                data["convert_units_func"], None
-                            ),
-                            attrs_keys=data["attrs"],
-                            device_class=data["device_class"],
-                            icon=data["icon"],
-                            state_func=data.get("state_func", None),
-                        )
-                    )
