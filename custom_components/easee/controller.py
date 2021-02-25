@@ -411,45 +411,44 @@ class Controller:
         self,
         object_type,
         controller,
-        data,
+        product_data,
         name,
-        state_key,
-        units,
-        convert_units_func,
-        attrs_keys,
-        device_class,
-        icon,
-        state_func=None,
-        switch_func=None,
+        data,
     ):
+
+        custom_units = self.config.options.get(CUSTOM_UNITS, {})
+        if data["units"] in custom_units:
+            data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
 
         _LOGGER.debug(f"_create_entity object_type: {object_type}")
         entity_type_name = ENTITY_TYPES[object_type]
         _LOGGER.debug(f"entity_type_name: {entity_type_name}")
+
         entity = entity_type_name(
             controller=controller,
-            data=data,
+            data=product_data,
             name=name,
-            state_key=state_key,
-            units=units,
-            convert_units_func=convert_units_func,
-            attrs_keys=attrs_keys,
-            device_class=device_class,
-            icon=icon,
-            state_func=state_func,
-            switch_func=switch_func,
+            state_key=data["key"],
+            units=data["units"],
+            convert_units_func=convert_units_funcs.get(
+                data["convert_units_func"], None
+            ),
+            attrs_keys=data["attrs"],
+            device_class=data["device_class"],
+            icon=data["icon"],
+            state_func=data.get("state_func", None),
+            switch_func=data.get("switch_func", None),
         )
         _LOGGER.debug(f"entity: {entity}")
         _LOGGER.debug(
-            "Adding %s entity: %s (%s) for product %s",
-            object_type,
+            "Adding entity: %s (%s) for product %s",
             name,
             object_type,
-            data.product.name,
+            product_data.product.name,
         )
         if object_type == "sensor":
             self.sensor_entities.append(entity)
-            
+
         elif object_type == "switch":
             self.switch_entities.append(entity)
 
@@ -474,7 +473,6 @@ class Controller:
         monitored_eq_conditions = self.config.options.get(
             CONF_MONITORED_EQ_CONDITIONS, ["status"]
         )
-        custom_units = self.config.options.get(CUSTOM_UNITS, {})
         self.sensor_entities = []
         self.switch_entities = []
         self.binary_sensor_entities = []
@@ -490,24 +488,13 @@ class Controller:
                     continue
                 data = all_easee_entities[key]
                 entity_type = data.get("type", "sensor")
-                if data["units"] in custom_units:
-                    data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
 
-                entity = self._create_entity(
+                self._create_entity(
                     entity_type,
                     controller=self,
-                    data=charger_data,
+                    product_data=charger_data,
                     name=key,
-                    state_key=data["key"],
-                    units=data["units"],
-                    convert_units_func=convert_units_funcs.get(
-                        data["convert_units_func"], None
-                    ),
-                    attrs_keys=data["attrs"],
-                    device_class=data["device_class"],
-                    icon=data["icon"],
-                    state_func=data.get("state_func", None),
-                    switch_func=data.get("switch_func", None),
+                    data=data,
                 )
 
         for equalizer_data in self.equalizers_data:
@@ -517,23 +504,11 @@ class Controller:
                     continue
                 data = EASEE_EQ_ENTITIES[key]
                 entity_type = data.get("type", "eq_sensor")
-                if data["units"] in custom_units:
-                    data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
 
-                entity = self._create_entity(
+                self._create_entity(
                     entity_type,
                     controller=self,
-                    data=equalizer_data,
+                    product_data=equalizer_data,
                     name=key,
-                    state_key=data["key"],
-                    units=data["units"],
-                    convert_units_func=convert_units_funcs.get(
-                        data["convert_units_func"], None
-                    ),
-                    attrs_keys=data["attrs"],
-                    device_class=data["device_class"],
-                    icon=data["icon"],
-                    state_func=data.get("state_func", None),
-                    switch_func=data.get("switch_func", None),
+                    data=data,
                 )
-

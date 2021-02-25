@@ -381,7 +381,6 @@ EASEE_EQ_ENTITIES = {
         "icon": None,
     },
     "power": {
-        "type": "eq_sensor",
         "key": "state.activePowerImport",
         "attrs": [
             "state.activePowerImport",
@@ -396,7 +395,6 @@ EASEE_EQ_ENTITIES = {
         "icon": None,
     },
     "voltage": {
-        "type": "eq_sensor",
         "key": "state.voltageNL1",
         "attrs": [
             "state.voltageNL1",
@@ -422,7 +420,6 @@ EASEE_EQ_ENTITIES = {
         ),
     },
     "current": {
-        "type": "eq_sensor",
         "key": "state.currentL1",
         "attrs": [
             "state.currentL1",
@@ -442,7 +439,6 @@ EASEE_EQ_ENTITIES = {
         ),
     },
     "energy": {
-        "type": "eq_sensor",
         "key": "state.cumulativeActivePowerImport",
         "attrs": [
             "state.cumulativeActivePowerImport",
