@@ -111,10 +111,7 @@ class ProductData:
 
     def check_latest_pulse(self):
         now = dt.utcnow().replace(microsecond=0)
-        if type(self.state["latestPulse"]) is datetime:
-            elapsed = now - self.state["latestPulse"]
-        else:
-            elapsed = now - dt.parse_datetime(self.state["latestPulse"])
+        elapsed = now - self.state["latestPulse"]
 
         if elapsed.total_seconds() > OFFLINE_DELAY:
             if self.state["isOnline"] is True:
