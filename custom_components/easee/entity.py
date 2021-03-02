@@ -205,9 +205,11 @@ class ChargerEntity(Entity):
     def set_value_from_key(self, key, value):
         first, second = key.split(".")
         if first == "config":
-            self.data.config[second] = value
+            if self.data.config is not None:
+                self.data.config[second] = value
         elif first == "state":
-            self.data.state[second] = value
+            if self.data.state is not None:
+                self.data.state[second] = value
         elif first == "circuit":
             self.data.circuit[second] = value
         elif first == "site":
@@ -219,8 +221,6 @@ class ChargerEntity(Entity):
             _LOGGER.error("Unknown first part of key: %s", key)
             raise IndexError("Unknown first part of key")
 
-        if type(value) is datetime:
-            value = dt.as_local(value)
         return value
 
     def get_value_from_key(self, key):

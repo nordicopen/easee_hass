@@ -72,11 +72,26 @@ class ProductData:
         self.product = product
         self.circuit: Circuit = circuit
         self.site: Site = site
-        self.state = []
-        self.config = []
-        self.schedule = []
+        self.state = None
+        self.config = None
+        self.schedule = None
         self.streamdata = streamdata
         self.dirty = False
+
+    def is_state_polled(self):
+        if self.state is None:
+            return False
+        return True
+
+    def is_config_polled(self):
+        if self.config is None:
+            return False
+        return True
+
+    def is_schedule_polled(self):
+        if self.schedule is None:
+            return False
+        return True
 
     def is_dirty(self):
         return self.dirty
@@ -110,6 +125,9 @@ class ProductData:
         return False
 
     def check_latest_pulse(self):
+        if self.state is None:
+            return
+
         now = dt.utcnow().replace(microsecond=0)
         elapsed = now - self.state["latestPulse"]
 
@@ -120,6 +138,9 @@ class ProductData:
                 _LOGGER.debug(f"Product {self.product.id} marked offline")
 
     def update_stream_data(self, data_type, data_id, value):
+        if self.state is None:
+            return False
+
         self.dirty = True
         now = dt.utcnow().replace(microsecond=0)
         self.state["latestPulse"] = now
@@ -142,10 +163,14 @@ class ProductData:
                 if self.check_value(data_type, oldvalue, value):
                     return True
             elif first == "config":
+                if self.config is None:
+                    return False
                 if self.config[second] != value:
                     self.config[second] = value
                     return True
             elif first == "schedule":
+                if self.schedule is None:
+                    return False
                 value = json.loads(value)
                 self.schedule["id"] = value.get("Id")
                 self.schedule["chargeStartTime"] = datetime.utcfromtimestamp(
@@ -243,9 +268,6 @@ class Controller:
                         )
                         self.chargers_data.append(charger_data)
 
-        self._first_site_poll = True
-        self._first_equalizer_poll = True
-        self._first_schedule_poll = True
         self._init_count = 0
         self.running_loop = asyncio.get_running_loop()
         self.event_loop = asyncio.get_event_loop()
@@ -326,63 +348,41 @@ class Controller:
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """
-        if self._first_schedule_poll or not self.easee.sr_is_connected():
-            self._first_schedule_poll = False
-
-            tasks = [
-                charger.schedules_async_refresh() for charger in self.chargers_data
-            ]
-            if tasks:
-                await asyncio.wait(tasks)
+        for charger in self.chargers_data:
+            if charger.is_schedule_polled() and self.easee.sr_is_connected():
+                continue
+            await charger.schedules_async_refresh()
 
         self.update_ha_state()
 
     async def refresh_sites_state(self, now=None):
         """ gets site state for all sites and updates the chargers state and config """
-        sites_state = {}
 
-        if not self._first_site_poll:
-            for charger_data in self.chargers_data:
-                charger_data.check_latest_pulse()
+        for charger_data in self.chargers_data:
+            charger_data.check_latest_pulse()
+            if charger_data.is_state_polled() and self.easee.sr_is_connected():
+                continue
 
-        if self._first_site_poll or not self.easee.sr_is_connected():
-            self._first_site_poll = False
+            site_state = await self.easee.get_site_state(charger_data.site.id)
+            charger_id = charger_data.product.id
 
-            for site in self.get_sites():
-                if site.name in self.monitored_sites:
-                    _LOGGER.debug("Getting state for site %s", site.id)
-                    sites_state[site.id] = await self.easee.get_site_state(site.id)
-
-            for charger_data in self.chargers_data:
-                if charger_data.site.id not in sites_state:
-                    _LOGGER.error(
-                        "Site %s from charger not found in site states",
-                        charger_data.state.id,
-                    )
-                    continue
-                charger_id = charger_data.product.id
-                site_state = sites_state[charger_data.site.id]
-
-                charger_data.state = site_state.get_charger_state(charger_id, raw=True)
-                _LOGGER.debug("Charger state: %s ", charger_id)
-                charger_data.config = site_state.get_charger_config(
-                    charger_id, raw=True
-                )
-                charger_data.mark_dirty()
+            charger_data.state = site_state.get_charger_state(charger_id, raw=True)
+            _LOGGER.debug("Charger state: %s ", charger_id)
+            charger_data.config = site_state.get_charger_config(charger_id, raw=True)
+            charger_data.mark_dirty()
 
         self.update_ha_state()
 
     async def refresh_equalizers_state(self, now=None):
         """ gets equalizer state for all equalizers """
-        if not self._first_equalizer_poll:
-            for equalizer_data in self.equalizers_data:
-                equalizer_data.check_latest_pulse()
 
-        if self._first_equalizer_poll or not self.easee.sr_is_connected():
-            self._first_equalizer_poll = False
-            for equalizer_data in self.equalizers_data:
-                equalizer_data.state = await equalizer_data.product.get_state()
-                equalizer_data.mark_dirty()
+        for equalizer_data in self.equalizers_data:
+            equalizer_data.check_latest_pulse()
+            if equalizer_data.is_state_polled() and self.easee.sr_is_connected():
+                continue
+            equalizer_data.state = await equalizer_data.product.get_state()
+            equalizer_data.config = await equalizer_data.product.get_config()
+            equalizer_data.mark_dirty()
 
         self.update_ha_state()
 
