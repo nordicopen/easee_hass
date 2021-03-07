@@ -17,7 +17,7 @@
       "circuit_fuse_too_low": "Kretssäkring för låg",
       "waiting_in_queue": "Väntar i kö",
       "waiting_in_fully": "Waiting in fully",
-      "illegal_grid_type": "Otillåten nättyp",
+      "illegal_grid_type": "Otillåten elnätstyp",
       "no_current_request": "Ingen begäran om ström från sekundär enhet",
       "not_requesting_current": "Sekundär enhet begär ingen ström",
       "max_charger_current_too_low": "Laddarens maxström för låg",

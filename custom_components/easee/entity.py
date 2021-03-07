@@ -76,6 +76,7 @@ class ChargerEntity(Entity):
         icon: str,
         state_func=None,
         switch_func=None,
+        enabled_default=True,
     ):
 
         """Initialize the entity."""
@@ -91,7 +92,8 @@ class ChargerEntity(Entity):
         self._state_func = state_func
         self._state = None
         self._switch_func = switch_func
-
+        self._enabled_default = enabled_default
+        
     async def async_added_to_hass(self) -> None:
         """Entity created."""
 
@@ -124,6 +126,10 @@ class ChargerEntity(Entity):
                 return
 
             ent_reg.async_remove(self.entity_id)
+
+    @property
+    def entity_registry_enabled_default(self):
+        return self._enabled_default
 
     @property
     def name(self):

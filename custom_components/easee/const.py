@@ -95,7 +95,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "icon": "mdi:lock",
         "switch_func": "lockCablePermanently",
     },
-    "total_power": {
+    "power": {
         "key": "state.totalPower",
         "attrs": [],
         "units": POWER_KILO_WATT,
@@ -143,7 +143,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_CONNECTIVITY,
         "icon": None,
     },
-    "output_current": {
+    "output_limit": {
         "key": "state.outputCurrent",
         "attrs": [],
         "units": ELECTRICAL_CURRENT_AMPERE,
@@ -151,10 +151,9 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
     },
-    "in_current": {
+    "current": {
         "key": "state.inCurrentT2",
         "attrs": [
-            "state.outputCurrent",
             "state.inCurrentT2",
             "state.inCurrentT3",
             "state.inCurrentT4",
@@ -205,7 +204,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
     },
-    "dynamic_circuit_current": {
+    "dynamic_circuit_limit": {
         "key": "state.dynamicCircuitCurrentP1",
         "attrs": [
             "circuit.id",
@@ -228,7 +227,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
     },
-    "max_circuit_current": {
+    "max_circuit_limit": {
         "key": "config.circuitMaxCurrentP1",
         "attrs": [
             "circuit.id",
@@ -251,7 +250,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
     },
-    "dynamic_charger_current": {
+    "dynamic_charger_limit": {
         "key": "state.dynamicChargerCurrent",
         "attrs": [
             "state.dynamicChargerCurrent",
@@ -261,7 +260,30 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
     },
-    "max_charger_current": {
+    "offline_circuit_limit": {
+        "key": "state.offlineMaxCircuitCurrentP1",
+        "attrs": [
+            "circuit.id",
+            "circuit.circuitPanelId",
+            "circuit.panelName",
+            "circuit.ratedCurrent",
+            "state.offlineMaxCircuitCurrentP1",
+            "state.offlineMaxCircuitCurrentP2",
+            "state.offlineMaxCircuitCurrentP3",
+        ],
+        "units": ELECTRICAL_CURRENT_AMPERE,
+        "convert_units_func": "round_0_dec",
+        "device_class": DEVICE_CLASS_CURRENT,
+        "icon": None,
+        "state_func": lambda state: float(
+            max(
+                state["offlineMaxCircuitCurrentP1"],
+                state["offlineMaxCircuitCurrentP2"],
+                state["offlineMaxCircuitCurrentP3"],
+            )
+        ),
+    },
+    "max_charger_limit": {
         "key": "config.maxChargerCurrent",
         "attrs": [
             "config.maxChargerCurrent",
