@@ -339,7 +339,7 @@ class Controller:
         )
 
         # Let other tasks run
-        asyncio.sleep(0)
+        await asyncio.sleep(0)
 
         for equalizer in self.equalizers:
             await self.easee.sr_subscribe(equalizer, self.stream_callback)
