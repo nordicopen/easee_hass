@@ -12,10 +12,9 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.util import dt
 from pyeasee import (
     Charger,
-    ChargerConfig,
-    ChargerState,
     ChargerStreamData,
     Circuit,
     DatatypesStreamData,
@@ -24,7 +23,6 @@ from pyeasee import (
     EqualizerStreamData,
     Site,
 )
-from pyeasee.charger import ChargerSchedule
 from pyeasee.exceptions import (
     AuthorizationFailedException,
     NotFoundException,
@@ -48,6 +46,13 @@ from .entity import convert_units_funcs
 from .sensor import ChargerSensor, EqualizerSensor
 from .switch import ChargerSwitch
 
+ENTITY_TYPES = {
+    "sensor": ChargerSensor,
+    "binary_sensor": ChargerBinarySensor,
+    "switch": ChargerSwitch,
+    "eq_sensor": EqualizerSensor,
+    "eq_binary_sensor": EqualizerBinarySensor,
+}
 _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL_STATE_SECONDS = 60
@@ -59,70 +64,43 @@ MINIMUM_UPDATE = 0.05
 OFFLINE_DELAY = 17 * 60
 
 
-def check_value(data_type, reference, value):
-    if (
-        data_type != DatatypesStreamData.Double.value
-        and data_type != DatatypesStreamData.Integer.value
-    ):
-        return True
+class ProductData:
+    """Representation product data."""
 
-    if abs(reference - value) > abs(reference * MINIMUM_UPDATE):
-        return True
-
-    return False
-
-
-class EqualizerData:
-    """Representation equalizer data."""
-
-    def __init__(self, equalizer: Equalizer, site: Site):
-        """Initialize the charger data."""
-        self.product: Equalizer = equalizer
-        self.site: Site = site
-        self.state = []
-        self.config = []
-
-    def update_stream_data(self, data_type, data_id, value):
-        now = datetime.utcnow().replace(microsecond=0)
-        self.state["latestPulse"] = now
-        _LOGGER.debug(f"Equalizer latestPulse update {now}")
-        self.state["isOnline"] = True
-        try:
-            name = EqualizerStreamData(data_id).name
-        except ValueError:
-            # Unsupported data
-            _LOGGER.debug(f"Unsupported data id {data_id} {value}")
-            return False
-
-        str = f"Equalizer callback {data_id} {name} {value}"
-        _LOGGER.debug(str)
-
-        if "_" in name:
-            first, second = name.split("_")
-            if first == "state":
-                oldvalue = self.state[second]
-                self.state[second] = value
-                if check_value(data_type, oldvalue, value):
-                    return True
-            elif first == "config":
-                if self.config[second] != value:
-                    self.config[second] = value
-                    return True
-
-        return False
-
-
-class ChargerData:
-    """Representation charger data."""
-
-    def __init__(self, charger: Charger, circuit: Circuit, site: Site):
-        """Initialize the charger data."""
-        self.product: Charger = charger
+    def __init__(self, product, site: Site, streamdata, circuit: Circuit = None):
+        """Initialize the product data."""
+        self.product = product
         self.circuit: Circuit = circuit
         self.site: Site = site
-        self.state: List[ChargerState] = []
-        self.config: List[ChargerConfig] = []
-        self.schedule: List[ChargerSchedule] = []
+        self.state = None
+        self.config = None
+        self.schedule = None
+        self.streamdata = streamdata
+        self.dirty = False
+
+    def is_state_polled(self):
+        if self.state is None:
+            return False
+        return True
+
+    def is_config_polled(self):
+        if self.config is None:
+            return False
+        return True
+
+    def is_schedule_polled(self):
+        if self.schedule is None:
+            return False
+        return True
+
+    def is_dirty(self):
+        return self.dirty
+
+    def mark_clean(self):
+        self.dirty = False
+
+    def mark_dirty(self):
+        self.dirty = True
 
     async def schedules_async_refresh(self):
         try:
@@ -134,20 +112,47 @@ class ChargerData:
 
         _LOGGER.debug("Schedule: %s", self.schedule)
 
+    def check_value(self, data_type, reference, value):
+        if (
+            data_type != DatatypesStreamData.Double.value
+            and data_type != DatatypesStreamData.Integer.value
+        ):
+            return True
+
+        if abs(reference - value) > abs(reference * MINIMUM_UPDATE):
+            return True
+
+        return False
+
+    def check_latest_pulse(self):
+        if self.state is None:
+            return
+
+        now = dt.utcnow().replace(microsecond=0)
+        elapsed = now - self.state["latestPulse"]
+
+        if elapsed.total_seconds() > OFFLINE_DELAY:
+            if self.state["isOnline"] is True:
+                self.dirty = True
+                self.state["isOnline"] = False
+                _LOGGER.debug(f"Product {self.product.id} marked offline")
+
     def update_stream_data(self, data_type, data_id, value):
-        now = datetime.utcnow().replace(microsecond=0)
+        if self.state is None:
+            return False
+
+        self.dirty = True
+        now = dt.utcnow().replace(microsecond=0)
         self.state["latestPulse"] = now
-        _LOGGER.debug(f"Charger latestPulse update {now}")
         self.state["isOnline"] = True
         try:
-            name = ChargerStreamData(data_id).name
+            name = self.streamdata(data_id).name
         except ValueError:
             # Unsupported data
             _LOGGER.debug(f"Unsupported data id {data_id} {value}")
             return False
 
-        str = f"Charger callback {data_id} {name} {value}"
-        _LOGGER.debug(str)
+        _LOGGER.debug(f"Callback {self.product.id} {data_id} {name} {value}")
 
         if "_" in name:
             first, second = name.split("_")
@@ -155,13 +160,17 @@ class ChargerData:
             if first == "state":
                 oldvalue = self.state[second]
                 self.state[second] = value
-                if check_value(data_type, oldvalue, value):
+                if self.check_value(data_type, oldvalue, value):
                     return True
             elif first == "config":
+                if self.config is None:
+                    return False
                 if self.config[second] != value:
                     self.config[second] = value
                     return True
             elif first == "schedule":
+                if self.schedule is None:
+                    return False
                 value = json.loads(value)
                 self.schedule["id"] = value.get("Id")
                 self.schedule["chargeStartTime"] = datetime.utcfromtimestamp(
@@ -196,9 +205,9 @@ class Controller:
         self.sites: List[Site] = []
         self.circuits: List[Circuit] = []
         self.chargers: List[Charger] = []
-        self.chargers_data: List[ChargerData] = []
+        self.chargers_data: List[ProductData] = []
         self.equalizers: List[Equalizer] = []
-        self.equalizers_data: List[EqualizerData] = []
+        self.equalizers_data: List[ProductData] = []
         self.switch_entities = []
         self.sensor_entities = []
         self.equalizer_sensor_entities = []
@@ -244,7 +253,7 @@ class Controller:
                         "Found equalizer: %s %s", equalizer.id, equalizer.name
                     )
                     self.equalizers.append(equalizer)
-                    equalizer_data = EqualizerData(equalizer, site)
+                    equalizer_data = ProductData(equalizer, site, EqualizerStreamData)
                     self.equalizers_data.append(equalizer_data)
                 for circuit in site.get_circuits():
                     _LOGGER.debug(
@@ -254,12 +263,11 @@ class Controller:
                     for charger in circuit.get_chargers():
                         _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
                         self.chargers.append(charger)
-                        charger_data = ChargerData(charger, circuit, site)
+                        charger_data = ProductData(
+                            charger, site, ChargerStreamData, circuit
+                        )
                         self.chargers_data.append(charger_data)
 
-        self._first_site_poll = True
-        self._first_equalizer_poll = True
-        self._first_schedule_poll = True
         self._init_count = 0
         self.running_loop = asyncio.get_running_loop()
         self.event_loop = asyncio.get_event_loop()
@@ -267,18 +275,13 @@ class Controller:
         self._create_entitites()
 
     async def stream_callback(self, id, data_type, data_id, value):
-        for charger_data in self.chargers_data:
-            if charger_data.product.id == id:
-                if charger_data.update_stream_data(data_type, data_id, value):
-                    _LOGGER.debug("Scheduling charger update")
-                    self.update_ha_state()
-                    return
+        all_data = self.chargers_data + self.equalizers_data
 
-        for equalizer_data in self.equalizers_data:
-            if equalizer_data.product.id == id:
-                if equalizer_data.update_stream_data(data_type, data_id, value):
-                    _LOGGER.debug("Scheduling equalizer update")
-                    self.update_equalizers_state()
+        for data in all_data:
+            if data.product.id == id:
+                if data.update_stream_data(data_type, data_id, value):
+                    _LOGGER.debug("Scheduling update")
+                    self.update_ha_state()
                     return
 
     def setup_done(self, name):
@@ -291,19 +294,19 @@ class Controller:
     def update_ha_state(self):
         # Schedule an update for all other included entities
         all_entities = (
-            self.switch_entities + self.sensor_entities + self.binary_sensor_entities
+            self.switch_entities
+            + self.sensor_entities
+            + self.binary_sensor_entities
+            + self.equalizer_sensor_entities
+            + self.equalizer_binary_sensor_entities
         )
 
         for entity in all_entities:
-            entity.async_schedule_update_ha_state(True)
+            if entity.data.is_dirty():
+                entity.async_schedule_update_ha_state(True)
 
-    def update_equalizers_state(self):
-        # Schedule an update for all equalizer entities
-        all_entities = (
-            self.equalizer_sensor_entities + self.equalizer_binary_sensor_entities
-        )
         for entity in all_entities:
-            entity.async_schedule_update_ha_state(True)
+            entity.data.mark_clean()
 
     async def add_schedulers(self):
         """ Add schedules to udpate data """
@@ -335,6 +338,9 @@ class Controller:
             timedelta(seconds=SCAN_INTERVAL_SCHEDULES_SECONDS),
         )
 
+        # Let other tasks run
+        await asyncio.sleep(0)
+
         for equalizer in self.equalizers:
             await self.easee.sr_subscribe(equalizer, self.stream_callback)
         for charger in self.chargers:
@@ -342,73 +348,43 @@ class Controller:
 
     async def refresh_schedules(self, now=None):
         """ Refreshes the charging schedules data """
-        if self._first_schedule_poll or not self.easee.sr_is_connected():
-            self._first_schedule_poll = False
-
-            tasks = [
-                charger.schedules_async_refresh() for charger in self.chargers_data
-            ]
-            if tasks:
-                await asyncio.wait(tasks)
+        for charger in self.chargers_data:
+            if charger.is_schedule_polled() and self.easee.sr_is_connected():
+                continue
+            await charger.schedules_async_refresh()
 
         self.update_ha_state()
 
     async def refresh_sites_state(self, now=None):
         """ gets site state for all sites and updates the chargers state and config """
-        sites_state = {}
 
-        if not self._first_site_poll:
-            for charger_data in self.chargers_data:
-                elapsed = datetime.utcnow() - charger_data.state["latestPulse"]
-                _LOGGER.debug(
-                    f"Seconds since {charger_data.product.id} latestPulse {elapsed.total_seconds()}"
-                )
-                if elapsed.total_seconds() > OFFLINE_DELAY:
-                    charger_data.state["isOnline"] = False
+        for charger_data in self.chargers_data:
+            charger_data.check_latest_pulse()
+            if charger_data.is_state_polled() and self.easee.sr_is_connected():
+                continue
 
-        if self._first_site_poll or not self.easee.sr_is_connected():
-            self._first_site_poll = False
+            site_state = await self.easee.get_site_state(charger_data.site.id)
+            charger_id = charger_data.product.id
 
-            for site in self.get_sites():
-                if site.name in self.monitored_sites:
-                    _LOGGER.debug("Getting state for site %s", site.id)
-                    sites_state[site.id] = await self.easee.get_site_state(site.id)
-
-            for charger_data in self.chargers_data:
-                if charger_data.site.id not in sites_state:
-                    _LOGGER.error(
-                        "Site %s from charger not found in site states",
-                        charger_data.state.id,
-                    )
-                    continue
-                charger_id = charger_data.product.id
-                site_state = sites_state[charger_data.site.id]
-
-                charger_data.state = site_state.get_charger_state(charger_id, raw=True)
-                _LOGGER.debug("Charger state: %s ", charger_id)
-                charger_data.config = site_state.get_charger_config(
-                    charger_id, raw=True
-                )
+            charger_data.state = site_state.get_charger_state(charger_id, raw=True)
+            _LOGGER.debug("Charger state: %s ", charger_id)
+            charger_data.config = site_state.get_charger_config(charger_id, raw=True)
+            charger_data.mark_dirty()
 
         self.update_ha_state()
 
     async def refresh_equalizers_state(self, now=None):
         """ gets equalizer state for all equalizers """
-        if not self._first_equalizer_poll:
-            for equalizer_data in self.equalizers_data:
-                elapsed = datetime.utcnow() - equalizer_data.state["latestPulse"]
-                _LOGGER.debug(
-                    f"Seconds since {equalizer_data.product.id} latestPulse {elapsed.total_seconds()}"
-                )
-                if elapsed.total_seconds() > OFFLINE_DELAY:
-                    equalizer_data.state["isOnline"] = False
 
-        if self._first_equalizer_poll or not self.easee.sr_is_connected():
-            self._first_equalizer_poll = False
-            for equalizer_data in self.equalizers_data:
-                equalizer_data.state = await equalizer_data.product.get_state()
+        for equalizer_data in self.equalizers_data:
+            equalizer_data.check_latest_pulse()
+            if equalizer_data.is_state_polled() and self.easee.sr_is_connected():
+                continue
+            equalizer_data.state = await equalizer_data.product.get_state()
+            equalizer_data.config = await equalizer_data.product.get_config()
+            equalizer_data.mark_dirty()
 
-        self.update_equalizers_state()
+        self.update_ha_state()
 
     def get_sites(self):
         return self.sites
@@ -428,6 +404,59 @@ class Controller:
     def get_switch_entities(self):
         return self.switch_entities
 
+    def _create_entity(
+        self,
+        object_type,
+        controller,
+        product_data,
+        name,
+        data,
+    ):
+
+        custom_units = self.config.options.get(CUSTOM_UNITS, {})
+        if data["units"] in custom_units:
+            data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
+
+        entity_type_name = ENTITY_TYPES[object_type]
+
+        entity = entity_type_name(
+            controller=controller,
+            data=product_data,
+            name=name,
+            state_key=data["key"],
+            units=data["units"],
+            convert_units_func=convert_units_funcs.get(
+                data["convert_units_func"], None
+            ),
+            attrs_keys=data["attrs"],
+            device_class=data["device_class"],
+            icon=data["icon"],
+            state_func=data.get("state_func", None),
+            switch_func=data.get("switch_func", None),
+        )
+        _LOGGER.debug(
+            "Adding entity: %s (%s) for product %s",
+            name,
+            object_type,
+            product_data.product.name,
+        )
+        if object_type == "sensor":
+            self.sensor_entities.append(entity)
+
+        elif object_type == "switch":
+            self.switch_entities.append(entity)
+
+        elif object_type == "binary_sensor":
+            self.binary_sensor_entities.append(entity)
+
+        elif object_type == "eq_sensor":
+            self.equalizer_sensor_entities.append(entity)
+
+        elif object_type == "eq_binary_sensor":
+            self.equalizer_binary_sensor_entities.append(entity)
+
+        return entity
+
     def _create_entitites(self):
         monitored_conditions = list(
             dict.fromkeys(
@@ -438,7 +467,6 @@ class Controller:
         monitored_eq_conditions = self.config.options.get(
             CONF_MONITORED_EQ_CONDITIONS, ["status"]
         )
-        custom_units = self.config.options.get(CUSTOM_UNITS, {})
         self.sensor_entities = []
         self.switch_entities = []
         self.binary_sensor_entities = []
@@ -455,80 +483,13 @@ class Controller:
                 data = all_easee_entities[key]
                 entity_type = data.get("type", "sensor")
 
-                if entity_type == "sensor":
-                    _LOGGER.debug(
-                        "Adding sensor entity: %s (%s) for charger %s",
-                        key,
-                        entity_type,
-                        charger_data.product.name,
-                    )
-
-                    if data["units"] in custom_units:
-                        data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
-
-                    self.sensor_entities.append(
-                        ChargerSensor(
-                            controller=self,
-                            data=charger_data,
-                            name=key,
-                            state_key=data["key"],
-                            units=data["units"],
-                            convert_units_func=convert_units_funcs.get(
-                                data["convert_units_func"], None
-                            ),
-                            attrs_keys=data["attrs"],
-                            device_class=data["device_class"],
-                            icon=data["icon"],
-                            state_func=data.get("state_func", None),
-                        )
-                    )
-                elif entity_type == "switch":
-                    _LOGGER.debug(
-                        "Adding switch entity: %s (%s) for charger %s",
-                        key,
-                        entity_type,
-                        charger_data.product.name,
-                    )
-                    self.switch_entities.append(
-                        ChargerSwitch(
-                            controller=self,
-                            data=charger_data,
-                            name=key,
-                            state_key=data["key"],
-                            units=data["units"],
-                            convert_units_func=convert_units_funcs.get(
-                                data["convert_units_func"], None
-                            ),
-                            attrs_keys=data["attrs"],
-                            device_class=data["device_class"],
-                            icon=data["icon"],
-                            state_func=data.get("state_func", None),
-                            switch_func=data.get("switch_func", None),
-                        )
-                    )
-                elif entity_type == "binary_sensor":
-                    _LOGGER.debug(
-                        "Adding binary sensor entity: %s (%s) for charger %s",
-                        key,
-                        entity_type,
-                        charger_data.product.name,
-                    )
-                    self.binary_sensor_entities.append(
-                        ChargerBinarySensor(
-                            controller=self,
-                            data=charger_data,
-                            name=key,
-                            state_key=data["key"],
-                            units=data["units"],
-                            convert_units_func=convert_units_funcs.get(
-                                data["convert_units_func"], None
-                            ),
-                            attrs_keys=data["attrs"],
-                            device_class=data["device_class"],
-                            icon=data["icon"],
-                            state_func=data.get("state_func", None),
-                        )
-                    )
+                self._create_entity(
+                    entity_type,
+                    controller=self,
+                    product_data=charger_data,
+                    name=key,
+                    data=data,
+                )
 
         for equalizer_data in self.equalizers_data:
             for key in monitored_eq_conditions:
@@ -536,60 +497,12 @@ class Controller:
                 if key not in EASEE_EQ_ENTITIES:
                     continue
                 data = EASEE_EQ_ENTITIES[key]
-                entity_type = data.get("type", "sensor")
+                entity_type = data.get("type", "eq_sensor")
 
-                if entity_type == "eq_sensor":
-                    _LOGGER.debug(
-                        "Adding sensor entity: %s (%s) for equalizer %s",
-                        key,
-                        entity_type,
-                        equalizer_data.product.name,
-                    )
-
-                    if data["units"] in custom_units:
-                        data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
-
-                    self.equalizer_sensor_entities.append(
-                        EqualizerSensor(
-                            controller=self,
-                            data=equalizer_data,
-                            name=key,
-                            state_key=data["key"],
-                            units=data["units"],
-                            convert_units_func=convert_units_funcs.get(
-                                data["convert_units_func"], None
-                            ),
-                            attrs_keys=data["attrs"],
-                            device_class=data["device_class"],
-                            icon=data["icon"],
-                            state_func=data.get("state_func", None),
-                        )
-                    )
-
-                elif entity_type == "eq_binary_sensor":
-                    _LOGGER.debug(
-                        "Adding binary sensor entity: %s (%s) for equalizer %s",
-                        key,
-                        entity_type,
-                        equalizer_data.product.name,
-                    )
-
-                    if data["units"] in custom_units:
-                        data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
-
-                    self.equalizer_binary_sensor_entities.append(
-                        EqualizerBinarySensor(
-                            controller=self,
-                            data=equalizer_data,
-                            name=key,
-                            state_key=data["key"],
-                            units=data["units"],
-                            convert_units_func=convert_units_funcs.get(
-                                data["convert_units_func"], None
-                            ),
-                            attrs_keys=data["attrs"],
-                            device_class=data["device_class"],
-                            icon=data["icon"],
-                            state_func=data.get("state_func", None),
-                        )
-                    )
+                self._create_entity(
+                    entity_type,
+                    controller=self,
+                    product_data=equalizer_data,
+                    name=key,
+                    data=data,
+                )
