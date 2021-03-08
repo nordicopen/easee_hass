@@ -69,7 +69,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "icon": "mdi:auto-fix",
         "switch_func": "smart_charging",
     },
-    "cable_locked_car": {
+    "cable_locked": {
         "type": "binary_sensor",
         "key": "state.cableLocked",
         "attrs": [
@@ -82,7 +82,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "icon": None,
         "state_func": lambda state: not bool(state["cableLocked"]),
     },
-    "cable_permanently_locked_charger": {
+    "permanent_cable_lock": {
         "type": "switch",
         "key": "state.lockCablePermanently",
         "attrs": [
