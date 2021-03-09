@@ -82,7 +82,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "icon": None,
         "state_func": lambda state: not bool(state["cableLocked"]),
     },
-    "permanent_cable_lock": {
+    "cable_locked_permanently": {
         "type": "switch",
         "key": "state.lockCablePermanently",
         "attrs": [
