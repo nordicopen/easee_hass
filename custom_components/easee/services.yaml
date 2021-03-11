@@ -84,8 +84,8 @@ update_firmware:
       description: "The charger id"
       example: "EH123456"
 
-set_circuit_dynamic_current:
-  description: "Set circuit dynamic current (current available to share by all chargers on a circuit)."
+set_circuit_dynamic_limit:
+  description: "Set circuit dynamic limit (current available to share by all chargers on a circuit)."
   fields:
     circuit_id:
       description: "The circuit id"
@@ -100,8 +100,8 @@ set_circuit_dynamic_current:
       description: "Phase 3 current (Optional)"
       example: 10
 
-set_circuit_max_current:
-  description: "Set circuit max current. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
+set_circuit_max_limit:
+  description: "Set circuit max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
   fields:
     circuit_id:
       description: "The circuit id"
@@ -116,8 +116,8 @@ set_circuit_max_current:
       description: "Phase 3 current (Optional)"
       example: 10
 
-set_charger_circuit_dynamic_current:
-  description: "Set circuit dynamic current (current available to share by all chargers on a circuit)."
+set_charger_circuit_dynamic_limit:
+  description: "Set circuit dynamic limit (current available to share by all chargers on a circuit)."
   fields:
     charger_id:
       description: "The charger id"
@@ -132,8 +132,8 @@ set_charger_circuit_dynamic_current:
       description: "Phase 3 current (Optional)"
       example: 10
 
-set_charger_circuit_max_current:
-  description: "Set circuit max current. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
+set_charger_circuit_max_limit:
+  description: "Set circuit max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
   fields:
     charger_id:
       description: "The charger id"
@@ -148,8 +148,8 @@ set_charger_circuit_max_current:
       description: "Phase 3 current (Optional)"
       example: 10
 
-set_charger_dynamic_current:
-  description: "Set charger dynamic current"
+set_charger_dynamic_limit:
+  description: "Set charger dynamic limit"
   fields:
     charger_id:
       description: "The charger id"
@@ -158,8 +158,8 @@ set_charger_dynamic_current:
       description: "Charger current"
       example: 10
 
-set_charger_max_current:
-  description: "Set charger max current. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
+set_charger_max_limit:
+  description: "Set charger max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
   fields:
     charger_id:
       description: "The charger id"
