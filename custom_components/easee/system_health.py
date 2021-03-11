@@ -20,7 +20,7 @@ async def system_health_info(hass):
     return {
         "component_version": VERSION,
         "reach_easee_cloud": system_health.async_check_can_reach_url(
-            hass, "https://api.easee.cloud"
+            hass, client["controller"].easee.base_uri()
         ),
         "connected2stream": client["controller"].easee.sr_is_connected(),
     }
