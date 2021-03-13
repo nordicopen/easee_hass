@@ -133,32 +133,32 @@ SERVICE_MAP = {
         "function_call": "delete_basic_charge_plan",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
-    "set_circuit_dynamic_current": {
+    "set_circuit_dynamic_limit": {
         "handler": "circuit_execute_set_current",
         "function_call": "set_dynamic_current",
         "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
     },
-    "set_circuit_max_current": {
+    "set_circuit_max_limit": {
         "handler": "circuit_execute_set_current",
         "function_call": "set_max_current",
         "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
     },
-    "set_charger_circuit_dynamic_current": {
+    "set_charger_circuit_dynamic_limit": {
         "handler": "charger_execute_set_circuit_current",
         "function_call": "set_dynamic_charger_circuit_current",
         "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
     },
-    "set_charger_circuit_max_current": {
+    "set_charger_circuit_max_limit": {
         "handler": "charger_execute_set_circuit_current",
         "function_call": "set_max_charger_circuit_current",
         "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
     },
-    "set_charger_dynamic_current": {
+    "set_charger_dynamic_limit": {
         "handler": "charger_execute_set_current",
         "function_call": "set_dynamic_charger_current",
         "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA,
     },
-    "set_charger_max_current": {
+    "set_charger_max_limit": {
         "handler": "charger_execute_set_current",
         "function_call": "set_max_charger_current",
         "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA,
