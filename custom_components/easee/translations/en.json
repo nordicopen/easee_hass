@@ -37,5 +37,12 @@
       "no_sites": "No monitored sites selected"
     }
   },
+  "system_health": {
+    "info": {
+      "reach_easee_cloud": "Reach Easee Cloud",
+      "component_version": "Version",
+      "connected2stream": "Connected to signalr"
+    }
+  },
   "title": "Easee EV Charger"
 }
