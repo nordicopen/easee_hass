@@ -37,15 +37,6 @@ SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
     }
 )
 
-SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
-    {
-        vol.Required(CIRCUIT_ID): cv.positive_int,
-        vol.Required(ATTR_SET_CURRENTP1): cv.positive_int,
-        vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
-        vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
-    }
-)
-
 SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
     {
         vol.Required(CHARGER_ID): cv.string,
@@ -133,16 +124,6 @@ SERVICE_MAP = {
         "function_call": "delete_basic_charge_plan",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
-    "set_circuit_dynamic_limit": {
-        "handler": "circuit_execute_set_current",
-        "function_call": "set_dynamic_current",
-        "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
-    },
-    "set_circuit_max_limit": {
-        "handler": "circuit_execute_set_current",
-        "function_call": "set_max_current",
-        "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
-    },
     "set_charger_circuit_dynamic_limit": {
         "handler": "charger_execute_set_circuit_current",
         "function_call": "set_dynamic_charger_circuit_current",
@@ -218,24 +199,6 @@ async def async_setup_services(hass):
 
         _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
-
-    async def circuit_execute_set_current(call):
-        """Execute a service to set currents for Easee circuit."""
-        circuit_id = call.data.get(CIRCUIT_ID)
-        currentP1 = call.data.get(ATTR_SET_CURRENTP1)
-        currentP2 = call.data.get(ATTR_SET_CURRENTP2)
-        currentP3 = call.data.get(ATTR_SET_CURRENTP3)
-
-        _LOGGER.debug("execute_service:" + str(call.data))
-
-        circuit = next((c for c in circuits if c.id == circuit_id), None)
-        if circuit:
-            function_name = SERVICE_MAP[call.service]
-            function_call = getattr(circuit, function_name["function_call"])
-            return await function_call(currentP1, currentP2, currentP3)
-
-        _LOGGER.error("Could not find circuit %s", circuit_id)
-        raise HomeAssistantError("Could not find circuit {}".format(circuit_id))
 
     async def charger_execute_set_circuit_current(call):
         """Execute a service to set currents for Easee circuit for specific charger."""
