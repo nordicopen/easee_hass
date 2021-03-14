@@ -61,6 +61,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
             ]
         )
     )
+    if hass.data[DOMAIN]["controller"] is not None:
+        await hass.data[DOMAIN]["controller"].cleanup()
     if unload_ok:
         hass.data[DOMAIN][entry.entry_id][LISTENER_FN_CLOSE]()
         hass.data[DOMAIN] = {}
