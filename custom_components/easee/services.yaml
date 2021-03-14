@@ -148,6 +148,22 @@ set_charger_circuit_max_limit:
       description: "Phase 3 current (Optional)"
       example: 10
 
+set_charger_circuit_offline_limit:
+  description: "Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
+  fields:
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
+    currentP1:
+      description: "Phase 1 current"
+      example: 10
+    currentP2:
+      description: "Phase 2 current (Optional)"
+      example: 10
+    currentP3:
+      description: "Phase 3 current (Optional)"
+      example: 10
+
 set_charger_dynamic_limit:
   description: "Set charger dynamic limit"
   fields:
