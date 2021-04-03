@@ -3,6 +3,8 @@ import asyncio
 import json
 import logging
 from datetime import datetime, timedelta
+from gc import collect
+from sys import getrefcount
 from typing import List
 
 from async_timeout import timeout
@@ -213,6 +215,23 @@ class Controller:
         self.equalizer_sensor_entities = []
         self.equalizer_binary_sensor_entities = []
 
+    def __del__(self):
+        _LOGGER.debug("Controller deleted")
+
+    async def cleanup(self):
+        if self.easee is not None:
+            for equalizer in self.equalizers:
+                await self.easee.sr_unsubscribe(equalizer)
+            for charger in self.chargers:
+                await self.easee.sr_unsubscribe(charger)
+            await self.easee.close()
+        for tracker in self.trackers:
+            tracker()
+        self.trackers = []
+        collect()
+
+        _LOGGER.debug("Controller refcount after cleanup %d", getrefcount(self))
+
     async def initialize(self):
         """ initialize the session and get initial data """
         client_session = aiohttp_client.async_get_clientsession(self.hass)
@@ -271,6 +290,7 @@ class Controller:
         self._init_count = 0
         self.running_loop = asyncio.get_running_loop()
         self.event_loop = asyncio.get_event_loop()
+        self.trackers = []
 
         self._create_entitites()
 
@@ -318,24 +338,30 @@ class Controller:
         self.hass.async_add_job(self.refresh_equalizers_state)
 
         # Add interval refresh for site state interval
-        async_track_time_interval(
-            self.hass,
-            self.refresh_sites_state,
-            timedelta(seconds=SCAN_INTERVAL_STATE_SECONDS),
+        self.trackers.append(
+            async_track_time_interval(
+                self.hass,
+                self.refresh_sites_state,
+                timedelta(seconds=SCAN_INTERVAL_STATE_SECONDS),
+            )
         )
 
         # Add interval refresh for equalizer state interval
-        async_track_time_interval(
-            self.hass,
-            self.refresh_equalizers_state,
-            timedelta(seconds=SCAN_INTERVAL_EQUALIZERS_SECONDS),
+        self.trackers.append(
+            async_track_time_interval(
+                self.hass,
+                self.refresh_equalizers_state,
+                timedelta(seconds=SCAN_INTERVAL_EQUALIZERS_SECONDS),
+            )
         )
 
         # Add interval refresh for schedules
-        async_track_time_interval(
-            self.hass,
-            self.refresh_schedules,
-            timedelta(seconds=SCAN_INTERVAL_SCHEDULES_SECONDS),
+        self.trackers.append(
+            async_track_time_interval(
+                self.hass,
+                self.refresh_schedules,
+                timedelta(seconds=SCAN_INTERVAL_SCHEDULES_SECONDS),
+            )
         )
 
         # Let other tasks run

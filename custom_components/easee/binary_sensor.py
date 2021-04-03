@@ -1,6 +1,7 @@
 """Easee charger binary sensor."""
 
 import logging
+from typing import Dict
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 
@@ -36,3 +37,13 @@ class EqualizerBinarySensor(ChargerEntity, BinarySensorEntity):
         """Return true if the binary sensor is on."""
         _LOGGER.debug("Getting state of %s" % self._entity_name)
         return self._state
+
+    @property
+    def device_info(self) -> Dict[str, any]:
+        """Return the device information."""
+        return {
+            "identifiers": {(DOMAIN, self.data.product.id)},
+            "name": self.data.product.name,
+            "manufacturer": "Easee",
+            "model": "Equalizer",
+        }

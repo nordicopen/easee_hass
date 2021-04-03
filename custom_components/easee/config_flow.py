@@ -31,7 +31,7 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
     """Easee config flow."""
 
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
+    CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_PUSH
 
     @staticmethod
     @callback
