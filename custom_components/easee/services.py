@@ -153,6 +153,11 @@ SERVICE_MAP = {
         "function_call": "set_max_charger_circuit_current",
         "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
     },
+    "set_charger_circuit_offline_limit": {
+        "handler": "charger_execute_set_circuit_current",
+        "function_call": "set_max_offline_charger_circuit_current",
+        "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
+    },
     "set_charger_dynamic_limit": {
         "handler": "charger_execute_set_current",
         "function_call": "set_dynamic_charger_current",
