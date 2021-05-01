@@ -13,5 +13,6 @@
     "@tmjo",
     "@olalid",
     "@astrandb"
-  ]
+  ],
+  "iot_class": "cloud_push"
 }
