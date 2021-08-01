@@ -8,13 +8,20 @@ from homeassistant.const import (
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_POWER,
     DEVICE_CLASS_VOLTAGE,
-    ELECTRIC_CURRENT_AMPERE,
     ENERGY_KILO_WATT_HOUR,
     ENERGY_WATT_HOUR,
     POWER_KILO_WATT,
     POWER_WATT,
-    ELECTRIC_POTENTIAL_VOLT,
 )
+
+# For backwards compatibility for HA before v2021.8
+try:
+    from homeassistant.const import ELECTRIC_CURRENT_AMPERE, ELECTRIC_POTENTIAL_VOLT
+except:
+    from homeassistant.const import (
+        ELECTRICAL_CURRENT_AMPERE as ELECTRIC_CURRENT_AMPERE,
+        VOLT as ELECTRIC_POTENTIAL_VOLT,
+    )
 
 DOMAIN = "easee"
 TIMEOUT = 30
