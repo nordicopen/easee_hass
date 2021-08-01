@@ -23,9 +23,17 @@ ATTR_SET_CURRENTP3 = "currentP3"
 ATTR_COST_PER_KWH = "cost_per_kwh"
 ATTR_COST_CURRENCY = "currency_id"
 ATTR_COST_VAT = "vat"
+ATTR_ENABLE = "enable"
 
 SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
     {vol.Optional(CHARGER_ID): cv.string}
+)
+
+SERVICE_CHARGER_ENABLE_SCHEMA = vol.Schema(
+    {
+        vol.Required(CHARGER_ID): cv.string,
+        vol.Optional(ATTR_ENABLE): cv.boolean,
+    }
 )
 
 SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
@@ -111,7 +119,7 @@ SERVICE_MAP = {
     "smart_charging": {
         "handler": "charger_execute_service",
         "function_call": "smart_charging",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
+        "schema": SERVICE_CHARGER_ENABLE_SCHEMA,
     },
     "reboot": {
         "handler": "charger_execute_service",
@@ -190,6 +198,7 @@ async def async_setup_services(hass):
     async def charger_execute_service(call):
         """Execute a service to Easee charging station."""
         charger_id = call.data.get(CHARGER_ID)
+        enable = call.data.get(ATTR_ENABLE, None)
 
         _LOGGER.debug("execute_service:" + str(call.data))
 
@@ -198,7 +207,10 @@ async def async_setup_services(hass):
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
-            return await function_call()
+            if enable is not None:
+                return await function_call(enable)
+            else:
+                return await function_call()
 
         _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
