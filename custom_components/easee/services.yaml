@@ -64,11 +64,14 @@ override_schedule:
       example: "EH123456"
 
 smart_charging:
-  description: "Enable smart charging"
+  description: "Enable/disable smart charging"
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
+    enable:
+      description: "enable"
+      example: True
 
 reboot:
   description: "Reboot charger"
