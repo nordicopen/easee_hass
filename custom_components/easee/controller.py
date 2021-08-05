@@ -233,7 +233,7 @@ class Controller:
         _LOGGER.debug("Controller refcount after cleanup %d", getrefcount(self))
 
     async def initialize(self):
-        """ initialize the session and get initial data """
+        """initialize the session and get initial data"""
         client_session = aiohttp_client.async_get_clientsession(self.hass)
         self.easee = Easee(self.username, self.password, client_session)
 
@@ -329,7 +329,7 @@ class Controller:
             entity.data.mark_clean()
 
     async def add_schedulers(self):
-        """ Add schedules to udpate data """
+        """Add schedules to udpate data"""
         # first update
         tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
         if tasks:
@@ -373,7 +373,7 @@ class Controller:
             await self.easee.sr_subscribe(charger, self.stream_callback)
 
     async def refresh_schedules(self, now=None):
-        """ Refreshes the charging schedules data """
+        """Refreshes the charging schedules data"""
         for charger in self.chargers_data:
             if charger.is_schedule_polled() and self.easee.sr_is_connected():
                 continue
@@ -382,7 +382,7 @@ class Controller:
         self.update_ha_state()
 
     async def refresh_sites_state(self, now=None):
-        """ gets site state for all sites and updates the chargers state and config """
+        """gets site state for all sites and updates the chargers state and config"""
 
         for charger_data in self.chargers_data:
             charger_data.check_latest_pulse()
@@ -400,7 +400,7 @@ class Controller:
         self.update_ha_state()
 
     async def refresh_equalizers_state(self, now=None):
-        """ gets equalizer state for all equalizers """
+        """gets equalizer state for all equalizers"""
 
         for equalizer_data in self.equalizers_data:
             equalizer_data.check_latest_pulse()
