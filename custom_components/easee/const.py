@@ -8,13 +8,20 @@ from homeassistant.const import (
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_POWER,
     DEVICE_CLASS_VOLTAGE,
-    ELECTRICAL_CURRENT_AMPERE,
     ENERGY_KILO_WATT_HOUR,
     ENERGY_WATT_HOUR,
     POWER_KILO_WATT,
     POWER_WATT,
-    VOLT,
 )
+
+# For backwards compatibility for HA before v2021.8
+try:
+    from homeassistant.const import ELECTRIC_CURRENT_AMPERE, ELECTRIC_POTENTIAL_VOLT
+except:
+    from homeassistant.const import (
+        ELECTRICAL_CURRENT_AMPERE as ELECTRIC_CURRENT_AMPERE,
+        VOLT as ELECTRIC_POTENTIAL_VOLT,
+    )
 
 DOMAIN = "easee"
 TIMEOUT = 30
@@ -146,7 +153,7 @@ OPTIONAL_EASEE_ENTITIES = {
     "output_limit": {
         "key": "state.outputCurrent",
         "attrs": [],
-        "units": ELECTRICAL_CURRENT_AMPERE,
+        "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
@@ -159,7 +166,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.inCurrentT4",
             "state.inCurrentT5",
         ],
-        "units": ELECTRICAL_CURRENT_AMPERE,
+        "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
@@ -186,7 +193,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.circuitTotalPhaseConductorCurrentL2",
             "state.circuitTotalPhaseConductorCurrentL3",
         ],
-        "units": ELECTRICAL_CURRENT_AMPERE,
+        "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
@@ -215,7 +222,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.dynamicCircuitCurrentP2",
             "state.dynamicCircuitCurrentP3",
         ],
-        "units": ELECTRICAL_CURRENT_AMPERE,
+        "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
@@ -238,7 +245,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "config.circuitMaxCurrentP2",
             "config.circuitMaxCurrentP3",
         ],
-        "units": ELECTRICAL_CURRENT_AMPERE,
+        "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
@@ -255,7 +262,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "attrs": [
             "state.dynamicChargerCurrent",
         ],
-        "units": ELECTRICAL_CURRENT_AMPERE,
+        "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
@@ -271,7 +278,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.offlineMaxCircuitCurrentP2",
             "state.offlineMaxCircuitCurrentP3",
         ],
-        "units": ELECTRICAL_CURRENT_AMPERE,
+        "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
@@ -288,7 +295,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "attrs": [
             "config.maxChargerCurrent",
         ],
-        "units": ELECTRICAL_CURRENT_AMPERE,
+        "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
@@ -307,7 +314,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.inVoltageT3T5",
             "state.inVoltageT4T5",
         ],
-        "units": VOLT,
+        "units": ELECTRIC_POTENTIAL_VOLT,
         "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_VOLTAGE,
         "icon": None,
@@ -426,7 +433,7 @@ EASEE_EQ_ENTITIES = {
             "state.voltageL1L3",
             "state.voltageL2L3",
         ],
-        "units": VOLT,
+        "units": ELECTRIC_POTENTIAL_VOLT,
         "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_VOLTAGE,
         "icon": None,
@@ -448,7 +455,7 @@ EASEE_EQ_ENTITIES = {
             "state.currentL2",
             "state.currentL3",
         ],
-        "units": ELECTRICAL_CURRENT_AMPERE,
+        "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
