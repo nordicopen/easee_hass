@@ -3,6 +3,7 @@ from homeassistant.components.binary_sensor import (
     DEVICE_CLASS_CONNECTIVITY,
     DEVICE_CLASS_LOCK,
 )
+from homeassistant.components.sensor import STATE_CLASS_MEASUREMENT
 from homeassistant.const import (
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_ENERGY,
@@ -13,6 +14,7 @@ from homeassistant.const import (
     POWER_KILO_WATT,
     POWER_WATT,
 )
+from homeassistant.util import dt
 
 # For backwards compatibility for HA before v2021.8
 try:
@@ -106,6 +108,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "units": POWER_KILO_WATT,
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_POWER,
+        "state_class": STATE_CLASS_MEASUREMENT,
         "icon": None,
     },
     "session_energy": {
@@ -122,6 +125,8 @@ OPTIONAL_EASEE_ENTITIES = {
         "units": ENERGY_KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_ENERGY,
+        "state_class": STATE_CLASS_MEASUREMENT,
+        "last_reset": dt.utc_from_timestamp(0),
         "icon": "mdi:counter",
     },
     "energy_per_hour": {
@@ -167,6 +172,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
+        "state_class": STATE_CLASS_MEASUREMENT,
         "icon": None,
         "state_func": lambda state: float(
             max(
@@ -315,6 +321,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "units": ELECTRIC_POTENTIAL_VOLT,
         "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_VOLTAGE,
+        "state_class": STATE_CLASS_MEASUREMENT,
         "icon": None,
     },
     "reason_for_no_current": {
@@ -419,6 +426,7 @@ EASEE_EQ_ENTITIES = {
         "units": POWER_KILO_WATT,
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_POWER,
+        "state_class": STATE_CLASS_MEASUREMENT,
         "icon": None,
     },
     "voltage": {
@@ -434,6 +442,7 @@ EASEE_EQ_ENTITIES = {
         "units": ELECTRIC_POTENTIAL_VOLT,
         "convert_units_func": "round_0_dec",
         "device_class": DEVICE_CLASS_VOLTAGE,
+        "state_class": STATE_CLASS_MEASUREMENT,
         "icon": None,
         "state_func": lambda state: float(
             max(
@@ -456,6 +465,7 @@ EASEE_EQ_ENTITIES = {
         "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_CURRENT,
+        "state_class": STATE_CLASS_MEASUREMENT,
         "icon": None,
         "state_func": lambda state: float(
             max(
@@ -476,6 +486,8 @@ EASEE_EQ_ENTITIES = {
         "units": ENERGY_KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_ENERGY,
+        "state_class": STATE_CLASS_MEASUREMENT,
+        "last_reset": dt.utc_from_timestamp(0),
         "icon": None,
     },
 }

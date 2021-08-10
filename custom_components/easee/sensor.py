@@ -2,9 +2,12 @@
 Easee charger sensor
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
+
 import logging
 from datetime import timedelta
 from typing import Dict
+
+from homeassistant.components.sensor import SensorEntity
 
 from .const import DOMAIN
 from .entity import ChargerEntity
@@ -22,7 +25,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     controller.setup_done("sensor")
 
 
-class ChargerSensor(ChargerEntity):
+class ChargerSensor(ChargerEntity, SensorEntity):
     """Implementation of Easee charger sensor."""
 
     @property
@@ -31,7 +34,7 @@ class ChargerSensor(ChargerEntity):
         return self._state
 
 
-class EqualizerSensor(ChargerEntity):
+class EqualizerSensor(ChargerEntity, SensorEntity):
     """Implementation of Easee equalizer sensor."""
 
     @property
