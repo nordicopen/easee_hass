@@ -461,7 +461,7 @@ class Controller:
             icon=data["icon"],
             state_func=data.get("state_func", None),
             switch_func=data.get("switch_func", None),
-            enabled_default=data.get("enabled_default", None),
+            enabled_default=data.get("enabled_default", True),
         )
         _LOGGER.debug(
             "Adding entity: %s (%s) for product %s",
