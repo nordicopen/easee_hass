@@ -25,7 +25,7 @@ except ImportError:
 
 DOMAIN = "easee"
 TIMEOUT = 30
-VERSION = "0.9.32"
+VERSION = "0.9.33"
 CONF_MONITORED_SITES = "monitored_sites"
 CONF_MONITORED_EQ_CONDITIONS = "monitored_eq_conditions"
 CUSTOM_UNITS = "custom_units"
