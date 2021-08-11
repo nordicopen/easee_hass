@@ -414,14 +414,24 @@ EASEE_EQ_ENTITIES = {
         "device_class": DEVICE_CLASS_CONNECTIVITY,
         "icon": None,
     },
-    "power": {
+    "import_power": {
         "key": "state.activePowerImport",
         "attrs": [
             "state.activePowerImport",
-            "state.activePowerExport",
             "state.reactivePowerImport",
-            "state.reactivePowerExport",
             "state.maxPowerImport",
+        ],
+        "units": POWER_KILO_WATT,
+        "convert_units_func": "round_1_dec",
+        "device_class": DEVICE_CLASS_POWER,
+        "state_class": STATE_CLASS_MEASUREMENT,
+        "icon": None,
+    },
+    "export_power": {
+        "key": "state.activePowerExport",
+        "attrs": [
+            "state.activePowerExport",
+            "state.reactivePowerExport",
         ],
         "units": POWER_KILO_WATT,
         "convert_units_func": "round_1_dec",
@@ -475,12 +485,23 @@ EASEE_EQ_ENTITIES = {
             )
         ),
     },
-    "energy": {
+    "import_energy": {
         "key": "state.cumulativeActivePowerImport",
         "attrs": [
             "state.cumulativeActivePowerImport",
-            "state.cumulativeActivePowerExport",
             "state.cumulativeReactivePowerImport",
+        ],
+        "units": ENERGY_KILO_WATT_HOUR,
+        "convert_units_func": "round_1_dec",
+        "device_class": DEVICE_CLASS_ENERGY,
+        "state_class": STATE_CLASS_MEASUREMENT,
+        "last_reset": dt.utc_from_timestamp(0),
+        "icon": None,
+    },
+    "export_energy": {
+        "key": "state.cumulativeActivePowerExport",
+        "attrs": [
+            "state.cumulativeActivePowerExport",
             "state.cumulativeReactivePowerExport",
         ],
         "units": ENERGY_KILO_WATT_HOUR,
