@@ -368,9 +368,10 @@ OPTIONAL_EASEE_ENTITIES = {
     },
     "basic_schedule": {
         "type": "binary_sensor",
-        "key": "schedule.id",
+        "key": "schedule.isEnabled",
         "attrs": [
             "schedule.id",
+            "schedule.isEnabled",
             "schedule.chargeStartTime",
             "schedule.chargeStopTime",
             "schedule.repeat",
@@ -379,7 +380,19 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": None,
         "device_class": None,
         "icon": "mdi:clock-check",
-        "state_func": lambda schedule: bool(schedule) or False,
+        "state_func": lambda schedule: bool(schedule.isEnabled) or False,
+    },
+    "weekly_schedule": {
+        "type": "binary_sensor",
+        "key": "weekly_schedule.isEnabled",
+        "attrs": [
+            "weekly_schedule.isEnabled",
+        ],
+        "units": None,
+        "convert_units_func": None,
+        "device_class": None,
+        "icon": "mdi:clock-check",
+        "state_func": lambda weekly_schedule: bool(weekly_schedule.isEnabled) or False,
     },
     "cost_per_kwh": {
         "key": "site.costPerKWh",
