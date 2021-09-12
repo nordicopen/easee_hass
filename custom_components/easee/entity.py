@@ -295,3 +295,5 @@ class ChargerEntity(Entity):
 
         except IndexError:
             raise IndexError("Wrong key for entity: %s", self._state_key)
+        except AttributeError:
+            pass
