@@ -1,8 +1,7 @@
 """ Easee Connector class """
 import asyncio
-import json
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 from gc import collect
 from sys import getrefcount
 from typing import List
@@ -69,7 +68,9 @@ OFFLINE_DELAY = 17 * 60
 class ProductData:
     """Representation product data."""
 
-    def __init__(self, event_loop, product, site: Site, streamdata, circuit: Circuit = None):
+    def __init__(
+        self, event_loop, product, site: Site, streamdata, circuit: Circuit = None
+    ):
         """Initialize the product data."""
         self.product = product
         self.circuit: Circuit = circuit
@@ -82,7 +83,7 @@ class ProductData:
         self.streamdata = streamdata
         self.dirty = False
         self.event_loop = event_loop
-        
+
     def is_state_polled(self):
         if self.state is None:
             return False
@@ -184,7 +185,9 @@ class ProductData:
             elif first == "schedule":
                 _LOGGER.debug("Schedule update")
                 if self.event_loop is not None:
-                    future = asyncio.run_coroutine_threadsafe(self.schedules_async_refresh(), self.event_loop)
+                    asyncio.run_coroutine_threadsafe(
+                        self.schedules_async_refresh(), self.event_loop
+                    )
             else:
                 _LOGGER.debug("Unkonwn update type: %s", first)
 
@@ -272,7 +275,9 @@ class Controller:
                         "Found equalizer: %s %s", equalizer.id, equalizer.name
                     )
                     self.equalizers.append(equalizer)
-                    equalizer_data = ProductData(self.event_loop, equalizer, site, EqualizerStreamData)
+                    equalizer_data = ProductData(
+                        self.event_loop, equalizer, site, EqualizerStreamData
+                    )
                     self.equalizers_data.append(equalizer_data)
                 for circuit in site.get_circuits():
                     _LOGGER.debug(
