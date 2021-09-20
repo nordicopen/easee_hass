@@ -6,8 +6,7 @@ import logging
 from datetime import datetime
 from typing import Callable, Dict, List
 
-from homeassistant.components.sensor import STATE_CLASS_MEASUREMENT
-from homeassistant.const import DEVICE_CLASS_ENERGY, ENERGY_WATT_HOUR, POWER_WATT
+from homeassistant.const import ENERGY_WATT_HOUR, POWER_WATT
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_registry import async_entries_for_device
@@ -79,7 +78,6 @@ class ChargerEntity(Entity):
         switch_func=None,
         enabled_default=True,
         state_class=None,
-        last_reset=None,
     ):
 
         """Initialize the entity."""
@@ -96,15 +94,7 @@ class ChargerEntity(Entity):
         self._state = None
         self._switch_func = switch_func
         self._enabled_default = enabled_default
-        self._last_reset = last_reset
         self._attr_state_class = state_class
-
-        if (
-            device_class == DEVICE_CLASS_ENERGY
-            and state_class == STATE_CLASS_MEASUREMENT
-        ):
-            self._attr_last_reset = last_reset
-            _LOGGER.debug("Setting last_reset for %s: %s", name, last_reset)
 
     async def async_added_to_hass(self) -> None:
         """Entity created."""
@@ -185,8 +175,6 @@ class ChargerEntity(Entity):
                 "name": self.data.product.name,
                 "id": self.data.product.id,
             }
-            if hasattr(self, "_attr_last_reset") and self._attr_last_reset is not None:
-                attrs["last_reset"] = self._attr_last_reset
             for attr_key in self._attrs_keys:
                 key = attr_key.replace(".", "_")
                 if "voltage" in key.lower():

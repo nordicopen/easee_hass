@@ -457,7 +457,6 @@ class Controller:
             attrs_keys=data["attrs"],
             device_class=data["device_class"],
             state_class=data.get("state_class", None),
-            last_reset=data.get("last_reset", None),
             icon=data["icon"],
             state_func=data.get("state_func", None),
             switch_func=data.get("switch_func", None),
