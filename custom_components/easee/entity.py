@@ -261,9 +261,9 @@ class ChargerEntity(Entity):
         elif first == "schedule":
             if self.data.schedule is not None:
                 value = self.data.schedule[second]
-        elif first == "weekly_schedule":
-            if self.data.weekly_schedule is not None:
-                value = self.data.weekly_schedule[second]
+            elif first == "weekly_schedule":
+                if self.data.weekly_schedule is not None:
+                    value = self.data.weekly_schedule[second]
         else:
             _LOGGER.error("Unknown first part of key: %s", key)
             raise IndexError("Unknown first part of key")
@@ -295,5 +295,7 @@ class ChargerEntity(Entity):
 
         except IndexError:
             raise IndexError("Wrong key for entity: %s", self._state_key)
+        except TypeError:
+            pass
         except AttributeError:
             pass
