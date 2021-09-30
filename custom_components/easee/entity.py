@@ -205,6 +205,8 @@ class ChargerEntity(Entity):
                     attrs[key] = self.get_value_from_key(attr_key)
 
             return attrs
+        except TypeError:
+            return {}
         except IndexError:
             return {}
 
