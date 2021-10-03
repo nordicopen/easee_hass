@@ -205,6 +205,8 @@ class ChargerEntity(Entity):
                     attrs[key] = self.get_value_from_key(attr_key)
 
             return attrs
+        except TypeError:
+            return {}
         except IndexError:
             return {}
 
@@ -238,6 +240,9 @@ class ChargerEntity(Entity):
         elif first == "schedule":
             if self.data.schedule is not None:
                 self.data.schedule[second] = value
+        elif first == "weekly_schedule":
+            if self.data.weekly_schedule is not None:
+                self.data.weelly_schedule[second] = value
         else:
             _LOGGER.error("Unknown first part of key: %s", key)
             raise IndexError("Unknown first part of key")
@@ -258,6 +263,9 @@ class ChargerEntity(Entity):
         elif first == "schedule":
             if self.data.schedule is not None:
                 value = self.data.schedule[second]
+        elif first == "weekly_schedule":
+            if self.data.weekly_schedule is not None:
+                value = self.data.weekly_schedule[second]
         else:
             _LOGGER.error("Unknown first part of key: %s", key)
             raise IndexError("Unknown first part of key")
@@ -282,8 +290,14 @@ class ChargerEntity(Entity):
                     self._state = self._state_func(self.data.config)
                 if self._state_key.startswith("schedule"):
                     self._state = self._state_func(self.data.schedule)
+                if self._state_key.startswith("weekly_schedule"):
+                    self._state = self._state_func(self.data.weekly_schedule)
             if self._convert_units_func is not None:
                 self._state = self._convert_units_func(self._state, self._units)
 
         except IndexError:
             raise IndexError("Wrong key for entity: %s", self._state_key)
+        except TypeError:
+            pass
+        except AttributeError:
+            pass

@@ -1,8 +1,7 @@
 """ Easee Connector class """
 import asyncio
-import json
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 from gc import collect
 from sys import getrefcount
 from typing import List
@@ -69,7 +68,9 @@ OFFLINE_DELAY = 17 * 60
 class ProductData:
     """Representation product data."""
 
-    def __init__(self, product, site: Site, streamdata, circuit: Circuit = None):
+    def __init__(
+        self, event_loop, product, site: Site, streamdata, circuit: Circuit = None
+    ):
         """Initialize the product data."""
         self.product = product
         self.circuit: Circuit = circuit
@@ -77,8 +78,11 @@ class ProductData:
         self.state = None
         self.config = None
         self.schedule = None
+        self.weekly_schedule = None
+        self.schedule_polled = False
         self.streamdata = streamdata
         self.dirty = False
+        self.event_loop = event_loop
 
     def is_state_polled(self):
         if self.state is None:
@@ -91,7 +95,8 @@ class ProductData:
         return True
 
     def is_schedule_polled(self):
-        if self.schedule is None:
+        if self.schedule_polled is False:
+            self.schedule_polled = True
             return False
         return True
 
@@ -112,7 +117,14 @@ class ProductData:
         except NotFoundException:
             self.schedule = None
 
-        _LOGGER.debug("Schedule: %s", self.schedule)
+        try:
+            self.weekly_schedule = await self.product.get_weekly_charge_plan()
+        except (TooManyRequestsException, ServerFailureException):
+            _LOGGER.debug("Got server error while fetching weekly schedule")
+        except NotFoundException:
+            self.weekly_schedule = None
+
+        _LOGGER.debug("Schedule: %s %s", self.schedule, self.weekly_schedule)
 
     def check_value(self, data_type, reference, value):
         if (
@@ -171,22 +183,11 @@ class ProductData:
                     self.config[second] = value
                     return True
             elif first == "schedule":
-                if self.schedule is None:
-                    return False
-                value = json.loads(value)
-                self.schedule["id"] = value.get("Id")
-                self.schedule["chargeStartTime"] = datetime.utcfromtimestamp(
-                    value.get("StartSchedule")
-                )
-                periods = value.get("Periods")
-                self.schedule["chargeStopTime"] = datetime.utcfromtimestamp(
-                    value.get("StartSchedule") + periods[len(periods) - 1][0]
-                )
-                if value.get("ProfileKind") == "Recurring":
-                    self.schedule["repeat"] = True
-                else:
-                    self.schedule["repeat"] = False
-                return True
+                _LOGGER.debug("Schedule update")
+                if self.event_loop is not None:
+                    asyncio.run_coroutine_threadsafe(
+                        self.schedules_async_refresh(), self.event_loop
+                    )
             else:
                 _LOGGER.debug("Unkonwn update type: %s", first)
 
@@ -236,6 +237,8 @@ class Controller:
         """initialize the session and get initial data"""
         client_session = aiohttp_client.async_get_clientsession(self.hass)
         self.easee = Easee(self.username, self.password, client_session)
+        self.running_loop = asyncio.get_running_loop()
+        self.event_loop = asyncio.get_event_loop()
 
         try:
             with timeout(TIMEOUT):
@@ -272,7 +275,9 @@ class Controller:
                         "Found equalizer: %s %s", equalizer.id, equalizer.name
                     )
                     self.equalizers.append(equalizer)
-                    equalizer_data = ProductData(equalizer, site, EqualizerStreamData)
+                    equalizer_data = ProductData(
+                        self.event_loop, equalizer, site, EqualizerStreamData
+                    )
                     self.equalizers_data.append(equalizer_data)
                 for circuit in site.get_circuits():
                     _LOGGER.debug(
@@ -283,13 +288,11 @@ class Controller:
                         _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
                         self.chargers.append(charger)
                         charger_data = ProductData(
-                            charger, site, ChargerStreamData, circuit
+                            self.event_loop, charger, site, ChargerStreamData, circuit
                         )
                         self.chargers_data.append(charger_data)
 
         self._init_count = 0
-        self.running_loop = asyncio.get_running_loop()
-        self.event_loop = asyncio.get_event_loop()
         self.trackers = []
 
         self._create_entitites()
@@ -308,7 +311,7 @@ class Controller:
         _LOGGER.debug(f"Entities {name} setup done")
         self._init_count = self._init_count + 1
 
-        if self._init_count >= len(PLATFORMS) and self.running_loop is not None:
+        if self._init_count >= len(PLATFORMS) and self.event_loop is not None:
             asyncio.run_coroutine_threadsafe(self.add_schedulers(), self.event_loop)
 
     def update_ha_state(self):
