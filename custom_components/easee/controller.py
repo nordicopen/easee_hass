@@ -395,10 +395,11 @@ class Controller:
             site_state = await self.easee.get_site_state(charger_data.site.id)
             charger_id = charger_data.product.id
 
-            charger_data.state = site_state.get_charger_state(charger_id, raw=True)
-            _LOGGER.debug("Charger state: %s ", charger_id)
-            charger_data.config = site_state.get_charger_config(charger_id, raw=True)
-            charger_data.mark_dirty()
+            if site_state is not None:
+                charger_data.state = site_state.get_charger_state(charger_id, raw=True)
+                _LOGGER.debug("Charger state: %s ", charger_id)
+                charger_data.config = site_state.get_charger_config(charger_id, raw=True)
+                charger_data.mark_dirty()
 
         self.update_ha_state()
 
