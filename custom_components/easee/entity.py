@@ -283,8 +283,8 @@ class ChargerEntity(Entity):
             if self._convert_units_func is not None:
                 self._state = self._convert_units_func(self._state, self._units)
 
-        except IndexError:
-            raise IndexError("Wrong key for entity: %s", self._state_key)
+        except IndexError as exc:
+            raise IndexError(f"Wrong key for entity: {self._state_key}") from exc
         except TypeError:
             pass
         except AttributeError:
