@@ -8,7 +8,6 @@ from typing import List
 
 from async_timeout import timeout
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_MONITORED_CONDITIONS
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
 from homeassistant.helpers import aiohttp_client
@@ -33,7 +32,6 @@ from pyeasee.exceptions import (
 
 from .binary_sensor import ChargerBinarySensor, EqualizerBinarySensor
 from .const import (
-    CONF_MONITORED_EQ_CONDITIONS,
     CONF_MONITORED_SITES,
     CUSTOM_UNITS,
     CUSTOM_UNITS_TABLE,
@@ -490,15 +488,6 @@ class Controller:
         return entity
 
     def _create_entitites(self):
-        monitored_conditions = list(
-            dict.fromkeys(
-                self.config.options.get(CONF_MONITORED_CONDITIONS, [])
-                + [x for x in MANDATORY_EASEE_ENTITIES]
-            )
-        )
-        monitored_eq_conditions = self.config.options.get(
-            CONF_MONITORED_EQ_CONDITIONS, ["status"]
-        )
         self.sensor_entities = []
         self.switch_entities = []
         self.binary_sensor_entities = []
@@ -508,11 +497,7 @@ class Controller:
         all_easee_entities = {**MANDATORY_EASEE_ENTITIES, **OPTIONAL_EASEE_ENTITIES}
 
         for charger_data in self.chargers_data:
-            #  for key in monitored_conditions:
             for key in all_easee_entities:
-                # Fix renamed entities previously configured
-                if key not in all_easee_entities:
-                    continue
                 data = all_easee_entities[key]
                 entity_type = data.get("type", "sensor")
 
@@ -525,11 +510,7 @@ class Controller:
                 )
 
         for equalizer_data in self.equalizers_data:
-            #  for key in monitored_eq_conditions:
             for key in EASEE_EQ_ENTITIES:
-                # Fix renamed entities previously configured
-                if key not in EASEE_EQ_ENTITIES:
-                    continue
                 data = EASEE_EQ_ENTITIES[key]
                 entity_type = data.get("type", "eq_sensor")
 
