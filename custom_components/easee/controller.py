@@ -325,7 +325,7 @@ class Controller:
         )
 
         for entity in all_entities:
-            if entity.data.is_dirty():
+            if entity.enabled and entity.data.is_dirty():
                 entity.async_schedule_update_ha_state(True)
 
         for entity in all_entities:
@@ -464,6 +464,7 @@ class Controller:
             state_func=data.get("state_func", None),
             switch_func=data.get("switch_func", None),
             enabled_default=data.get("enabled_default", True),
+            entity_category=data.get("entity_category", None),
         )
         _LOGGER.debug(
             "Adding entity: %s (%s) for product %s",
@@ -507,7 +508,8 @@ class Controller:
         all_easee_entities = {**MANDATORY_EASEE_ENTITIES, **OPTIONAL_EASEE_ENTITIES}
 
         for charger_data in self.chargers_data:
-            for key in monitored_conditions:
+            #  for key in monitored_conditions:
+            for key in all_easee_entities:
                 # Fix renamed entities previously configured
                 if key not in all_easee_entities:
                     continue
@@ -523,7 +525,8 @@ class Controller:
                 )
 
         for equalizer_data in self.equalizers_data:
-            for key in monitored_eq_conditions:
+            #  for key in monitored_eq_conditions:
+            for key in EASEE_EQ_ENTITIES:
                 # Fix renamed entities previously configured
                 if key not in EASEE_EQ_ENTITIES:
                     continue

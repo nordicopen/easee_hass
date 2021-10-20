@@ -78,6 +78,7 @@ class ChargerEntity(Entity):
         switch_func=None,
         enabled_default=True,
         state_class=None,
+        entity_category=None,
     ):
 
         """Initialize the entity."""
@@ -95,6 +96,7 @@ class ChargerEntity(Entity):
         self._switch_func = switch_func
         self._enabled_default = enabled_default
         self._attr_state_class = state_class
+        self._attr_entity_category = entity_category
 
     async def async_added_to_hass(self) -> None:
         """Entity created."""
