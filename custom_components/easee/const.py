@@ -33,7 +33,6 @@ DOMAIN = "easee"
 TIMEOUT = 30
 VERSION = "0.9.34"
 CONF_MONITORED_SITES = "monitored_sites"
-CONF_MONITORED_EQ_CONDITIONS = "monitored_eq_conditions"
 CUSTOM_UNITS = "custom_units"
 PLATFORMS = ("sensor", "switch", "binary_sensor")
 LISTENER_FN_CLOSE = "update_listener_close_fn"
