@@ -46,4 +46,5 @@ class EqualizerBinarySensor(ChargerEntity, BinarySensorEntity):
             "name": self.data.product.name,
             "manufacturer": "Easee",
             "model": "Equalizer",
+            "configuration_url": f"https://easee.cloud/mypage/products/{self.data.product.id}",
         }
