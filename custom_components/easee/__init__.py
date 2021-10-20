@@ -73,3 +73,26 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 async def config_entry_update_listener(hass: HomeAssistant, entry: ConfigEntry):
 
     await hass.config_entries.async_reload(entry.entry_id)
+
+
+async def async_migrate_entry(hass, config_entry: ConfigEntry):
+    """Migrate old entry."""
+    _LOGGER.info("Migrating from version %s", config_entry.version)
+
+    if config_entry.version == 1:
+
+        options = {**config_entry.options}
+        # modify Config Entry data
+        if "monitored_conditions" in options:
+            options.pop("monitored_conditions")
+
+        if "monitored_eq_conditions" in options:
+            options.pop("monitored_eq_conditions")
+
+        config_entry.options = {**options}
+
+        config_entry.version = 2
+
+    _LOGGER.info("Migration to version %s successful", config_entry.version)
+
+    return True
