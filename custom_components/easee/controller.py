@@ -147,7 +147,7 @@ class ProductData:
             if self.state["isOnline"] is True:
                 self.dirty = True
                 self.state["isOnline"] = False
-                _LOGGER.debug(f"Product {self.product.id} marked offline")
+                _LOGGER.debug("Product %s marked offline", self.product.id)
 
     def update_stream_data(self, data_type, data_id, value):
         if self.state is None:
@@ -161,10 +161,10 @@ class ProductData:
             name = self.streamdata(data_id).name
         except ValueError:
             # Unsupported data
-            _LOGGER.debug(f"Unsupported data id {data_id} {value}")
+            _LOGGER.debug("Unsupported data id %s %s", data_id, value)
             return False
 
-        _LOGGER.debug(f"Callback {self.product.id} {data_id} {name} {value}")
+        _LOGGER.debug("Callback %s %s %s %s", self.product.id, data_id, name, value)
 
         if "_" in name:
             first, second = name.split("_")
