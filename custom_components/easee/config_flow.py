@@ -96,9 +96,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 return await self._update_options()
         controller = self.hass.data[DOMAIN]["controller"]
         sites: List[Site] = controller.get_sites()
-        sites_multi_select = []
-        for site in sites:
-            sites_multi_select.append(site["name"])
+        sites_multi_select = {x["name"]: x["name"] for x in sites}
 
         return self.async_show_form(
             step_id="init",
