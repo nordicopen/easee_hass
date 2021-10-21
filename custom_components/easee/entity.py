@@ -121,11 +121,7 @@ class ChargerEntity(Entity):
         device_entry = dev_reg.async_get(entity_entry.device_id)
 
         _LOGGER.debug("Removing _entity_name: %s", self._entity_name)
-        if (
-            self._entity_name in self.hass.data[DOMAIN]["entities_to_remove"]
-            or self._entity_name in self.hass.data[DOMAIN]["eq_entities_to_remove"]
-            or self.data.site.name in self.hass.data[DOMAIN]["sites_to_remove"]
-        ):
+        if self.data.site.name in self.hass.data[DOMAIN]["sites_to_remove"]:
             if len(async_entries_for_device(ent_reg, entity_entry.device_id)) == 1:
                 dev_reg.async_remove_device(device_entry.id)
                 return
