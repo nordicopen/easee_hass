@@ -245,14 +245,18 @@ async def async_setup_services(hass):
 
         _LOGGER.debug("execute_service:" + str(call.data))
 
-        circuit = next((c for c in circuits if c.id == circuit_id), None)
+        function_name = SERVICE_MAP[call.service]
+        function_call = getattr(
+            controller, "circuit_check_" + function_name["function_call"]
+        )
+        circuit = function_call(circuit_id, currentP1, currentP2, currentP3)
         if circuit:
-            function_name = SERVICE_MAP[call.service]
             function_call = getattr(circuit, function_name["function_call"])
             return await function_call(currentP1, currentP2, currentP3)
 
-        _LOGGER.error("Could not find circuit %s", circuit_id)
-        raise HomeAssistantError("Could not find circuit {}".format(circuit_id))
+        if circuit is None:
+            _LOGGER.error("Could not find circuit %s", circuit_id)
+            raise HomeAssistantError("Could not find circuit {}".format(circuit_id))
 
     async def charger_execute_set_circuit_current(call):
         """Execute a service to set currents for Easee circuit for specific charger."""
@@ -261,32 +265,40 @@ async def async_setup_services(hass):
         currentP2 = call.data.get(ATTR_SET_CURRENTP2)
         currentP3 = call.data.get(ATTR_SET_CURRENTP3)
 
-        _LOGGER.debug("execute_service:" + str(call.data))
+        _LOGGER.debug("execute_service: " + str(call.service) + " " + str(call.data))
 
-        charger = next((c for c in chargers if c.id == charger_id), None)
+        function_name = SERVICE_MAP[call.service]
+        function_call = getattr(
+            controller, "charger_check_" + function_name["function_call"]
+        )
+        charger = function_call(charger_id, currentP1, currentP2, currentP3)
         if charger:
-            function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
             return await function_call(currentP1, currentP2, currentP3)
 
-        _LOGGER.error("Could not find charger %s", charger_id)
-        raise HomeAssistantError("Could not find charger {}".format(charger_id))
+        if charger is None:
+            _LOGGER.error("Could not find charger %s", charger_id)
+            raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
     async def charger_execute_set_current(call):
         """Execute a service to set currents for Easee charger."""
         charger_id = call.data.get(CHARGER_ID)
         current = call.data.get(ATTR_SET_CURRENT)
 
-        _LOGGER.debug("execute_service:" + str(call.data))
+        _LOGGER.debug("execute_service: " + str(call.service) + " " + str(call.data))
 
-        charger = next((c for c in chargers if c.id == charger_id), None)
+        function_name = SERVICE_MAP[call.service]
+        function_call = getattr(
+            controller, "charger_check_" + function_name["function_call"]
+        )
+        charger = function_call(charger_id, current)
         if charger:
-            function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
             return await function_call(current)
 
-        _LOGGER.error("Could not find charger %s", charger_id)
-        raise HomeAssistantError("Could not find charger {}".format(charger_id))
+        if charger is None:
+            _LOGGER.error("Could not find charger %s", charger_id)
+            raise HomeAssistantError("Could not find charger {}".format(charger_id))
 
     async def charger_execute_set_charging_cost(call):
         """Execute a service to set charging cost per kwh for Easee charger site."""
@@ -295,7 +307,7 @@ async def async_setup_services(hass):
         currency = call.data.get(ATTR_COST_CURRENCY)
         vat = call.data.get(ATTR_COST_VAT)
 
-        _LOGGER.debug("execute_service:" + str(call.data))
+        _LOGGER.debug("execute_service: " + str(call.service) + " " + str(call.data))
 
         charger = next((c for c in chargers if c.id == charger_id), None)
         if charger:

@@ -142,6 +142,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "type": "binary_sensor",
         "key": "state.isOnline",
         "attrs": [
+            "state.signalRConnected",
             "state.latestPulse",
             "config.wiFiSSID",
             "state.wiFiAPEnabled",
@@ -430,6 +431,7 @@ EASEE_EQ_ENTITIES = {
         "type": "eq_binary_sensor",
         "key": "state.isOnline",
         "attrs": [
+            "state.signalRConnected",
             "state.latestPulse",
             "state.clockAndDateMeter",
             "state.rcpi",

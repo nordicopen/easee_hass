@@ -151,10 +151,17 @@ class ProductData:
                 self.state["isOnline"] = False
                 _LOGGER.debug(f"Product {self.product.id} marked offline")
 
+    def set_signalr_state(self, state):
+        if self.state is None:
+            return
+
+        self.state["signalRConnected"] = state
+
     def update_stream_data(self, data_type, data_id, value):
         if self.state is None:
             return False
 
+        self.state["signalRConnected"] = True
         self.dirty = True
         now = dt.utcnow().replace(microsecond=0)
         self.state["latestPulse"] = now
@@ -388,6 +395,7 @@ class Controller:
         """gets site state for all sites and updates the chargers state and config"""
 
         for charger_data in self.chargers_data:
+            charger_data.set_signalr_state(self.easee.sr_is_connected())
             charger_data.check_latest_pulse()
             if charger_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
@@ -398,7 +406,10 @@ class Controller:
             if site_state is not None:
                 charger_data.state = site_state.get_charger_state(charger_id, raw=True)
                 _LOGGER.debug("Charger state: %s ", charger_id)
-                charger_data.config = site_state.get_charger_config(charger_id, raw=True)
+                charger_data.config = site_state.get_charger_config(
+                    charger_id, raw=True
+                )
+                charger_data.set_signalr_state(self.easee.sr_is_connected())
                 charger_data.mark_dirty()
 
         self.update_ha_state()
@@ -407,11 +418,14 @@ class Controller:
         """gets equalizer state for all equalizers"""
 
         for equalizer_data in self.equalizers_data:
+            equalizer_data.set_signalr_state(self.easee.sr_is_connected())
             equalizer_data.check_latest_pulse()
             if equalizer_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
+
             equalizer_data.state = await equalizer_data.product.get_state()
             equalizer_data.config = await equalizer_data.product.get_config()
+            equalizer_data.set_signalr_state(self.easee.sr_is_connected())
             equalizer_data.mark_dirty()
 
         self.update_ha_state()
@@ -421,6 +435,124 @@ class Controller:
 
     def get_chargers(self):
         return self.chargers
+
+    def circuit_check_set_dynamic_current(
+        self, circuit_id, currentP1, currentP2, currentP3
+    ):
+        _LOGGER.debug("circuit_check_set_dynamic_current")
+        if currentP2 is None:
+            currentP2 = currentP1
+        if currentP3 is None:
+            currentP3 = currentP1
+
+        for charger_data in self.chargers_data:
+            if charger_data.circuit.id == circuit_id:
+                if (
+                    charger_data.state["dynamicCircuitCurrentP1"] != currentP1
+                    or charger_data.state["dynamicCircuitCurrentP2"] != currentP2
+                    or charger_data.state["dynamicCircuitCurrentP3"] != currentP3
+                ):
+                    return charger_data.circuit
+                return False
+        return None
+
+    def circuit_check_set_max_current(
+        self, circuit_id, currentP1, currentP2, currentP3
+    ):
+        _LOGGER.debug("circuit_check_set_max_current")
+        if currentP2 is None:
+            currentP2 = currentP1
+        if currentP3 is None:
+            currentP3 = currentP1
+
+        for charger_data in self.chargers_data:
+            if charger_data.circuit.id == circuit_id:
+                if (
+                    charger_data.state["circuitMaxCurrentP1"] != currentP1
+                    or charger_data.state["circuitMaxCurrentP2"] != currentP2
+                    or charger_data.state["circuitMaxCurrentP3"] != currentP3
+                ):
+                    return charger_data.circuit
+                return False
+        return None
+
+    def charger_check_set_dynamic_charger_circuit_current(
+        self, charger_id, currentP1, currentP2, currentP3
+    ):
+        _LOGGER.debug("charger_check_set_dynamic_charger_circuit_current")
+        if currentP2 is None:
+            currentP2 = currentP1
+        if currentP3 is None:
+            currentP3 = currentP1
+
+        for charger_data in self.chargers_data:
+            if charger_data.product.id == charger_id:
+                if (
+                    charger_data.state["dynamicCircuitCurrentP1"] != currentP1
+                    or charger_data.state["dynamicCircuitCurrentP2"] != currentP2
+                    or charger_data.state["dynamicCircuitCurrentP3"] != currentP3
+                ):
+                    return charger_data.product
+                return False
+        return None
+
+    def charger_check_set_max_charger_circuit_current(
+        self, charger_id, currentP1, currentP2, currentP3
+    ):
+        _LOGGER.debug("charger_check_set_max_charger_circuit_current")
+        if currentP2 is None:
+            currentP2 = currentP1
+        if currentP3 is None:
+            currentP3 = currentP1
+
+        for charger_data in self.chargers_data:
+            if charger_data.product.id == charger_id:
+                if (
+                    charger_data.state["circuitMaxCurrentP1"] != currentP1
+                    or charger_data.state["circuitMaxCurrentP2"] != currentP2
+                    or charger_data.state["circuitMaxCurrentP3"] != currentP3
+                ):
+                    return charger_data.product
+                return False
+        return None
+
+    def charger_check_set_max_offline_charger_circuit_current(
+        self, charger_id, currentP1, currentP2, currentP3
+    ):
+        _LOGGER.debug("charger_check_set_max_offline_charger_circuit_current")
+        if currentP2 is None:
+            currentP2 = currentP1
+        if currentP3 is None:
+            currentP3 = currentP1
+
+        for charger_data in self.chargers_data:
+            if charger_data.product.id == charger_id:
+                if (
+                    charger_data.state["offlineMaxCircuitCurrentP1"] != currentP1
+                    or charger_data.state["offlineMaxCircuitCurrentP2"] != currentP2
+                    or charger_data.state["offlineMaxCircuitCurrentP3"] != currentP3
+                ):
+                    return charger_data.product
+                return False
+        return None
+
+    def charger_check_set_dynamic_charger_current(self, charger_id, current):
+        _LOGGER.debug("charger_check_set_dynamic_charger_current")
+        for charger_data in self.chargers_data:
+            if charger_data.product.id == charger_id:
+                if charger_data.state["dynamicChargerCurrent"] != current:
+                    return charger_data.product
+                return False
+        return None
+
+    def charger_check_set_max_charger_current(self, charger_id, current):
+        _LOGGER.debug("charger_check_set_max_charger_current")
+        for charger_data in self.chargers_data:
+            if charger_data.product.id == charger_id:
+                if charger_data.state["maxChargerCurrent"] != current:
+                    return charger_data.product
+                return False
+        return None
 
     def get_circuits(self):
         return self.circuits
