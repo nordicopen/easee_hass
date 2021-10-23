@@ -459,7 +459,6 @@ class Controller:
     def circuit_check_set_max_current(
         self, circuit_id, currentP1, currentP2, currentP3
     ):
-        _LOGGER.debug("circuit_check_set_max_current")
         if currentP2 is None:
             currentP2 = currentP1
         if currentP3 is None:
@@ -479,7 +478,6 @@ class Controller:
     def charger_check_set_dynamic_charger_circuit_current(
         self, charger_id, currentP1, currentP2, currentP3
     ):
-        _LOGGER.debug("charger_check_set_dynamic_charger_circuit_current")
         if currentP2 is None:
             currentP2 = currentP1
         if currentP3 is None:
@@ -499,7 +497,6 @@ class Controller:
     def charger_check_set_max_charger_circuit_current(
         self, charger_id, currentP1, currentP2, currentP3
     ):
-        _LOGGER.debug("charger_check_set_max_charger_circuit_current")
         if currentP2 is None:
             currentP2 = currentP1
         if currentP3 is None:
@@ -519,7 +516,6 @@ class Controller:
     def charger_check_set_max_offline_charger_circuit_current(
         self, charger_id, currentP1, currentP2, currentP3
     ):
-        _LOGGER.debug("charger_check_set_max_offline_charger_circuit_current")
         if currentP2 is None:
             currentP2 = currentP1
         if currentP3 is None:
@@ -537,7 +533,6 @@ class Controller:
         return None
 
     def charger_check_set_dynamic_charger_current(self, charger_id, current):
-        _LOGGER.debug("charger_check_set_dynamic_charger_current")
         for charger_data in self.chargers_data:
             if charger_data.product.id == charger_id:
                 if charger_data.state["dynamicChargerCurrent"] != current:
@@ -546,7 +541,6 @@ class Controller:
         return None
 
     def charger_check_set_max_charger_current(self, charger_id, current):
-        _LOGGER.debug("charger_check_set_max_charger_current")
         for charger_data in self.chargers_data:
             if charger_data.product.id == charger_id:
                 if charger_data.state["maxChargerCurrent"] != current:
