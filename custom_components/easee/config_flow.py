@@ -97,6 +97,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         controller = self.hass.data[DOMAIN]["controller"]
         sites: List[Site] = controller.get_sites()
         sites_multi_select = {x["name"]: x["name"] for x in sites}
+        default_sites = [x["name"] for x in sites]
 
         return self.async_show_form(
             step_id="init",
@@ -105,7 +106,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Optional(
                         CONF_MONITORED_SITES,
                         default=self.config_entry.options.get(
-                            CONF_MONITORED_SITES, sites_multi_select
+                            CONF_MONITORED_SITES, default_sites
                         ),
                     ): cv.multi_select(sites_multi_select),
                     vol.Optional(
