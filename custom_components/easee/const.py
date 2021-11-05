@@ -7,27 +7,20 @@ from homeassistant.components.sensor import (
     STATE_CLASS_MEASUREMENT,
     STATE_CLASS_TOTAL_INCREASING,
 )
-from homeassistant.const import (  # ENTITY_CATEGORY_CONFIG,; ENTITY_CATEGORY_DIAGNOSTIC,
+from homeassistant.const import (
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_POWER,
     DEVICE_CLASS_VOLTAGE,
+    ELECTRIC_CURRENT_AMPERE,
+    ELECTRIC_POTENTIAL_VOLT,
     ENERGY_KILO_WATT_HOUR,
     ENERGY_WATT_HOUR,
+    ENTITY_CATEGORY_CONFIG,
+    ENTITY_CATEGORY_DIAGNOSTIC,
     POWER_KILO_WATT,
     POWER_WATT,
 )
-
-# Compatibility with HA <= 2021.10
-ENTITY_CATEGORY_CONFIG = "config"
-ENTITY_CATEGORY_DIAGNOSTIC = "diagnostic"
-
-# For backwards compatibility for HA before v2021.8
-try:
-    from homeassistant.const import ELECTRIC_CURRENT_AMPERE, ELECTRIC_POTENTIAL_VOLT
-except ImportError:
-    from homeassistant.const import ELECTRICAL_CURRENT_AMPERE as ELECTRIC_CURRENT_AMPERE
-    from homeassistant.const import VOLT as ELECTRIC_POTENTIAL_VOLT
 
 DOMAIN = "easee"
 TIMEOUT = 30
