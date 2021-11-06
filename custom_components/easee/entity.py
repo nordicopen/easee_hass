@@ -153,6 +153,7 @@ class ChargerEntity(Entity):
             name=self.data.product.name,
             manufacturer="Easee",
             model="Charging Robot",
+            configuration_url=f"https://easee.cloud/mypage/products/{self.data.product.id}",
         )
 
     @property
