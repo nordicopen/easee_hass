@@ -4,11 +4,11 @@ Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
 import logging
 from datetime import datetime
-from typing import Callable, Dict, List
+from typing import Callable, List
 
 from homeassistant.const import ENERGY_WATT_HOUR, POWER_WATT
 from homeassistant.helpers import device_registry, entity_registry
-from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity import Entity, DeviceInfo
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.util import dt
 
@@ -146,14 +146,14 @@ class ChargerEntity(Entity):
         return f"{self.data.product.id}_{self._entity_name}"
 
     @property
-    def device_info(self) -> Dict[str, any]:
+    def device_info(self):
         """Return the device information."""
-        return {
-            "identifiers": {(DOMAIN, self.data.product.id)},
-            "name": self.data.product.name,
-            "manufacturer": "Easee",
-            "model": "Charging Robot",
-        }
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.data.product.id)},
+            name=self.data.product.name,
+            manufacturer="Easee",
+            model="Charging Robot",
+        )
 
     @property
     def unit_of_measurement(self):
