@@ -8,7 +8,6 @@ from typing import List
 
 from async_timeout import timeout
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_MONITORED_CONDITIONS
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
 from homeassistant.helpers import aiohttp_client
@@ -33,7 +32,6 @@ from pyeasee.exceptions import (
 
 from .binary_sensor import ChargerBinarySensor, EqualizerBinarySensor
 from .const import (
-    CONF_MONITORED_EQ_CONDITIONS,
     CONF_MONITORED_SITES,
     CUSTOM_UNITS,
     CUSTOM_UNITS_TABLE,
@@ -149,7 +147,7 @@ class ProductData:
             if self.state["isOnline"] is True:
                 self.dirty = True
                 self.state["isOnline"] = False
-                _LOGGER.debug(f"Product {self.product.id} marked offline")
+                _LOGGER.debug("Product %s marked offline", self.product.id)
 
     def update_stream_data(self, data_type, data_id, value):
         if self.state is None:
@@ -163,10 +161,10 @@ class ProductData:
             name = self.streamdata(data_id).name
         except ValueError:
             # Unsupported data
-            _LOGGER.debug(f"Unsupported data id {data_id} {value}")
+            _LOGGER.debug("Unsupported data id %s %s", data_id, value)
             return False
 
-        _LOGGER.debug(f"Callback {self.product.id} {data_id} {name} {value}")
+        _LOGGER.debug("Callback %s %s %s %s", self.product.id, data_id, name, value)
 
         if "_" in name:
             first, second = name.split("_")
@@ -325,7 +323,7 @@ class Controller:
         )
 
         for entity in all_entities:
-            if entity.data.is_dirty():
+            if entity.enabled and entity.data.is_dirty():
                 entity.async_schedule_update_ha_state(True)
 
         for entity in all_entities:
@@ -464,6 +462,7 @@ class Controller:
             state_func=data.get("state_func", None),
             switch_func=data.get("switch_func", None),
             enabled_default=data.get("enabled_default", True),
+            entity_category=data.get("entity_category", None),
         )
         _LOGGER.debug(
             "Adding entity: %s (%s) for product %s",
@@ -489,15 +488,6 @@ class Controller:
         return entity
 
     def _create_entitites(self):
-        monitored_conditions = list(
-            dict.fromkeys(
-                self.config.options.get(CONF_MONITORED_CONDITIONS, [])
-                + [x for x in MANDATORY_EASEE_ENTITIES]
-            )
-        )
-        monitored_eq_conditions = self.config.options.get(
-            CONF_MONITORED_EQ_CONDITIONS, ["status"]
-        )
         self.sensor_entities = []
         self.switch_entities = []
         self.binary_sensor_entities = []
@@ -507,10 +497,7 @@ class Controller:
         all_easee_entities = {**MANDATORY_EASEE_ENTITIES, **OPTIONAL_EASEE_ENTITIES}
 
         for charger_data in self.chargers_data:
-            for key in monitored_conditions:
-                # Fix renamed entities previously configured
-                if key not in all_easee_entities:
-                    continue
+            for key in all_easee_entities:
                 data = all_easee_entities[key]
                 entity_type = data.get("type", "sensor")
 
@@ -523,10 +510,7 @@ class Controller:
                 )
 
         for equalizer_data in self.equalizers_data:
-            for key in monitored_eq_conditions:
-                # Fix renamed entities previously configured
-                if key not in EASEE_EQ_ENTITIES:
-                    continue
+            for key in EASEE_EQ_ENTITIES:
                 data = EASEE_EQ_ENTITIES[key]
                 entity_type = data.get("type", "eq_sensor")
 

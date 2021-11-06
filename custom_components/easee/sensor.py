@@ -5,9 +5,9 @@ Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 
 import logging
 from datetime import timedelta
-from typing import Dict
 
 from homeassistant.components.sensor import SensorEntity
+from homeassistant.helpers.entity import DeviceInfo
 
 from .const import DOMAIN
 from .entity import ChargerEntity
@@ -43,11 +43,12 @@ class EqualizerSensor(ChargerEntity, SensorEntity):
         return self._state
 
     @property
-    def device_info(self) -> Dict[str, any]:
+    def device_info(self):
         """Return the device information."""
-        return {
-            "identifiers": {(DOMAIN, self.data.product.id)},
-            "name": self.data.product.name,
-            "manufacturer": "Easee",
-            "model": "Equalizer",
-        }
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.data.product.id)},
+            name=self.data.product.name,
+            manufacturer="Easee",
+            model="Equalizer",
+            configuration_url=f"https://easee.cloud/mypage/products/{self.data.product.id}",
+        )

@@ -4,11 +4,11 @@ Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
 import logging
 from datetime import datetime
-from typing import Callable, Dict, List
+from typing import Callable, List
 
 from homeassistant.const import ENERGY_WATT_HOUR, POWER_WATT
 from homeassistant.helpers import device_registry, entity_registry
-from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity import Entity, DeviceInfo
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.util import dt
 
@@ -78,6 +78,7 @@ class ChargerEntity(Entity):
         switch_func=None,
         enabled_default=True,
         state_class=None,
+        entity_category=None,
     ):
 
         """Initialize the entity."""
@@ -95,6 +96,7 @@ class ChargerEntity(Entity):
         self._switch_func = switch_func
         self._enabled_default = enabled_default
         self._attr_state_class = state_class
+        self._attr_entity_category = entity_category
 
     async def async_added_to_hass(self) -> None:
         """Entity created."""
@@ -119,11 +121,7 @@ class ChargerEntity(Entity):
         device_entry = dev_reg.async_get(entity_entry.device_id)
 
         _LOGGER.debug("Removing _entity_name: %s", self._entity_name)
-        if (
-            self._entity_name in self.hass.data[DOMAIN]["entities_to_remove"]
-            or self._entity_name in self.hass.data[DOMAIN]["eq_entities_to_remove"]
-            or self.data.site.name in self.hass.data[DOMAIN]["sites_to_remove"]
-        ):
+        if self.data.site.name in self.hass.data[DOMAIN]["sites_to_remove"]:
             if len(async_entries_for_device(ent_reg, entity_entry.device_id)) == 1:
                 dev_reg.async_remove_device(device_entry.id)
                 return
@@ -148,14 +146,15 @@ class ChargerEntity(Entity):
         return f"{self.data.product.id}_{self._entity_name}"
 
     @property
-    def device_info(self) -> Dict[str, any]:
+    def device_info(self):
         """Return the device information."""
-        return {
-            "identifiers": {(DOMAIN, self.data.product.id)},
-            "name": self.data.product.name,
-            "manufacturer": "Easee",
-            "model": "Charging Robot",
-        }
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.data.product.id)},
+            name=self.data.product.name,
+            manufacturer="Easee",
+            model="Charging Robot",
+            configuration_url=f"https://easee.cloud/mypage/products/{self.data.product.id}",
+        )
 
     @property
     def unit_of_measurement(self):
@@ -283,8 +282,8 @@ class ChargerEntity(Entity):
             if self._convert_units_func is not None:
                 self._state = self._convert_units_func(self._state, self._units)
 
-        except IndexError:
-            raise IndexError("Wrong key for entity: %s", self._state_key)
+        except IndexError as exc:
+            raise IndexError(f"Wrong key for entity: {self._state_key}") from exc
         except TypeError:
             pass
         except AttributeError:
