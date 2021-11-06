@@ -73,7 +73,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": None,
         "icon": "mdi:auto-fix",
         "switch_func": "smart_charging",
-        "enabled_default": False,
+        "enabled_default": True,
         "entity_category": ENTITY_CATEGORY_CONFIG,
     },
     "cable_locked": {
@@ -102,7 +102,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": None,
         "icon": "mdi:lock",
         "switch_func": "lockCablePermanently",
-        "enabled_default": False,
+        "enabled_default": True,
         "entity_category": ENTITY_CATEGORY_CONFIG,
     },
     "power": {
@@ -121,7 +121,8 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": None,
-        "enabled_default": False,
+        "enabled_default": True,
+        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
     "lifetime_energy": {
         "key": "state.lifetimeEnergy",
@@ -131,6 +132,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "state_class": STATE_CLASS_TOTAL_INCREASING,
         "icon": "mdi:counter",
+        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
     "energy_per_hour": {
         "key": "state.energyPerHour",
@@ -139,6 +141,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": None,
+        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
     "online": {
         "type": "binary_sensor",
@@ -155,6 +158,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": None,
         "device_class": DEVICE_CLASS_CONNECTIVITY,
         "icon": None,
+        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
     "output_limit": {
         "key": "state.outputCurrent",
@@ -222,6 +226,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
+        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
     "dynamic_circuit_limit": {
         "key": "state.dynamicCircuitCurrentP1",
@@ -557,6 +562,7 @@ EASEE_EQ_ENTITIES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "state_class": STATE_CLASS_TOTAL_INCREASING,
         "icon": None,
+        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
     "export_energy": {
         "key": "state.cumulativeActivePowerExport",
@@ -569,6 +575,7 @@ EASEE_EQ_ENTITIES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "state_class": STATE_CLASS_TOTAL_INCREASING,
         "icon": None,
+        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
     },
 }
 
