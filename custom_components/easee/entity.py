@@ -8,7 +8,7 @@ from typing import Callable, List
 
 from homeassistant.const import ENERGY_WATT_HOUR, POWER_WATT
 from homeassistant.helpers import device_registry, entity_registry
-from homeassistant.helpers.entity import Entity, DeviceInfo
+from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.util import dt
 
