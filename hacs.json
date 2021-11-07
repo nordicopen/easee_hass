@@ -8,5 +8,7 @@
   "homeassistant": "2021.11.0",
   "iot_class": [
     "Cloud Push"
-  ]
+  ],
+  "zip_release": true,
+  "filename": "easee.zip"
 }
