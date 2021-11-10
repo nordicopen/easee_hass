@@ -235,7 +235,7 @@ async def async_setup_services(hass):
         charger_id = call.data.get(CHARGER_ID)
         enable = call.data.get(ATTR_ENABLE, None)
 
-        _LOGGER.debug("execute_service:" + str(call.data))
+        _LOGGER.debug("execute_service: %s", str(call.data))
 
         # Possibly move to use entity id later
         charger = next((c for c in chargers if c.id == charger_id), None)
@@ -258,7 +258,7 @@ async def async_setup_services(hass):
         stop_datetime = call.data.get(ATTR_CHARGEPLAN_STOP_DATETIME)
         repeat = call.data.get(ATTR_CHARGEPLAN_REPEAT)
 
-        _LOGGER.debug("execute_service:" + str(call.data))
+        _LOGGER.debug("execute_service: %s", str(call.data))
 
         charger = next((c for c in chargers if c.id == charger_id), None)
         if charger:
@@ -278,7 +278,7 @@ async def async_setup_services(hass):
         currentP2 = call.data.get(ATTR_SET_CURRENTP2)
         currentP3 = call.data.get(ATTR_SET_CURRENTP3)
 
-        _LOGGER.debug("execute_service:" + str(call.data))
+        _LOGGER.debug("execute_service: %s", str(call.data))
 
         function_name = SERVICE_MAP[call.service]
         compare = function_name["compare_currents"]
@@ -306,7 +306,7 @@ async def async_setup_services(hass):
         currentP2 = call.data.get(ATTR_SET_CURRENTP2)
         currentP3 = call.data.get(ATTR_SET_CURRENTP3)
 
-        _LOGGER.debug("execute_service: " + str(call.service) + " " + str(call.data))
+        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
         function_name = SERVICE_MAP[call.service]
         compare = function_name["compare_currents"]
@@ -332,7 +332,7 @@ async def async_setup_services(hass):
         charger_id = call.data.get(CHARGER_ID)
         current = call.data.get(ATTR_SET_CURRENT)
 
-        _LOGGER.debug("execute_service: " + str(call.service) + " " + str(call.data))
+        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
         function_name = SERVICE_MAP[call.service]
         compare = function_name["compare_currents"]
@@ -360,7 +360,7 @@ async def async_setup_services(hass):
         currency = call.data.get(ATTR_COST_CURRENCY)
         vat = call.data.get(ATTR_COST_VAT)
 
-        _LOGGER.debug("execute_service: " + str(call.service) + " " + str(call.data))
+        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
         charger = next((c for c in chargers if c.id == charger_id), None)
         if charger:
@@ -376,7 +376,7 @@ async def async_setup_services(hass):
         charger_id = call.data.get(CHARGER_ID)
         access_level = call.data.get(ACCESS_LEVEL)
 
-        _LOGGER.debug("execute_service:" + str(call.data))
+        _LOGGER.debug("execute_service: %s", str(call.data))
 
         charger = next((c for c in chargers if c.id == charger_id), None)
         if charger:
