@@ -436,28 +436,15 @@ class Controller:
     def get_chargers(self):
         return self.chargers
 
-    def circuit_check_set_dynamic_current(
-        self, circuit_id, currentP1, currentP2, currentP3
-    ):
-        _LOGGER.debug("circuit_check_set_dynamic_current")
-        if currentP2 is None:
-            currentP2 = currentP1
-        if currentP3 is None:
-            currentP3 = currentP1
-
-        for charger_data in self.chargers_data:
-            if charger_data.circuit.id == circuit_id:
-                if (
-                    charger_data.state["dynamicCircuitCurrentP1"] != currentP1
-                    or charger_data.state["dynamicCircuitCurrentP2"] != currentP2
-                    or charger_data.state["dynamicCircuitCurrentP3"] != currentP3
-                ):
-                    return charger_data.circuit
-                return False
-        return None
-
-    def circuit_check_set_max_current(
-        self, circuit_id, currentP1, currentP2, currentP3
+    def check_circuit_current(
+        self,
+        circuit_id,
+        currentP1,
+        currentP2,
+        currentP3,
+        compareP1,
+        compareP2,
+        compareP3,
     ):
         if currentP2 is None:
             currentP2 = currentP1
@@ -467,16 +454,23 @@ class Controller:
         for charger_data in self.chargers_data:
             if charger_data.circuit.id == circuit_id:
                 if (
-                    charger_data.state["circuitMaxCurrentP1"] != currentP1
-                    or charger_data.state["circuitMaxCurrentP2"] != currentP2
-                    or charger_data.state["circuitMaxCurrentP3"] != currentP3
+                    charger_data.state[compareP1] != currentP1
+                    or charger_data.state[compareP2] != currentP2
+                    or charger_data.state[compareP3] != currentP3
                 ):
                     return charger_data.circuit
                 return False
         return None
 
-    def charger_check_set_dynamic_charger_circuit_current(
-        self, charger_id, currentP1, currentP2, currentP3
+    def check_charger_current(
+        self,
+        charger_id,
+        currentP1,
+        currentP2,
+        currentP3,
+        compareP1,
+        compareP2,
+        compareP3,
     ):
         if currentP2 is None:
             currentP2 = currentP1
@@ -486,64 +480,10 @@ class Controller:
         for charger_data in self.chargers_data:
             if charger_data.product.id == charger_id:
                 if (
-                    charger_data.state["dynamicCircuitCurrentP1"] != currentP1
-                    or charger_data.state["dynamicCircuitCurrentP2"] != currentP2
-                    or charger_data.state["dynamicCircuitCurrentP3"] != currentP3
+                    charger_data.state[compareP1] != currentP1
+                    or charger_data.state[compareP2] != currentP2
+                    or charger_data.state[compareP3] != currentP3
                 ):
-                    return charger_data.product
-                return False
-        return None
-
-    def charger_check_set_max_charger_circuit_current(
-        self, charger_id, currentP1, currentP2, currentP3
-    ):
-        if currentP2 is None:
-            currentP2 = currentP1
-        if currentP3 is None:
-            currentP3 = currentP1
-
-        for charger_data in self.chargers_data:
-            if charger_data.product.id == charger_id:
-                if (
-                    charger_data.state["circuitMaxCurrentP1"] != currentP1
-                    or charger_data.state["circuitMaxCurrentP2"] != currentP2
-                    or charger_data.state["circuitMaxCurrentP3"] != currentP3
-                ):
-                    return charger_data.product
-                return False
-        return None
-
-    def charger_check_set_max_offline_charger_circuit_current(
-        self, charger_id, currentP1, currentP2, currentP3
-    ):
-        if currentP2 is None:
-            currentP2 = currentP1
-        if currentP3 is None:
-            currentP3 = currentP1
-
-        for charger_data in self.chargers_data:
-            if charger_data.product.id == charger_id:
-                if (
-                    charger_data.state["offlineMaxCircuitCurrentP1"] != currentP1
-                    or charger_data.state["offlineMaxCircuitCurrentP2"] != currentP2
-                    or charger_data.state["offlineMaxCircuitCurrentP3"] != currentP3
-                ):
-                    return charger_data.product
-                return False
-        return None
-
-    def charger_check_set_dynamic_charger_current(self, charger_id, current):
-        for charger_data in self.chargers_data:
-            if charger_data.product.id == charger_id:
-                if charger_data.state["dynamicChargerCurrent"] != current:
-                    return charger_data.product
-                return False
-        return None
-
-    def charger_check_set_max_charger_current(self, charger_id, current):
-        for charger_data in self.chargers_data:
-            if charger_data.product.id == charger_id:
-                if charger_data.state["maxChargerCurrent"] != current:
                     return charger_data.product
                 return False
         return None

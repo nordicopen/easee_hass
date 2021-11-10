@@ -144,36 +144,71 @@ SERVICE_MAP = {
     "set_circuit_dynamic_limit": {
         "handler": "circuit_execute_set_current",
         "function_call": "set_dynamic_current",
+        "compare_currents": {
+            "P1": "dynamicCircuitCurrentP1",
+            "P2": "dynamicCircuitCurrentP2",
+            "P3": "dynamicCircuitCurrentP3",
+        },
         "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
     },
     "set_circuit_max_limit": {
         "handler": "circuit_execute_set_current",
         "function_call": "set_max_current",
+        "compare_currents": {
+            "P1": "circuitMaxCurrentP1",
+            "P2": "circuitMaxCurrentP2",
+            "P3": "circuitMaxCurrentP3",
+        },
         "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
     },
     "set_charger_circuit_dynamic_limit": {
         "handler": "charger_execute_set_circuit_current",
         "function_call": "set_dynamic_charger_circuit_current",
+        "compare_currents": {
+            "P1": "dynamicCircuitCurrentP1",
+            "P2": "dynamicCircuitCurrentP2",
+            "P3": "dynamicCircuitCurrentP3",
+        },
         "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
     },
     "set_charger_circuit_max_limit": {
         "handler": "charger_execute_set_circuit_current",
         "function_call": "set_max_charger_circuit_current",
+        "compare_currents": {
+            "P1": "circuitMaxCurrentP1",
+            "P2": "circuitMaxCurrentP2",
+            "P3": "circuitMaxCurrentP3",
+        },
         "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
     },
     "set_charger_circuit_offline_limit": {
         "handler": "charger_execute_set_circuit_current",
         "function_call": "set_max_offline_charger_circuit_current",
+        "compare_currents": {
+            "P1": "offlineMaxCircuitCurrentP1",
+            "P2": "offlineMaxCircuitCurrentP2",
+            "P3": "offlineMaxCircuitCurrentP3",
+        },
         "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
     },
     "set_charger_dynamic_limit": {
         "handler": "charger_execute_set_current",
         "function_call": "set_dynamic_charger_current",
+        "compare_currents": {
+            "P1": "dynamicChargerCurrent",
+            "P2": "dynamicChargerCurrent",
+            "P3": "dynamicChargerCurrent",
+        },
         "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA,
     },
     "set_charger_max_limit": {
         "handler": "charger_execute_set_current",
         "function_call": "set_max_charger_current",
+        "compare_currents": {
+            "P1": "maxChargerCurrent",
+            "P2": "maxChargerCurrent",
+            "P3": "maxChargerCurrent",
+        },
         "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA,
     },
     "set_charging_cost": {
@@ -246,10 +281,16 @@ async def async_setup_services(hass):
         _LOGGER.debug("execute_service:" + str(call.data))
 
         function_name = SERVICE_MAP[call.service]
-        function_call = getattr(
-            controller, "circuit_check_" + function_name["function_call"]
+        compare = function_name["compare_currents"]
+        circuit = controller.check_circuit_current(
+            circuit_id,
+            currentP1,
+            currentP2,
+            currentP3,
+            compare["P1"],
+            compare["P2"],
+            compare["P3"],
         )
-        circuit = function_call(circuit_id, currentP1, currentP2, currentP3)
         if circuit:
             function_call = getattr(circuit, function_name["function_call"])
             return await function_call(currentP1, currentP2, currentP3)
@@ -268,10 +309,16 @@ async def async_setup_services(hass):
         _LOGGER.debug("execute_service: " + str(call.service) + " " + str(call.data))
 
         function_name = SERVICE_MAP[call.service]
-        function_call = getattr(
-            controller, "charger_check_" + function_name["function_call"]
+        compare = function_name["compare_currents"]
+        charger = controller.check_charger_current(
+            charger_id,
+            currentP1,
+            currentP2,
+            currentP3,
+            compare["P1"],
+            compare["P2"],
+            compare["P3"],
         )
-        charger = function_call(charger_id, currentP1, currentP2, currentP3)
         if charger:
             function_call = getattr(charger, function_name["function_call"])
             return await function_call(currentP1, currentP2, currentP3)
@@ -288,10 +335,16 @@ async def async_setup_services(hass):
         _LOGGER.debug("execute_service: " + str(call.service) + " " + str(call.data))
 
         function_name = SERVICE_MAP[call.service]
-        function_call = getattr(
-            controller, "charger_check_" + function_name["function_call"]
+        compare = function_name["compare_currents"]
+        charger = controller.check_charger_current(
+            charger_id,
+            current,
+            current,
+            current,
+            compare["P1"],
+            compare["P2"],
+            compare["P3"],
         )
-        charger = function_call(charger_id, current)
         if charger:
             function_call = getattr(charger, function_name["function_call"])
             return await function_call(current)
