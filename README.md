@@ -17,9 +17,6 @@ completed
 error
 ```
 
-**_Important_**
-This component is on the way to make it into HA as an official component. Help out by liking the PR -> https://github.com/home-assistant/core/pull/40162
-
 ## Installation
 
 There are 2 different methods of installing the custom component
