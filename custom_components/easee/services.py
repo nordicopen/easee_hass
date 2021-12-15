@@ -242,10 +242,14 @@ async def async_setup_services(hass):
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
-            if enable is not None:
-                return await function_call(enable)
-            else:
-                return await function_call()
+            try:
+                if enable is not None:
+                    return await function_call(enable)
+                else:
+                    return await function_call()
+            except Exception:
+                _LOGGER.error("Failed to execute serive: %s", str(call.data))
+                return
 
         _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
@@ -264,9 +268,13 @@ async def async_setup_services(hass):
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
-            return await function_call(
-                schedule_id, dt.as_utc(start_datetime), dt.as_utc(stop_datetime), repeat
-            )
+            try:
+                return await function_call(
+                    schedule_id, dt.as_utc(start_datetime), dt.as_utc(stop_datetime), repeat
+                )
+            except Exception:
+                _LOGGER.error("Failed to execute serivce: %s", str(call.data))
+                return
 
         _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
@@ -293,7 +301,11 @@ async def async_setup_services(hass):
         )
         if circuit:
             function_call = getattr(circuit, function_name["function_call"])
-            return await function_call(currentP1, currentP2, currentP3)
+            try:
+                return await function_call(currentP1, currentP2, currentP3)
+            except Exception:
+                _LOGGER.error("Failed to execute service: %s", str(call.data))
+                return
 
         if circuit is None:
             _LOGGER.error("Could not find circuit %s", circuit_id)
@@ -321,7 +333,11 @@ async def async_setup_services(hass):
         )
         if charger:
             function_call = getattr(charger, function_name["function_call"])
-            return await function_call(currentP1, currentP2, currentP3)
+            try:
+                return await function_call(currentP1, currentP2, currentP3)
+            except Exception:
+                _LOGGER.error("Failed to execute serive: %s", str(call.data))
+                return
 
         if charger is None:
             _LOGGER.error("Could not find charger %s", charger_id)
@@ -347,7 +363,11 @@ async def async_setup_services(hass):
         )
         if charger:
             function_call = getattr(charger, function_name["function_call"])
-            return await function_call(current)
+            try:
+                return await function_call(current)
+            except Exception:
+                _LOGGER.error("Failed to execute serive: %s", str(call.data))
+                return
 
         if charger is None:
             _LOGGER.error("Could not find charger %s", charger_id)
@@ -366,7 +386,11 @@ async def async_setup_services(hass):
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger.site, function_name["function_call"])
-            return await function_call(cost_per_kwh, vat, currency)
+            try:
+                return await function_call(cost_per_kwh, vat, currency)
+            except Exception:
+                _LOGGER.error("Failed to execute serive: %s", str(call.data))
+                return
 
         _LOGGER.error("Could not find charger %s", charger_id)
         raise HomeAssistantError("Could not find charger {}".format(charger_id))
@@ -382,7 +406,11 @@ async def async_setup_services(hass):
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
-            return await function_call(access_level)
+            try:
+                return await function_call(access_level)
+            except Exception:
+                _LOGGER.error("Failed to execute serive: %s", str(call.data))
+                return
 
     for service in SERVICE_MAP:
         data = SERVICE_MAP[service]
