@@ -28,7 +28,10 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         self._state = True
         self.async_write_ha_state()
         function_call = getattr(self.data.product, self._switch_func)
-        await function_call(True)
+        try:
+            await function_call(True)
+        except Exception:
+            _LOGGER.error("Got server error while calling %s", self._switch_func)
 
     async def async_turn_off(self, **kwargs):  # pylint: disable=unused-argument
         """Turn off the switch."""
@@ -37,7 +40,10 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         self._state = False
         self.async_write_ha_state()
         function_call = getattr(self.data.product, self._switch_func)
-        await function_call(False)
+        try:
+            await function_call(False)
+        except Exception:
+            _LOGGER.error("Got server error while calling %s", self._switch_func)
 
     @property
     def is_on(self):

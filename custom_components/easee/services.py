@@ -270,7 +270,10 @@ async def async_setup_services(hass):
             function_call = getattr(charger, function_name["function_call"])
             try:
                 return await function_call(
-                    schedule_id, dt.as_utc(start_datetime), dt.as_utc(stop_datetime), repeat
+                    schedule_id,
+                    dt.as_utc(start_datetime),
+                    dt.as_utc(stop_datetime),
+                    repeat,
                 )
             except Exception:
                 _LOGGER.error("Failed to execute serivce: %s", str(call.data))

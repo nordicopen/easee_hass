@@ -113,14 +113,14 @@ class ProductData:
         try:
             self.schedule = await self.product.get_basic_charge_plan()
         except (TooManyRequestsException, ServerFailureException):
-            _LOGGER.debug("Got server error while fetching schedule")
+            _LOGGER.error("Got server error while fetching schedule")
         except NotFoundException:
             self.schedule = None
 
         try:
             self.weekly_schedule = await self.product.get_weekly_charge_plan()
         except (TooManyRequestsException, ServerFailureException):
-            _LOGGER.debug("Got server error while fetching weekly schedule")
+            _LOGGER.error("Got server error while fetching weekly schedule")
         except NotFoundException:
             self.weekly_schedule = None
 
@@ -423,8 +423,12 @@ class Controller:
             if equalizer_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
 
-            equalizer_data.state = await equalizer_data.product.get_state()
-            equalizer_data.config = await equalizer_data.product.get_config()
+            try:
+                equalizer_data.state = await equalizer_data.product.get_state()
+                equalizer_data.config = await equalizer_data.product.get_config()
+            except Exception:
+                _LOGGER.error("Got server error while polling equalizer state")
+
             equalizer_data.set_signalr_state(self.easee.sr_is_connected())
             equalizer_data.mark_dirty()
 
