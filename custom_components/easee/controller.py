@@ -111,14 +111,14 @@ class ProductData:
         try:
             self.schedule = await self.product.get_basic_charge_plan()
         except (TooManyRequestsException, ServerFailureException):
-            _LOGGER.debug("Got server error while fetching schedule")
+            _LOGGER.error("Got server error while fetching schedule")
         except NotFoundException:
             self.schedule = None
 
         try:
             self.weekly_schedule = await self.product.get_weekly_charge_plan()
         except (TooManyRequestsException, ServerFailureException):
-            _LOGGER.debug("Got server error while fetching weekly schedule")
+            _LOGGER.error("Got server error while fetching weekly schedule")
         except NotFoundException:
             self.weekly_schedule = None
 
@@ -149,10 +149,17 @@ class ProductData:
                 self.state["isOnline"] = False
                 _LOGGER.debug("Product %s marked offline", self.product.id)
 
+    def set_signalr_state(self, state):
+        if self.state is None:
+            return
+
+        self.state["signalRConnected"] = state
+
     def update_stream_data(self, data_type, data_id, value):
         if self.state is None:
             return False
 
+        self.state["signalRConnected"] = True
         self.dirty = True
         now = dt.utcnow().replace(microsecond=0)
         self.state["latestPulse"] = now
@@ -386,6 +393,7 @@ class Controller:
         """gets site state for all sites and updates the chargers state and config"""
 
         for charger_data in self.chargers_data:
+            charger_data.set_signalr_state(self.easee.sr_is_connected())
             charger_data.check_latest_pulse()
             if charger_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
@@ -393,10 +401,14 @@ class Controller:
             site_state = await self.easee.get_site_state(charger_data.site.id)
             charger_id = charger_data.product.id
 
-            charger_data.state = site_state.get_charger_state(charger_id, raw=True)
-            _LOGGER.debug("Charger state: %s ", charger_id)
-            charger_data.config = site_state.get_charger_config(charger_id, raw=True)
-            charger_data.mark_dirty()
+            if site_state is not None:
+                charger_data.state = site_state.get_charger_state(charger_id, raw=True)
+                _LOGGER.debug("Charger state: %s ", charger_id)
+                charger_data.config = site_state.get_charger_config(
+                    charger_id, raw=True
+                )
+                charger_data.set_signalr_state(self.easee.sr_is_connected())
+                charger_data.mark_dirty()
 
         self.update_ha_state()
 
@@ -404,11 +416,18 @@ class Controller:
         """gets equalizer state for all equalizers"""
 
         for equalizer_data in self.equalizers_data:
+            equalizer_data.set_signalr_state(self.easee.sr_is_connected())
             equalizer_data.check_latest_pulse()
             if equalizer_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
-            equalizer_data.state = await equalizer_data.product.get_state()
-            equalizer_data.config = await equalizer_data.product.get_config()
+
+            try:
+                equalizer_data.state = await equalizer_data.product.get_state()
+                equalizer_data.config = await equalizer_data.product.get_config()
+            except Exception:
+                _LOGGER.error("Got server error while polling equalizer state")
+
+            equalizer_data.set_signalr_state(self.easee.sr_is_connected())
             equalizer_data.mark_dirty()
 
         self.update_ha_state()
@@ -418,6 +437,58 @@ class Controller:
 
     def get_chargers(self):
         return self.chargers
+
+    def check_circuit_current(
+        self,
+        circuit_id,
+        currentP1,
+        currentP2,
+        currentP3,
+        compareP1,
+        compareP2,
+        compareP3,
+    ):
+        if currentP2 is None:
+            currentP2 = currentP1
+        if currentP3 is None:
+            currentP3 = currentP1
+
+        for charger_data in self.chargers_data:
+            if charger_data.circuit.id == circuit_id:
+                if (
+                    charger_data.state[compareP1] != currentP1
+                    or charger_data.state[compareP2] != currentP2
+                    or charger_data.state[compareP3] != currentP3
+                ):
+                    return charger_data.circuit
+                return False
+        return None
+
+    def check_charger_current(
+        self,
+        charger_id,
+        currentP1,
+        currentP2,
+        currentP3,
+        compareP1,
+        compareP2,
+        compareP3,
+    ):
+        if currentP2 is None:
+            currentP2 = currentP1
+        if currentP3 is None:
+            currentP3 = currentP1
+
+        for charger_data in self.chargers_data:
+            if charger_data.product.id == charger_id:
+                if (
+                    charger_data.state[compareP1] != currentP1
+                    or charger_data.state[compareP2] != currentP2
+                    or charger_data.state[compareP3] != currentP3
+                ):
+                    return charger_data.product
+                return False
+        return None
 
     def get_circuits(self):
         return self.circuits
