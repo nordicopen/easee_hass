@@ -248,7 +248,9 @@ async def async_setup_services(hass):
                 else:
                     return await function_call()
             except Exception:
-                _LOGGER.error("Failed to execute serive: %s", str(call.data))
+                _LOGGER.error(
+                    f"Failed to execute service: {call.service} with data {call.data}"
+                )
                 return
 
         _LOGGER.error("Could not find charger %s", charger_id)
@@ -339,7 +341,9 @@ async def async_setup_services(hass):
             try:
                 return await function_call(currentP1, currentP2, currentP3)
             except Exception:
-                _LOGGER.error("Failed to execute serive: %s", str(call.data))
+                _LOGGER.error(
+                    f"Failed to execute service: {call.service} with data {call.data}"
+                )
                 return
 
         if charger is None:
@@ -369,7 +373,9 @@ async def async_setup_services(hass):
             try:
                 return await function_call(current)
             except Exception:
-                _LOGGER.error("Failed to execute serive: %s", str(call.data))
+                _LOGGER.error(
+                    f"Failed to execute service: {call.service} with data {call.data}"
+                )
                 return
 
         if charger is None:
@@ -392,7 +398,9 @@ async def async_setup_services(hass):
             try:
                 return await function_call(cost_per_kwh, vat, currency)
             except Exception:
-                _LOGGER.error("Failed to execute serive: %s", str(call.data))
+                _LOGGER.error(
+                    f"Failed to execute service: {call.service} with data {call.data}"
+                )
                 return
 
         _LOGGER.error("Could not find charger %s", charger_id)
@@ -412,7 +420,9 @@ async def async_setup_services(hass):
             try:
                 return await function_call(access_level)
             except Exception:
-                _LOGGER.error("Failed to execute serive: %s", str(call.data))
+                _LOGGER.error(
+                    f"Failed to execute service: {call.service} with data {call.data}"
+                )
                 return
 
     for service in SERVICE_MAP:
