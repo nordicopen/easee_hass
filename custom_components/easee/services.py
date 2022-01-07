@@ -235,7 +235,7 @@ async def async_setup_services(hass):
         charger_id = call.data.get(CHARGER_ID)
         enable = call.data.get(ATTR_ENABLE, None)
 
-        _LOGGER.debug("execute_service: %s", str(call.data))
+        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
         # Possibly move to use entity id later
         charger = next((c for c in chargers if c.id == charger_id), None)
@@ -249,7 +249,9 @@ async def async_setup_services(hass):
                     return await function_call()
             except Exception:
                 _LOGGER.error(
-                    f"Failed to execute service: {call.service} with data {call.data}"
+                    "Failed to execute service: %s with data %s",
+                    str(call.service),
+                    str(call.data),
                 )
                 return
 
@@ -264,7 +266,7 @@ async def async_setup_services(hass):
         stop_datetime = call.data.get(ATTR_CHARGEPLAN_STOP_DATETIME)
         repeat = call.data.get(ATTR_CHARGEPLAN_REPEAT)
 
-        _LOGGER.debug("execute_service: %s", str(call.data))
+        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
         charger = next((c for c in chargers if c.id == charger_id), None)
         if charger:
@@ -278,7 +280,11 @@ async def async_setup_services(hass):
                     repeat,
                 )
             except Exception:
-                _LOGGER.error("Failed to execute serivce: %s", str(call.data))
+                _LOGGER.error(
+                    "Failed to execute service: %s with data %s",
+                    str(call.service),
+                    str(call.data),
+                )
                 return
 
         _LOGGER.error("Could not find charger %s", charger_id)
@@ -291,7 +297,7 @@ async def async_setup_services(hass):
         currentP2 = call.data.get(ATTR_SET_CURRENTP2)
         currentP3 = call.data.get(ATTR_SET_CURRENTP3)
 
-        _LOGGER.debug("execute_service: %s", str(call.data))
+        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
         function_name = SERVICE_MAP[call.service]
         compare = function_name["compare_currents"]
@@ -309,7 +315,11 @@ async def async_setup_services(hass):
             try:
                 return await function_call(currentP1, currentP2, currentP3)
             except Exception:
-                _LOGGER.error("Failed to execute service: %s", str(call.data))
+                _LOGGER.error(
+                    "Failed to execute service: %s with data %s",
+                    str(call.service),
+                    str(call.data),
+                )
                 return
 
         if circuit is None:
@@ -342,7 +352,9 @@ async def async_setup_services(hass):
                 return await function_call(currentP1, currentP2, currentP3)
             except Exception:
                 _LOGGER.error(
-                    f"Failed to execute service: {call.service} with data {call.data}"
+                    "Failed to execute service: %s with data %s",
+                    str(call.service),
+                    str(call.data),
                 )
                 return
 
@@ -374,7 +386,9 @@ async def async_setup_services(hass):
                 return await function_call(current)
             except Exception:
                 _LOGGER.error(
-                    f"Failed to execute service: {call.service} with data {call.data}"
+                    "Failed to execute service: %s with data %s",
+                    str(call.service),
+                    str(call.data),
                 )
                 return
 
@@ -399,7 +413,9 @@ async def async_setup_services(hass):
                 return await function_call(cost_per_kwh, vat, currency)
             except Exception:
                 _LOGGER.error(
-                    f"Failed to execute service: {call.service} with data {call.data}"
+                    "Failed to execute service: %s with data %s",
+                    str(call.service),
+                    str(call.data),
                 )
                 return
 
@@ -411,7 +427,7 @@ async def async_setup_services(hass):
         charger_id = call.data.get(CHARGER_ID)
         access_level = call.data.get(ACCESS_LEVEL)
 
-        _LOGGER.debug("execute_service: %s", str(call.data))
+        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
         charger = next((c for c in chargers if c.id == charger_id), None)
         if charger:
@@ -421,7 +437,9 @@ async def async_setup_services(hass):
                 return await function_call(access_level)
             except Exception:
                 _LOGGER.error(
-                    f"Failed to execute service: {call.service} with data {call.data}"
+                    "Failed to execute service: %s with data %s",
+                    str(call.service),
+                    str(call.data),
                 )
                 return
 
