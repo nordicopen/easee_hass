@@ -455,12 +455,21 @@ class Controller:
 
         for charger_data in self.chargers_data:
             if charger_data.circuit.id == circuit_id:
-                if (
-                    charger_data.state[compareP1] != currentP1
-                    or charger_data.state[compareP2] != currentP2
-                    or charger_data.state[compareP3] != currentP3
-                ):
-                    return charger_data.circuit
+                try:
+                    if (
+                        charger_data.state[compareP1] != currentP1
+                        or charger_data.state[compareP2] != currentP2
+                        or charger_data.state[compareP3] != currentP3
+                    ):
+                        return charger_data.circuit
+                except KeyError:
+                    if (
+                        charger_data.config[compareP1] != currentP1
+                        or charger_data.config[compareP2] != currentP2
+                        or charger_data.config[compareP3] != currentP3
+                    ):
+                        return charger_data.circuit
+
                 return False
         return None
 
@@ -481,12 +490,21 @@ class Controller:
 
         for charger_data in self.chargers_data:
             if charger_data.product.id == charger_id:
-                if (
-                    charger_data.state[compareP1] != currentP1
-                    or charger_data.state[compareP2] != currentP2
-                    or charger_data.state[compareP3] != currentP3
-                ):
-                    return charger_data.product
+                try:
+                    if (
+                        charger_data.state[compareP1] != currentP1
+                        or charger_data.state[compareP2] != currentP2
+                        or charger_data.state[compareP3] != currentP3
+                    ):
+                        return charger_data.product
+                except KeyError:
+                    if (
+                        charger_data.config[compareP1] != currentP1
+                        or charger_data.config[compareP2] != currentP2
+                        or charger_data.config[compareP3] != currentP3
+                    ):
+                        return charger_data.product
+
                 return False
         return None
 
