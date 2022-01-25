@@ -16,11 +16,10 @@ from homeassistant.const import (
     ELECTRIC_POTENTIAL_VOLT,
     ENERGY_KILO_WATT_HOUR,
     ENERGY_WATT_HOUR,
-    ENTITY_CATEGORY_CONFIG,
-    ENTITY_CATEGORY_DIAGNOSTIC,
     POWER_KILO_WATT,
     POWER_WATT,
 )
+from homeassistant.helpers.entity import EntityCategory
 
 DOMAIN = "easee"
 TIMEOUT = 30
@@ -74,7 +73,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "icon": "mdi:auto-fix",
         "switch_func": "smart_charging",
         "enabled_default": True,
-        "entity_category": ENTITY_CATEGORY_CONFIG,
+        "entity_category": EntityCategory.CONFIG,
     },
     "cable_locked": {
         "type": "binary_sensor",
@@ -88,7 +87,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_LOCK,
         "icon": None,
         "state_func": lambda state: not bool(state["cableLocked"]),
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "cable_locked_permanently": {
         "type": "switch",
@@ -103,7 +102,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "icon": "mdi:lock",
         "switch_func": "lockCablePermanently",
         "enabled_default": True,
-        "entity_category": ENTITY_CATEGORY_CONFIG,
+        "entity_category": EntityCategory.CONFIG,
     },
     "power": {
         "key": "state.totalPower",
@@ -122,7 +121,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": None,
         "enabled_default": True,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "lifetime_energy": {
         "key": "state.lifetimeEnergy",
@@ -132,7 +131,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "state_class": STATE_CLASS_TOTAL_INCREASING,
         "icon": "mdi:counter",
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "energy_per_hour": {
         "key": "state.energyPerHour",
@@ -141,7 +140,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": "round_1_dec",
         "device_class": DEVICE_CLASS_ENERGY,
         "icon": None,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "online": {
         "type": "binary_sensor",
@@ -159,7 +158,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": None,
         "device_class": DEVICE_CLASS_CONNECTIVITY,
         "icon": None,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "output_limit": {
         "key": "state.outputCurrent",
@@ -169,7 +168,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "current": {
         "key": "state.inCurrentT2",
@@ -193,7 +192,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "circuit_current": {
         "key": "state.circuitTotalPhaseConductorCurrentL1",
@@ -227,7 +226,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "dynamic_circuit_limit": {
         "key": "state.dynamicCircuitCurrentP1",
@@ -252,7 +251,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "max_circuit_limit": {
         "key": "config.circuitMaxCurrentP1",
@@ -277,7 +276,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "dynamic_charger_limit": {
         "key": "state.dynamicChargerCurrent",
@@ -289,7 +288,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "offline_circuit_limit": {
         "key": "state.offlineMaxCircuitCurrentP1",
@@ -314,7 +313,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "max_charger_limit": {
         "key": "config.maxChargerCurrent",
@@ -326,7 +325,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": DEVICE_CLASS_CURRENT,
         "icon": None,
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "voltage": {
         "key": "state.inVoltageT2T3",
@@ -348,7 +347,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "state_class": STATE_CLASS_MEASUREMENT,
         "icon": None,
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "reason_for_no_current": {
         "key": "state.reasonForNoCurrent",
@@ -378,7 +377,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": None,
         "icon": "mdi:current-ac",
         "switch_func": "enable_idle_current",
-        "entity_category": ENTITY_CATEGORY_CONFIG,
+        "entity_category": EntityCategory.CONFIG,
     },
     "update_available": {
         "type": "binary_sensor",
@@ -394,7 +393,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "state_func": lambda state: int(state["chargerFirmware"])
         < int(state["latestFirmware"]),
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "basic_schedule": {
         "type": "binary_sensor",
@@ -412,7 +411,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "icon": "mdi:clock-check",
         "state_func": lambda schedule: bool(schedule.isEnabled) or False,
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "weekly_schedule": {
         "type": "binary_sensor",
@@ -440,7 +439,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "icon": "mdi:clock-check",
         "state_func": lambda weekly_schedule: bool(weekly_schedule.isEnabled) or False,
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "cost_per_kwh": {
         "key": "site.costPerKWh",
@@ -456,7 +455,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": None,
         "icon": "mdi:currency-usd",
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
 }
 
@@ -529,7 +528,7 @@ EASEE_EQ_ENTITIES = {
             )
         ),
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "current": {
         "key": "state.currentL1",
@@ -551,7 +550,7 @@ EASEE_EQ_ENTITIES = {
             )
         ),
         "enabled_default": False,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "import_energy": {
         "key": "state.cumulativeActivePowerImport",
@@ -564,7 +563,7 @@ EASEE_EQ_ENTITIES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "state_class": STATE_CLASS_TOTAL_INCREASING,
         "icon": None,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "export_energy": {
         "key": "state.cumulativeActivePowerExport",
@@ -577,7 +576,7 @@ EASEE_EQ_ENTITIES = {
         "device_class": DEVICE_CLASS_ENERGY,
         "state_class": STATE_CLASS_TOTAL_INCREASING,
         "icon": None,
-        "entity_category": ENTITY_CATEGORY_DIAGNOSTIC,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
 }
 
