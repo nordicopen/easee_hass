@@ -1,36 +1,37 @@
-name-template: 'Example title - v$NEXT_PATCH_VERSION'
-tag-template: 'v$NEXT_PATCH_VERSION'
+name-template: "Example title - v$NEXT_PATCH_VERSION"
+tag-template: "v$NEXT_PATCH_VERSION"
 exclude-labels:
-  - 'skip-changelog'
+  - "skip-changelog"
 categories:
-  - title: 'New Features'
+  - title: "New Features"
     labels:
-      - 'feature'
-      - 'enhancement'
-  - title: 'Bug Fixes'
+      - "feature"
+      - "enhancement"
+  - title: "Bug Fixes"
     labels:
-      - 'fix'
-      - 'bugfix'
-      - 'bug'
-  - title: 'Dependencies'
+      - "fix"
+      - "bugfix"
+      - "bug"
+  - title: "Dependencies"
     labels:
-      - 'dependencies'
-  - title: 'Maintenance'
-    label: 'chore'
-change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+      - "dependencies"
+  - title: "Maintenance"
+    label: "chore"
+change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 
 template: |
+  [![Downloads for this release](https://img.shields.io/github/downloads/fondberg/easee_hass/v$RESOLVED_VERSION/total.svg)](https://github.com/fondberg/easee_hass/releases/v$RESOLVED_VERSION)
+
   ## Changes
 
   $CHANGES
-  
+
 autolabeler:
-  - label: 'chore'
+  - label: "chore"
     files:
-      - '*.md'
-      - '.github/*'
-  - label: 'bugfix'
+      - "*.md"
+      - ".github/*"
+  - label: "bugfix"
     title:
-      - '/fix/i'
- 
+      - "/fix/i"
