@@ -88,16 +88,17 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Manage the options."""
 
         errors = {}
+        controller = self.hass.data[DOMAIN]["controller"]
+        sites: List[Site] = controller.get_sites()
+        sites_multi_select = {x["name"]: x["name"] for x in sites}
+        default_sites = [x["name"] for x in sites]
+
         if user_input is not None:
             if len(user_input[CONF_MONITORED_SITES]) == 0:
                 errors["base"] = "no_sites"
             else:
                 self.options.update(user_input)
-                return await self._update_options()
-        controller = self.hass.data[DOMAIN]["controller"]
-        sites: List[Site] = controller.get_sites()
-        sites_multi_select = {x["name"]: x["name"] for x in sites}
-        default_sites = [x["name"] for x in sites]
+                return await self._update_options(default_sites)
 
         return self.async_show_form(
             step_id="init",
@@ -118,10 +119,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             errors=errors,
         )
 
-    async def _update_options(self):
+    async def _update_options(self, all_sites):
         self.hass.data[DOMAIN]["sites_to_remove"] = [
             cond
-            for cond in self.prev_options.get(CONF_MONITORED_SITES, {})
+            for cond in self.prev_options.get(CONF_MONITORED_SITES, all_sites)
             if cond not in self.options[CONF_MONITORED_SITES]
         ]
         return self.async_create_entry(title="", data=self.options)
