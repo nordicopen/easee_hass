@@ -1,11 +1,11 @@
 {
   "domain": "easee",
   "name": "Easee EV charger",
-  "version": "0.9.38",
+  "version": "0.9.39",
   "documentation": "https://github.com/fondberg/easee_hass",
   "issue_tracker": "https://github.com/fondberg/easee_hass/issues",
   "requirements": [
-    "pyeasee==0.7.41"
+    "pyeasee==0.7.42"
   ],
   "config_flow": true,
   "codeowners": [
