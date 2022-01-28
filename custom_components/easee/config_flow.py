@@ -1,12 +1,15 @@
 """Config flow to configure Easee component."""
+from __future__ import annotations
+
 import logging
-from typing import List, Optional
+from typing import Any, List, Optional
 
 import voluptuous as vol
 from aiohttp import ClientConnectionError
 from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
+from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
@@ -23,6 +26,12 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
 
     VERSION = 2
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_PUSH
+
+    def __init__(self):
+        """Setup the config flow."""
+
+        self.sites = {}
+        self.data = {}
 
     @staticmethod
     @callback
@@ -42,13 +51,25 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
         if user_input is not None:
             username = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
+            self.data = user_input
 
             try:
                 client_session = aiohttp_client.async_get_clientsession(self.hass)
                 easee = Easee(username, password, client_session)
                 # Check that login is possible
                 await easee.connect()
-                return self.async_create_entry(title=username, data=user_input)
+                the_sites: List[Site] = await easee.get_sites()
+                self.sites = [site.name for site in the_sites]
+
+                if len(self.sites) == 1:
+                    return self.async_create_entry(
+                        title=self.data[CONF_USERNAME],
+                        data=self.data,
+                        options={CONF_MONITORED_SITES: self.sites},
+                    )
+
+                # Account has more than one site, select sites to add
+                return await self.async_step_sites()
 
             except AuthorizationFailedException:
                 errors["base"] = "auth_failure"
@@ -66,6 +87,31 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
             step_id="user",
             data_schema=vol.Schema(
                 {vol.Required(CONF_USERNAME): str, vol.Required(CONF_PASSWORD): str}
+            ),
+            errors=errors,
+        )
+
+    async def async_step_sites(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+
+        errors = {}
+        if user_input is not None:
+            if len(user_input[CONF_MONITORED_SITES]) > 0:
+                return self.async_create_entry(
+                    title=self.data[CONF_USERNAME], data=self.data, options=user_input
+                )
+            else:
+                errors["base"] = "no_sites"
+
+        return self.async_show_form(
+            step_id="sites",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(
+                        CONF_MONITORED_SITES, default=self.sites
+                    ): cv.multi_select(self.sites)
+                }
             ),
             errors=errors,
         )

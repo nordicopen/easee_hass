@@ -6,7 +6,8 @@
     "error": {
       "auth_failure": "Unable to connect to Easee. Check your username and password.",
       "connection_failure": "Unable to connect to Easee. Test again later.",
-      "refused_failure": "Connection refused to Easee. Test again later."
+      "refused_failure": "Connection refused to Easee. Test again later.",
+      "no_sites": "No monitored sites selected"
     },
     "step": {
       "user": {
@@ -16,6 +17,13 @@
         },
         "description": "Please enter the username and password for your Easee account",
         "title": "Connect to Easee"
+      },
+      "sites": {
+        "data": {
+          "monitored_sites": "Sites"
+        },
+        "description": "Select sites to monitor",
+        "title": "Easee EV Charger"
       }
     }
   },
