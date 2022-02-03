@@ -23,7 +23,7 @@ from homeassistant.helpers.entity import EntityCategory
 
 DOMAIN = "easee"
 TIMEOUT = 30
-VERSION = "0.9.39"
+VERSION = "0.9.40"
 CONF_MONITORED_SITES = "monitored_sites"
 CUSTOM_UNITS = "custom_units"
 PLATFORMS = ("sensor", "switch", "binary_sensor")
