@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release_zip_file:
+    name: Prepare release asset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      # Pack the easee dir as a zip and upload to the release
+      - name: ZIP easee Dir
+        run: |
+          cd ${{ github.workspace }}/custom_components/easee
+          zip easee.zip -r ./
+      - name: Upload zip to release
+        uses: svenstaro/upload-release-action@v1-release
+
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ github.workspace }}/custom_components/easee/easee.zip
+          asset_name: easee.zip
+          tag: ${{ github.ref }}
+          overwrite: true
