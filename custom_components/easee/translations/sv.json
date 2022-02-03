@@ -6,7 +6,8 @@
     "error": {
       "auth_failure": "Autentisering misslyckades. Kontrollera användarnamn och lösenord.",
       "connection_failure": "Kan inte ansluta till Easee. Försök igen senare.",
-      "refused_failure": "Anslutning nekades till Easee. Försök igen senare."
+      "refused_failure": "Anslutning nekades till Easee. Försök igen senare.",
+      "no_sites": "Ingen plats vald"
     },
     "step": {
       "user": {
@@ -16,6 +17,13 @@
         },
         "description": "Ange användarnamn och lösenord för ditt Easee-konto",
         "title": "Anslut till Easee"
+      },
+      "sites": {
+        "data": {
+          "monitored_sites": "Platser"
+        },
+        "description": "Välj platser att monitorera",
+        "title": "Easee EV Charger"
       }
     }
   },
