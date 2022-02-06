@@ -23,6 +23,8 @@ change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add
 template: |
   [![Downloads for this release](https://img.shields.io/github/downloads/fondberg/easee_hass/v$RESOLVED_VERSION/total.svg)](https://github.com/fondberg/easee_hass/releases/v$RESOLVED_VERSION)
 
+  ### Don't forget to run `make lint` and `make bump` before releasing new version
+
   ## Changes
 
   $CHANGES
