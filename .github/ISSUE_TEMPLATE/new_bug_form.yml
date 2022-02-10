@@ -1,0 +1,55 @@
+name: Report an issue
+description: Report an issue with Easee for Home Assistant.
+labels: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue form is for reporting bugs only!
+        Please make sure that you have the latest version of Easee integration and that your Home Assistant is also upgraded to the latest version.
+
+        If you have a feature or enhancement request, please use the applicable form
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: The problem
+      description: >-
+        Describe the issue you are experiencing here to communicate to the
+        maintainers. Tell us what you were trying to do and what happened.
+
+        Provide a clear and concise description of what the problem is.
+  - type: markdown
+    attributes:
+      value: |
+        ## Environment
+  - type: input
+    id: version_easee
+    validations:
+      required: true
+    attributes:
+      label: Version of Easee integration having the issue?
+      placeholder: easee-
+      description: >
+        Can be found in the Configuration panel -> Info.
+  - type: input
+    id: version
+    validations:
+      required: true
+    attributes:
+      label: Version of Home Assistant Core having the issue?
+      placeholder: core-
+      description: >
+        Can be found in the Configuration panel -> Info.
+  - type: textarea
+    attributes:
+      label: Anything in the logs that might be useful for us?
+      description: For example, error message, or stack traces.
+      render: txt
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: >
+        If you have any additional information for us, use the field below.
+        Please note, you can attach screenshots or screen recordings here, by
+        setting the cursor in the field below and dragging and dropping files into the box.

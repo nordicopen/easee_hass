@@ -1,0 +1,43 @@
+name: Support request
+description: Ask support questions.
+labels: support
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is for support and other questions!
+        Make sure that yo have updated the integration to the latest version.
+        Check if there are similar requests already. If so, please add your request as a comment to that issue.
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Question
+      description: >-
+        Describe what you need help with.
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Environment
+  - type: input
+    id: version_easee
+    validations:
+      required: true
+    attributes:
+      label: What version of the integration are you using?
+      placeholder: easee-
+      description: >
+        Can be found in the Configuration panel -> Info.
+  - type: textarea
+    attributes:
+      label: Anything in the logs that might be useful for us?
+      description: For example diagnostic downloads, error message, or stack traces.
+      render: txt
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: >
+        If you have any additional information for us, use the field below.
+        Please note, you can attach screenshots or screen recordings here, by
+        setting the cursor in the field below and dragging and dropping files into the box.
