@@ -1,0 +1,32 @@
+{
+  "state" : {
+    "easee__status" : {
+      "disconnected" : "Kein Fahrzeug verbunden",
+      "awaiting_start" : "Warten auf Start",
+      "charging" : "Lädt",
+      "error" : "Fehler",
+      "completed" : "Abgeschlossen",
+      "ready_to_charge" : "Bereit zum Laden"
+    },
+    "easee__reason_no_current" : {
+      "none" : "Keiner",
+      "ok" : "OK",
+      "max_circuit_current_too_low" : "Max Schaltkreisstrom zu niedrig",
+      "max_dynamic_circuit_current_too_low" : "Max dynamischer Schaltkreisstrom zu niedrig",
+      "max_dynamic_offline_fallback_circuit_current_too_low" : "Max dynamischer offline Schaltkreisstrom zu niedrig",
+      "circuit_fuse_too_low" : "Sicherung zu gering",
+      "waiting_in_queue" : "In Warteschlange",
+      "waiting_in_fully" : "Warten",
+      "illegal_grid_type" : "Ungültiger Stromnetztyp",
+      "no_current_request" : "Keine Stromanfrage",
+      "not_requesting_current" : "Strom wird nicht angefragt",
+      "max_charger_current_too_low" : "Max Charger Strom zu niedrig",
+      "max_dynamic_charger_current_too_low" : "Max dynamischer Charger Strom zu niedrig",
+      "charger_disabled" : "Charger deaktiviert",
+      "pending_schedule" : "Warten auf Zeitplan",
+      "pending_authorization" : "Warten auf Autorisierung",
+      "charger_in_error_state" : "Charger in Fehlerzustand",
+      "undefined" : "Unbestimmt"
+    }
+  }
+}
