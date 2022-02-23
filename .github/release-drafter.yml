@@ -12,6 +12,9 @@ categories:
       - "fix"
       - "bugfix"
       - "bug"
+  - title: "Translation"
+    labels:
+      - "translation"
   - title: "Dependencies"
     labels:
       - "dependencies"
@@ -37,3 +40,6 @@ autolabeler:
   - label: "bugfix"
     title:
       - "/fix/i"
+  - label: "translation"
+    title:
+      - "/translation/i"
