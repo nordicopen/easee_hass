@@ -1,0 +1,56 @@
+{
+  "config" : {
+    "abort" : {
+      "already_setup" : "Sie können nur eine einzige Easee Verbindung konfigurieren."
+    },
+    "error" : {
+      "auth_failure" : "Verbindung zu Easee nicht möglich. Prüfen Sie Username und Passwort.",
+      "connection_failure" : "Verbindung zu Easee nicht möglich. Versuchen Sie es später erneut.",
+      "refused_failure" : "Verbindung zu Easee abgelehnt. Versuchen Sie es später erneut.",
+      "no_sites" : "Keine Standorte ausgewählt."
+    },
+    "step" : {
+      "user" : {
+        "data" : {
+          "password" : "Passwort",
+          "username" : "Username"
+        },
+        "description" : "Bitte geben Sie Username und Passwort für Ihren Easee Account an",
+        "title" : "Mit Easee verbinden"
+      },
+      "sites" : {
+        "data" : {
+          "monitored_sites" : "Standorte"
+        },
+        "description" : "Wählen Sie zu überwachende Standorte aus",
+        "title" : "Easee EV Charger"
+      }
+    }
+  },
+  "options" : {
+    "step" : {
+      "init" : {
+        "data" : {
+          "monitored_conditions" : "Charger Sensoren",
+          "monitored_eq_conditions" : "Equalizer Sensoren",
+          "measured_consumption_days" : "Verbrauchsanzeige Tage",
+          "custom_units" : "Einheiten",
+          "monitored_sites" : "Standorte"
+        },
+        "description" : "Optionen wählen",
+        "title" : "Easee EV Charger"
+      }
+    },
+    "error" : {
+      "no_sites" : "Keine Standorte ausgewählt"
+    }
+  },
+  "system_health" : {
+    "info" : {
+      "reach_easee_cloud" : "Easee Cloud erreichbar",
+      "component_version" : "Version",
+      "connected2stream" : "Mit Signalr verbunden"
+    }
+  },
+  "title" : "Easee EV Charger"
+}
