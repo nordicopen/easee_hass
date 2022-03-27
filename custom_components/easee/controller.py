@@ -290,12 +290,13 @@ class Controller:
                     )
                     self.circuits.append(circuit)
                     for charger in circuit.get_chargers():
-                        _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
-                        self.chargers.append(charger)
-                        charger_data = ProductData(
-                            self.event_loop, charger, site, ChargerStreamData, circuit
-                        )
-                        self.chargers_data.append(charger_data)
+                        if charger.id is not None:
+                            _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
+                            self.chargers.append(charger)
+                            charger_data = ProductData(
+                                self.event_loop, charger, site, ChargerStreamData, circuit
+                            )
+                            self.chargers_data.append(charger_data)
 
         self._init_count = 0
         self.trackers = []
