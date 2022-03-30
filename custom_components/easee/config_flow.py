@@ -139,6 +139,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         sites_multi_select = {x["name"]: x["name"] for x in sites}
         default_sites = [x["name"] for x in sites]
 
+        # Remove entries that are renamed or deleted in Easee cloud
+        for x in self.config_entry.options.get(CONF_MONITORED_SITES):
+            if x not in default_sites:
+                self.config_entry.options[CONF_MONITORED_SITES].remove(x)
+
         if user_input is not None:
             if len(user_input[CONF_MONITORED_SITES]) == 0:
                 errors["base"] = "no_sites"
