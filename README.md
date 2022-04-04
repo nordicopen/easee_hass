@@ -4,7 +4,7 @@
 
 # Easee EV charger component for Home Assistant
 
-Custom component to support Easee EV chargers.
+Custom component to support Easee EV chargers and equalizers.
 
 The status sensor is the default sensor and has the following values
 
