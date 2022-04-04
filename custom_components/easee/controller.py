@@ -35,6 +35,7 @@ from .const import (
     CONF_MONITORED_SITES,
     CUSTOM_UNITS,
     CUSTOM_UNITS_TABLE,
+    DOMAIN,
     EASEE_EQ_ENTITIES,
     MANDATORY_EASEE_ENTITIES,
     OPTIONAL_EASEE_ENTITIES,
@@ -220,6 +221,7 @@ class Controller:
         self.sensor_entities = []
         self.equalizer_sensor_entities = []
         self.equalizer_binary_sensor_entities = []
+        self.diagnostics = {}
 
     def __del__(self):
         _LOGGER.debug("Controller deleted")
@@ -265,6 +267,7 @@ class Controller:
             return None
 
         self.sites: List[Site] = await self.easee.get_sites()
+        self.diagnostics["sites"] = self.sites
 
         self.monitored_sites = self.config.options.get(
             CONF_MONITORED_SITES, [site.name for site in self.sites]
@@ -275,7 +278,8 @@ class Controller:
                 _LOGGER.debug("Found site (unmonitored): %s %s", site.id, site.name)
             else:
                 _LOGGER.debug("Found site (monitored): %s %s", site.id, site.name)
-                for equalizer in site.get_equalizers():
+                equalizers = site.get_equalizers()
+                for equalizer in equalizers:
                     _LOGGER.debug(
                         "Found equalizer: %s %s", equalizer.id, equalizer.name
                     )
@@ -284,20 +288,28 @@ class Controller:
                         self.event_loop, equalizer, site, EqualizerStreamData
                     )
                     self.equalizers_data.append(equalizer_data)
-                for circuit in site.get_circuits():
+                circuits = site.get_circuits()
+                for circuit in circuits:
                     _LOGGER.debug(
                         "Found circuit: %s %s", circuit.id, circuit["panelName"]
                     )
                     self.circuits.append(circuit)
                     for charger in circuit.get_chargers():
                         if charger.id is not None:
-                            _LOGGER.debug("Found charger: %s %s", charger.id, charger.name)
+                            _LOGGER.debug(
+                                "Found charger: %s %s", charger.id, charger.name
+                            )
                             self.chargers.append(charger)
                             charger_data = ProductData(
-                                self.event_loop, charger, site, ChargerStreamData, circuit
+                                self.event_loop,
+                                charger,
+                                site,
+                                ChargerStreamData,
+                                circuit,
                             )
                             self.chargers_data.append(charger_data)
 
+        self.hass.data[DOMAIN]["diagnostics"] = self.diagnostics
         self._init_count = 0
         self.trackers = []
 
