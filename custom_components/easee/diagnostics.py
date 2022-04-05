@@ -19,16 +19,10 @@ TO_REDACT_DATA = {}
 TO_REDACT_SITES = {
     "id",
     "siteKey",
-    "installerName",
-    "installerPhoneNumber",
-    "ownerName",
-    "ownerPhoneNumber",
+    "address",
+    "contactInfo",
     "siteId",
     "masterBackPlateId",
-    "street",
-    "buildingNumber",
-    "zip",
-    "area",
 }
 
 
