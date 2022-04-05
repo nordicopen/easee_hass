@@ -29,8 +29,8 @@ class ChargerSensor(ChargerEntity, SensorEntity):
     """Implementation of Easee charger sensor."""
 
     @property
-    def state(self):
-        """Return status."""
+    def native_value(self):
+        """Return native value of sensor."""
         return self._state
 
 
@@ -38,8 +38,8 @@ class EqualizerSensor(ChargerEntity, SensorEntity):
     """Implementation of Easee equalizer sensor."""
 
     @property
-    def state(self):
-        """Return status."""
+    def native_value(self):
+        """Return native value of sensor."""
         return self._state
 
     @property

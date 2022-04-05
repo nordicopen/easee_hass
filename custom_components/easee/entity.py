@@ -157,8 +157,8 @@ class ChargerEntity(Entity):
         )
 
     @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement of this entity, if any."""
+    def native_unit_of_measurement(self):
+        """Return the native unit of measurement of this entity, if any."""
         return self._units
 
     @property
