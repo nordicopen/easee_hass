@@ -1,23 +1,14 @@
 """Easee Charger constants."""
-from homeassistant.components.binary_sensor import (
-    DEVICE_CLASS_CONNECTIVITY,
-    DEVICE_CLASS_LOCK,
-)
-from homeassistant.components.sensor import (
-    STATE_CLASS_MEASUREMENT,
-    STATE_CLASS_TOTAL_INCREASING,
-)
+from homeassistant.components.binary_sensor import BinarySensorDeviceClass
+from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
-    DEVICE_CLASS_CURRENT,
-    DEVICE_CLASS_ENERGY,
-    DEVICE_CLASS_POWER,
-    DEVICE_CLASS_VOLTAGE,
     ELECTRIC_CURRENT_AMPERE,
     ELECTRIC_POTENTIAL_VOLT,
     ENERGY_KILO_WATT_HOUR,
     ENERGY_WATT_HOUR,
     POWER_KILO_WATT,
     POWER_WATT,
+    Platform,
 )
 from homeassistant.helpers.entity import EntityCategory
 
@@ -26,7 +17,7 @@ TIMEOUT = 30
 VERSION = "0.9.42"
 CONF_MONITORED_SITES = "monitored_sites"
 CUSTOM_UNITS = "custom_units"
-PLATFORMS = ("sensor", "switch", "binary_sensor")
+PLATFORMS = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.SWITCH]
 LISTENER_FN_CLOSE = "update_listener_close_fn"
 CUSTOM_UNITS_OPTIONS = {
     POWER_KILO_WATT: f"Power {POWER_KILO_WATT} to {POWER_WATT}",
@@ -84,7 +75,7 @@ OPTIONAL_EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "device_class": DEVICE_CLASS_LOCK,
+        "device_class": BinarySensorDeviceClass.LOCK,
         "icon": None,
         "state_func": lambda state: not bool(state["cableLocked"]),
         "entity_category": EntityCategory.DIAGNOSTIC,
@@ -109,8 +100,8 @@ OPTIONAL_EASEE_ENTITIES = {
         "attrs": [],
         "units": POWER_KILO_WATT,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_POWER,
-        "state_class": STATE_CLASS_MEASUREMENT,
+        "device_class": SensorDeviceClass.POWER,
+        "state_class": SensorStateClass.MEASUREMENT,
         "icon": None,
     },
     "session_energy": {
@@ -118,7 +109,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "attrs": [],
         "units": ENERGY_KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_ENERGY,
+        "device_class": SensorDeviceClass.ENERGY,
         "icon": None,
         "enabled_default": True,
         "entity_category": EntityCategory.DIAGNOSTIC,
@@ -128,8 +119,8 @@ OPTIONAL_EASEE_ENTITIES = {
         "attrs": [],
         "units": ENERGY_KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_ENERGY,
-        "state_class": STATE_CLASS_TOTAL_INCREASING,
+        "device_class": SensorDeviceClass.ENERGY,
+        "state_class": SensorStateClass.TOTAL_INCREASING,
         "icon": "mdi:counter",
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
@@ -138,7 +129,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "attrs": [],
         "units": ENERGY_KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_ENERGY,
+        "device_class": SensorDeviceClass.ENERGY,
         "icon": None,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
@@ -156,7 +147,7 @@ OPTIONAL_EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "device_class": DEVICE_CLASS_CONNECTIVITY,
+        "device_class": BinarySensorDeviceClass.CONNECTIVITY,
         "icon": None,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
@@ -165,7 +156,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "attrs": [],
         "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_CURRENT,
+        "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
         "enabled_default": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
@@ -180,8 +171,8 @@ OPTIONAL_EASEE_ENTITIES = {
         ],
         "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_CURRENT,
-        "state_class": STATE_CLASS_MEASUREMENT,
+        "device_class": SensorDeviceClass.CURRENT,
+        "state_class": SensorStateClass.MEASUREMENT,
         "icon": None,
         "state_func": lambda state: float(
             max(
@@ -210,7 +201,7 @@ OPTIONAL_EASEE_ENTITIES = {
         ],
         "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_CURRENT,
+        "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
         "state_func": lambda state: float(
             max(
@@ -241,7 +232,7 @@ OPTIONAL_EASEE_ENTITIES = {
         ],
         "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_0_dec",
-        "device_class": DEVICE_CLASS_CURRENT,
+        "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
         "state_func": lambda state: float(
             max(
@@ -266,7 +257,7 @@ OPTIONAL_EASEE_ENTITIES = {
         ],
         "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_0_dec",
-        "device_class": DEVICE_CLASS_CURRENT,
+        "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
         "state_func": lambda config: float(
             max(
@@ -285,7 +276,7 @@ OPTIONAL_EASEE_ENTITIES = {
         ],
         "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_0_dec",
-        "device_class": DEVICE_CLASS_CURRENT,
+        "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
         "enabled_default": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
@@ -303,7 +294,7 @@ OPTIONAL_EASEE_ENTITIES = {
         ],
         "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_0_dec",
-        "device_class": DEVICE_CLASS_CURRENT,
+        "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
         "state_func": lambda state: float(
             max(
@@ -322,7 +313,7 @@ OPTIONAL_EASEE_ENTITIES = {
         ],
         "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_0_dec",
-        "device_class": DEVICE_CLASS_CURRENT,
+        "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
         "enabled_default": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
@@ -343,8 +334,8 @@ OPTIONAL_EASEE_ENTITIES = {
         ],
         "units": ELECTRIC_POTENTIAL_VOLT,
         "convert_units_func": "round_0_dec",
-        "device_class": DEVICE_CLASS_VOLTAGE,
-        "state_class": STATE_CLASS_MEASUREMENT,
+        "device_class": SensorDeviceClass.VOLTAGE,
+        "state_class": SensorStateClass.MEASUREMENT,
         "icon": None,
         "enabled_default": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
@@ -474,7 +465,7 @@ EASEE_EQ_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": None,
-        "device_class": DEVICE_CLASS_CONNECTIVITY,
+        "device_class": BinarySensorDeviceClass.CONNECTIVITY,
         "icon": None,
     },
     "import_power": {
@@ -486,8 +477,8 @@ EASEE_EQ_ENTITIES = {
         ],
         "units": POWER_KILO_WATT,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_POWER,
-        "state_class": STATE_CLASS_MEASUREMENT,
+        "device_class": SensorDeviceClass.POWER,
+        "state_class": SensorStateClass.MEASUREMENT,
         "icon": None,
     },
     "export_power": {
@@ -498,8 +489,8 @@ EASEE_EQ_ENTITIES = {
         ],
         "units": POWER_KILO_WATT,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_POWER,
-        "state_class": STATE_CLASS_MEASUREMENT,
+        "device_class": SensorDeviceClass.POWER,
+        "state_class": SensorStateClass.MEASUREMENT,
         "icon": None,
     },
     "voltage": {
@@ -514,8 +505,8 @@ EASEE_EQ_ENTITIES = {
         ],
         "units": ELECTRIC_POTENTIAL_VOLT,
         "convert_units_func": "round_0_dec",
-        "device_class": DEVICE_CLASS_VOLTAGE,
-        "state_class": STATE_CLASS_MEASUREMENT,
+        "device_class": SensorDeviceClass.VOLTAGE,
+        "state_class": SensorStateClass.MEASUREMENT,
         "icon": None,
         "state_func": lambda state: float(
             max(
@@ -539,8 +530,8 @@ EASEE_EQ_ENTITIES = {
         ],
         "units": ELECTRIC_CURRENT_AMPERE,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_CURRENT,
-        "state_class": STATE_CLASS_MEASUREMENT,
+        "device_class": SensorDeviceClass.CURRENT,
+        "state_class": SensorStateClass.MEASUREMENT,
         "icon": None,
         "state_func": lambda state: float(
             max(
@@ -560,8 +551,8 @@ EASEE_EQ_ENTITIES = {
         ],
         "units": ENERGY_KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_ENERGY,
-        "state_class": STATE_CLASS_TOTAL_INCREASING,
+        "device_class": SensorDeviceClass.ENERGY,
+        "state_class": SensorStateClass.TOTAL_INCREASING,
         "icon": None,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
@@ -573,8 +564,8 @@ EASEE_EQ_ENTITIES = {
         ],
         "units": ENERGY_KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
-        "device_class": DEVICE_CLASS_ENERGY,
-        "state_class": STATE_CLASS_TOTAL_INCREASING,
+        "device_class": SensorDeviceClass.ENERGY,
+        "state_class": SensorStateClass.TOTAL_INCREASING,
         "icon": None,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
