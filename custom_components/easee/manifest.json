@@ -5,7 +5,7 @@
   "documentation": "https://github.com/fondberg/easee_hass",
   "issue_tracker": "https://github.com/fondberg/easee_hass/issues",
   "requirements": [
-    "pyeasee==0.7.43"
+    "pyeasee==0.7.44"
   ],
   "config_flow": true,
   "codeowners": [
