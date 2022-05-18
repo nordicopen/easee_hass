@@ -27,7 +27,7 @@
       "limited_by_circuit_dynamic_limit": "Durch Schaltkreis dynamisch limitiert",
       "limited_by_equalizer": "Durch Equalizer limitiert",
       "limited_by_load_balancing": "Durch Lastverteilung limitiert",
-      "limited_by_offline_setting": "Durch Offline Einstellung limitiert",
+      "limited_by_offline_setting": "Durch Offline-Einstellung limitiert",
       "not_requesting_current" : "Strom wird nicht angefragt",
       "max_charger_current_too_low" : "Max Charger Strom zu niedrig",
       "max_dynamic_charger_current_too_low" : "Max dynamischer Charger Strom zu niedrig",
