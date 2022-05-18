@@ -41,7 +41,7 @@
       "limited_by_charger_max_limit": "Limited by charger max limit",
       "limited_by_charger_dynamic_limit": "Limited by charger dynamic limit",
       "car_not_charging": "EV not charging",
-      "limited_by_local_adjustment": "Limited by local adjusmtent",
+      "limited_by_local_adjustment": "Limited by local adjustment",
       "limited_by_car": "Limited by EV",
       "undefined": "Undefined"
     }
