@@ -396,8 +396,6 @@ class Controller:
     async def refresh_schedules(self, now=None):
         """Refreshes the charging schedules data"""
         for charger in self.chargers_data:
-            if charger.is_schedule_polled() and self.easee.sr_is_connected():
-                continue
             await charger.schedules_async_refresh()
 
         self.update_ha_state()
