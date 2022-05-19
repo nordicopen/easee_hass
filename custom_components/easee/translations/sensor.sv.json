@@ -23,7 +23,7 @@
       "eq_too_low_current": "Equalizerström för låg",
       "phase_not_connected": "Fas ej ansluten",
       "limited_by_circuit_fuse": "Begränsad av kretssäkring",
-      "limited_by_circuit_max_limit": "Begärnsad av max krets-gräns",
+      "limited_by_circuit_max_limit": "Begränsad av max krets-gräns",
       "limited_by_circuit_dynamic_limit": "Begränsad av dynamisk krets-gräns",
       "limited_by_equalizer": "Begränsad av equalizer",
       "limited_by_load_balancing": "Begränsad av lastbalansering",
