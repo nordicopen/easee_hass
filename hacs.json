@@ -5,7 +5,7 @@
     "sensor",
     "switch"
   ],
-  "homeassistant": "2022.2",
+  "homeassistant": "2022.5",
   "iot_class": [
     "Cloud Push"
   ],
