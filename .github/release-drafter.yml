@@ -17,7 +17,7 @@ categories:
       - "translation"
   - title: "Dependencies"
     labels:
-      - "dependencies"
+      - "dependency"
   - title: "Maintenance"
     label: "maintenance"
 change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
