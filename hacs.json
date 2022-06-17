@@ -1,14 +1,6 @@
 {
   "name": "Easee EV Charger",
-  "domains": [
-    "binary_sensor",
-    "sensor",
-    "switch"
-  ],
   "homeassistant": "2022.5",
-  "iot_class": [
-    "Cloud Push"
-  ],
   "zip_release": true,
   "filename": "easee.zip"
 }
