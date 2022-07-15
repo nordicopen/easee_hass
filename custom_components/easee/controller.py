@@ -266,54 +266,59 @@ class Controller:
             _LOGGER.error("Unexpected error creating device")
             return None
 
-        self.sites: List[Site] = await self.easee.get_sites()
-        self.diagnostics["sites"] = self.sites
+        try:
+            self.sites: List[Site] = await self.easee.get_sites()
+            self.diagnostics["sites"] = self.sites
 
-        self.monitored_sites = self.config.options.get(
-            CONF_MONITORED_SITES, [site.name for site in self.sites]
-        )
+            self.monitored_sites = self.config.options.get(
+                CONF_MONITORED_SITES, [site.name for site in self.sites]
+            )
 
-        for site in self.sites:
-            if site.name not in self.monitored_sites:
-                _LOGGER.debug("Found site (unmonitored): %s %s", site.id, site.name)
-            else:
-                _LOGGER.debug("Found site (monitored): %s %s", site.id, site.name)
-                equalizers = site.get_equalizers()
-                for equalizer in equalizers:
-                    _LOGGER.debug(
-                        "Found equalizer: %s %s", equalizer.id, equalizer.name
-                    )
-                    self.equalizers.append(equalizer)
-                    equalizer_data = ProductData(
-                        self.event_loop, equalizer, site, EqualizerStreamData
-                    )
-                    self.equalizers_data.append(equalizer_data)
-                circuits = site.get_circuits()
-                for circuit in circuits:
-                    _LOGGER.debug(
-                        "Found circuit: %s %s", circuit.id, circuit["panelName"]
-                    )
-                    self.circuits.append(circuit)
-                    for charger in circuit.get_chargers():
-                        if charger.id is not None:
-                            _LOGGER.debug(
-                                "Found charger: %s %s", charger.id, charger.name
-                            )
-                            self.chargers.append(charger)
-                            charger_data = ProductData(
-                                self.event_loop,
-                                charger,
-                                site,
-                                ChargerStreamData,
-                                circuit,
-                            )
-                            self.chargers_data.append(charger_data)
+            for site in self.sites:
+                if site.name not in self.monitored_sites:
+                    _LOGGER.debug("Found site (unmonitored): %s %s", site.id, site.name)
+                else:
+                    _LOGGER.debug("Found site (monitored): %s %s", site.id, site.name)
+                    equalizers = site.get_equalizers()
+                    for equalizer in equalizers:
+                        _LOGGER.debug(
+                            "Found equalizer: %s %s", equalizer.id, equalizer.name
+                        )
+                        self.equalizers.append(equalizer)
+                        equalizer_data = ProductData(
+                            self.event_loop, equalizer, site, EqualizerStreamData
+                        )
+                        self.equalizers_data.append(equalizer_data)
+                    circuits = site.get_circuits()
+                    for circuit in circuits:
+                        _LOGGER.debug(
+                            "Found circuit: %s %s", circuit.id, circuit["panelName"]
+                        )
+                        self.circuits.append(circuit)
+                        for charger in circuit.get_chargers():
+                            if charger.id is not None:
+                                _LOGGER.debug(
+                                    "Found charger: %s %s", charger.id, charger.name
+                                )
+                                self.chargers.append(charger)
+                                charger_data = ProductData(
+                                    self.event_loop,
+                                    charger,
+                                    site,
+                                    ChargerStreamData,
+                                    circuit,
+                                )
+                                self.chargers_data.append(charger_data)
 
-        self.hass.data[DOMAIN]["diagnostics"] = self.diagnostics
-        self._init_count = 0
-        self.trackers = []
+            self.hass.data[DOMAIN]["diagnostics"] = self.diagnostics
+            self._init_count = 0
+            self.trackers = []
 
-        self._create_entitites()
+            self._create_entitites()
+
+        except Exception as err:
+            _LOGGER.debug("Easee server failure")
+            raise ConfigEntryNotReady from err
 
     async def stream_callback(self, id, data_type, data_id, value):
         all_data = self.chargers_data + self.equalizers_data
