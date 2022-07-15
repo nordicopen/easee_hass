@@ -114,10 +114,10 @@ class ChargerEntity(Entity):
         if self in self.controller.equalizer_sensor_entities:
             self.controller.equalizer_sensor_entities.remove(self)
         self.controller = None
-        ent_reg = await entity_registry.async_get_registry(self.hass)
+        ent_reg = entity_registry.async_get(self.hass)
         entity_entry = ent_reg.async_get(self.entity_id)
 
-        dev_reg = await device_registry.async_get_registry(self.hass)
+        dev_reg = device_registry.async_get(self.hass)
         device_entry = dev_reg.async_get(entity_entry.device_id)
 
         _LOGGER.debug("Removing _entity_name: %s", self._entity_name)
