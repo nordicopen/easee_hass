@@ -1,0 +1,49 @@
+{
+  "state": {
+    "easee__status": {
+      "disconnected": "Deconectat",
+      "awaiting_start": "Asteptare pornire",
+      "charging": "Incarcare",
+      "error": "Eroare",
+      "completed": "Finzalizat",
+      "ready_to_charge": "Pregatit de incarcare"
+    },
+    "easee__reason_no_current": {
+      "none": "Nu sunt probleme",
+      "ok": "OK",
+      "max_circuit_current_too_low": "Curent max circuit prea mic",
+      "max_dynamic_circuit_current_too_low": "Curent max circuit prea mic",
+      "max_dynamic_offline_fallback_circuit_current_too_low": "Curent max circuit dinamic neconectat prea mic",
+      "circuit_fuse_too_low": "Siguranta circuit prea mica",
+      "waiting_in_queue": "Asteptare in lista",
+      "waiting_in_fully": "Asteptare in coada",
+      "illegal_grid_type": "Tip retea ilegala",
+      "no_current_request": "Nu exista solicitare curent",
+      "not_connected_to_master": "Nu este conectat la principal",
+      "eq_too_low_current": "Curent egalizator prea mic",
+      "phase_not_connected": "Faza de alimentare nu este conectata",
+      "limited_by_circuit_fuse": "Limitat de siguranta circuitului",
+      "limited_by_circuit_max_limit": "Limitat de limita maxima a circuitului",
+      "limited_by_circuit_dynamic_limit": "Limitat de limita dinamica a ciruitului",
+      "limited_by_equalizer": "Limitat de egalizator",
+      "limited_by_load_balancing": "Limitat de gradul de incarcare a retelei",
+      "limited_by_offline_setting": "Limitat de setarile in modul deconectat",
+      "not_requesting_current": "Nu este solicitat curent",
+      "max_charger_current_too_low": "Limita incarcare maxima prea mica",
+      "max_dynamic_charger_current_too_low": "Limita incarcare dinamica maxima prea mica",
+      "charger_disabled": "Incarcator dezactivat",
+      "pending_schedule": "Asteptare program",
+      "pending_authorization": "Asteaptare autorizare",
+      "charger_in_error_state": "Incarcator cu eroare",
+      "ev_behaving_erratic": "Comportament EV haotic",
+      "limited_by_cable_rating": "Limitat de cablu",
+      "limited_by_schedule": "Limitat de program",
+      "limited_by_charger_max_limit": "Limitat de limita maxima a incarcatorului",
+      "limited_by_charger_dynamic_limit": "Limitat de limita dinamica a incarcatorului",
+      "car_not_charging": "EV nu se incarca",
+      "limited_by_local_adjustment": "Limitat de setarile locale",
+      "limited_by_car": "Limitat de EV",
+      "undefined": "Nedefinit"
+    }
+  }
+}
