@@ -1,0 +1,56 @@
+{
+  "config": {
+    "abort": {
+      "already_setup": "Puteti configura doar o singura conexiune Easee."
+    },
+    "error": {
+      "auth_failure": "Nu se poate conecta la Easee. Verificati numele de utilizator si parola.",
+      "connection_failure": "Nu se poate conecta la Easee. Incercati mai tarziu.",
+      "refused_failure": "Conexiune refuzata la Easee. Incercati mai tarziu.",
+      "no_sites": "Nu a fost selectat nici un site de monitorizat"
+    },
+    "step": {
+      "user": {
+        "data": {
+          "password": "Parola",
+          "username": "Utilizator"
+        },
+        "description": "Introduceti utilizatorul si parola de la contul dvs Easee",
+        "title": "Conectare la Easee"
+      },
+      "sites": {
+        "data": {
+          "monitored_sites": "Site-uri"
+        },
+        "description": "Selectati site-ul de monitorizat",
+        "title": "Easee EV Charger"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "monitored_conditions": "Senzori incarcator",
+          "monitored_eq_conditions": "Sunzori egazlizator",
+          "measured_consumption_days": "Zile monitorizare consum",
+          "custom_units": "Unitati personalizate",
+          "monitored_sites": "Site-uri monitorizate"
+        },
+        "description": "Selectati optiunile",
+        "title": "Easee EV Charger"
+      }
+    },
+    "error": {
+      "no_sites": "Nici un site selectat pentru monitorizare"
+    }
+  },
+  "system_health": {
+    "info": {
+      "reach_easee_cloud": "Viziteaza Easee Cloud",
+      "component_version": "Versiune",
+      "connected2stream": "Conectat la signalr"
+    }
+  },
+  "title": "Easee EV Charger"
+}
