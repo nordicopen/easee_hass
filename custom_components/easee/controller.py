@@ -418,11 +418,9 @@ class Controller:
             charger_id = charger_data.product.id
 
             if site_state is not None:
-                charger_data.state = site_state.get_charger_state(charger_id, raw=True)
+                charger_data.state = await charger_data.product.get_state(raw=True)
                 _LOGGER.debug("Charger state: %s ", charger_id)
-                charger_data.config = site_state.get_charger_config(
-                    charger_id, raw=True
-                )
+                charger_data.config = await charger_data.product.get_config(raw=True)
                 charger_data.set_signalr_state(self.easee.sr_is_connected())
                 charger_data.mark_dirty()
 
