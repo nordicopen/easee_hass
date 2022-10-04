@@ -36,6 +36,9 @@ MANDATORY_EASEE_ENTITIES = {
             "state.ledMode",
             "state.cableRating",
             "config.authorizationRequired",
+            "state.pairedUserIDToken",
+            "state.userIDToken",
+            "state.userIDTokenReversed",
             "config.limitToSinglePhaseCharging",
             "config.localNodeType",
             "config.localAuthorizationRequired",
@@ -214,6 +217,27 @@ OPTIONAL_EASEE_ENTITIES = {
                 state["circuitTotalPhaseConductorCurrentL3"]
                 if state["circuitTotalPhaseConductorCurrentL3"] is not None
                 else 0.0,
+            )
+        ),
+        "enabled_default": False,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+    },
+    "equalizer_limit": {
+        "key": "state.dynamicCircuitCurrentP1",
+        "attrs": [
+            "state.eqAvailableCurrentP1",
+            "state.eqAvailableCurrentP2",
+            "state.eqAvailableCurrentP3",
+        ],
+        "units": ELECTRIC_CURRENT_AMPERE,
+        "convert_units_func": "round_0_dec",
+        "device_class": SensorDeviceClass.CURRENT,
+        "icon": None,
+        "state_func": lambda state: float(
+            max(
+                state["eqAvailableCurrentP1"],
+                state["eqAvailableCurrentP2"],
+                state["eqAvailableCurrentP3"],
             )
         ),
         "enabled_default": False,
