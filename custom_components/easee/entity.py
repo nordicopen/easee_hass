@@ -237,28 +237,32 @@ class ChargerEntity(Entity):
         return value
 
     def get_value_from_key(self, key):
-        first, second = key.split(".")
-        value = None
-        if first == "config":
-            value = self.data.config[second]
-        elif first == "state":
-            value = self.data.state[second]
-        elif first == "circuit":
-            value = self.data.circuit[second]
-        elif first == "site":
-            value = self.data.site[second]
-        elif first == "schedule":
-            if self.data.schedule is not None:
-                value = self.data.schedule[second]
-        elif first == "weekly_schedule":
-            if self.data.weekly_schedule is not None:
-                value = self.data.weekly_schedule[second]
-        else:
-            _LOGGER.error("Unknown first part of key: %s", key)
-            raise IndexError("Unknown first part of key")
+        try:
+            first, second = key.split(".")
+            value = None
+            if first == "config":
+                value = self.data.config[second]
+            elif first == "state":
+                value = self.data.state[second]
+            elif first == "circuit":
+                value = self.data.circuit[second]
+            elif first == "site":
+                value = self.data.site[second]
+            elif first == "schedule":
+                if self.data.schedule is not None:
+                    value = self.data.schedule[second]
+            elif first == "weekly_schedule":
+                if self.data.weekly_schedule is not None:
+                    value = self.data.weekly_schedule[second]
+            else:
+                _LOGGER.error("Unknown first part of key: %s", key)
+                raise IndexError("Unknown first part of key")
 
-        if type(value) is datetime:
-            value = dt.as_local(value)
+            if type(value) is datetime:
+                value = dt.as_local(value)
+        except KeyError:
+            value = ""
+            
         return value
 
     async def async_update(self):
