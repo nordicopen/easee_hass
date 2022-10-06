@@ -102,6 +102,9 @@ set_circuit_dynamic_limit:
     currentP3:
       description: "Phase 3 current (Optional)"
       example: 10
+    timeToLive:
+      description: "How long the limits should be valid in minutes, 0 means forever (default)"
+      example: 5
 
 set_circuit_max_limit:
   description: "Set circuit max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
@@ -134,6 +137,9 @@ set_charger_circuit_dynamic_limit:
     currentP3:
       description: "Phase 3 current (Optional)"
       example: 10
+    timeToLive:
+      description: "How long the limits should be valid in minutes, 0 means forever (default)"
+      example: 5
 
 set_charger_circuit_max_limit:
   description: "Set circuit max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."

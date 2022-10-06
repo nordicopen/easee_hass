@@ -262,7 +262,7 @@ class ChargerEntity(Entity):
                 value = dt.as_local(value)
         except KeyError:
             value = ""
-            
+
         return value
 
     async def async_update(self):

@@ -20,6 +20,7 @@ ATTR_SET_CURRENT = "current"
 ATTR_SET_CURRENTP1 = "currentP1"
 ATTR_SET_CURRENTP2 = "currentP2"
 ATTR_SET_CURRENTP3 = "currentP3"
+ATTR_SET_TIMETOLIVE = "timeToLive"
 ATTR_COST_PER_KWH = "cost_per_kwh"
 ATTR_COST_CURRENCY = "currency_id"
 ATTR_COST_VAT = "vat"
@@ -51,6 +52,7 @@ SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
         vol.Required(ATTR_SET_CURRENTP1): cv.positive_int,
         vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
         vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
+        vol.Optional(ATTR_SET_TIMETOLIVE): cv.positive_int,
     }
 )
 
@@ -60,6 +62,7 @@ SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
         vol.Required(ATTR_SET_CURRENTP1): cv.positive_int,
         vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
         vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
+        vol.Optional(ATTR_SET_TIMETOLIVE): cv.positive_int,
     }
 )
 
@@ -296,6 +299,7 @@ async def async_setup_services(hass):
         currentP1 = call.data.get(ATTR_SET_CURRENTP1)
         currentP2 = call.data.get(ATTR_SET_CURRENTP2)
         currentP3 = call.data.get(ATTR_SET_CURRENTP3)
+        timeToLive = call.data.get(ATTR_SET_TIMETOLIVE)
 
         _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
@@ -313,7 +317,12 @@ async def async_setup_services(hass):
         if circuit:
             function_call = getattr(circuit, function_name["function_call"])
             try:
-                return await function_call(currentP1, currentP2, currentP3)
+                if timeToLive is not None:
+                    return await function_call(
+                        currentP1, currentP2, currentP3, timeToLive
+                    )
+                else:
+                    return await function_call(currentP1, currentP2, currentP3)
             except Exception:
                 _LOGGER.error(
                     "Failed to execute service: %s with data %s",
@@ -332,6 +341,7 @@ async def async_setup_services(hass):
         currentP1 = call.data.get(ATTR_SET_CURRENTP1)
         currentP2 = call.data.get(ATTR_SET_CURRENTP2)
         currentP3 = call.data.get(ATTR_SET_CURRENTP3)
+        timeToLive = call.data.get(ATTR_SET_TIMETOLIVE)
 
         _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
@@ -349,7 +359,12 @@ async def async_setup_services(hass):
         if charger:
             function_call = getattr(charger, function_name["function_call"])
             try:
-                return await function_call(currentP1, currentP2, currentP3)
+                if timeToLive is not None:
+                    return await function_call(
+                        currentP1, currentP2, currentP3, timeToLive
+                    )
+                else:
+                    return await function_call(currentP1, currentP2, currentP3)
             except Exception:
                 _LOGGER.error(
                     "Failed to execute service: %s with data %s",
