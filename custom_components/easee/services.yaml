@@ -33,6 +33,61 @@ toggle:
       description: "The charger id"
       example: "EH123456"
 
+start_new:
+  name: "Start - New"
+  description: "Start charger. Keeps current charge session authorized."
+  target:
+    device:
+      integration: "easee"
+      model: "Charging Robot"
+    entity:
+      integration: "easee"
+      device_class: "easee__none"
+
+stop_new:
+  name: "Stop - New"
+  description: "Stop charger. Keeps current charge session authorized."
+  target:
+    device:
+      integration: "easee"
+      model: "Charging Robot"
+    entity:
+      integration: "easee"
+      device_class: "easee__none"
+
+pause_new:
+  name: "Pause - New"
+  description: "Pause charger. Keeps current charge session authorized."
+  target:
+    device:
+      integration: "easee"
+      model: "Charging Robot"
+    entity:
+      integration: "easee"
+      device_class: "easee__none"
+
+resume_new:
+  name: "Resume - New"
+  description: "Resume charger. Keeps current charge session authorized."
+  target:
+    device:
+      integration: "easee"
+      model: "Charging Robot"
+    entity:
+      integration: "easee"
+      device_class: "easee__none"
+
+toggle_new:
+  name: "Toggle - New"
+  description: "Pause charger. Keeps current charge session authorized."
+  target:
+    device:
+      integration: "easee"
+      model: "Charging Robot"
+    entity:
+      integration: "easee"
+      device_class: "easee__none"
+
 set_basic_charge_plan:
   description: "Set basic charge plan"
   fields:
@@ -176,6 +231,33 @@ set_charger_dynamic_limit:
     current:
       description: "Charger current"
       example: 10
+
+
+set_charger_dynamic_limit_new:
+  name: "Set charger dynamic limit - New:"
+  description: "Set charger dynamic limit - can be used in automations"
+  fields:
+    current:
+      name: "Current"
+      required: true
+      description: "Max charging current"
+      example: 16
+      default: 16
+      selector:
+        number:
+          min: 0
+          max: 32
+          step: 1
+          unit_of_measurement: "A"
+          mode: slider
+  target:
+    device:
+      integration: "easee"
+      model: "Charging Robot"
+    entity:
+      integration: "easee"
+      device_class: "easee__none"
+
 
 set_charger_max_limit:
   description: "Set charger max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."

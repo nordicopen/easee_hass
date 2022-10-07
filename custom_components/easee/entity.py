@@ -12,7 +12,7 @@ from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.util import dt
 
-from .const import DOMAIN, EASEE_STATUS, REASON_NO_CURRENT
+from .const import DOMAIN, EASEE_STATUS, MANUFACTURER, MODEL_CHARGING_ROBOT, REASON_NO_CURRENT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -151,8 +151,8 @@ class ChargerEntity(Entity):
         return DeviceInfo(
             identifiers={(DOMAIN, self.data.product.id)},
             name=self.data.product.name,
-            manufacturer="Easee",
-            model="Charging Robot",
+            manufacturer=MANUFACTURER,
+            model=MODEL_CHARGING_ROBOT,
             configuration_url=f"https://easee.cloud/mypage/products/{self.data.product.id}",
         )
 
@@ -262,7 +262,7 @@ class ChargerEntity(Entity):
                 value = dt.as_local(value)
         except KeyError:
             value = ""
-            
+
         return value
 
     async def async_update(self):
