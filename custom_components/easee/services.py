@@ -99,6 +99,14 @@ SERVICE_SET_ACCESS_SHCEMA = vol.Schema(
     {vol.Required(CHARGER_ID): cv.string, vol.Required(ACCESS_LEVEL): vol.Any(int, str)}
 )
 
+SERVICE_SET_ACCESS_SHCEMA_NEW = vol.Schema(
+    {
+        vol.Required(CONF_DEVICE_ID): cv.string,
+        vol.Required(ACCESS_LEVEL): vol.All(
+            cv.positive_int, vol.Range(min=1, max=3)),
+    }
+)
+
 
 SERVICE_MAP = {
     "start": {
@@ -280,6 +288,11 @@ SERVICE_MAP = {
         "handler": "charger_execute_set_access",
         "function_call": "set_access",
         "schema": SERVICE_SET_ACCESS_SHCEMA,
+    },
+    "set_charger_access_new": {
+        "handler": "charger_execute_set_access_new",
+        "function_call": "set_access",
+        "schema": SERVICE_SET_ACCESS_SHCEMA_NEW,
     },
 }
 
@@ -573,6 +586,24 @@ async def async_setup_services(hass):
         _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
         charger = next((c for c in chargers if c.id == charger_id), None)
+        if charger:
+            function_name = SERVICE_MAP[call.service]
+            function_call = getattr(charger, function_name["function_call"])
+            try:
+                return await function_call(access_level)
+            except Exception:
+                _LOGGER.error(
+                    "Failed to execute service: %s with data %s",
+                    str(call.service),
+                    str(call.data),
+                )
+                return
+
+    async def charger_execute_set_access_new(call):
+        """Execute a service to set access level on a charger"""
+        access_level = call.data.get(ACCESS_LEVEL)
+        charger = await get_charger(call.data[CONF_DEVICE_ID], call)
+
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])

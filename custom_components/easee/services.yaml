@@ -39,6 +39,7 @@ start_new:
   fields:
     device_id:
       name: Target device
+      description: "Select the charger to control"
       required: true
       example: "EH123456"
       selector:
@@ -52,6 +53,7 @@ stop_new:
   fields:
     device_id:
       name: Target device
+      description: "Select the charger to control"
       required: true
       example: "EH123456"
       selector:
@@ -65,6 +67,7 @@ pause_new:
   fields:
     device_id:
       name: Target device
+      description: "Select the charger to control"
       required: true
       example: "EH123456"
       selector:
@@ -78,6 +81,7 @@ resume_new:
   fields:
     device_id:
       name: Target device
+      description: "Select the charger to control"
       required: true
       example: "EH123456"
       selector:
@@ -91,6 +95,7 @@ toggle_new:
   fields:
     device_id:
       name: Target device
+      description: "Select the charger to control"
       required: true
       example: "EH123456"
       selector:
@@ -104,6 +109,7 @@ reboot_new:
   fields:
     device_id:
       name: Target device
+      description: "Select the charger to control"
       required: true
       example: "EH123456"
       selector:
@@ -117,6 +123,7 @@ update_firmware_new:
   fields:
     device_id:
       name: Target device
+      description: "Select the charger to control"
       required: true
       example: "EH123456"
       selector:
@@ -275,6 +282,7 @@ set_charger_dynamic_limit_new:
   fields:
     device_id:
       name: Target device
+      description: "Select the charger to control"
       required: true
       example: "EH123456"
       selector:
@@ -331,3 +339,30 @@ set_charger_access:
       description: "1: Open for all, 2: Require easee account, 3: whitelist"
       example: 1
 
+set_charger_access_new:
+  description: "Set access level on the charger"
+  name: "Set access level on the charger - New:"
+  fields:
+    device_id:
+      name: Target device
+      description: "Select the charger to control"
+      required: true
+      example: "EH123456"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
+    access_level:
+      name: "Access level"
+      description: "Select one of the levels"
+      example: 1
+      required: true
+      selector:
+        select:
+          options:
+            - label: Open for all
+              value: 1
+            - label: Require Easee account
+              value: 2
+            - label: Whitelist
+              value: 3
