@@ -4,9 +4,9 @@ import logging
 import voluptuous as vol
 from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import config_validation as cv, device_registry as dr
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import device_registry as dr
 from homeassistant.util import dt
-from homeassistant.helpers.service import async_extract_config_entry_ids
 
 from .const import DOMAIN
 
@@ -32,7 +32,7 @@ SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
 )
 
 SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW = vol.Schema(
-    cv.make_entity_service_schema({})
+    {vol.Required(CONF_DEVICE_ID): cv.string}
 )
 
 SERVICE_CHARGER_ENABLE_SCHEMA = vol.Schema(
@@ -77,11 +77,12 @@ SERVICE_SET_CHARGER_CURRENT_SCHEMA = vol.Schema(
 )
 
 SERVICE_SET_CHARGER_CURRENT_SCHEMA_NEW = vol.Schema(
-    cv.make_entity_service_schema(
-        {
-            vol.Required(ATTR_SET_CURRENT): cv.positive_int,
-        }
-    ),
+    {
+        vol.Required(CONF_DEVICE_ID): cv.string,
+        vol.Optional(ATTR_SET_CURRENT, default=16): vol.All(
+            cv.positive_int, vol.Range(min=0, max=40)
+        ),
+    }
 )
 
 SERVICE_SET_SITE_CHARGING_COST_SCHEMA = vol.Schema(
@@ -131,24 +132,34 @@ SERVICE_MAP = {
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW,
     },
     "start_new": {
-        "handler": "charger_execute_service",
+        "handler": "charger_execute_service_new",
         "function_call": "start",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW,
     },
     "stop_new": {
-        "handler": "charger_execute_service",
+        "handler": "charger_execute_service_new",
         "function_call": "stop",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW,
     },
-     "resume_new": {
+    "resume_new": {
         "handler": "charger_execute_service_new",
         "function_call": "resume",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW,
     },
     "toggle_new": {
-        "handler": "charger_execute_service",
+        "handler": "charger_execute_service_new",
         "function_call": "toggle",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW,
+    },
+    "reboot_new": {
+        "handler": "charger_execute_service_new",
+        "function_call": "reboot",
+        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
+    },
+    "update_firmware_new": {
+        "handler": "charger_execute_service_new",
+        "function_call": "update_firmware",
+        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
     "override_schedule": {
         "handler": "charger_execute_service",
@@ -279,13 +290,25 @@ async def async_setup_services(hass):
     chargers = controller.get_chargers()
     circuits = controller.get_circuits()
 
-    async def extract_our_config_entry_ids(service_call):
-        return [
-            entry_id
-            for entry_id in await async_extract_config_entry_ids(hass, service_call)
-            if (entry := hass.config_entries.async_get_entry(entry_id))
-            and entry.domain == DOMAIN
-        ]
+    async def convert_device_id_to_charger_id(device_id: str, call):
+        """Convert device_id to charger_id."""
+        # print(call)
+        if CONF_DEVICE_ID not in call.data.keys():
+            raise HomeAssistantError("Can only call service on device. Not on entity.")
+        _LOGGER.debug("Entry: %s", call.data[CONF_DEVICE_ID])
+        charger_id = None
+        device_reg = dr.async_get(hass)
+        device_entry = device_reg.async_get(call.data[CONF_DEVICE_ID])
+        for ident in device_entry.identifiers:
+            for val in ident:
+                if val != DOMAIN:
+                    charger_id = val
+        return charger_id
+
+    async def get_charger(device_id, call):
+        charger_id = await convert_device_id_to_charger_id(device_id, call)
+        charger = next((c for c in chargers if c.id == charger_id), None)
+        return charger
 
     async def charger_execute_service(call):
         """Execute a service to Easee charging station."""
@@ -318,29 +341,10 @@ async def async_setup_services(hass):
     async def charger_execute_service_new(call):
         """Execute a service to Easee charging station."""
 
-        if not (our_entry_ids := await extract_our_config_entry_ids(call)):
-            raise HomeAssistantError(
-                "Failed to call service. Config entry for target not found."
-            )
-        if CONF_DEVICE_ID not in call.data.keys():
-            raise HomeAssistantError(
-                "Cannot call service on entity. Only on device."
-            )
-        _LOGGER.debug("Entries: %s", our_entry_ids)
-        device_reg = dr.async_get(hass)
-        charger_id = ""
-        for ent in call.data[CONF_DEVICE_ID]:
-            device_entry = device_reg.async_get(ent)
-            for ident in device_entry.identifiers:
-                for val in ident:
-                    if val != DOMAIN:
-                        charger_id = val
+        enable = call.data.get(ATTR_ENABLE)
 
-        enable = call.data.get(ATTR_ENABLE, None)
-
-        _LOGGER.debug("Call service on charger_id: %s", charger_id)
-
-        charger = next((c for c in chargers if c.id == charger_id), None)
+        charger = await get_charger(call.data[CONF_DEVICE_ID], call)
+        _LOGGER.debug("Call execution service on charger_id: %s", charger.id)
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
@@ -356,8 +360,7 @@ async def async_setup_services(hass):
                     str(call.data),
                 )
                 return
-        _LOGGER.error("Could not find charger %s", charger_id)
-        raise HomeAssistantError("Could not find charger {}".format(charger_id))
+        raise HomeAssistantError(f"Could not find charger: {charger.id}")
 
     async def charger_set_schedule(call):
         """Execute a set schedule call to Easee charging station."""
@@ -499,28 +502,11 @@ async def async_setup_services(hass):
 
     async def charger_execute_set_current_new(call):
         """Execute a service to set currents for Easee charger."""
+        charger_id = await convert_device_id_to_charger_id(
+            call.data[CONF_DEVICE_ID], call
+        )
 
-        if not (our_entry_ids := await extract_our_config_entry_ids(call)):
-            raise HomeAssistantError(
-                "Failed to call service. Config entry for target not found."
-            )
-        if CONF_DEVICE_ID not in call.data.keys():
-            raise HomeAssistantError(
-                "Cannot call service on entity. Only on device."
-            )
-        _LOGGER.debug("Entries: %s", our_entry_ids)
-        device_reg = dr.async_get(hass)
-        charger_id = ""
-        for ent in call.data[CONF_DEVICE_ID]:
-            device_entry = device_reg.async_get(ent)
-            for ident in device_entry.identifiers:
-                for val in ident:
-                    if val != DOMAIN:
-                        charger_id = val
-
-        current = call.data.get(ATTR_SET_CURRENT)
-
-        _LOGGER.debug("Call service on charger_id: %s", charger_id)
+        _LOGGER.debug("Call set_current service on charger_id: %s", charger_id)
 
         current = call.data.get(ATTR_SET_CURRENT)
 

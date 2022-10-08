@@ -36,57 +36,93 @@ toggle:
 start_new:
   name: "Start - New"
   description: "Start charger. Keeps current charge session authorized."
-  target:
-    device:
-      integration: "easee"
-      model: "Charging Robot"
-    entity:
-      integration: "easee"
-      device_class: "easee__none"
+  fields:
+    device_id:
+      name: Target device
+      required: true
+      example: "EH123456"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
 
 stop_new:
   name: "Stop - New"
   description: "Stop charger. Keeps current charge session authorized."
-  target:
-    device:
-      integration: "easee"
-      model: "Charging Robot"
-    entity:
-      integration: "easee"
-      device_class: "easee__none"
+  fields:
+    device_id:
+      name: Target device
+      required: true
+      example: "EH123456"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
 
 pause_new:
   name: "Pause - New"
   description: "Pause charger. Keeps current charge session authorized."
-  target:
-    device:
-      integration: "easee"
-      model: "Charging Robot"
-    entity:
-      integration: "easee"
-      device_class: "easee__none"
+  fields:
+    device_id:
+      name: Target device
+      required: true
+      example: "EH123456"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
 
 resume_new:
   name: "Resume - New"
   description: "Resume charger. Keeps current charge session authorized."
-  target:
-    device:
-      integration: "easee"
-      model: "Charging Robot"
-    entity:
-      integration: "easee"
-      device_class: "easee__none"
+  fields:
+    device_id:
+      name: Target device
+      required: true
+      example: "EH123456"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
 
 toggle_new:
   name: "Toggle - New"
   description: "Pause charger. Keeps current charge session authorized."
-  target:
-    device:
-      integration: "easee"
-      model: "Charging Robot"
-    entity:
-      integration: "easee"
-      device_class: "easee__none"
+  fields:
+    device_id:
+      name: Target device
+      required: true
+      example: "EH123456"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
+
+reboot_new:
+  name: "Reboot - New"
+  description: "Reboot charger"
+  fields:
+    device_id:
+      name: Target device
+      required: true
+      example: "EH123456"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
+
+update_firmware_new:
+  name: "Update firmware - New"
+  description: "Update charger firmware"
+  fields:
+    device_id:
+      name: Target device
+      required: true
+      example: "EH123456"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
 
 set_basic_charge_plan:
   description: "Set basic charge plan"
@@ -237,27 +273,27 @@ set_charger_dynamic_limit_new:
   name: "Set charger dynamic limit - New:"
   description: "Set charger dynamic limit - can be used in automations"
   fields:
+    device_id:
+      name: Target device
+      required: true
+      example: "EH123456"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
     current:
       name: "Current"
       required: true
-      description: "Max charging current"
+      description: "Max dynamic charging current"
       example: 16
       default: 16
       selector:
         number:
           min: 0
-          max: 32
+          max: 40
           step: 1
           unit_of_measurement: "A"
           mode: slider
-  target:
-    device:
-      integration: "easee"
-      model: "Charging Robot"
-    entity:
-      integration: "easee"
-      device_class: "easee__none"
-
 
 set_charger_max_limit:
   description: "Set charger max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
