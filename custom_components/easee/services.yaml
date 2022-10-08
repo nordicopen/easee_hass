@@ -361,8 +361,8 @@ set_charger_access_new:
         select:
           options:
             - label: Open for all
-              value: 1
+              value: "1"
             - label: Require Easee account
-              value: 2
+              value: "2"
             - label: Whitelist
-              value: 3
+              value: "3"
