@@ -1,11 +1,13 @@
 """ easee services."""
 import logging
+from tokenize import String
 
 import voluptuous as vol
 from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.issue_registry import IssueSeverity, async_create_issue
 from homeassistant.util import dt
 
 from .const import DOMAIN
@@ -26,19 +28,53 @@ ATTR_COST_PER_KWH = "cost_per_kwh"
 ATTR_COST_CURRENCY = "currency_id"
 ATTR_COST_VAT = "vat"
 ATTR_ENABLE = "enable"
+ATTR_TTL = "time_to_live"
+
+ACTION_COMMAND = "action_command"
+ACTION_START = "start"
+ACTION_STOP = "stop"
+ACTION_PAUSE = "pause"
+ACTION_RESUME = "resume"
+ACTION_TOGGLE = "toggle"
+ACTION_REBOOT = "reboot"
+ACTION_UPDATE_FIRMWARE = "update_firmware"
+ACTION_OVERRIDE_SCHEDULE = "override_schedule"
+ACTION_DELETE_BASIC_CHARGE_PLAN = "delete_basic_charge_plan"
+ACTIONS = {
+    ACTION_START,
+    ACTION_STOP,
+    ACTION_PAUSE,
+    ACTION_RESUME,
+    ACTION_TOGGLE,
+    ACTION_REBOOT,
+    ACTION_UPDATE_FIRMWARE,
+    ACTION_OVERRIDE_SCHEDULE,
+    ACTION_DELETE_BASIC_CHARGE_PLAN,
+}
+
+GRP1 = "group_1"
+MESSAGE_1 = "Use only one of CHARGER_ID or DEVICE_ID"
+MESSAGE_2 = "Use only one of CHARGER_ID, CIRCUIT_ID or DEVICE_ID"
 
 SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
-    {vol.Optional(CHARGER_ID): cv.string}
+    {
+        vol.Optional(CHARGER_ID): cv.string,
+    }
 )
 
-SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW = vol.Schema(
-    {vol.Required(CONF_DEVICE_ID): cv.string}
+SERVICE_CHARGER_ACTIONS_COMMAND_SCHEMA = vol.Schema(
+    {
+        vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_1): cv.string,
+        vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_1): cv.string,
+        vol.Required(ACTION_COMMAND): vol.In(ACTIONS),
+    }
 )
 
 SERVICE_CHARGER_ENABLE_SCHEMA = vol.Schema(
     {
-        vol.Required(CHARGER_ID): cv.string,
-        vol.Optional(ATTR_ENABLE): cv.boolean,
+        vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_1): cv.string,
+        vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_1): cv.string,
+        vol.Required(ATTR_ENABLE): cv.boolean,
     }
 )
 
@@ -53,10 +89,24 @@ SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
 
 SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
     {
-        vol.Required(CIRCUIT_ID): cv.positive_int,
-        vol.Required(ATTR_SET_CURRENTP1): cv.positive_int,
-        vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
-        vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
+        vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_2): cv.string,
+        vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_2): cv.string,
+        vol.Exclusive(CIRCUIT_ID, GRP1, MESSAGE_2): cv.string,
+        vol.Required(ATTR_SET_CURRENTP1, default=16): cv.positive_int,
+        vol.Optional(ATTR_SET_CURRENTP2, default=16): cv.positive_int,
+        vol.Optional(ATTR_SET_CURRENTP3, default=16): cv.positive_int,
+    }
+)
+
+SERVICE_SET_CIRCUIT_CURRENT_SCHEMA_TTL = vol.Schema(
+    {
+        vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_2): cv.string,
+        vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_2): cv.string,
+        vol.Exclusive(CIRCUIT_ID, GRP1, MESSAGE_2): cv.string,
+        vol.Required(ATTR_SET_CURRENTP1, default=16): cv.positive_int,
+        vol.Optional(ATTR_SET_CURRENTP2, default=16): cv.positive_int,
+        vol.Optional(ATTR_SET_CURRENTP3, default=16): cv.positive_int,
+        vol.Optional(ATTR_TTL, default=0): cv.positive_int,
     }
 )
 
@@ -66,6 +116,22 @@ SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
         vol.Required(ATTR_SET_CURRENTP1): cv.positive_int,
         vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
         vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
+    }
+)
+
+SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA_NEW = vol.Schema(
+    {
+        vol.Required(CONF_DEVICE_ID): cv.string,
+        vol.Required(ATTR_SET_CURRENTP1): vol.All(
+            cv.positive_int, vol.Range(min=0, max=40)
+        ),
+        vol.Optional(ATTR_SET_CURRENTP2): vol.All(
+            cv.positive_int, vol.Range(min=0, max=40)
+        ),
+        vol.Optional(ATTR_SET_CURRENTP3): vol.All(
+            cv.positive_int, vol.Range(min=0, max=40)
+        ),
+        vol.Optional(ATTR_TTL): vol.All(cv.positive_int, vol.Range(min=0, max=40)),
     }
 )
 
@@ -96,79 +162,51 @@ SERVICE_SET_SITE_CHARGING_COST_SCHEMA = vol.Schema(
 
 
 SERVICE_SET_ACCESS_SHCEMA = vol.Schema(
-    {vol.Required(CHARGER_ID): cv.string, vol.Required(ACCESS_LEVEL): vol.Any(int, str)}
-)
-
-SERVICE_SET_ACCESS_SHCEMA_NEW = vol.Schema(
     {
-        vol.Required(CONF_DEVICE_ID): cv.string,
-        vol.Required(ACCESS_LEVEL): vol.All(
-            cv.positive_int, vol.Range(min=1, max=3)),
+        vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_1): cv.string,
+        vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_1): cv.string,
+        vol.Required(CHARGER_ID): cv.string,
+        vol.Required(ACCESS_LEVEL): vol.All(cv.positive_int, vol.Range(min=1, max=3)),
     }
 )
 
 
 SERVICE_MAP = {
+    # Deprecated 2023.1.0
     "start": {
         "handler": "charger_execute_service",
         "function_call": "start",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
+    # Deprecated 2023.1.0
     "stop": {
         "handler": "charger_execute_service",
         "function_call": "stop",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
+    # Deprecated 2023.1.0
     "pause": {
         "handler": "charger_execute_service",
         "function_call": "pause",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
+    # Deprecated 2023.1.0
     "resume": {
         "handler": "charger_execute_service",
         "function_call": "resume",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
+    # Deprecated 2023.1.0
     "toggle": {
         "handler": "charger_execute_service",
         "function_call": "toggle",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
-    "pause_new": {
-        "handler": "charger_execute_service_new",
-        "function_call": "pause",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW,
+    "action_command": {
+        "handler": "charger_execute_action_command",
+        "schema": SERVICE_CHARGER_ACTIONS_COMMAND_SCHEMA,
     },
-    "start_new": {
-        "handler": "charger_execute_service_new",
-        "function_call": "start",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW,
-    },
-    "stop_new": {
-        "handler": "charger_execute_service_new",
-        "function_call": "stop",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW,
-    },
-    "resume_new": {
-        "handler": "charger_execute_service_new",
-        "function_call": "resume",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW,
-    },
-    "toggle_new": {
-        "handler": "charger_execute_service_new",
-        "function_call": "toggle",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA_NEW,
-    },
-    "reboot_new": {
-        "handler": "charger_execute_service_new",
-        "function_call": "reboot",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    },
-    "update_firmware_new": {
-        "handler": "charger_execute_service_new",
-        "function_call": "update_firmware",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    },
+    # Deprecated 2023.1.0
     "override_schedule": {
         "handler": "charger_execute_service",
         "function_call": "override_schedule",
@@ -179,11 +217,13 @@ SERVICE_MAP = {
         "function_call": "smart_charging",
         "schema": SERVICE_CHARGER_ENABLE_SCHEMA,
     },
+    # Deprecated 2023.1.0
     "reboot": {
         "handler": "charger_execute_service",
         "function_call": "reboot",
         "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
+    # Deprecated 2023.1.0
     "update_firmware": {
         "handler": "charger_execute_service",
         "function_call": "update_firmware",
@@ -194,6 +234,7 @@ SERVICE_MAP = {
         "function_call": "set_basic_charge_plan",
         "schema": SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA,
     },
+    # Deprecated 2023.1.0
     "delete_basic_charge_plan": {
         "handler": "charger_execute_service",
         "function_call": "delete_basic_charge_plan",
@@ -207,7 +248,18 @@ SERVICE_MAP = {
             "P2": "dynamicCircuitCurrentP2",
             "P3": "dynamicCircuitCurrentP3",
         },
-        "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
+        "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA_TTL,
+    },
+    # Deprecated 2023.1.0
+    "set_charger_circuit_dynamic_limit": {
+        "handler": "charger_execute_set_circuit_current",
+        "function_call": "set_dynamic_charger_circuit_current",
+        "compare_currents": {
+            "P1": "dynamicCircuitCurrentP1",
+            "P2": "dynamicCircuitCurrentP2",
+            "P3": "dynamicCircuitCurrentP3",
+        },
+        "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
     },
     "set_circuit_max_limit": {
         "handler": "circuit_execute_set_current",
@@ -219,16 +271,7 @@ SERVICE_MAP = {
         },
         "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
     },
-    "set_charger_circuit_dynamic_limit": {
-        "handler": "charger_execute_set_circuit_current",
-        "function_call": "set_dynamic_charger_circuit_current",
-        "compare_currents": {
-            "P1": "dynamicCircuitCurrentP1",
-            "P2": "dynamicCircuitCurrentP2",
-            "P3": "dynamicCircuitCurrentP3",
-        },
-        "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
-    },
+    # Deprecated 2023.1.0
     "set_charger_circuit_max_limit": {
         "handler": "charger_execute_set_circuit_current",
         "function_call": "set_max_charger_circuit_current",
@@ -259,16 +302,6 @@ SERVICE_MAP = {
         },
         "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA,
     },
-    "set_charger_dynamic_limit_new": {
-        "handler": "charger_execute_set_current_new",
-        "function_call": "set_dynamic_charger_current",
-        "compare_currents": {
-            "P1": "dynamicChargerCurrent",
-            "P2": "dynamicChargerCurrent",
-            "P3": "dynamicChargerCurrent",
-        },
-        "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA_NEW,
-    },
     "set_charger_max_limit": {
         "handler": "charger_execute_set_current",
         "function_call": "set_max_charger_current",
@@ -289,26 +322,32 @@ SERVICE_MAP = {
         "function_call": "set_access",
         "schema": SERVICE_SET_ACCESS_SHCEMA,
     },
-    "set_charger_access_new": {
-        "handler": "charger_execute_set_access_new",
-        "function_call": "set_access",
-        "schema": SERVICE_SET_ACCESS_SHCEMA_NEW,
-    },
 }
+
+
+async def _create_issue(hass, deprecation, recommend):
+    async_create_issue(
+        hass,
+        DOMAIN,
+        deprecation,
+        breaks_in_ha_version="2023.1.0",
+        is_fixable=False,
+        severity=IssueSeverity.WARNING,
+        translation_key="deprecated_service",
+        translation_placeholders={
+            "deprecation": deprecation,
+            "recommend": recommend,
+        },
+    )
 
 
 async def async_setup_services(hass):
     """Setup services for Easee."""
     controller = hass.data[DOMAIN]["controller"]
     chargers = controller.get_chargers()
-    circuits = controller.get_circuits()
 
-    async def convert_device_id_to_charger_id(device_id: str, call):
+    async def _convert_device_id_to_charger_id(call):
         """Convert device_id to charger_id."""
-        # print(call)
-        if CONF_DEVICE_ID not in call.data.keys():
-            raise HomeAssistantError("Can only call service on device. Not on entity.")
-        _LOGGER.debug("Entry: %s", call.data[CONF_DEVICE_ID])
         charger_id = None
         device_reg = dr.async_get(hass)
         device_entry = device_reg.async_get(call.data[CONF_DEVICE_ID])
@@ -318,20 +357,32 @@ async def async_setup_services(hass):
                     charger_id = val
         return charger_id
 
-    async def get_charger(device_id, call):
-        charger_id = await convert_device_id_to_charger_id(device_id, call)
+    async def _get_charger(call):
+        if CONF_DEVICE_ID in call.data.keys():
+            charger_id = await _convert_device_id_to_charger_id(call)
+        else:
+            charger_id = call.data[CHARGER_ID]
         charger = next((c for c in chargers if c.id == charger_id), None)
         return charger
 
+    async def _get_circuit_id(call):
+        if CIRCUIT_ID in call.data.keys():
+            return call.data[CIRCUIT_ID]
+        charger = await _get_charger(call)
+        return charger.circuit.id
+
     async def charger_execute_service(call):
         """Execute a service to Easee charging station."""
-        charger_id = call.data.get(CHARGER_ID)
-        enable = call.data.get(ATTR_ENABLE, None)
+
+        # Create issue for deprecated services
+        if call.service in ["start", "stop", "pause", "resume", "toggle", "delete_basic_charge_plan", "override_schedule", "update_firmware", "reboot"]:
+            await _create_issue(hass, call.service, "action_command")
+
+        charger = await _get_charger(call)
+        enable = call.data.get(ATTR_ENABLE)
 
         _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
-        # Possibly move to use entity id later
-        charger = next((c for c in chargers if c.id == charger_id), None)
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
@@ -348,19 +399,21 @@ async def async_setup_services(hass):
                 )
                 return
 
-        _LOGGER.error("Could not find charger %s", charger_id)
-        raise HomeAssistantError("Could not find charger {}".format(charger_id))
+        raise HomeAssistantError(f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}")
 
-    async def charger_execute_service_new(call):
-        """Execute a service to Easee charging station."""
+    async def charger_execute_action_command(call):
+        """Execute a service with an action command to Easee charging station."""
 
         enable = call.data.get(ATTR_ENABLE)
+        charger = await _get_charger(call)
 
-        charger = await get_charger(call.data[CONF_DEVICE_ID], call)
-        _LOGGER.debug("Call execution service on charger_id: %s", charger.id)
+        _LOGGER.debug(
+            "Call action service %s on charger_id: %s",
+            call.data[ACTION_COMMAND],
+            charger.id,
+        )
         if charger:
-            function_name = SERVICE_MAP[call.service]
-            function_call = getattr(charger, function_name["function_call"])
+            function_call = getattr(charger, call.data.get(ACTION_COMMAND))
             try:
                 if enable is not None:
                     return await function_call(enable)
@@ -409,12 +462,13 @@ async def async_setup_services(hass):
 
     async def circuit_execute_set_current(call):
         """Execute a service to set currents for Easee circuit."""
-        circuit_id = call.data.get(CIRCUIT_ID)
+        circuit_id = await _get_circuit_id(call)
+
         currentP1 = call.data.get(ATTR_SET_CURRENTP1)
         currentP2 = call.data.get(ATTR_SET_CURRENTP2)
         currentP3 = call.data.get(ATTR_SET_CURRENTP3)
 
-        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
+        _LOGGER.debug("Execute_service: %s %s", str(call.service), str(call.data))
 
         function_name = SERVICE_MAP[call.service]
         compare = function_name["compare_currents"]
@@ -445,6 +499,15 @@ async def async_setup_services(hass):
 
     async def charger_execute_set_circuit_current(call):
         """Execute a service to set currents for Easee circuit for specific charger."""
+
+        # Handle deprecation
+        RECOMMEND = {
+            "set_charger_circuit_dynamic_limit": "set_circuit_dynamic_limit",
+            "set_charger_dynamic_limit": "set_circuit_dynamic_limit",
+        }
+        if call.service in RECOMMEND.keys():
+            await _create_issue(hass, call.service, RECOMMEND[call.service])
+
         charger_id = call.data.get(CHARGER_ID)
         currentP1 = call.data.get(ATTR_SET_CURRENTP1)
         currentP2 = call.data.get(ATTR_SET_CURRENTP2)
@@ -481,44 +544,15 @@ async def async_setup_services(hass):
 
     async def charger_execute_set_current(call):
         """Execute a service to set currents for Easee charger."""
+
+        # Handle deprecation
+        RECOMMEND = {
+            "set_charger_dynamic_limit": "set_circuit_dynamic_limit",
+        }
+        if call.service in RECOMMEND.keys():
+            await _create_issue(hass, call.service, RECOMMEND[call.service])
+
         charger_id = call.data.get(CHARGER_ID)
-        current = call.data.get(ATTR_SET_CURRENT)
-
-        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
-
-        function_name = SERVICE_MAP[call.service]
-        compare = function_name["compare_currents"]
-        charger = controller.check_charger_current(
-            charger_id,
-            current,
-            current,
-            current,
-            compare["P1"],
-            compare["P2"],
-            compare["P3"],
-        )
-        if charger:
-            function_call = getattr(charger, function_name["function_call"])
-            try:
-                return await function_call(current)
-            except Exception:
-                _LOGGER.error(
-                    "Failed to execute service: %s with data %s",
-                    str(call.service),
-                    str(call.data),
-                )
-                return
-
-        if charger is None:
-            _LOGGER.error("Could not find charger %s", charger_id)
-            raise HomeAssistantError("Could not find charger {}".format(charger_id))
-
-    async def charger_execute_set_current_new(call):
-        """Execute a service to set currents for Easee charger."""
-        charger_id = await convert_device_id_to_charger_id(
-            call.data[CONF_DEVICE_ID], call
-        )
-
         _LOGGER.debug("Call set_current service on charger_id: %s", charger_id)
 
         current = call.data.get(ATTR_SET_CURRENT)
@@ -549,8 +583,7 @@ async def async_setup_services(hass):
                 return
 
         if charger is None:
-            _LOGGER.error("Could not find charger %s", charger_id)
-            raise HomeAssistantError("Could not find charger {}".format(charger_id))
+            raise HomeAssistantError(f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}")
 
     async def charger_execute_set_charging_cost(call):
         """Execute a service to set charging cost per kwh for Easee charger site."""
@@ -575,34 +608,12 @@ async def async_setup_services(hass):
                 )
                 return
 
-        _LOGGER.error("Could not find charger %s", charger_id)
-        raise HomeAssistantError("Could not find charger {}".format(charger_id))
+        raise HomeAssistantError(f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}")
 
     async def charger_execute_set_access(call):
         """Execute a service to set access level on a charger"""
-        charger_id = call.data.get(CHARGER_ID)
         access_level = call.data.get(ACCESS_LEVEL)
-
-        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
-
-        charger = next((c for c in chargers if c.id == charger_id), None)
-        if charger:
-            function_name = SERVICE_MAP[call.service]
-            function_call = getattr(charger, function_name["function_call"])
-            try:
-                return await function_call(access_level)
-            except Exception:
-                _LOGGER.error(
-                    "Failed to execute service: %s with data %s",
-                    str(call.service),
-                    str(call.data),
-                )
-                return
-
-    async def charger_execute_set_access_new(call):
-        """Execute a service to set access level on a charger"""
-        access_level = call.data.get(ACCESS_LEVEL)
-        charger = await get_charger(call.data[CONF_DEVICE_ID], call)
+        charger = await _get_charger(call)
 
         if charger:
             function_name = SERVICE_MAP[call.service]
@@ -616,6 +627,7 @@ async def async_setup_services(hass):
                     str(call.data),
                 )
                 return
+        raise HomeAssistantError(f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}")
 
     for service in SERVICE_MAP:
         data = SERVICE_MAP[service]
