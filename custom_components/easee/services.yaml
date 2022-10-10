@@ -57,7 +57,7 @@ action_command:
       name: "Action command"
       description: "Select the command to execute"
       required: true
-      example: "b40f1f45d28b0891fe8d"
+      example: "resume"
       selector:
         select:
           options:
@@ -247,14 +247,30 @@ set_charger_circuit_offline_limit:
       example: 10
 
 set_charger_dynamic_limit:
-  description: "Deprecated HA 2023.1.0\nSet charger dynamic limit"
+  description: Set charger dynamic limit"
   fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
+    device_id:
+      name: Target device
+      description: "Select one of the chargers in the circuit that should be controlled."
+      required: true
+      example: "b40f1f45d28b0891fe8d"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
     current:
-      description: "Charger current"
-      example: 10
+      name: "Current"
+      required: true
+      description: "Max charging current"
+      example: 16
+      default: 16
+      selector:
+        number:
+          min: 0
+          max: 40
+          step: 1
+          unit_of_measurement: "A"
+          mode: slider
 
 set_circuit_dynamic_limit:
   name: "Set dynamic current limit"
@@ -309,7 +325,7 @@ set_circuit_dynamic_limit:
           unit_of_measurement: "A"
           mode: slider
     time_to_live:
-      name: "Time ro live"
+      name: "Time to live"
       required: false
       description: "Set time in minutes for the command to live. 0 = indefinitely."
       example: 0
@@ -324,12 +340,12 @@ set_circuit_dynamic_limit:
 
 
 set_charger_max_limit:
-  name: "Set charger max limit - New"
+  name: "Set charger max limit"
   description: "Set charger max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
   fields:
     device_id:
       name: Target device
-      description: "Select the charger to control"
+      description: "Select one of the chargers in the circuit that should be controlled."
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -339,7 +355,7 @@ set_charger_max_limit:
     current:
       name: "Current"
       required: true
-      description: "Max limit charging current"
+      description: "Max charging current"
       example: 16
       default: 16
       selector:
@@ -351,20 +367,47 @@ set_charger_max_limit:
           mode: slider
 
 set_charging_cost:
+  name: "Set charging cost"
   description: "Set charging cost per kwh for charger site"
   fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
+    device_id:
+      name: Target device
+      description: "Select one of the chargers in the circuit that should be controlled."
+      required: true
+      example: "b40f1f45d28b0891fe8d"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
     cost_per_kwh:
+      name: "Cost per kWh"
       description: "Cost per kWh"
       example: 0.3
+      default: 0
+      required: true
+      selector:
+        number:
+          mode: box
     vat:
-      description: "VAT (Optional)"
+      name: VAT
+      description: "VAT"
+      required: False
       example: 25.0
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+          mode: box
     currency_id:
-      description: "Currency"
+      name: "Currency"
+      description: "Currency code"
       example: "EUR"
+      required: false
+      selector:
+        text:
+          type: text
 
 set_charger_access:
   description: "Set access level on the charger"

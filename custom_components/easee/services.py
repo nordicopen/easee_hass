@@ -1,6 +1,5 @@
 """ easee services."""
 import logging
-from tokenize import String
 
 import voluptuous as vol
 from homeassistant.const import CONF_DEVICE_ID
@@ -63,19 +62,35 @@ SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
 )
 
 SERVICE_CHARGER_ACTIONS_COMMAND_SCHEMA = vol.Schema(
-    {
-        vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_1): cv.string,
-        vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_1): cv.string,
-        vol.Required(ACTION_COMMAND): vol.In(ACTIONS),
-    }
+    vol.All(
+        {
+            vol.Required(
+                vol.Any(CHARGER_ID, CONF_DEVICE_ID), msg="Target key is missing"
+            ): object,
+            vol.Required(ACTION_COMMAND): vol.In(ACTIONS),
+        },
+        {
+            vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_1): cv.string,
+            vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_1): cv.string,
+            vol.Required(ACTION_COMMAND): vol.In(ACTIONS),
+        },
+    ),
 )
 
 SERVICE_CHARGER_ENABLE_SCHEMA = vol.Schema(
-    {
-        vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_1): cv.string,
-        vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_1): cv.string,
-        vol.Required(ATTR_ENABLE): cv.boolean,
-    }
+    vol.All(
+        {
+            vol.Required(
+                vol.Any(CHARGER_ID, CONF_DEVICE_ID), msg="Target key is missing"
+            ): object,
+            vol.Required(ATTR_ENABLE): cv.boolean,
+        },
+        {
+            vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_1): cv.string,
+            vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_1): cv.string,
+            vol.Required(ATTR_ENABLE): cv.boolean,
+        },
+    ),
 )
 
 SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
@@ -88,26 +103,49 @@ SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
 )
 
 SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
-    {
-        vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_2): cv.string,
-        vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_2): cv.string,
-        vol.Exclusive(CIRCUIT_ID, GRP1, MESSAGE_2): cv.string,
-        vol.Required(ATTR_SET_CURRENTP1, default=16): cv.positive_int,
-        vol.Optional(ATTR_SET_CURRENTP2, default=16): cv.positive_int,
-        vol.Optional(ATTR_SET_CURRENTP3, default=16): cv.positive_int,
-    }
+    vol.All(
+        {
+            vol.Required(
+                vol.Any(CHARGER_ID, CIRCUIT_ID, CONF_DEVICE_ID),
+                msg="Target key is missing",
+            ): object,
+            vol.Required(ATTR_SET_CURRENTP1, default=16): cv.positive_int,
+            vol.Optional(ATTR_SET_CURRENTP2, default=16): cv.positive_int,
+            vol.Optional(ATTR_SET_CURRENTP3, default=16): cv.positive_int,
+        },
+        {
+            vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_2): cv.string,
+            vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_2): cv.string,
+            vol.Exclusive(CIRCUIT_ID, GRP1, MESSAGE_2): cv.string,
+            vol.Required(ATTR_SET_CURRENTP1, default=16): cv.positive_int,
+            vol.Optional(ATTR_SET_CURRENTP2, default=16): cv.positive_int,
+            vol.Optional(ATTR_SET_CURRENTP3, default=16): cv.positive_int,
+        },
+    ),
 )
 
 SERVICE_SET_CIRCUIT_CURRENT_SCHEMA_TTL = vol.Schema(
-    {
-        vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_2): cv.string,
-        vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_2): cv.string,
-        vol.Exclusive(CIRCUIT_ID, GRP1, MESSAGE_2): cv.string,
-        vol.Required(ATTR_SET_CURRENTP1, default=16): cv.positive_int,
-        vol.Optional(ATTR_SET_CURRENTP2, default=16): cv.positive_int,
-        vol.Optional(ATTR_SET_CURRENTP3, default=16): cv.positive_int,
-        vol.Optional(ATTR_TTL, default=0): cv.positive_int,
-    }
+    vol.All(
+        {
+            vol.Required(
+                vol.Any(CHARGER_ID, CIRCUIT_ID, CONF_DEVICE_ID),
+                msg="Target key is missing",
+            ): object,
+            vol.Required(ATTR_SET_CURRENTP1, default=16): cv.positive_int,
+            vol.Optional(ATTR_SET_CURRENTP2, default=16): cv.positive_int,
+            vol.Optional(ATTR_SET_CURRENTP3, default=16): cv.positive_int,
+            vol.Optional(ATTR_TTL, default=0): cv.positive_int,
+        },
+        {
+            vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_2): cv.string,
+            vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_2): cv.string,
+            vol.Exclusive(CIRCUIT_ID, GRP1, MESSAGE_2): cv.string,
+            vol.Required(ATTR_SET_CURRENTP1, default=16): cv.positive_int,
+            vol.Optional(ATTR_SET_CURRENTP2, default=16): cv.positive_int,
+            vol.Optional(ATTR_SET_CURRENTP3, default=16): cv.positive_int,
+            vol.Optional(ATTR_TTL, default=0): cv.positive_int,
+        },
+    ),
 )
 
 SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
@@ -137,37 +175,52 @@ SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA_NEW = vol.Schema(
 
 SERVICE_SET_CHARGER_CURRENT_SCHEMA = vol.Schema(
     {
-        vol.Required(CHARGER_ID): cv.string,
-        vol.Required(ATTR_SET_CURRENT): cv.positive_int,
-    }
-)
-
-SERVICE_SET_CHARGER_CURRENT_SCHEMA_NEW = vol.Schema(
-    {
         vol.Required(CONF_DEVICE_ID): cv.string,
-        vol.Optional(ATTR_SET_CURRENT, default=16): vol.All(
+        vol.Required(ATTR_SET_CURRENT, default=16): vol.All(
             cv.positive_int, vol.Range(min=0, max=40)
         ),
     }
 )
 
 SERVICE_SET_SITE_CHARGING_COST_SCHEMA = vol.Schema(
-    {
-        vol.Required(CHARGER_ID): cv.string,
-        vol.Required(ATTR_COST_PER_KWH): vol.All(vol.Coerce(float)),
-        vol.Optional(ATTR_COST_CURRENCY): cv.string,
-        vol.Optional(ATTR_COST_VAT): vol.All(vol.Coerce(float)),
-    }
+    vol.All(
+        {
+            vol.Required(
+                vol.Any(CHARGER_ID, CONF_DEVICE_ID), msg="Target key is missing"
+            ): object,
+            vol.Required(ATTR_COST_PER_KWH): vol.All(vol.Coerce(float)),
+            vol.Optional(ATTR_COST_CURRENCY): cv.string,
+            vol.Optional(ATTR_COST_VAT): vol.All(vol.Coerce(float)),
+        },
+        {
+            vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_1): cv.string,
+            vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_1): cv.string,
+            vol.Required(ATTR_COST_PER_KWH): vol.All(vol.Coerce(float)),
+            vol.Optional(ATTR_COST_CURRENCY): cv.string,
+            vol.Optional(ATTR_COST_VAT): vol.All(vol.Coerce(float)),
+        },
+    ),
 )
 
 
-SERVICE_SET_ACCESS_SHCEMA = vol.Schema(
-    {
-        vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_1): cv.string,
-        vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_1): cv.string,
-        vol.Required(CHARGER_ID): cv.string,
-        vol.Required(ACCESS_LEVEL): vol.All(cv.positive_int, vol.Range(min=1, max=3)),
-    }
+SERVICE_SET_ACCESS_SCHEMA = vol.Schema(
+    vol.All(
+        {
+            vol.Required(
+                vol.Any(CHARGER_ID, CONF_DEVICE_ID), msg="Target key is missing"
+            ): object,
+            vol.Required(ACCESS_LEVEL): vol.All(
+                cv.positive_int, vol.Range(min=1, max=3)
+            ),
+        },
+        {
+            vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_1): cv.string,
+            vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_1): cv.string,
+            vol.Required(ACCESS_LEVEL): vol.All(
+                cv.positive_int, vol.Range(min=1, max=3)
+            ),
+        },
+    ),
 )
 
 
@@ -320,7 +373,7 @@ SERVICE_MAP = {
     "set_charger_access": {
         "handler": "charger_execute_set_access",
         "function_call": "set_access",
-        "schema": SERVICE_SET_ACCESS_SHCEMA,
+        "schema": SERVICE_SET_ACCESS_SCHEMA,
     },
 }
 
@@ -375,7 +428,17 @@ async def async_setup_services(hass):
         """Execute a service to Easee charging station."""
 
         # Create issue for deprecated services
-        if call.service in ["start", "stop", "pause", "resume", "toggle", "delete_basic_charge_plan", "override_schedule", "update_firmware", "reboot"]:
+        if call.service in [
+            "start",
+            "stop",
+            "pause",
+            "resume",
+            "toggle",
+            "delete_basic_charge_plan",
+            "override_schedule",
+            "update_firmware",
+            "reboot",
+        ]:
             await _create_issue(hass, call.service, "action_command")
 
         charger = await _get_charger(call)
@@ -399,7 +462,9 @@ async def async_setup_services(hass):
                 )
                 return
 
-        raise HomeAssistantError(f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}")
+        raise HomeAssistantError(
+            f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
+        )
 
     async def charger_execute_action_command(call):
         """Execute a service with an action command to Easee charging station."""
@@ -494,7 +559,6 @@ async def async_setup_services(hass):
                 return
 
         if circuit is None:
-            _LOGGER.error("Could not find circuit %s", circuit_id)
             raise HomeAssistantError("Could not find circuit {}".format(circuit_id))
 
     async def charger_execute_set_circuit_current(call):
@@ -545,14 +609,9 @@ async def async_setup_services(hass):
     async def charger_execute_set_current(call):
         """Execute a service to set currents for Easee charger."""
 
-        # Handle deprecation
-        RECOMMEND = {
-            "set_charger_dynamic_limit": "set_circuit_dynamic_limit",
-        }
-        if call.service in RECOMMEND.keys():
-            await _create_issue(hass, call.service, RECOMMEND[call.service])
+        charger = await _get_charger(call)
+        charger_id = charger.id
 
-        charger_id = call.data.get(CHARGER_ID)
         _LOGGER.debug("Call set_current service on charger_id: %s", charger_id)
 
         current = call.data.get(ATTR_SET_CURRENT)
@@ -583,18 +642,19 @@ async def async_setup_services(hass):
                 return
 
         if charger is None:
-            raise HomeAssistantError(f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}")
+            raise HomeAssistantError(
+                f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
+            )
 
     async def charger_execute_set_charging_cost(call):
         """Execute a service to set charging cost per kwh for Easee charger site."""
-        charger_id = call.data.get(CHARGER_ID)
+        charger = await _get_charger(call)
         cost_per_kwh = call.data.get(ATTR_COST_PER_KWH)
         currency = call.data.get(ATTR_COST_CURRENCY)
         vat = call.data.get(ATTR_COST_VAT)
 
         _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
-        charger = next((c for c in chargers if c.id == charger_id), None)
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger.site, function_name["function_call"])
@@ -608,7 +668,7 @@ async def async_setup_services(hass):
                 )
                 return
 
-        raise HomeAssistantError(f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}")
+        raise HomeAssistantError("Could not find charger")
 
     async def charger_execute_set_access(call):
         """Execute a service to set access level on a charger"""
@@ -627,7 +687,9 @@ async def async_setup_services(hass):
                     str(call.data),
                 )
                 return
-        raise HomeAssistantError(f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}")
+        raise HomeAssistantError(
+            f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
+        )
 
     for service in SERVICE_MAP:
         data = SERVICE_MAP[service]
