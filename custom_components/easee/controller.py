@@ -1,7 +1,7 @@
 """ Easee Connector class """
 import asyncio
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 from gc import collect
 from sys import getrefcount
 from typing import List
@@ -22,6 +22,7 @@ from pyeasee import (
     Equalizer,
     EqualizerStreamData,
     Site,
+    SiteCost,
 )
 from pyeasee.exceptions import (
     AuthorizationFailedException,
@@ -78,6 +79,15 @@ class ProductData:
         self.config = None
         self.schedule = None
         self.weekly_schedule = None
+        self.cost_day = SiteCost(
+            {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
+        )
+        self.cost_month = SiteCost(
+            {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
+        )
+        self.cost_year = SiteCost(
+            {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
+        )
         self.schedule_polled = False
         self.streamdata = streamdata
         self.dirty = False
@@ -124,6 +134,26 @@ class ProductData:
             self.weekly_schedule = None
 
         _LOGGER.debug("Schedule: %s %s", self.schedule, self.weekly_schedule)
+
+    async def cost_async_refresh(self):
+        dt_end = datetime.now()
+        dt_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        _LOGGER.debug(f"Refresh cost {dt_start} {dt_end}")
+        costs_day = await self.site.get_cost_between_dates(dt_start, dt_end)
+        dt_start = dt_start.replace(day=1)
+        costs_month = await self.site.get_cost_between_dates(dt_start, dt_end)
+        dt_start = dt_start.replace(month=1)
+        costs_year = await self.site.get_cost_between_dates(dt_start, dt_end)
+        _LOGGER.debug(f"Cost refreshed {costs_day} {costs_month} {costs_year}")
+        for cost in costs_day:
+            if cost["chargerId"] == self.product.id:
+                self.cost_day = cost
+        for cost in costs_month:
+            if cost["chargerId"] == self.product.id:
+                self.cost_month = cost
+        for cost in costs_year:
+            if cost["chargerId"] == self.product.id:
+                self.cost_year = cost
 
     def check_value(self, data_type, reference, value):
         if (
@@ -180,6 +210,10 @@ class ProductData:
             if first == "state":
                 oldvalue = self.state[second]
                 self.state[second] = value
+                if second == "lifetimeEnergy":
+                    asyncio.run_coroutine_threadsafe(
+                        self.cost_async_refresh(), self.event_loop
+                    )
                 if self.check_value(data_type, oldvalue, value):
                     return True
             elif first == "config":
