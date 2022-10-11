@@ -94,12 +94,23 @@ SERVICE_CHARGER_ENABLE_SCHEMA = vol.Schema(
 )
 
 SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.Schema(
-    {
-        vol.Required(CHARGER_ID): cv.string,
-        vol.Optional(ATTR_CHARGEPLAN_START_DATETIME): cv.datetime,
-        vol.Optional(ATTR_CHARGEPLAN_STOP_DATETIME): cv.datetime,
-        vol.Optional(ATTR_CHARGEPLAN_REPEAT): cv.boolean,
-    }
+    vol.All(
+        {
+            vol.Required(
+                vol.Any(CHARGER_ID, CONF_DEVICE_ID), msg="Target key is missing"
+            ): object,
+            vol.Optional(ATTR_CHARGEPLAN_START_DATETIME): cv.datetime,
+            vol.Optional(ATTR_CHARGEPLAN_STOP_DATETIME): cv.datetime,
+            vol.Optional(ATTR_CHARGEPLAN_REPEAT): cv.boolean,
+        },
+        {
+            vol.Exclusive(CHARGER_ID, GRP1, MESSAGE_1): cv.string,
+            vol.Exclusive(CONF_DEVICE_ID, GRP1, MESSAGE_1): cv.string,
+            vol.Optional(ATTR_CHARGEPLAN_START_DATETIME): cv.datetime,
+            vol.Optional(ATTR_CHARGEPLAN_STOP_DATETIME): cv.datetime,
+            vol.Optional(ATTR_CHARGEPLAN_REPEAT): cv.boolean,
+        },
+    ),
 )
 
 SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
@@ -335,6 +346,7 @@ SERVICE_MAP = {
         },
         "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
     },
+    # Deprecated 2023.1.0
     "set_charger_circuit_offline_limit": {
         "handler": "charger_execute_set_circuit_current",
         "function_call": "set_max_offline_charger_circuit_current",
@@ -344,6 +356,16 @@ SERVICE_MAP = {
             "P3": "offlineMaxCircuitCurrentP3",
         },
         "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
+    },
+    "set_circuit_offline_limit": {
+        "handler": "charger_execute_set_current",
+        "function_call": "set_max_offline_charger_circuit_current",
+        "compare_currents": {
+            "P1": "offlineMaxCircuitCurrentP1",
+            "P2": "offlineMaxCircuitCurrentP2",
+            "P3": "offlineMaxCircuitCurrentP3",
+        },
+        "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
     },
     "set_charger_dynamic_limit": {
         "handler": "charger_execute_set_current",
@@ -495,15 +517,14 @@ async def async_setup_services(hass):
 
     async def charger_set_schedule(call):
         """Execute a set schedule call to Easee charging station."""
-        charger_id = call.data.get(CHARGER_ID)
-        schedule_id = charger_id  # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
+        charger = await _get_charger(call)
+        schedule_id = charger.id  # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
         start_datetime = call.data.get(ATTR_CHARGEPLAN_START_DATETIME)
         stop_datetime = call.data.get(ATTR_CHARGEPLAN_STOP_DATETIME)
         repeat = call.data.get(ATTR_CHARGEPLAN_REPEAT)
 
         _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
-        charger = next((c for c in chargers if c.id == charger_id), None)
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
@@ -522,8 +543,7 @@ async def async_setup_services(hass):
                 )
                 return
 
-        _LOGGER.error("Could not find charger %s", charger_id)
-        raise HomeAssistantError("Could not find charger {}".format(charger_id))
+        raise HomeAssistantError("Could not find charger.")
 
     async def circuit_execute_set_current(call):
         """Execute a service to set currents for Easee circuit."""
@@ -568,6 +588,7 @@ async def async_setup_services(hass):
         RECOMMEND = {
             "set_charger_circuit_dynamic_limit": "set_circuit_dynamic_limit",
             "set_charger_dynamic_limit": "set_circuit_dynamic_limit",
+            "set_charger_circuit_offline_limit": "set_circuit_offline_limit",
         }
         if call.service in RECOMMEND.keys():
             await _create_issue(hass, call.service, RECOMMEND[call.service])

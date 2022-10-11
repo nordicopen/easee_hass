@@ -81,20 +81,39 @@ action_command:
               value: "delete_basic_charge_plan"
 
 set_basic_charge_plan:
+  name: "Set basic charge plan"
   description: "Set basic charge plan"
   fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
+    device_id:
+      name: Target device
+      description: "Select the charger to control"
+      required: true
+      example: "b40f1f45d28b0891fe8d"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
     start_datetime:
+      name: "Start datetime"
       description: "Plan start time"
+      required: true
       example: "2020-07-28T19:51"
+      selector:
+        datetime:
     stop_datetime:
+      name: "Stop datetime"
       description: "Plan stop time"
+      required: true
       example: "2020-07-28T19:51"
+      selector:
+        datetime:
     repeat:
+      name: "Repeat plan"
       description: "Repeat plan"
+      required: true
       example: True
+      selector:
+        boolean:
 
 delete_basic_charge_plan:
   description: "Deprecated HA 2023.1.0\nDelete basic charge plan"
@@ -231,7 +250,7 @@ set_charger_circuit_max_limit:
       example: 10
 
 set_charger_circuit_offline_limit:
-  description: "Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
+  description: "Deprecated. Will be removed in HA 2023.1.0. Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
   fields:
     charger_id:
       description: "The charger id"
@@ -245,6 +264,59 @@ set_charger_circuit_offline_limit:
     currentP3:
       description: "Phase 3 current (Optional)"
       example: 10
+
+set_circuit_offline_limit:
+  name: "Set circuit offline limit"
+  description: "Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
+  fields:
+    device_id:
+      name: Target device
+      description: "Select one of the chargers in the circuit that should be controlled."
+      required: true
+      example: "b40f1f45d28b0891fe8d"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
+    currentP1:
+      name: "Current Phase 1"
+      required: true
+      description: "Max charging current"
+      example: 16
+      default: 16
+      selector:
+        number:
+          min: 0
+          max: 40
+          step: 1
+          unit_of_measurement: "A"
+          mode: slider
+    currentP2:
+      name: "Current Phase 2"
+      required: false
+      description: "Max charging current. If disabled, the value of Current Phase 1 will be used"
+      example: 16
+      default: 16
+      selector:
+        number:
+          min: 0
+          max: 40
+          step: 1
+          unit_of_measurement: "A"
+          mode: slider
+    currentP3:
+      name: "Current Phase 3"
+      required: false
+      description: "Max charging current. If disabled, the value of Current Phase 1 will be used"
+      example: 16
+      default: 16
+      selector:
+        number:
+          min: 0
+          max: 40
+          step: 1
+          unit_of_measurement: "A"
+          mode: slider
 
 set_charger_dynamic_limit:
   description: Set charger dynamic limit"
@@ -411,7 +483,7 @@ set_charging_cost:
 
 set_charger_access:
   description: "Set access level on the charger"
-  name: "Set access level on the charger - New:"
+  name: "Set access level on the charger"
   fields:
     device_id:
       name: Target device
