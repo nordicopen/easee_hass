@@ -26,7 +26,6 @@ from pyeasee import (
     Equalizer,
     EqualizerStreamData,
     Site,
-    SiteCost,
 )
 from pyeasee.exceptions import (
     AuthorizationFailedException,
@@ -83,15 +82,9 @@ class ProductData:
         self.config = None
         self.schedule = None
         self.weekly_schedule = None
-        self.cost_day = SiteCost(
-            {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
-        )
-        self.cost_month = SiteCost(
-            {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
-        )
-        self.cost_year = SiteCost(
-            {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
-        )
+        self.cost_day = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
+        self.cost_month = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
+        self.cost_year = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
         self.schedule_polled = False
         self.streamdata = streamdata
         self.dirty = False
