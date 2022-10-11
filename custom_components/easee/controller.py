@@ -3,6 +3,7 @@ import asyncio
 import logging
 from datetime import datetime, timedelta
 from gc import collect
+from random import random
 from sys import getrefcount
 from typing import List
 
@@ -11,7 +12,10 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
 from homeassistant.helpers import aiohttp_client
-from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers.event import (
+    async_track_time_change,
+    async_track_time_interval,
+)
 from homeassistant.util import dt
 from pyeasee import (
     Charger,
@@ -394,6 +398,9 @@ class Controller:
         tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
         if tasks:
             await asyncio.wait(tasks)
+        tasks = [charger.cost_async_refresh() for charger in self.chargers_data]
+        if tasks:
+            await asyncio.wait(tasks)
         self.hass.async_add_job(self.refresh_sites_state)
         self.hass.async_add_job(self.refresh_equalizers_state)
 
@@ -424,6 +431,17 @@ class Controller:
             )
         )
 
+        # Add time pattern refresh some random time after midnight
+        self.trackers.append(
+            async_track_time_change(
+                self.hass,
+                self.refresh_midnight,
+                hour=0,
+                minute=int(random() * 9),
+                second=int(random() * 59),
+            )
+        )
+
         # Let other tasks run
         await asyncio.sleep(0)
 
@@ -431,6 +449,13 @@ class Controller:
             await self.easee.sr_subscribe(equalizer, self.stream_callback)
         for charger in self.chargers:
             await self.easee.sr_subscribe(charger, self.stream_callback)
+
+    async def refresh_midnight(self, now=None):
+        """Refreshes the cost data"""
+        for charger in self.chargers_data:
+            await charger.cost_async_refresh()
+
+        self.update_ha_state()
 
     async def refresh_schedules(self, now=None):
         """Refreshes the charging schedules data"""
