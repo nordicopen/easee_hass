@@ -27,18 +27,11 @@ toggle:
       example: "EH123456"
 
 resume:
-  name: "Resume"
   description: "Deprecated HA 2023.1.0\nResume charger. Keeps current charge session authorized."
   fields:
-    device_id:
-      name: Target device
-      description: "Select the charger to control"
-      required: true
-      example: "b40f1f45d28b0891fe8d"
-      selector:
-        device:
-          integration: "easee"
-          model: "Charging Robot"
+    charger_id:
+      description: "The charger id"
+      example: "EH123456"
 
 action_command:
   name: "Execute action command"
