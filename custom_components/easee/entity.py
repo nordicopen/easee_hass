@@ -95,6 +95,8 @@ class ChargerEntity(Entity):
         self._state = None
         self._switch_func = switch_func
         self._enabled_default = enabled_default
+        self._attr_name = f"{self._entity_name}".capitalize().replace("_", " ")
+        self._attr_has_entity_name = True
         self._attr_state_class = state_class
         self._attr_entity_category = entity_category
 
@@ -131,14 +133,6 @@ class ChargerEntity(Entity):
     @property
     def entity_registry_enabled_default(self):
         return self._enabled_default
-
-    @property
-    def name(self):
-        """Return the name of the entity."""
-        return (
-            f"{self.data.product.name} "
-            + f"{self._entity_name}".capitalize().replace("_", " ")
-        )
 
     @property
     def unique_id(self) -> str:
@@ -262,7 +256,7 @@ class ChargerEntity(Entity):
                 value = dt.as_local(value)
         except KeyError:
             value = ""
-            
+
         return value
 
     async def async_update(self):
