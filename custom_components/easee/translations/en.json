@@ -55,7 +55,7 @@
   "issues": {
     "deprecated_service": {
       "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\n\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
-      "title": "Use of deprecated service"
+      "title": "Use of deprecated service: {deprecation}"
     }
   },
   "title": "Easee EV Charger"
