@@ -5,7 +5,7 @@ import logging
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.helpers.entity import DeviceInfo
 
-from .const import DOMAIN
+from .const import DOMAIN, MANUFACTURER, MODEL_EQUALIZER
 from .entity import ChargerEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ class EqualizerBinarySensor(ChargerEntity, BinarySensorEntity):
         return DeviceInfo(
             identifiers={(DOMAIN, self.data.product.id)},
             name=self.data.product.name,
-            manufacturer="Easee",
-            model="Equalizer",
+            manufacturer=MANUFACTURER,
+            model=MODEL_EQUALIZER,
             configuration_url=f"https://easee.cloud/mypage/products/{self.data.product.id}",
         )
