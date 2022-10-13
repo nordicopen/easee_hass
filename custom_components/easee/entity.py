@@ -95,14 +95,26 @@ class ChargerEntity(Entity):
         self._units = units
         self._convert_units_func = convert_units_func
         self._attrs_keys = attrs_keys
-        self._device_class = device_class
-        self._icon = icon
         self._state_func = state_func
         self._state = None
         self._switch_func = switch_func
-        self._enabled_default = enabled_default
+        self._attr_unique_id = f"{self.data.product.id}_{self._entity_name}"
+        self._attr_device_class = device_class
+        self._attr_icon = icon
+        self._attr_should_poll = False
+        self._attr_entity_registry_enabled_default = enabled_default
+        self._attr_name = f"{self._entity_name}".capitalize().replace("_", " ")
+        self._attr_has_entity_name = True
         self._attr_state_class = state_class
         self._attr_entity_category = entity_category
+        self._attr_native_unit_of_measurement = self._units
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, self.data.product.id)},
+            name=self.data.product.name,
+            manufacturer="Easee",
+            model="Charging Robot",
+            configuration_url=f"https://easee.cloud/mypage/products/{self.data.product.id}",
+        )
 
     async def async_added_to_hass(self) -> None:
         """Entity created."""
@@ -133,39 +145,6 @@ class ChargerEntity(Entity):
                 return
 
             ent_reg.async_remove(self.entity_id)
-
-    @property
-    def entity_registry_enabled_default(self):
-        return self._enabled_default
-
-    @property
-    def name(self):
-        """Return the name of the entity."""
-        return (
-            f"{self.data.product.name} "
-            + f"{self._entity_name}".capitalize().replace("_", " ")
-        )
-
-    @property
-    def unique_id(self) -> str:
-        """Return a unique ID."""
-        return f"{self.data.product.id}_{self._entity_name}"
-
-    @property
-    def device_info(self):
-        """Return the device information."""
-        return DeviceInfo(
-            identifiers={(DOMAIN, self.data.product.id)},
-            name=self.data.product.name,
-            manufacturer=MANUFACTURER,
-            model=MODEL_CHARGING_ROBOT,
-            configuration_url=f"https://easee.cloud/mypage/products/{self.data.product.id}",
-        )
-
-    @property
-    def native_unit_of_measurement(self):
-        """Return the native unit of measurement of this entity, if any."""
-        return self._units
 
     @property
     def available(self):
@@ -202,21 +181,6 @@ class ChargerEntity(Entity):
             return {}
         except IndexError:
             return {}
-
-    @property
-    def icon(self):
-        """Icon to use in the frontend, if any."""
-        return self._icon
-
-    @property
-    def device_class(self):
-        """Device class of sensor."""
-        return self._device_class
-
-    @property
-    def should_poll(self):
-        """No polling needed."""
-        return False
 
     def set_value_from_key(self, key, value):
         first, second = key.split(".")
