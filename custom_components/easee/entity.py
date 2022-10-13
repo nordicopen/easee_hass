@@ -92,12 +92,13 @@ class ChargerEntity(Entity):
         self._state_func = state_func
         self._state = None
         self._switch_func = switch_func
-
         self._attr_unique_id = f"{self.data.product.id}_{self._entity_name}"
         self._attr_device_class = device_class
         self._attr_icon = icon
         self._attr_should_poll = False
         self._attr_entity_registry_enabled_default = enabled_default
+        self._attr_name = f"{self._entity_name}".capitalize().replace("_", " ")
+        self._attr_has_entity_name = True
         self._attr_state_class = state_class
         self._attr_entity_category = entity_category
         self._attr_native_unit_of_measurement = self._units
@@ -138,14 +139,6 @@ class ChargerEntity(Entity):
                 return
 
             ent_reg.async_remove(self.entity_id)
-
-    @property
-    def name(self):
-        """Return the name of the entity."""
-        return (
-            f"{self.data.product.name} "
-            + f"{self._entity_name}".capitalize().replace("_", " ")
-        )
 
     @property
     def available(self):
