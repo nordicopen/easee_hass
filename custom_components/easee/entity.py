@@ -218,6 +218,12 @@ class ChargerEntity(Entity):
                 value = self.data.circuit[second]
             elif first == "site":
                 value = self.data.site[second]
+            elif first == "cost_day":
+                value = self.data.cost_day[second]
+            elif first == "cost_month":
+                value = self.data.cost_month[second]
+            elif first == "cost_year":
+                value = self.data.cost_year[second]
             elif first == "schedule":
                 if self.data.schedule is not None:
                     value = self.data.schedule[second]

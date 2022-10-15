@@ -1,8 +1,9 @@
 """ Easee Connector class """
 import asyncio
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 from gc import collect
+from random import random
 from sys import getrefcount
 from typing import List
 
@@ -11,7 +12,10 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
 from homeassistant.helpers import aiohttp_client
-from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers.event import (
+    async_track_time_change,
+    async_track_time_interval,
+)
 from homeassistant.util import dt
 from pyeasee import (
     Charger,
@@ -78,6 +82,9 @@ class ProductData:
         self.config = None
         self.schedule = None
         self.weekly_schedule = None
+        self.cost_day = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
+        self.cost_month = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
+        self.cost_year = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
         self.schedule_polled = False
         self.streamdata = streamdata
         self.dirty = False
@@ -124,6 +131,25 @@ class ProductData:
             self.weekly_schedule = None
 
         _LOGGER.debug("Schedule: %s %s", self.schedule, self.weekly_schedule)
+
+    async def cost_async_refresh(self):
+        dt_end = dt.now().replace(microsecond=0)
+        dt_start = dt.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        costs_day = await self.site.get_cost_between_dates(dt.as_utc(dt_start), dt.as_utc(dt_end))
+        dt_start = dt_start.replace(day=1)
+        costs_month = await self.site.get_cost_between_dates(dt.as_utc(dt_start), dt.as_utc(dt_end))
+        dt_start = dt_start.replace(month=1)
+        costs_year = await self.site.get_cost_between_dates(dt.as_utc(dt_start), dt.as_utc(dt_end))
+        _LOGGER.debug(f"Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
+        for cost in costs_day:
+            if cost["chargerId"] == self.product.id:
+                self.cost_day = cost
+        for cost in costs_month:
+            if cost["chargerId"] == self.product.id:
+                self.cost_month = cost
+        for cost in costs_year:
+            if cost["chargerId"] == self.product.id:
+                self.cost_year = cost
 
     def check_value(self, data_type, reference, value):
         if (
@@ -180,6 +206,10 @@ class ProductData:
             if first == "state":
                 oldvalue = self.state[second]
                 self.state[second] = value
+                if second == "lifetimeEnergy":
+                    asyncio.run_coroutine_threadsafe(
+                        self.cost_async_refresh(), self.event_loop
+                    )
                 if self.check_value(data_type, oldvalue, value):
                     return True
             elif first == "config":
@@ -331,7 +361,7 @@ class Controller:
                     return
 
     def setup_done(self, name):
-        _LOGGER.debug(f"Entities {name} setup done")
+        _LOGGER.debug(f"Entities %s setup done", name)
         self._init_count = self._init_count + 1
 
         if self._init_count >= len(PLATFORMS) and self.event_loop is not None:
@@ -358,6 +388,9 @@ class Controller:
         """Add schedules to udpate data"""
         # first update
         tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
+        if tasks:
+            await asyncio.wait(tasks)
+        tasks = [charger.cost_async_refresh() for charger in self.chargers_data]
         if tasks:
             await asyncio.wait(tasks)
         self.hass.async_add_job(self.refresh_sites_state)
@@ -390,6 +423,17 @@ class Controller:
             )
         )
 
+        # Add time pattern refresh some random time after midnight
+        self.trackers.append(
+            async_track_time_change(
+                self.hass,
+                self.refresh_midnight,
+                hour=0,
+                minute=int(random() * 9),
+                second=int(random() * 59),
+            )
+        )
+
         # Let other tasks run
         await asyncio.sleep(0)
 
@@ -397,6 +441,14 @@ class Controller:
             await self.easee.sr_subscribe(equalizer, self.stream_callback)
         for charger in self.chargers:
             await self.easee.sr_subscribe(charger, self.stream_callback)
+
+    async def refresh_midnight(self, now=None):
+        """Refreshes the cost data"""
+        _LOGGER.debug("Midnight refresh started")
+        for charger in self.chargers_data:
+            await charger.cost_async_refresh()
+
+        self.update_ha_state()
 
     async def refresh_schedules(self, now=None):
         """Refreshes the charging schedules data"""
