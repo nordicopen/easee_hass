@@ -12,13 +12,7 @@ from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.util import dt
 
-from .const import (
-    DOMAIN,
-    EASEE_STATUS,
-    MANUFACTURER,
-    MODEL_CHARGING_ROBOT,
-    REASON_NO_CURRENT,
-)
+from .const import DOMAIN, EASEE_STATUS, REASON_NO_CURRENT
 
 _LOGGER = logging.getLogger(__name__)
 

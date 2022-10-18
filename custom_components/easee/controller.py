@@ -1,7 +1,7 @@
 """ Easee Connector class """
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 from gc import collect
 from random import random
 from sys import getrefcount
@@ -135,12 +135,18 @@ class ProductData:
     async def cost_async_refresh(self):
         dt_end = dt.now().replace(microsecond=0)
         dt_start = dt.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        costs_day = await self.site.get_cost_between_dates(dt.as_utc(dt_start), dt.as_utc(dt_end))
+        costs_day = await self.site.get_cost_between_dates(
+            dt.as_utc(dt_start), dt.as_utc(dt_end)
+        )
         dt_start = dt_start.replace(day=1)
-        costs_month = await self.site.get_cost_between_dates(dt.as_utc(dt_start), dt.as_utc(dt_end))
+        costs_month = await self.site.get_cost_between_dates(
+            dt.as_utc(dt_start), dt.as_utc(dt_end)
+        )
         dt_start = dt_start.replace(month=1)
-        costs_year = await self.site.get_cost_between_dates(dt.as_utc(dt_start), dt.as_utc(dt_end))
-        _LOGGER.debug(f"Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
+        costs_year = await self.site.get_cost_between_dates(
+            dt.as_utc(dt_start), dt.as_utc(dt_end)
+        )
+        _LOGGER.debug("Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
         for cost in costs_day:
             if cost["chargerId"] == self.product.id:
                 self.cost_day = cost
@@ -361,7 +367,7 @@ class Controller:
                     return
 
     def setup_done(self, name):
-        _LOGGER.debug(f"Entities %s setup done", name)
+        _LOGGER.debug("Entities %s setup done", name)
         self._init_count = self._init_count + 1
 
         if self._init_count >= len(PLATFORMS) and self.event_loop is not None:
