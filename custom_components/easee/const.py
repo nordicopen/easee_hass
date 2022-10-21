@@ -412,7 +412,7 @@ OPTIONAL_EASEE_ENTITIES = {
     "reason_for_no_current": {
         "key": "state.reasonForNoCurrent",
         "attrs": [],
-        "units": "",
+        "units": None,
         "convert_units_func": "map_reason_no_current",
         "device_class": "easee__reason_no_current",
         "icon": "mdi:alert-circle",

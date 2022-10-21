@@ -101,10 +101,7 @@ class ProductData:
         return True
 
     def is_schedule_polled(self):
-        if self.schedule_polled is False:
-            self.schedule_polled = True
-            return False
-        return True
+        return self.schedule_polled
 
     def is_dirty(self):
         return self.dirty
@@ -116,10 +113,13 @@ class ProductData:
         self.dirty = True
 
     async def schedules_async_refresh(self):
+        self.schedule_polled = True
+
         try:
             self.schedule = await self.product.get_basic_charge_plan()
         except (TooManyRequestsException, ServerFailureException):
             _LOGGER.error("Got server error while fetching schedule")
+            self.schedule_polled = False
         except NotFoundException:
             self.schedule = None
 
@@ -127,6 +127,7 @@ class ProductData:
             self.weekly_schedule = await self.product.get_weekly_charge_plan()
         except (TooManyRequestsException, ServerFailureException):
             _LOGGER.error("Got server error while fetching weekly schedule")
+            self.schedule_polled = False
         except NotFoundException:
             self.weekly_schedule = None
 
@@ -212,7 +213,7 @@ class ProductData:
             if first == "state":
                 oldvalue = self.state[second]
                 self.state[second] = value
-                if second == "lifetimeEnergy":
+                if second == "lifetimeEnergy" and oldvalue != value:
                     asyncio.run_coroutine_threadsafe(
                         self.cost_async_refresh(), self.event_loop
                     )
