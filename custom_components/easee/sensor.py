@@ -33,6 +33,16 @@ class ChargerSensor(ChargerEntity, SensorEntity):
         """Return native value of sensor."""
         return self._state
 
+    @property
+    def native_unit_of_measurement(self):
+        """Return native unit of measurement for sensor."""
+        if self._state_key in ["site.costPerKWh", "cost_day.totalCost", "cost_month.totalCost", "cost_year.totalCost", ]:
+            print(f"Data: {self.data.cost_day}")
+            unit = self.data.cost_day.get("currencyId", "HEJ")
+            print(f"Key: {self._state_key}  Unit: {unit}")
+            return unit
+        return self._units
+
 
 class EqualizerSensor(ChargerEntity, SensorEntity):
     """Implementation of Easee equalizer sensor."""
