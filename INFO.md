@@ -29,8 +29,8 @@ error
 ```
 
 **_Important_**
-This component quite new and uses the [pyease library](https://github.com/fondberg/pyeasee).
-Please help me test and preferbly suggest the fixes as a PR or technical note in an issue.
+This component uses the [pyease library](https://github.com/fondberg/pyeasee).
+Suggestions for improvements are welcome. So are PRs.
 
 ## Configuration
 

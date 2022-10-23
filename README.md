@@ -39,6 +39,31 @@ There are 2 different methods of installing the custom component
 
 Configuration is done through in Configuration > Integrations where you first configure it and then set the options for what you want to monitor.
 
+## Use
+The basic use of the integrations from the UI should be self-explanatory. The integration defines a number of services that can be used from automations and scripts to control the charger and the charging process. The available services can be found in Home Assistant at Developer tools->Services.
+
+The easiest way to set up services and their parameters is to use the automation editor or the developer tools. However, you can also write the code in plain yaml. The UI will use device_id as target for the services. This is a random string generated internally by HA and is not very user friendly. To simplify for hard-core coders and to be backward compatible with previous versions of this integration you can also use charger_id or circuit_id as targets.
+Three examples that will do the same thing:
+```yaml
+service: easee.set_circuit_dynamic_limit
+data:
+  device_id: b40f1f45d28b0891
+  currentP1: 10
+```
+```yaml
+service: easee.set_circuit_dynamic_limit
+data:
+  charger_id: EVK1234
+  currentP1: 10
+```
+```yaml
+service: easee.set_circuit_dynamic_limit
+data:
+  circuit_id: 30456
+  currentP1: 10
+```
+For details on the Easee API, please refer to https://developer.easee.cloud/reference
+
 ## Development
 
 This project uses `black` for code formatting and `flake8` for linting.
