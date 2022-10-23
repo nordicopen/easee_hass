@@ -1,40 +1,45 @@
 start:
-  description: "Deprecated HA 2023.1.0\nStarts charger. Also authorizes if configured to use authorization."
+  name: "Start"
+  description: "Deprecated HA 2023.1.0, see easee.action_command. Starts charger. Also authorizes if configured to use authorization."
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 stop:
-  description: "Deprecated HA 2023.1.0\nStop charger. Also deauthorizes if configured to use authorization."
+  name: "Stop"
+  description: "Deprecated HA 2023.1.0, see easee.action_command. Stop charger. Also deauthorizes if configured to use authorization."
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 pause:
-  description: "Deprecated HA 2023.1.0\nPause charger. Keeps current charge session authorized."
+  name: "Pause"
+  description: "Deprecated HA 2023.1.0, see easee.action_command. Pause charger. Keeps current charge session authorized."
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 toggle:
-  description: "Deprecated HA 2023.1.0\nToggle charger. Corresponds to pause/resume if not configured to use authorization, stop/start if configured."
+  name: "Toggle"
+  description: "Deprecated HA 2023.1.0, see easee.action_command. Toggle charger. Corresponds to pause/resume if not configured to use authorization, stop/start if configured."
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 resume:
-  description: "Deprecated HA 2023.1.0\nResume charger. Keeps current charge session authorized."
+  name: "Resume"
+  description: "Deprecated HA 2023.1.0, see easee.action_command. Resume charger. Keeps current charge session authorized."
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 action_command:
-  name: "Execute action command"
+  name: "Action command"
   description: "Execute action command on charger"
   fields:
     device_id:
@@ -109,14 +114,16 @@ set_basic_charge_plan:
         boolean:
 
 delete_basic_charge_plan:
-  description: "Deprecated HA 2023.1.0\nDelete basic charge plan"
+  name: "Delete basic charge plan"
+  description: "Deprecated HA 2023.1.0, see easee.action_command. Delete basic charge plan"
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 override_schedule:
-  description: "Override charger schedule and start charging"
+  name: "Override schedule"
+  description: "Deprecated HA 2023.1.0, see easee.action_command. Override charger schedule and start charging"
   fields:
     charger_id:
       description: "The charger id"
@@ -144,21 +151,23 @@ smart_charging:
         boolean:
 
 reboot:
-  description: "Reboot charger"
+  name: "Reboot"
+  description: "Deprecated HA 2023.1.0, see easee.action_command. Reboot charger"
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 update_firmware:
-  description: "Update charger firmware"
+  name: "Update firmware"
+  description: "Deprecated HA 2023.1.0, see easee.action_command. Update charger firmware"
   fields:
     charger_id:
       description: "The charger id"
       example: "EH123456"
 
 set_circuit_max_limit:
-  name: "Set max current on circuit"
+  name: "Set circuit max limit"
   description: "Set circuit max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
   fields:
     device_id:
@@ -211,7 +220,8 @@ set_circuit_max_limit:
           mode: slider
 
 set_charger_circuit_dynamic_limit:
-  description: "Deprecated. Will be removed in HA 2023.1.0\nSet circuit dynamic limit (current available to share by all chargers on a circuit)."
+  name: "Set charger circuit dynmic limit"
+  description: "Deprecated. Will be removed in HA 2023.1.0, see easee.set_circuit_dynamic_limit. Set circuit dynamic limit (current available to share by all chargers on a circuit)."
   fields:
     charger_id:
       description: "The charger id"
@@ -227,7 +237,8 @@ set_charger_circuit_dynamic_limit:
       example: 10
 
 set_charger_circuit_max_limit:
-  description: "Missing ***"
+  name: "Set charger circuit max limit"
+  description: "Deprecated. Will be removed in HA 2023.1.0, see easee.set_circuit_max_limit. Set circuit dynamic limit (current available to share by all chargers on a circuit)."
   fields:
     charger_id:
       description: "The charger id"
@@ -243,7 +254,8 @@ set_charger_circuit_max_limit:
       example: 10
 
 set_charger_circuit_offline_limit:
-  description: "Deprecated. Will be removed in HA 2023.1.0. Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
+  name: "Set charger circuit offline limit"
+  description: "Deprecated. Will be removed in HA 2023.1.0, see easee.set_circuit_offline_limit. Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
   fields:
     charger_id:
       description: "The charger id"
@@ -312,7 +324,8 @@ set_circuit_offline_limit:
           mode: slider
 
 set_charger_dynamic_limit:
-  description: Set charger dynamic limit"
+  name: "Set charger dynamic limit"
+  description: "Set charger dynamic limit"
   fields:
     device_id:
       name: Target device
@@ -338,8 +351,8 @@ set_charger_dynamic_limit:
           mode: slider
 
 set_circuit_dynamic_limit:
-  name: "Set dynamic current limit"
-  description: "Set dynamic charging current to share on a circuit of chargers. This service can be used in automations."
+  name: "Set circuit dynamic limit"
+  description: "Set circuit dynamic limit (shared betwwen chargers on that circuit). This service can be used in automations."
   fields:
     device_id:
       name: Target device
@@ -403,7 +416,6 @@ set_circuit_dynamic_limit:
           unit_of_measurement: "min"
           mode: box
 
-
 set_charger_max_limit:
   name: "Set charger max limit"
   description: "Set charger max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
@@ -433,7 +445,7 @@ set_charger_max_limit:
 
 set_charging_cost:
   name: "Set charging cost"
-  description: "Set charging cost per kwh for charger site"
+  description: "Set charging cost per kWh for charger site"
   fields:
     device_id:
       name: Target device
@@ -475,8 +487,8 @@ set_charging_cost:
           type: text
 
 set_charger_access:
+  name: "Set charger access"
   description: "Set access level on the charger"
-  name: "Set access level on the charger"
   fields:
     device_id:
       name: Target device

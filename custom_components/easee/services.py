@@ -57,6 +57,7 @@ DEFAULT_CURRENT = 16
 
 GRP1 = "group_1"
 
+
 def has_at_least_one(keys):
     def f(obj):
         for k in obj.keys():
