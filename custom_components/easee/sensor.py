@@ -36,11 +36,15 @@ class ChargerSensor(ChargerEntity, SensorEntity):
     @property
     def native_unit_of_measurement(self):
         """Return native unit of measurement for sensor."""
-        if self._state_key in ["site.costPerKWh", "cost_day.totalCost", "cost_month.totalCost", "cost_year.totalCost", ]:
-            print(f"Data: {self.data.cost_day}")
-            unit = self.data.cost_day.get("currencyId", "HEJ")
-            print(f"Key: {self._state_key}  Unit: {unit}")
-            return unit
+        if self._state_key == "site.costPerKWh":
+            return self.data.site.get("currencyId", "")
+        elif self._state_key == "cost_day.totalCost":
+            return self.data.cost_day.get("currencyId", "")
+        elif self._state_key == "cost_month.totalCost":
+            return self.data.cost_month.get("currencyId", "")
+        elif self._state_key == "cost_year.totalCost":
+            return self.data.cost_year.get("currencyId", "")
+
         return self._units
 
 
