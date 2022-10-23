@@ -1,13 +1,13 @@
 """ easee services."""
 import logging
 
-import voluptuous as vol
 from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.issue_registry import IssueSeverity, async_create_issue
 from homeassistant.util import dt
+import voluptuous as vol
 
 from .const import DOMAIN
 

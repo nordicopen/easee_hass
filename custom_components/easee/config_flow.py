@@ -4,7 +4,6 @@ from __future__ import annotations
 import logging
 from typing import Any, List, Optional
 
-import voluptuous as vol
 from aiohttp import ClientConnectionError
 from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
@@ -14,6 +13,7 @@ from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 from pyeasee import AuthorizationFailedException, Easee, Site
+import voluptuous as vol
 
 from .const import CONF_MONITORED_SITES, CUSTOM_UNITS, CUSTOM_UNITS_OPTIONS, DOMAIN
 
