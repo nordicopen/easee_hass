@@ -3,8 +3,8 @@ Easee charger sensor
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
 
-import logging
 from datetime import timedelta
+import logging
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.entity import DeviceInfo

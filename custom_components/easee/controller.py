@@ -1,8 +1,8 @@
 """ Easee Connector class """
 import asyncio
-import logging
 from datetime import timedelta
 from gc import collect
+import logging
 from random import random
 from sys import getrefcount
 from typing import List

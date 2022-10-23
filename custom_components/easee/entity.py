@@ -2,8 +2,8 @@
 Easee Charger base entity class.
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
-import logging
 from datetime import datetime
+import logging
 from typing import Callable, List
 
 from homeassistant.const import ENERGY_WATT_HOUR, POWER_WATT
