@@ -304,7 +304,7 @@ class Controller:
             return None
 
         try:
-            self.sites: List[Site] = await self.easee.get_sites()
+            self.sites: List[Site] = await self.easee.get_account_products()
             self.diagnostics["sites"] = self.sites
 
             self.monitored_sites = self.config.options.get(

@@ -58,7 +58,7 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
                 easee = Easee(username, password, client_session)
                 # Check that login is possible
                 await easee.connect()
-                the_sites: List[Site] = await easee.get_sites()
+                the_sites: List[Site] = await easee.get_account_products()
                 self.sites = [site.name for site in the_sites]
 
                 if len(self.sites) == 1:
