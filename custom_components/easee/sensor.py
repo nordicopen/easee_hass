@@ -39,11 +39,17 @@ class ChargerSensor(ChargerEntity, SensorEntity):
         if self._state_key == "site.costPerKWh":
             return self.data.site.get("currencyId", "")
         elif self._state_key == "cost_day.totalCost":
-            return self.data.cost_day.get("currencyId", "")
+            if not (unit := self.data.cost_day.get("currencyId", "")):
+                unit = self.data.site.get("currencyId", "")
+            return unit
         elif self._state_key == "cost_month.totalCost":
-            return self.data.cost_month.get("currencyId", "")
+            if not (unit := self.data.cost_month.get("currencyId", "")):
+                unit = self.data.site.get("currencyId", "")
+            return unit
         elif self._state_key == "cost_year.totalCost":
-            return self.data.cost_year.get("currencyId", "")
+            if not (unit := self.data.cost_year.get("currencyId", "")):
+                unit = self.data.site.get("currencyId", "")
+            return unit
 
         return self._units
 
