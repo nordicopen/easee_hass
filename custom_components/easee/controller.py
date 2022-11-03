@@ -354,7 +354,7 @@ class Controller:
             self._create_entitites()
 
         except Exception as err:
-            _LOGGER.debug("Easee server failure")
+            _LOGGER.debug("Easee server failure %s", err)
             raise ConfigEntryNotReady from err
 
     async def stream_callback(self, id, data_type, data_id, value):
@@ -475,15 +475,13 @@ class Controller:
             if charger_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
 
-            site_state = await self.easee.get_site_state(charger_data.site.id)
             charger_id = charger_data.product.id
 
-            if site_state is not None:
-                charger_data.state = await charger_data.product.get_state(raw=True)
-                _LOGGER.debug("Charger state: %s ", charger_id)
-                charger_data.config = await charger_data.product.get_config(raw=True)
-                charger_data.set_signalr_state(self.easee.sr_is_connected())
-                charger_data.mark_dirty()
+            charger_data.state = await charger_data.product.get_state(raw=True)
+            _LOGGER.debug("Charger state: %s ", charger_id)
+            charger_data.config = await charger_data.product.get_config(raw=True)
+            charger_data.set_signalr_state(self.easee.sr_is_connected())
+            charger_data.mark_dirty()
 
         self.update_ha_state()
 
