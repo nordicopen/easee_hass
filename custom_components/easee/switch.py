@@ -31,9 +31,8 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         function_call = getattr(self.data.product, self._switch_func)
         try:
             await function_call(True)
-        except ForbiddenServiceException as ex:
-            _LOGGER.error("%s - Forbidden service - Check your access rights", self._entity_name)
-            raise HomeAssistantError(f"Forbidden {self._entity_name} - No access right") from ex
+        except ForbiddenServiceException:
+            raise HomeAssistantError(f"Forbidden {self._entity_name} turn_on - No access right") from None
         except Exception:
             _LOGGER.error("Got server error while calling %s", self._switch_func)
 
@@ -46,9 +45,8 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         function_call = getattr(self.data.product, self._switch_func)
         try:
             await function_call(False)
-        except ForbiddenServiceException as ex:
-            _LOGGER.debug("%s - Forbidden service - Check your access rights", self._entity_name)
-            raise HomeAssistantError(f"Forbidden {self._entity_name} - No access right") from ex
+        except ForbiddenServiceException:
+            raise HomeAssistantError(f"Forbidden {self._entity_name} turn_off - No access right") from None
         except Exception:
             _LOGGER.error("Got server error while calling %s", self._switch_func)
 
