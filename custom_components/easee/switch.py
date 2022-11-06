@@ -3,11 +3,12 @@
 import logging
 
 from homeassistant.components.switch import SwitchEntity
+from homeassistant.exceptions import HomeAssistantError
+from pyeasee.exceptions import ForbiddenServiceException
 
 from .const import DOMAIN
 from .entity import ChargerEntity
-from pyeasee.exceptions import ForbiddenServiceException
-from homeassistant.exceptions import HomeAssistantError
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -29,7 +30,9 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         try:
             await function_call(True)
         except ForbiddenServiceException:
-            raise HomeAssistantError(f"Forbidden {self._entity_name} turn_on - No access right") from None
+            raise HomeAssistantError(
+                f"Forbidden {self._entity_name} turn_on - No access right"
+            ) from None
         except Exception:
             _LOGGER.error("Got server error while calling %s", self._switch_func)
             return
@@ -44,7 +47,9 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         try:
             await function_call(False)
         except ForbiddenServiceException:
-            raise HomeAssistantError(f"Forbidden {self._entity_name} turn_off - No access right") from None
+            raise HomeAssistantError(
+                f"Forbidden {self._entity_name} turn_off - No access right"
+            ) from None
         except Exception:
             _LOGGER.error("Got server error while calling %s", self._switch_func)
             return
