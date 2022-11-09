@@ -7,6 +7,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.issue_registry import IssueSeverity, async_create_issue
 from homeassistant.util import dt
+from pyeasee.exceptions import BadRequestException, ForbiddenServiceException
 import voluptuous as vol
 
 from .const import DOMAIN
@@ -444,6 +445,20 @@ async def async_setup_services(hass):
                     return await function_call(enable)
                 else:
                     return await function_call()
+            except BadRequestException as ex:
+                msg = ex.args[0].get("title", "")
+                _LOGGER.error(
+                    "Bad request: %s - Bad parameters or command not allowed now | %s",
+                    str(call.service),
+                    msg,
+                )
+                return
+            except ForbiddenServiceException:
+                _LOGGER.error(
+                    "Forbidden service: %s - Check your access privileges",
+                    str(call.service),
+                )
+                return
             except Exception:
                 _LOGGER.error(
                     "Failed to execute service: %s with data %s",
@@ -474,6 +489,20 @@ async def async_setup_services(hass):
                     return await function_call(enable)
                 else:
                     return await function_call()
+            except BadRequestException as ex:
+                msg = ex.args[0].get("title", "")
+                _LOGGER.error(
+                    "Bad request: %s - Bad parameters or command not allowed now | %s",
+                    str(call.service),
+                    msg,
+                )
+                return
+            except ForbiddenServiceException:
+                _LOGGER.error(
+                    "Forbidden service: %s - Check your access privileges",
+                    str(call.service),
+                )
+                return
             except Exception:
                 _LOGGER.error(
                     "Failed to execute service: %s with data %s",

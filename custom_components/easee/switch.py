@@ -3,7 +3,6 @@
 import logging
 
 from homeassistant.components.switch import SwitchEntity
-from homeassistant.exceptions import HomeAssistantError
 from pyeasee.exceptions import ForbiddenServiceException
 
 from .const import DOMAIN
