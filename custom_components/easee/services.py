@@ -446,17 +446,17 @@ async def async_setup_services(hass):
                 else:
                     return await function_call()
             except BadRequestException as ex:
-                msg = ex.args[0].get("title", "")
                 _LOGGER.error(
-                    "Bad request: %s - Bad parameters or command not allowed now | %s",
+                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
                     str(call.service),
-                    msg,
+                    ex,
                 )
                 return
-            except ForbiddenServiceException:
+            except ForbiddenServiceException as ex:
                 _LOGGER.error(
-                    "Forbidden service: %s - Check your access privileges",
+                    "Forbidden : [%s] - Check your access privileges: %s",
                     str(call.service),
+                    ex,
                 )
                 return
             except Exception:
@@ -490,11 +490,11 @@ async def async_setup_services(hass):
                 else:
                     return await function_call()
             except BadRequestException as ex:
-                msg = ex.args[0].get("title", "")
+                # msg = ex.args[0].get("title", "")
                 _LOGGER.error(
-                    "Bad request: %s - Bad parameters or command not allowed now | %s",
+                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
                     str(call.service),
-                    msg,
+                    ex.message.get("title", ""),
                 )
                 return
             except ForbiddenServiceException:
@@ -534,6 +534,20 @@ async def async_setup_services(hass):
                     dt.as_utc(stop_datetime),
                     repeat,
                 )
+            except BadRequestException as ex:
+                _LOGGER.error(
+                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
+            except ForbiddenServiceException as ex:
+                _LOGGER.error(
+                    "Forbidden : [%s] - Check your access privileges: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
             except Exception:
                 _LOGGER.error(
                     "Failed to execute service: %s with data %s",
@@ -569,6 +583,20 @@ async def async_setup_services(hass):
             function_call = getattr(circuit, function_name["function_call"])
             try:
                 return await function_call(currentP1, currentP2, currentP3)
+            except BadRequestException as ex:
+                _LOGGER.error(
+                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
+            except ForbiddenServiceException as ex:
+                _LOGGER.error(
+                    "Forbidden : [%s] - Check your access privileges: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
             except Exception:
                 _LOGGER.error(
                     "Failed to execute service: %s with data %s",
@@ -614,6 +642,20 @@ async def async_setup_services(hass):
             function_call = getattr(charger, function_name["function_call"])
             try:
                 return await function_call(currentP1, currentP2, currentP3)
+            except BadRequestException as ex:
+                _LOGGER.error(
+                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
+            except ForbiddenServiceException as ex:
+                _LOGGER.error(
+                    "Forbidden : [%s] - Check your access privileges: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
             except Exception:
                 _LOGGER.error(
                     "Failed to execute service: %s with data %s",
@@ -653,6 +695,20 @@ async def async_setup_services(hass):
             function_call = getattr(charger, function_name["function_call"])
             try:
                 return await function_call(current)
+            except BadRequestException as ex:
+                _LOGGER.error(
+                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
+            except ForbiddenServiceException as ex:
+                _LOGGER.error(
+                    "Forbidden : [%s] - Check your access privileges: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
             except Exception:
                 _LOGGER.error(
                     "Failed to execute service: %s with data %s",
@@ -680,6 +736,20 @@ async def async_setup_services(hass):
             function_call = getattr(charger.site, function_name["function_call"])
             try:
                 return await function_call(cost_per_kwh, vat, currency)
+            except BadRequestException as ex:
+                _LOGGER.error(
+                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
+            except ForbiddenServiceException as ex:
+                _LOGGER.error(
+                    "Forbidden : [%s] - Check your access privileges: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
             except Exception:
                 _LOGGER.error(
                     "Failed to execute service: %s with data %s",
@@ -700,6 +770,20 @@ async def async_setup_services(hass):
             function_call = getattr(charger, function_name["function_call"])
             try:
                 return await function_call(access_level)
+            except BadRequestException as ex:
+                _LOGGER.error(
+                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
+            except ForbiddenServiceException as ex:
+                _LOGGER.error(
+                    "Forbidden : [%s] - Check your access privileges: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
             except Exception:
                 _LOGGER.error(
                     "Failed to execute service: %s with data %s",
