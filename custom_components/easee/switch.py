@@ -3,6 +3,7 @@
 import logging
 
 from homeassistant.components.switch import SwitchEntity
+from pyeasee.exceptions import ForbiddenServiceException
 
 from .const import DOMAIN
 from .entity import ChargerEntity
@@ -24,26 +25,34 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
     async def async_turn_on(self, **kwargs):  # pylint: disable=unused-argument
         """Turn on the switch."""
         _LOGGER.debug("%s Switch turn on" % self._entity_name)
-        self.set_value_from_key(self._state_key, True)
-        self._state = True
-        self.async_write_ha_state()
         function_call = getattr(self.data.product, self._switch_func)
         try:
             await function_call(True)
+        except ForbiddenServiceException:
+            _LOGGER.error("Forbidden turn_on on switch %s", self._entity_name)
+            return
         except Exception:
             _LOGGER.error("Got server error while calling %s", self._switch_func)
+            return
+        self.set_value_from_key(self._state_key, True)
+        self._state = True
+        self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs):  # pylint: disable=unused-argument
         """Turn off the switch."""
         _LOGGER.debug("%s Switch turn off" % self._entity_name)
-        self.set_value_from_key(self._state_key, False)
-        self._state = False
-        self.async_write_ha_state()
         function_call = getattr(self.data.product, self._switch_func)
         try:
             await function_call(False)
+        except ForbiddenServiceException:
+            _LOGGER.error("Forbidden turn_off on switch %s", self._entity_name)
+            return
         except Exception:
             _LOGGER.error("Got server error while calling %s", self._switch_func)
+            return
+        self.set_value_from_key(self._state_key, False)
+        self._state = False
+        self.async_write_ha_state()
 
     @property
     def is_on(self):

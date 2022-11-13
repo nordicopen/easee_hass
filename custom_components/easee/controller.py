@@ -148,15 +148,18 @@ class ProductData:
             dt.as_utc(dt_start), dt.as_utc(dt_end)
         )
         _LOGGER.debug("Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
-        for cost in costs_day:
-            if cost["chargerId"] == self.product.id:
-                self.cost_day = cost
-        for cost in costs_month:
-            if cost["chargerId"] == self.product.id:
-                self.cost_month = cost
-        for cost in costs_year:
-            if cost["chargerId"] == self.product.id:
-                self.cost_year = cost
+        if costs_day is not None:
+            for cost in costs_day:
+                if cost["chargerId"] == self.product.id:
+                    self.cost_day = cost
+        if costs_month is not None:
+            for cost in costs_month:
+                if cost["chargerId"] == self.product.id:
+                    self.cost_month = cost
+        if costs_year is not None:
+            for cost in costs_year:
+                if cost["chargerId"] == self.product.id:
+                    self.cost_year = cost
 
     def check_value(self, data_type, reference, value):
         if (
