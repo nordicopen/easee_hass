@@ -64,6 +64,16 @@ data:
 ```
 For details on the Easee API, please refer to https://developer.easee.cloud/reference
 
+## Debug logging
+A full debug log can be enabled by entering following into `configuration.yaml` and restarting Home Assistant
+```yaml
+logger:
+  default: info
+  logs:
+    pyeasee: debug
+    custom_components.easee: debug
+```
+
 ## Development
 
 This project uses `black` for code formatting and `flake8` for linting.
