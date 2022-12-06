@@ -20,6 +20,9 @@ categories:
       - "dependency"
   - title: "Maintenance"
     label: "maintenance"
+
+  - title: "Development environment and tools"
+    label: "dev tools"
 change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 
@@ -36,7 +39,16 @@ autolabeler:
   - label: "maintenance"
     files:
       - "*.md"
+      
+  - label: "dev tools"
+    files:
       - ".github/*"
+      - ".devcontainer/*
+      - "links.sh"
+      - "Makefile"
+      - "setup.cfg"
+      - "requirements*.txt
+      - ".gitignore"
   - label: "bugfix"
     title:
       - "/fix/i"
