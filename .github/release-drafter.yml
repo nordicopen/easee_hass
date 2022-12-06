@@ -39,15 +39,15 @@ autolabeler:
   - label: "maintenance"
     files:
       - "*.md"
-      
+
   - label: "dev tools"
     files:
       - ".github/*"
-      - ".devcontainer/*
+      - ".devcontainer/*"
       - "links.sh"
       - "Makefile"
       - "setup.cfg"
-      - "requirements*.txt
+      - "requirements*.txt"
       - ".gitignore"
   - label: "bugfix"
     title:
