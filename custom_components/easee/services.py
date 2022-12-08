@@ -126,8 +126,8 @@ SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.All(
 
 ext_circuit_current = {
     vol.Required(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
-    vol.Optional(ATTR_SET_CURRENTP2, default=DEFAULT_CURRENT): cv.positive_int,
-    vol.Optional(ATTR_SET_CURRENTP3, default=DEFAULT_CURRENT): cv.positive_int,
+    vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
+    vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
 }
 
 SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = vol.All(
@@ -327,7 +327,7 @@ SERVICE_MAP = {
         "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
     },
     "set_circuit_offline_limit": {
-        "handler": "charger_execute_set_current",
+        "handler": "charger_execute_set_current_3",
         "function_call": "set_max_offline_charger_circuit_current",
         "compare_currents": {
             "P1": "offlineMaxCircuitCurrentP1",
@@ -710,6 +710,62 @@ async def async_setup_services(hass):
                 )
                 return
             except Exception:
+                _LOGGER.error(
+                    "Failed to execute service: %s with data %s",
+                    str(call.service),
+                    str(call.data),
+                )
+                return
+
+        if charger is None:
+            raise HomeAssistantError(
+                f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
+            )
+
+    async def charger_execute_set_current_3(call):
+        """Execute a service to set currents for Easee charger."""
+
+        charger = await async_get_charger(call)
+        charger_id = charger.id
+
+        _LOGGER.debug("Call set_current service on charger_id: %s", charger_id)
+
+        currentP1 = call.data.get(ATTR_SET_CURRENTP1)
+        currentP2 = call.data.get(ATTR_SET_CURRENTP2)
+        currentP3 = call.data.get(ATTR_SET_CURRENTP3)
+
+        _LOGGER.debug("Execute_service: %s %s", str(call.service), str(call.data))
+
+        function_name = SERVICE_MAP[call.service]
+        compare = function_name["compare_currents"]
+        charger = controller.check_charger_current(
+            charger_id,
+            currentP1,
+            currentP2,
+            currentP3,
+            compare["P1"],
+            compare["P2"],
+            compare["P3"],
+        )
+        if charger:
+            function_call = getattr(charger, function_name["function_call"])
+            try:
+                return await function_call(currentP1, currentP2, currentP3)
+            except BadRequestException as ex:
+                _LOGGER.error(
+                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
+            except ForbiddenServiceException as ex:
+                _LOGGER.error(
+                    "Forbidden : [%s] - Check your access privileges: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
+            except Exception:  # pylint: disable=broad-except
                 _LOGGER.error(
                     "Failed to execute service: %s with data %s",
                     str(call.service),
