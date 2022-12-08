@@ -74,13 +74,34 @@ logger:
     custom_components.easee: debug
 ```
 
-## Development
+## Development Container
+One option for development is to use the VS Code Dev Container. You need to have Docker installed.
 
-This project uses `black` for code formatting and `flake8` for linting.
+1. For best performance, make sure to clone the repo in WSL2 if running on Windows.
+
+    ```console
+    $ git clone https://github.com/{your_user}/easee_hass
+    $ mkdir easee_hass_config
+    ```
+1. Open the repository in VS Code.
+
+    ```console
+    $ code easee_hass
+    ```
+1. VS Code will ask to reopen the folder in a container
+    - If not, press `Ctrl`+`Shift`+`P` and select `Dev Containers: Reopen in Dev Container`.
+1. Wait for the container to be built.
+1. Press `Ctrl`+`Shift`+`P` and select `Tasks: Run Task` > `Run Home Assistant on port 9125`.
+1. Wait for Home Assistant to start and go to http://localhost:9125/.
+1. Walk through the Home Assistant first-launch UI.
+1. Go to http://localhost:9125/config/integrations, click `Add Integration` and add the `Easee` integration.
+1. To debug, press `F5` to attach to the Home Assistant running in the container.
+
+
 Always run
 
-```
-make lint
+```console
+$ make lint
 ```
 
 Before pushing your changes

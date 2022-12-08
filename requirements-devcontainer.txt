@@ -1,0 +1,8 @@
+colorlog
+black
+isort
+flake8
+bump2version
+wheel
+
+pyeasee
