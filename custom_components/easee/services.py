@@ -527,11 +527,12 @@ async def async_setup_services(hass):
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
+            stop_d = None if stop_datetime is None else dt.as_utc(stop_datetime)
             try:
                 return await function_call(
                     schedule_id,
                     dt.as_utc(start_datetime),
-                    dt.as_utc(stop_datetime),
+                    stop_d,
                     repeat,
                 )
             except BadRequestException as ex:
@@ -548,10 +549,11 @@ async def async_setup_services(hass):
                     ex,
                 )
                 return
-            except Exception:
+            except Exception as ex:  # pylint: disable-broad-exept
                 _LOGGER.error(
-                    "Failed to execute service: %s with data %s",
+                    "Failed to execute service: %s : %s with data %s",
                     str(call.service),
+                    ex,
                     str(call.data),
                 )
                 return
