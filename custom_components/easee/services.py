@@ -549,7 +549,7 @@ async def async_setup_services(hass):
                     ex,
                 )
                 return
-            except Exception as ex:  # pylint: disable-broad-exept
+            except Exception as ex:  # pylint: disable=broad-except
                 _LOGGER.error(
                     "Failed to execute service: %s : %s with data %s",
                     str(call.service),
