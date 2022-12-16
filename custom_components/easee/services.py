@@ -60,13 +60,15 @@ GRP1 = "group_1"
 
 
 def has_at_least_one(keys):
-    def f(obj):
+    """Ensure that at least one key is present."""
+
+    def fkey(obj):
         for k in obj.keys():
             if k in keys:
                 return obj
-        raise vol.Invalid("Must contain one of {}".format(keys))
+        raise vol.Invalid(f"Must contain one of {keys}")
 
-    return f
+    return fkey
 
 
 target_schema2 = has_at_least_one([CONF_DEVICE_ID, CHARGER_ID])
@@ -608,19 +610,19 @@ async def async_setup_services(hass):
                 return
 
         if circuit is None:
-            raise HomeAssistantError("Could not find circuit {}".format(circuit_id))
+            raise HomeAssistantError(f"Could not find circuit {circuit_id}")
 
     async def charger_execute_set_circuit_current(call):
         """Execute a service to set currents for Easee circuit for specific charger."""
 
         # Handle deprecation
-        RECOMMEND = {
+        recommendations = {
             "set_charger_circuit_dynamic_limit": "set_circuit_dynamic_limit",
             "set_charger_dynamic_limit": "set_circuit_dynamic_limit",
             "set_charger_circuit_offline_limit": "set_circuit_offline_limit",
         }
-        if call.service in RECOMMEND.keys():
-            await _create_issue(hass, call.service, RECOMMEND[call.service])
+        if call.service in recommendations:
+            await _create_issue(hass, call.service, recommendations[call.service])
 
         charger_id = call.data.get(CHARGER_ID)
         currentP1 = call.data.get(ATTR_SET_CURRENTP1)
@@ -668,7 +670,7 @@ async def async_setup_services(hass):
 
         if charger is None:
             _LOGGER.error("Could not find charger %s", charger_id)
-            raise HomeAssistantError("Could not find charger {}".format(charger_id))
+            raise HomeAssistantError(f"Could not find charger {charger_id}")
 
     async def charger_execute_set_current(call):
         """Execute a service to set currents for Easee charger."""
