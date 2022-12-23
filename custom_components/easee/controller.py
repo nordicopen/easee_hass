@@ -214,7 +214,7 @@ class ProductData:
             first, second = name.split("_")
 
             if first == "state":
-                oldvalue = self.state[second]
+                oldvalue = self.state.get(second)
                 self.state[second] = value
                 if second == "lifetimeEnergy" and oldvalue != value:
                     asyncio.run_coroutine_threadsafe(

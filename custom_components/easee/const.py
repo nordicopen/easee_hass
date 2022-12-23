@@ -8,6 +8,7 @@ from homeassistant.const import (
     ENERGY_WATT_HOUR,
     POWER_KILO_WATT,
     POWER_WATT,
+    TEMP_CELSIUS,
     Platform,
 )
 from homeassistant.helpers.entity import EntityCategory
@@ -60,6 +61,17 @@ MANDATORY_EASEE_ENTITIES = {
     },
 }
 OPTIONAL_EASEE_ENTITIES = {
+    "temp_max": {
+        "key": "state.tempMax",
+        "attrs": [],
+        "units": TEMP_CELSIUS,
+        "convert_units_func": "round_0_dec",
+        "device_class": SensorDeviceClass.TEMPERATURE,
+        "state_class": SensorStateClass.MEASUREMENT,
+        "icon": "mdi:temperature-celsius",
+        "enabled_default": True,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+    },
     "smart_charging": {
         "type": "switch",
         "key": "state.smartCharging",
