@@ -35,6 +35,11 @@ There are 2 different methods of installing the custom component
 4. Execute the following command: `git clone https://github.com/fondberg/easee_hass.git easee`
 5. Run `bash links.sh`
 
+## Monitored chargers/equalizers
+
+Since v0.9.47 the integration only includes the chargers and equalizers that has been added to the Easee official app, rather than showing all that are available to the logged in user. This change was done becuase in larger installations there could be 10s or 100s of chargers listed which in most cases does not make much sense.
+So if you do not see all your products in the integration, open the official app and make sure they are listed there first.
+
 ## Configuration
 
 Configuration is done through in Configuration > Integrations where you first configure it and then set the options for what you want to monitor.
