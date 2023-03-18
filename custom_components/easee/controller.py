@@ -395,14 +395,14 @@ class Controller:
             entity.data.mark_clean()
 
     async def add_schedulers(self):
-        """Add schedules to udpate data"""
+        """Add schedules to update data"""
         # first update
-        tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
-        if tasks:
-            await asyncio.wait(tasks)
-        tasks = [charger.cost_async_refresh() for charger in self.chargers_data]
-        if tasks:
-            await asyncio.wait(tasks)
+        await asyncio.gather(
+            *[charger.schedules_async_refresh() for charger in self.chargers_data]
+        )
+        await asyncio.gather(
+            *[charger.cost_async_refresh() for charger in self.chargers_data]
+        )
         self.hass.async_add_job(self.refresh_sites_state)
         self.hass.async_add_job(self.refresh_equalizers_state)
 
