@@ -6,7 +6,7 @@ from datetime import datetime
 import logging
 from typing import Callable, List
 
-from homeassistant.const import ENERGY_WATT_HOUR, POWER_WATT
+from homeassistant.const import UnitOfEnergy, UnitOfPower
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.entity_registry import async_entries_for_device
@@ -21,7 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def round_to_dec(value, decimals=None, unit=None):
     """Round to selected no of decimals."""
-    if unit == POWER_WATT or unit == ENERGY_WATT_HOUR:
+    if unit == UnitOfPower.WATT or unit == UnitOfEnergy.WATT_HOUR:
         value = value * 1000
         decimals = None
     try:
@@ -32,22 +32,27 @@ def round_to_dec(value, decimals=None, unit=None):
 
 
 def round_2_dec(value, unit=None):
+    """Round to 2 decimals."""
     return round_to_dec(value, 2, unit)
 
 
 def round_1_dec(value, unit=None):
+    """Round to 1 decimal."""
     return round_to_dec(value, 1, unit)
 
 
 def round_0_dec(value, unit=None):
+    """Round to 0 decimals."""
     return round_to_dec(value, None, unit)
 
 
 def map_charger_status(value, unit=None):
+    """Map charger status."""
     return EASEE_STATUS.get(value, f"unknown {value}")
 
 
 def map_reason_no_current(value, unit=None):
+    """Map reason for no current."""
     return REASON_NO_CURRENT.get(value, f"unknown {value}")
 
 
@@ -177,6 +182,7 @@ class ChargerEntity(Entity):
             return {}
 
     def set_value_from_key(self, key, value):
+        """Set value from key."""
         first, second = key.split(".")
         if first == "config":
             if self.data.config is not None:
@@ -201,6 +207,7 @@ class ChargerEntity(Entity):
         return value
 
     def get_value_from_key(self, key):
+        """Get value from key."""
         try:
             first, second = key.split(".")
             value = None
