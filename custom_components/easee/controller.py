@@ -112,6 +112,16 @@ class ProductData:
     def mark_dirty(self):
         self.dirty = True
 
+    async def firmware_async_refresh(self):
+        if self.state is None:
+            return False
+
+        firmware = await self.product.get_latest_firmware()
+        self.state["latestFirmware"] = firmware["latestFirmware"]
+        _LOGGER.debug(
+            "Latest Firmware for %s: %s", self.product.id, firmware["latestFirmware"]
+        )
+
     async def schedules_async_refresh(self):
         self.schedule_polled = True
 
@@ -397,14 +407,20 @@ class Controller:
     async def add_schedulers(self):
         """Add schedules to udpate data"""
         # first update
-        tasks = [charger.schedules_async_refresh() for charger in self.chargers_data]
-        if tasks:
-            await asyncio.wait(tasks)
-        tasks = [charger.cost_async_refresh() for charger in self.chargers_data]
-        if tasks:
-            await asyncio.wait(tasks)
         self.hass.async_add_job(self.refresh_sites_state)
         self.hass.async_add_job(self.refresh_equalizers_state)
+        await asyncio.gather(
+            *[charger.schedules_async_refresh() for charger in self.chargers_data]
+        )
+        await asyncio.gather(
+            *[charger.cost_async_refresh() for charger in self.chargers_data]
+        )
+        await asyncio.gather(
+            *[charger.firmware_async_refresh() for charger in self.chargers_data]
+        )
+        await asyncio.gather(
+            *[equalizer.firmware_async_refresh() for equalizer in self.equalizers_data]
+        )
 
         # Add interval refresh for site state interval
         self.trackers.append(
