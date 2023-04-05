@@ -79,6 +79,7 @@ class ChargerEntity(Entity):
         enabled_default=True,
         state_class=None,
         entity_category=None,
+        translation_key=None,
     ):
 
         """Initialize the entity."""
@@ -94,6 +95,7 @@ class ChargerEntity(Entity):
         self._switch_func = switch_func
         self._attr_unique_id = f"{self.data.product.id}_{self._entity_name}"
         self._attr_device_class = device_class
+        self._attr_translation_key = translation_key
         self._attr_icon = icon
         self._attr_should_poll = False
         self._attr_entity_registry_enabled_default = enabled_default

@@ -55,8 +55,10 @@ MANDATORY_EASEE_ENTITIES = {
         ],
         "units": None,
         "convert_units_func": "map_charger_status",
-        "device_class": "easee__status",
+        "device_class": None,
+        # "device_class": "easee__status",
         "icon": "mdi:ev-station",
+        "translation_key": "easee_status",
     },
 }
 OPTIONAL_EASEE_ENTITIES = {
@@ -417,6 +419,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": "easee__reason_no_current",
         "icon": "mdi:alert-circle",
         "enabled_default": False,
+        "translation_key": "easee_reason_no_current",
     },
     "is_enabled": {
         "type": "switch",

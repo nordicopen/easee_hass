@@ -1,56 +1,109 @@
 {
-  "config" : {
-    "abort" : {
-      "already_setup" : "Sie können nur eine einzige Easee Verbindung konfigurieren."
+  "config": {
+    "abort": {
+      "already_setup": "Sie können nur eine einzige Easee Verbindung konfigurieren."
     },
-    "error" : {
-      "auth_failure" : "Verbindung zu Easee nicht möglich. Prüfen Sie Username und Passwort.",
-      "connection_failure" : "Verbindung zu Easee nicht möglich. Versuchen Sie es später erneut.",
-      "refused_failure" : "Verbindung zu Easee abgelehnt. Versuchen Sie es später erneut.",
-      "no_sites" : "Keine Standorte ausgewählt."
+    "error": {
+      "auth_failure": "Verbindung zu Easee nicht möglich. Prüfen Sie Username und Passwort.",
+      "connection_failure": "Verbindung zu Easee nicht möglich. Versuchen Sie es später erneut.",
+      "refused_failure": "Verbindung zu Easee abgelehnt. Versuchen Sie es später erneut.",
+      "no_sites": "Keine Standorte ausgewählt."
     },
-    "step" : {
-      "user" : {
-        "data" : {
-          "password" : "Passwort",
-          "username" : "Username"
+    "step": {
+      "user": {
+        "data": {
+          "password": "Passwort",
+          "username": "Username"
         },
-        "description" : "Bitte geben Sie Username und Passwort für Ihren Easee Account an",
-        "title" : "Mit Easee verbinden"
+        "description": "Bitte geben Sie Username und Passwort für Ihren Easee Account an",
+        "title": "Mit Easee verbinden"
       },
-      "sites" : {
-        "data" : {
-          "monitored_sites" : "Standorte"
+      "sites": {
+        "data": {
+          "monitored_sites": "Standorte"
         },
-        "description" : "Wählen Sie zu überwachende Standorte aus",
-        "title" : "Easee EV Charger"
+        "description": "Wählen Sie zu überwachende Standorte aus",
+        "title": "Easee EV Charger"
       }
     }
   },
-  "options" : {
-    "step" : {
-      "init" : {
-        "data" : {
-          "monitored_conditions" : "Charger Sensoren",
-          "monitored_eq_conditions" : "Equalizer Sensoren",
-          "measured_consumption_days" : "Verbrauchsanzeige Tage",
-          "custom_units" : "Einheiten",
-          "monitored_sites" : "Standorte"
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "monitored_conditions": "Charger Sensoren",
+          "monitored_eq_conditions": "Equalizer Sensoren",
+          "measured_consumption_days": "Verbrauchsanzeige Tage",
+          "custom_units": "Einheiten",
+          "monitored_sites": "Standorte"
         },
-        "description" : "Optionen wählen",
-        "title" : "Easee EV Charger"
+        "description": "Optionen wählen",
+        "title": "Easee EV Charger"
       }
     },
-    "error" : {
-      "no_sites" : "Keine Standorte ausgewählt"
+    "error": {
+      "no_sites": "Keine Standorte ausgewählt"
     }
   },
-  "system_health" : {
-    "info" : {
-      "reach_easee_cloud" : "Easee Cloud erreichbar",
-      "component_version" : "Version",
-      "connected2stream" : "Mit Signalr verbunden"
+  "system_health": {
+    "info": {
+      "reach_easee_cloud": "Easee Cloud erreichbar",
+      "component_version": "Version",
+      "connected2stream": "Mit Signalr verbunden"
     }
   },
-  "title" : "Easee EV Charger"
+  "title": "Easee EV Charger",
+  "entity": {
+    "sensor": {
+      "easee_status": {
+        "state": {
+          "disconnected": "Kein Fahrzeug verbunden",
+          "awaiting_start": "Wartet auf Start",
+          "charging": "Lädt",
+          "error": "Fehler",
+          "completed": "Abgeschlossen",
+          "ready_to_charge": "Bereit zum Laden"
+        }
+      },
+      "easee_reason_no_current": {
+        "state": {
+          "none": "Keiner",
+          "ok": "OK",
+          "max_circuit_current_too_low": "Max. Schaltkreisstrom zu niedrig",
+          "max_dynamic_circuit_current_too_low": "Max. dynamischer Schaltkreisstrom zu niedrig",
+          "max_dynamic_offline_fallback_circuit_current_too_low": "Max. dynamischer offline Schaltkreisstrom zu niedrig",
+          "circuit_fuse_too_low": "Absicherung zu niedrig",
+          "waiting_in_queue": "In Warteschlange",
+          "waiting_in_fully": "Warten",
+          "illegal_grid_type": "Ungültiger Stromnetztyp",
+          "no_current_request": "Kein Strom angefordert",
+          "not_connected_to_master": "Nicht mit dem Master verbunden",
+          "eq_too_low_current": "Equalizer Strom zu niedrig",
+          "phase_not_connected": "Phase nicht verbunden",
+          "limited_by_circuit_fuse": "Durch Schaltkreissicherung limitiert",
+          "limited_by_circuit_max_limit": "Durch Schaltkreismax. limitiert",
+          "limited_by_circuit_dynamic_limit": "Durch Schaltkreis dynamisch limitiert",
+          "limited_by_equalizer": "Durch Equalizer limitiert",
+          "limited_by_load_balancing": "Durch Lastverteilung limitiert",
+          "limited_by_offline_setting": "Durch Offline-Einstellung limitiert",
+          "not_requesting_current": "Kein Strom angefordert",
+          "max_charger_current_too_low": "Max. Charger Strom zu niedrig",
+          "max_dynamic_charger_current_too_low": "Max. dynamischer Charger Strom zu niedrig",
+          "charger_disabled": "Charger deaktiviert",
+          "pending_schedule": "Wartet auf Zeitplan",
+          "pending_authorization": "Wartet auf Autorisierung",
+          "charger_in_error_state": "Charger in Fehlerzustand",
+          "ev_behaving_erratic": "Fahrzeug verhält sich fehlerhaft",
+          "limited_by_cable_rating": "Durch Kabeleinstufung limitiert",
+          "limited_by_schedule": "Durch Zeitplan limitiert",
+          "limited_by_charger_max_limit": "Durch Charger Max. limitiert",
+          "limited_by_charger_dynamic_limit": "Durch Charger dynamisch limitiert",
+          "car_not_charging": "Fahrzeug lädt nicht",
+          "limited_by_local_adjustment": "Durch lokale Einstellung limitiert",
+          "limited_by_car": "Durch Fahrzeug limitiert",
+          "undefined": "Unbestimmt"
+        }
+      }
+    }
+  }
 }
