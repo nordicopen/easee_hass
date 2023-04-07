@@ -24,14 +24,14 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs):  # pylint: disable=unused-argument
         """Turn on the switch."""
-        _LOGGER.debug("%s Switch turn on" % self._entity_name)
+        _LOGGER.debug("%s Switch turn on", self._entity_name)
         function_call = getattr(self.data.product, self._switch_func)
         try:
             await function_call(True)
         except ForbiddenServiceException:
             _LOGGER.error("Forbidden turn_on on switch %s", self._entity_name)
             return
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             _LOGGER.error("Got server error while calling %s", self._switch_func)
             return
         self.set_value_from_key(self._state_key, True)
@@ -40,14 +40,14 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
 
     async def async_turn_off(self, **kwargs):  # pylint: disable=unused-argument
         """Turn off the switch."""
-        _LOGGER.debug("%s Switch turn off" % self._entity_name)
+        _LOGGER.debug("%s Switch turn off", self._entity_name)
         function_call = getattr(self.data.product, self._switch_func)
         try:
             await function_call(False)
         except ForbiddenServiceException:
             _LOGGER.error("Forbidden turn_off on switch %s", self._entity_name)
             return
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             _LOGGER.error("Got server error while calling %s", self._switch_func)
             return
         self.set_value_from_key(self._state_key, False)
