@@ -2,13 +2,11 @@
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
-    ELECTRIC_CURRENT_AMPERE,
-    ELECTRIC_POTENTIAL_VOLT,
-    ENERGY_KILO_WATT_HOUR,
-    ENERGY_WATT_HOUR,
-    POWER_KILO_WATT,
-    POWER_WATT,
     Platform,
+    UnitOfElectricCurrent,
+    UnitOfElectricPotential,
+    UnitOfEnergy,
+    UnitOfPower,
 )
 from homeassistant.helpers.entity import EntityCategory
 
@@ -23,12 +21,14 @@ MODEL_CHARGING_ROBOT = "Charging Robot"
 PLATFORMS = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.SWITCH]
 LISTENER_FN_CLOSE = "update_listener_close_fn"
 CUSTOM_UNITS_OPTIONS = {
-    POWER_KILO_WATT: f"Power {POWER_KILO_WATT} to {POWER_WATT}",
-    ENERGY_KILO_WATT_HOUR: f"Energy {ENERGY_KILO_WATT_HOUR} to {ENERGY_WATT_HOUR}",
+    UnitOfPower.KILO_WATT: f"Power {UnitOfPower.KILO_WATT} to {UnitOfPower.WATT}",
+    UnitOfEnergy.KILO_WATT_HOUR: (
+        f"Energy {UnitOfEnergy.KILO_WATT_HOUR} to {UnitOfEnergy.WATT_HOUR}"
+    ),
 }
 CUSTOM_UNITS_TABLE = {
-    POWER_KILO_WATT: POWER_WATT,
-    ENERGY_KILO_WATT_HOUR: ENERGY_WATT_HOUR,
+    UnitOfPower.KILO_WATT: UnitOfPower.WATT,
+    UnitOfEnergy.KILO_WATT_HOUR: UnitOfEnergy.WATT_HOUR,
 }
 MANDATORY_EASEE_ENTITIES = {
     "status": {
@@ -104,7 +104,7 @@ OPTIONAL_EASEE_ENTITIES = {
     "power": {
         "key": "state.totalPower",
         "attrs": [],
-        "units": POWER_KILO_WATT,
+        "units": UnitOfPower.KILO_WATT,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.POWER,
         "state_class": SensorStateClass.MEASUREMENT,
@@ -113,7 +113,7 @@ OPTIONAL_EASEE_ENTITIES = {
     "session_energy": {
         "key": "state.sessionEnergy",
         "attrs": [],
-        "units": ENERGY_KILO_WATT_HOUR,
+        "units": UnitOfEnergy.KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.ENERGY,
         "icon": None,
@@ -123,7 +123,7 @@ OPTIONAL_EASEE_ENTITIES = {
     "lifetime_energy": {
         "key": "state.lifetimeEnergy",
         "attrs": [],
-        "units": ENERGY_KILO_WATT_HOUR,
+        "units": UnitOfEnergy.KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.ENERGY,
         "state_class": SensorStateClass.TOTAL_INCREASING,
@@ -133,7 +133,7 @@ OPTIONAL_EASEE_ENTITIES = {
     "energy_per_hour": {
         "key": "state.energyPerHour",
         "attrs": [],
-        "units": ENERGY_KILO_WATT_HOUR,
+        "units": UnitOfEnergy.KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.ENERGY,
         "icon": None,
@@ -202,7 +202,7 @@ OPTIONAL_EASEE_ENTITIES = {
     "output_limit": {
         "key": "state.outputCurrent",
         "attrs": [],
-        "units": ELECTRIC_CURRENT_AMPERE,
+        "units": UnitOfElectricCurrent.AMPERE,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
@@ -217,7 +217,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.inCurrentT4",
             "state.inCurrentT5",
         ],
-        "units": ELECTRIC_CURRENT_AMPERE,
+        "units": UnitOfElectricCurrent.AMPERE,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.CURRENT,
         "state_class": SensorStateClass.MEASUREMENT,
@@ -247,7 +247,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.circuitTotalPhaseConductorCurrentL2",
             "state.circuitTotalPhaseConductorCurrentL3",
         ],
-        "units": ELECTRIC_CURRENT_AMPERE,
+        "units": UnitOfElectricCurrent.AMPERE,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
@@ -274,7 +274,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.eqAvailableCurrentP2",
             "state.eqAvailableCurrentP3",
         ],
-        "units": ELECTRIC_CURRENT_AMPERE,
+        "units": UnitOfElectricCurrent.AMPERE,
         "convert_units_func": "round_0_dec",
         "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
@@ -299,7 +299,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.dynamicCircuitCurrentP2",
             "state.dynamicCircuitCurrentP3",
         ],
-        "units": ELECTRIC_CURRENT_AMPERE,
+        "units": UnitOfElectricCurrent.AMPERE,
         "convert_units_func": "round_0_dec",
         "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
@@ -324,7 +324,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "config.circuitMaxCurrentP2",
             "config.circuitMaxCurrentP3",
         ],
-        "units": ELECTRIC_CURRENT_AMPERE,
+        "units": UnitOfElectricCurrent.AMPERE,
         "convert_units_func": "round_0_dec",
         "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
@@ -343,7 +343,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "attrs": [
             "state.dynamicChargerCurrent",
         ],
-        "units": ELECTRIC_CURRENT_AMPERE,
+        "units": UnitOfElectricCurrent.AMPERE,
         "convert_units_func": "round_0_dec",
         "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
@@ -361,7 +361,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.offlineMaxCircuitCurrentP2",
             "state.offlineMaxCircuitCurrentP3",
         ],
-        "units": ELECTRIC_CURRENT_AMPERE,
+        "units": UnitOfElectricCurrent.AMPERE,
         "convert_units_func": "round_0_dec",
         "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
@@ -380,7 +380,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "attrs": [
             "config.maxChargerCurrent",
         ],
-        "units": ELECTRIC_CURRENT_AMPERE,
+        "units": UnitOfElectricCurrent.AMPERE,
         "convert_units_func": "round_0_dec",
         "device_class": SensorDeviceClass.CURRENT,
         "icon": None,
@@ -401,7 +401,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.inVoltageT3T5",
             "state.inVoltageT4T5",
         ],
-        "units": ELECTRIC_POTENTIAL_VOLT,
+        "units": UnitOfElectricPotential.VOLT,
         "convert_units_func": "round_0_dec",
         "device_class": SensorDeviceClass.VOLTAGE,
         "state_class": SensorStateClass.MEASUREMENT,
@@ -544,7 +544,7 @@ EASEE_EQ_ENTITIES = {
             "state.reactivePowerImport",
             "state.maxPowerImport",
         ],
-        "units": POWER_KILO_WATT,
+        "units": UnitOfPower.KILO_WATT,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.POWER,
         "state_class": SensorStateClass.MEASUREMENT,
@@ -556,7 +556,7 @@ EASEE_EQ_ENTITIES = {
             "state.activePowerExport",
             "state.reactivePowerExport",
         ],
-        "units": POWER_KILO_WATT,
+        "units": UnitOfPower.KILO_WATT,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.POWER,
         "state_class": SensorStateClass.MEASUREMENT,
@@ -572,7 +572,7 @@ EASEE_EQ_ENTITIES = {
             "state.voltageL1L3",
             "state.voltageL2L3",
         ],
-        "units": ELECTRIC_POTENTIAL_VOLT,
+        "units": UnitOfElectricPotential.VOLT,
         "convert_units_func": "round_0_dec",
         "device_class": SensorDeviceClass.VOLTAGE,
         "state_class": SensorStateClass.MEASUREMENT,
@@ -597,7 +597,7 @@ EASEE_EQ_ENTITIES = {
             "state.currentL2",
             "state.currentL3",
         ],
-        "units": ELECTRIC_CURRENT_AMPERE,
+        "units": UnitOfElectricCurrent.AMPERE,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.CURRENT,
         "state_class": SensorStateClass.MEASUREMENT,
@@ -618,7 +618,7 @@ EASEE_EQ_ENTITIES = {
             "state.cumulativeActivePowerImport",
             "state.cumulativeReactivePowerImport",
         ],
-        "units": ENERGY_KILO_WATT_HOUR,
+        "units": UnitOfEnergy.KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.ENERGY,
         "state_class": SensorStateClass.TOTAL_INCREASING,
@@ -631,7 +631,7 @@ EASEE_EQ_ENTITIES = {
             "state.cumulativeActivePowerExport",
             "state.cumulativeReactivePowerExport",
         ],
-        "units": ENERGY_KILO_WATT_HOUR,
+        "units": UnitOfEnergy.KILO_WATT_HOUR,
         "convert_units_func": "round_1_dec",
         "device_class": SensorDeviceClass.ENERGY,
         "state_class": SensorStateClass.TOTAL_INCREASING,
