@@ -622,6 +622,7 @@ class Controller:
             ),
             attrs_keys=data["attrs"],
             device_class=data["device_class"],
+            translation_key=data.get("translation_key"),
             state_class=data.get("state_class", None),
             icon=data["icon"],
             state_func=data.get("state_func", None),

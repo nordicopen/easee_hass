@@ -1,4 +1,4 @@
-[![easee_hass](https://img.shields.io/github/release/fondberg/easee_hass.svg?1)](https://github.com/fondberg/easee_hass) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration) ![Validate with hassfest](https://github.com/fondberg/easee_hass/workflows/Validate%20with%20hassfest/badge.svg) ![Maintenance](https://img.shields.io/maintenance/yes/2022.svg) [![Easee_downloads](https://img.shields.io/github/downloads/fondberg/easee_hass/total)](https://github.com/fondberg/easee_hass) [![easee_hass_downloads](https://img.shields.io/github/downloads/fondberg/easee_hass/latest/total)](https://github.com/fondberg/easee_hass)
+[![easee_hass](https://img.shields.io/github/release/fondberg/easee_hass.svg?1)](https://github.com/fondberg/easee_hass) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration) ![Validate with hassfest](https://github.com/fondberg/easee_hass/workflows/Validate%20with%20hassfest/badge.svg) ![Maintenance](https://img.shields.io/maintenance/yes/2023.svg) [![Easee_downloads](https://img.shields.io/github/downloads/fondberg/easee_hass/total)](https://github.com/fondberg/easee_hass) [![easee_hass_downloads](https://img.shields.io/github/downloads/fondberg/easee_hass/latest/total)](https://github.com/fondberg/easee_hass)
 
 [![Buy me a coffee](https://img.shields.io/static/v1.svg?label=Buy%20me%20a%20coffee&message=🥨&color=black&logo=buy%20me%20a%20coffee&logoColor=white&labelColor=6f4e37)](https://www.buymeacoffee.com/fondberg)
 
@@ -34,6 +34,11 @@ There are 2 different methods of installing the custom component
 3. Create a `custom_components` folder of it does not exist, navigate down into it after creation.
 4. Execute the following command: `git clone https://github.com/fondberg/easee_hass.git easee`
 5. Run `bash links.sh`
+
+## Monitored chargers/equalizers
+
+Since v0.9.47 the integration only includes the chargers and equalizers that has been added to the Easee official app, rather than showing all that are available to the logged in user. This change was done becuase in larger installations there could be 10s or 100s of chargers listed which in most cases does not make much sense.
+So if you do not see all your products in the integration, open the official app and make sure they are listed there first.
 
 ## Configuration
 
