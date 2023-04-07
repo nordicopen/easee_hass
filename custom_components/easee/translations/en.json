@@ -124,8 +124,20 @@
       "energy_per_hour": {
         "name": "Energy per hour"
       },
-      "equializer_limit": {
+      "equalizer_limit": {
         "name": "Equalizer limit"
+      },
+      "export_energy": {
+        "name": "Export energy"
+      },
+      "export_power": {
+        "name": "Export power"
+      },
+      "import_energy": {
+        "name": "Import energy"
+      },
+      "import_power": {
+        "name": "Import power"
       },
       "internal_temperature": {
         "name": "Internal temperature"

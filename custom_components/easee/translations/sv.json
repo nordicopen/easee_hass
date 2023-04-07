@@ -124,8 +124,20 @@
       "energy_per_hour": {
         "name": "Energi senaste timme"
       },
-      "equializer_limit": {
+      "equalizer_limit": {
         "name": "Equalizer begränsning"
+      },
+      "export_energy": {
+        "name": "Exporterad energi"
+      },
+      "export_power": {
+        "name": "Exporterad effekt"
+      },
+      "import_energy": {
+        "name": "Importerad energi"
+      },
+      "import_power": {
+        "name": "Importerad effekt"
       },
       "internal_temperature": {
         "name": "Intern temperatur"
