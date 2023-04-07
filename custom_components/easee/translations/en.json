@@ -29,6 +29,9 @@
   },
   "entity": {
     "binary_sensor": {
+      "basic_schedule": {
+        "name": "Basic schedule"
+      },
       "cable_locked": {
         "name": "Cable lock"
       },
@@ -37,20 +40,35 @@
       },
       "update_available": {
         "name": "Update available"
+      },
+      "weekly_schedule": {
+        "name": "Weekly schedule"
       }
     },
     "sensor": {
+      "circuit_current": {
+        "name": "Circuit current"
+      },
       "cost_day": {
         "name": "Cost day"
       },
       "cost_month": {
         "name": "Cost month"
       },
+      "cost_per_kwh": {
+        "name": "Cost per kWh"
+      },
       "cost_year": {
         "name": "Cost year"
       },
       "current": {
         "name": "Current"
+      },
+      "dynamic_charger_limit": {
+        "name": "Dynamic charger limit"
+      },
+      "dynamic_circuit_limit": {
+        "name": "Dynamic circuit limit"
       },
       "easee_reason_no_current": {
         "name": "Reason for no current",
@@ -106,11 +124,26 @@
       "energy_per_hour": {
         "name": "Energy per hour"
       },
+      "equializer_limit": {
+        "name": "Equalizer limit"
+      },
       "internal_temperature": {
         "name": "Internal temperature"
       },
       "lifetime_energy": {
         "name": "Lifetime energy"
+      },
+      "max_charger_limit": {
+        "name": "Max charger limit"
+      },
+      "max_circuit_limit": {
+        "name": "Max circuit limit"
+      },
+      "offline_circuit_limit": {
+        "name": "Offline circuit limit"
+      },
+      "output_limit": {
+        "name": "Output limit"
       },
       "power": {
         "name": "Power"

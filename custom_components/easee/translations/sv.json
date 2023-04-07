@@ -29,6 +29,9 @@
   },
   "entity": {
     "binary_sensor": {
+      "basic_schedule": {
+        "name": "Grundschema"
+      },
       "cable_locked": {
         "name": "Kabellås"
       },
@@ -37,20 +40,35 @@
       },
       "update_available": {
         "name": "Uppdatering tillgänglig"
+      },
+      "weekly_schedule": {
+        "name": "Veckoschema"
       }
     },
     "sensor": {
+      "circuit_current": {
+        "name": "Kretsström"
+      },
       "cost_day": {
         "name": "Kostnad idag"
       },
       "cost_month": {
         "name": "Kostnad denna månad"
       },
+      "cost_per_kwh": {
+        "name": "Kostnad per kWh"
+      },
       "cost_year": {
         "name": "Kostnad i år"
       },
       "current": {
         "name": "Ström"
+      },
+      "dynamic_charger_limit": {
+        "name": "Dynamisk laddarbegränsning"
+      },
+      "dynamic_circuit_limit": {
+        "name": "Dynamisk kretsbegränsning"
       },
       "easee_reason_no_current": {
         "name": "Anledning för ingen ström",
@@ -106,11 +124,26 @@
       "energy_per_hour": {
         "name": "Energi senaste timme"
       },
+      "equializer_limit": {
+        "name": "Equalizer begränsning"
+      },
       "internal_temperature": {
         "name": "Intern temperatur"
       },
       "lifetime_energy": {
         "name": "Livstidsförbrukning"
+      },
+      "max_charger_limit": {
+        "name": "Max laddarbegränsning"
+      },
+      "max_circuit_limit": {
+        "name": "Max kretsbegränsning"
+      },
+      "offline_circuit_limit": {
+        "name": "Offline kretsbegränsning"
+      },
+      "output_limit": {
+        "name": "Total begränsning"
       },
       "power": {
         "name": "Effekt"
