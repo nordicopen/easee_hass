@@ -45,6 +45,8 @@ from .const import (
     OPTIONAL_EASEE_ENTITIES,
     PLATFORMS,
     TIMEOUT,
+    chargerObservations,
+    equalizerObservations,
 )
 from .entity import convert_units_funcs
 from .sensor import ChargerSensor, EqualizerSensor
@@ -72,7 +74,13 @@ class ProductData:
     """Representation product data."""
 
     def __init__(
-        self, event_loop, product, site: Site, streamdata, circuit: Circuit = None
+        self,
+        event_loop,
+        product,
+        site: Site,
+        streamdata,
+        poll_observations,
+        circuit: Circuit = None,
     ):
         """Initialize the product data."""
         self.product = product
@@ -89,6 +97,7 @@ class ProductData:
         self.streamdata = streamdata
         self.dirty = False
         self.event_loop = event_loop
+        self.poll_observations = poll_observations
 
     def is_state_polled(self):
         if self.state is None:
@@ -121,6 +130,48 @@ class ProductData:
         _LOGGER.debug(
             "Latest Firmware for %s: %s", self.product.id, firmware["latestFirmware"]
         )
+
+    async def async_refresh(self):
+        if self.state is None:
+            self.state = await self.product.empty_state(raw=True)
+        if self.config is None:
+            self.config = await self.product.empty_config(raw=True)
+
+        self.state["voltageNL1"] = None
+        self.state["voltageNL2"] = None
+        self.state["voltageNL3"] = None
+        self.state["voltageL1L2"] = None
+        self.state["voltageL1L3"] = None
+        self.state["voltageL2L3"] = None
+
+        _LOGGER.debug(
+            "Polling state for %s using %s", self.product.id, self.poll_observations
+        )
+        observations = await self.product.get_observations(*self.poll_observations)
+        for observation in observations["observations"]:
+            data_id = observation["id"]
+            value = observation["value"]
+            try:
+                name = self.streamdata(data_id).name
+            except ValueError:
+                # Unsupported data
+                _LOGGER.debug("Unsupported data id %s %s", data_id, value)
+                return False
+
+            _LOGGER.debug(
+                "Observation %s type %s %s",
+                name,
+                observation["dataType"],
+                type(value),
+            )
+
+            if "_" in name:
+                first, second = name.split("_")
+
+            if first == "state":
+                self.state[second] = value
+            elif first == "config":
+                self.config[second] = value
 
     async def schedules_async_refresh(self):
         self.schedule_polled = True
@@ -336,8 +387,13 @@ class Controller:
                         )
                         self.equalizers.append(equalizer)
                         equalizer_data = ProductData(
-                            self.event_loop, equalizer, site, EqualizerStreamData
+                            self.event_loop,
+                            equalizer,
+                            site,
+                            EqualizerStreamData,
+                            equalizerObservations,
                         )
+                        _LOGGER.debug("Calling refresh")
                         self.equalizers_data.append(equalizer_data)
                     circuits = site.get_circuits()
                     for circuit in circuits:
@@ -356,8 +412,10 @@ class Controller:
                                     charger,
                                     site,
                                     ChargerStreamData,
+                                    chargerObservations,
                                     circuit,
                                 )
+                                _LOGGER.debug("Calling refresh")
                                 self.chargers_data.append(charger_data)
 
             self.hass.data[DOMAIN]["diagnostics"] = self.diagnostics
@@ -494,11 +552,7 @@ class Controller:
             if charger_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
 
-            charger_id = charger_data.product.id
-
-            charger_data.state = await charger_data.product.get_state(raw=True)
-            _LOGGER.debug("Charger state: %s ", charger_id)
-            charger_data.config = await charger_data.product.get_config(raw=True)
+            await charger_data.async_refresh()
             charger_data.set_signalr_state(self.easee.sr_is_connected())
             charger_data.mark_dirty()
 
@@ -513,12 +567,7 @@ class Controller:
             if equalizer_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
 
-            try:
-                equalizer_data.state = await equalizer_data.product.get_state()
-                equalizer_data.config = await equalizer_data.product.get_config()
-            except Exception:
-                _LOGGER.error("Got server error while polling equalizer state")
-
+            await equalizer_data.async_refresh()
             equalizer_data.set_signalr_state(self.easee.sr_is_connected())
             equalizer_data.mark_dirty()
 
@@ -638,6 +687,7 @@ class Controller:
             ),
             attrs_keys=data["attrs"],
             device_class=data["device_class"],
+            translation_key=data.get("translation_key"),
             state_class=data.get("state_class", None),
             icon=data["icon"],
             state_func=data.get("state_func", None),
