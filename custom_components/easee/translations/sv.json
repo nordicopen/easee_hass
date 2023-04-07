@@ -32,11 +32,23 @@
       "cable_locked": {
         "name": "Kabellås"
       },
+      "online": {
+        "name": "Online"
+      },
       "update_available": {
         "name": "Uppdatering tillgänglig"
       }
     },
     "sensor": {
+      "cost_day": {
+        "name": "Kostnad idag"
+      },
+      "cost_month": {
+        "name": "Kostnad denna månad"
+      },
+      "cost_year": {
+        "name": "Kostnad i år"
+      },
       "current": {
         "name": "Ström"
       },
@@ -91,6 +103,9 @@
           "ready_to_charge": "Redo för laddning"
         }
       },
+      "energy_per_hour": {
+        "name": "Energi senaste timme"
+      },
       "internal_temperature": {
         "name": "Intern temperatur"
       },
@@ -100,6 +115,9 @@
       "power": {
         "name": "Effekt"
       },
+      "session_energy": {
+        "name": "Energi laddningssession"
+      },
       "voltage": {
         "name": "Spänning"
       }
@@ -108,8 +126,14 @@
       "cable_locked_permanently": {
         "name": "Permanent kabellås"
       },
+      "idle_current": {
+        "name": "Viloström"
+      },
       "is_enabled": {
         "name": "Laddare aktiverad"
+      },
+      "smart_charging": {
+        "name": "Smart laddning"
       }
     }
   },

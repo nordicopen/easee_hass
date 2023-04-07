@@ -32,11 +32,23 @@
       "cable_locked": {
         "name": "Cable lock"
       },
+      "online": {
+        "name": "Online"
+      },
       "update_available": {
         "name": "Update available"
       }
     },
     "sensor": {
+      "cost_day": {
+        "name": "Cost day"
+      },
+      "cost_month": {
+        "name": "Cost month"
+      },
+      "cost_year": {
+        "name": "Cost year"
+      },
       "current": {
         "name": "Current"
       },
@@ -91,6 +103,9 @@
           "ready_to_charge": "Ready to charge"
         }
       },
+      "energy_per_hour": {
+        "name": "Energy per hour"
+      },
       "internal_temperature": {
         "name": "Internal temperature"
       },
@@ -100,6 +115,9 @@
       "power": {
         "name": "Power"
       },
+      "session_energy": {
+        "name": "Session Energy"
+      },
       "voltage": {
         "name": "Voltage"
       }
@@ -108,8 +126,14 @@
       "cable_locked_permanently": {
         "name": "Cable locked permanently"
       },
+      "idle_current": {
+        "name": "Idle current"
+      },
       "is_enabled": {
         "name": "Charger enabled"
+      },
+      "smart_charging": {
+        "name": "Smart charging"
       }
     }
   },
