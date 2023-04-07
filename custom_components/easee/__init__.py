@@ -32,12 +32,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     await controller.initialize()
     hass.data[DOMAIN]["controller"] = controller
 
-    for component in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, component)
-        )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
-    # Setup services
     await async_setup_services(hass)
 
     undo_listener = entry.add_update_listener(config_entry_update_listener)
@@ -51,14 +47,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
-    unload_ok = all(
-        await asyncio.gather(
-            *[
-                hass.config_entries.async_forward_entry_unload(entry, component)
-                for component in PLATFORMS
-            ]
-        )
-    )
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
     if hass.data[DOMAIN]["controller"] is not None:
         await hass.data[DOMAIN]["controller"].cleanup()
     if unload_ok:
@@ -70,7 +60,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 async def config_entry_update_listener(hass: HomeAssistant, entry: ConfigEntry):
     """Update listener."""
-
     await hass.config_entries.async_reload(entry.entry_id)
 
 
