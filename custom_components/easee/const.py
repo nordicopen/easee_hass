@@ -812,6 +812,19 @@ EASEE_EQ_ENTITIES = {
         "icon": None,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
+    "temp_max": {
+        "key": "state.internalTemperature",
+        "attrs": [],
+        "units": UnitOfTemperature.CELSIUS,
+        "convert_units_func": None,
+        "suggested_display_precision": 0,
+        "translation_key": "internal_temperature",
+        "device_class": SensorDeviceClass.TEMPERATURE,
+        "state_class": SensorStateClass.MEASUREMENT,
+        "icon": None,
+        "enabled_default": True,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+    },
 }
 
 EA_DISCONNECTED = "disconnected"
