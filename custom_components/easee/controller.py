@@ -143,6 +143,7 @@ class ProductData:
         self.state["voltageL1L2"] = None
         self.state["voltageL1L3"] = None
         self.state["voltageL2L3"] = None
+        self.state["internalTemperature"] = None
 
         _LOGGER.debug(
             "Polling state for %s using %s", self.product.id, self.poll_observations
@@ -269,7 +270,9 @@ class ProductData:
             _LOGGER.debug("Unsupported data id %s %s", data_id, value)
             return False
 
-        _LOGGER.debug("Callback %s %s %s %s", self.product.id, data_id, name, value)
+        _LOGGER.debug(
+            "Callback %s %s %s %s %s", self.product.id, data_id, name, value, data_type
+        )
 
         if "_" in name:
             first, second = name.split("_")
