@@ -14,6 +14,7 @@ from pyeasee import ChargerStreamData, EqualizerStreamData
 DOMAIN = "easee"
 TIMEOUT = 30
 VERSION = "0.9.48"
+MIN_HA_VERSION = "2023.4.0"
 CONF_MONITORED_SITES = "monitored_sites"
 CUSTOM_UNITS = "custom_units"
 MANUFACTURER = "Easee"
