@@ -113,6 +113,14 @@ class ProductData:
         return self.schedule_polled
 
     def is_dirty(self):
+        if self.state is None:
+            return False
+        if self.config is None:
+            return False
+
+        if "latestFirmware" not in self.state:
+            return False
+
         return self.dirty
 
     def mark_clean(self):
@@ -143,6 +151,7 @@ class ProductData:
         self.state["voltageL1L2"] = None
         self.state["voltageL1L3"] = None
         self.state["voltageL2L3"] = None
+        self.state["internalTemperature"] = None
 
         _LOGGER.debug(
             "Polling state for %s using %s", self.product.id, self.poll_observations
@@ -159,8 +168,9 @@ class ProductData:
                 return False
 
             _LOGGER.debug(
-                "Observation %s type %s %s",
+                "Observation %s %s type %s %s",
                 name,
+                value,
                 observation["dataType"],
                 type(value),
             )
@@ -531,6 +541,10 @@ class Controller:
         _LOGGER.debug("Midnight refresh started")
         for charger in self.chargers_data:
             await charger.cost_async_refresh()
+            await charger.firmware_async_refresh()
+
+        for equalizer in self.equalizers_data:
+            await equalizer.firmware_async_refresh()
 
         self.update_ha_state()
 
