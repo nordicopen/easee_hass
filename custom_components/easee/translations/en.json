@@ -130,14 +130,26 @@
       "export_energy": {
         "name": "Export energy"
       },
+      "export_reactive_energy": {
+        "name": "Export reactive energy"
+      },
       "export_power": {
         "name": "Export power"
+      },
+      "export_reacitve_power": {
+        "name": "Export reactive power"
       },
       "import_energy": {
         "name": "Import energy"
       },
+      "import_reactive_energy": {
+        "name": "Import reactive energy"
+      },
       "import_power": {
         "name": "Import power"
+      },
+      "import_reactive_power": {
+        "name": "Import reactive power"
       },
       "internal_temperature": {
         "name": "Internal temperature"

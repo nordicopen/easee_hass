@@ -17,22 +17,11 @@ TIMEOUT = 30
 VERSION = "0.9.48"
 MIN_HA_VERSION = "2023.4.0"
 CONF_MONITORED_SITES = "monitored_sites"
-CUSTOM_UNITS = "custom_units"
 MANUFACTURER = "Easee"
 MODEL_EQUALIZER = "Equalizer"
 MODEL_CHARGING_ROBOT = "Charging Robot"
 PLATFORMS = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.SWITCH]
 LISTENER_FN_CLOSE = "update_listener_close_fn"
-CUSTOM_UNITS_OPTIONS = {
-    UnitOfPower.KILO_WATT: f"Power {UnitOfPower.KILO_WATT} to {UnitOfPower.WATT}",
-    UnitOfEnergy.KILO_WATT_HOUR: (
-        f"Energy {UnitOfEnergy.KILO_WATT_HOUR} to {UnitOfEnergy.WATT_HOUR}"
-    ),
-}
-CUSTOM_UNITS_TABLE = {
-    UnitOfPower.KILO_WATT: UnitOfPower.WATT,
-    UnitOfEnergy.KILO_WATT_HOUR: UnitOfEnergy.WATT_HOUR,
-}
 
 chargerObservations = {
     ChargerStreamData.config_phaseMode.value,
@@ -145,10 +134,6 @@ MANDATORY_EASEE_ENTITIES = {
             "state.ledMode",
             "state.cableRating",
             "config.authorizationRequired",
-            "state.pairedUserIDToken",
-            "state.userIDToken",
-            "state.userIDTokenReversed",
-            "config.limitToSinglePhaseCharging",
             "config.localNodeType",
             "config.localAuthorizationRequired",
             "config.ledStripBrightness",
@@ -184,10 +169,7 @@ OPTIONAL_EASEE_ENTITIES = {
     "cable_locked": {
         "type": "binary_sensor",
         "key": "state.cableLocked",
-        "attrs": [
-            "state.lockCablePermanently",
-            "state.cableLocked",
-        ],
+        "attrs": [],
         "units": None,
         "convert_units_func": None,
         "translation_key": "cable_locked",
@@ -199,10 +181,7 @@ OPTIONAL_EASEE_ENTITIES = {
     "cable_locked_permanently": {
         "type": "switch",
         "key": "state.lockCablePermanently",
-        "attrs": [
-            "state.lockCablePermanently",
-            "state.cableLocked",
-        ],
+        "attrs": [],
         "units": None,
         "convert_units_func": None,
         "translation_key": "cable_locked_permanently",
@@ -703,8 +682,6 @@ EASEE_EQ_ENTITIES = {
     "import_power": {
         "key": "state.activePowerImport",
         "attrs": [
-            "state.activePowerImport",
-            "state.reactivePowerImport",
             "state.maxPowerImport",
         ],
         "units": UnitOfPower.KILO_WATT,
@@ -715,16 +692,35 @@ EASEE_EQ_ENTITIES = {
         "state_class": SensorStateClass.MEASUREMENT,
         "icon": None,
     },
+    "import_reactive_power": {
+        "key": "state.reactivePowerImport",
+        "attrs": [],
+        "units": UnitOfPower.KILO_WATT,
+        "convert_units_func": None,
+        "suggested_display_precision": 1,
+        "translation_key": "import_reactive_power",
+        "device_class": SensorDeviceClass.POWER,
+        "state_class": SensorStateClass.MEASUREMENT,
+        "icon": None,
+    },
     "export_power": {
         "key": "state.activePowerExport",
-        "attrs": [
-            "state.activePowerExport",
-            "state.reactivePowerExport",
-        ],
+        "attrs": [],
         "units": UnitOfPower.KILO_WATT,
         "convert_units_func": None,
         "suggested_display_precision": 1,
         "translation_key": "export_power",
+        "device_class": SensorDeviceClass.POWER,
+        "state_class": SensorStateClass.MEASUREMENT,
+        "icon": None,
+    },
+    "export_reactive_power": {
+        "key": "state.reactivePowerExport",
+        "attrs": [],
+        "units": UnitOfPower.KILO_WATT,
+        "convert_units_func": None,
+        "suggested_display_precision": 1,
+        "translation_key": "export_reactive_power",
         "device_class": SensorDeviceClass.POWER,
         "state_class": SensorStateClass.MEASUREMENT,
         "icon": None,
@@ -785,10 +781,7 @@ EASEE_EQ_ENTITIES = {
     },
     "import_energy": {
         "key": "state.cumulativeActivePowerImport",
-        "attrs": [
-            "state.cumulativeActivePowerImport",
-            "state.cumulativeReactivePowerImport",
-        ],
+        "attrs": [],
         "units": UnitOfEnergy.KILO_WATT_HOUR,
         "convert_units_func": None,
         "suggested_display_precision": 1,
@@ -798,16 +791,37 @@ EASEE_EQ_ENTITIES = {
         "icon": None,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
+    "import_reactive_energy": {
+        "key": "state.cumulativeReactivePowerImport",
+        "attrs": [],
+        "units": UnitOfEnergy.KILO_WATT_HOUR,
+        "convert_units_func": None,
+        "suggested_display_precision": 1,
+        "translation_key": "import_reactive_energy",
+        "device_class": SensorDeviceClass.ENERGY,
+        "state_class": SensorStateClass.TOTAL_INCREASING,
+        "icon": None,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+    },
     "export_energy": {
         "key": "state.cumulativeActivePowerExport",
-        "attrs": [
-            "state.cumulativeActivePowerExport",
-            "state.cumulativeReactivePowerExport",
-        ],
+        "attrs": [],
         "units": UnitOfEnergy.KILO_WATT_HOUR,
         "convert_units_func": None,
         "suggested_display_precision": 1,
         "translation_key": "export_energy",
+        "device_class": SensorDeviceClass.ENERGY,
+        "state_class": SensorStateClass.TOTAL_INCREASING,
+        "icon": None,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+    },
+    "export_reactive_energy": {
+        "key": "state.cumulativeReactivePowerExport",
+        "attrs": [],
+        "units": UnitOfEnergy.KILO_WATT_HOUR,
+        "convert_units_func": None,
+        "suggested_display_precision": 1,
+        "translation_key": "export_reactive_energy",
         "device_class": SensorDeviceClass.ENERGY,
         "state_class": SensorStateClass.TOTAL_INCREASING,
         "icon": None,

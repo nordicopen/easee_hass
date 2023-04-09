@@ -156,7 +156,7 @@ class ChargerEntity(Entity):
         return True
 
     @property
-    def state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes."""
         try:
             attrs = {

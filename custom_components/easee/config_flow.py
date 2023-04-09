@@ -15,7 +15,7 @@ from homeassistant.helpers.typing import ConfigType
 from pyeasee import AuthorizationFailedException, Easee, Site
 import voluptuous as vol
 
-from .const import CONF_MONITORED_SITES, CUSTOM_UNITS, CUSTOM_UNITS_OPTIONS, DOMAIN
+from .const import CONF_MONITORED_SITES, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -161,10 +161,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                             CONF_MONITORED_SITES, default_sites
                         ),
                     ): cv.multi_select(sites_multi_select),
-                    vol.Optional(
-                        CUSTOM_UNITS,
-                        default=self.config_entry.options.get(CUSTOM_UNITS, []),
-                    ): cv.multi_select(CUSTOM_UNITS_OPTIONS),
                 }
             ),
             errors=errors,
