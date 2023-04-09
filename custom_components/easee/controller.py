@@ -279,7 +279,9 @@ class ProductData:
             _LOGGER.debug("Unsupported data id %s %s", data_id, value)
             return False
 
-        _LOGGER.debug("Callback %s %s %s %s", self.product.id, data_id, name, value)
+        _LOGGER.debug(
+            "Callback %s %s %s %s %s", self.product.id, data_id, name, value, data_type
+        )
 
         if "_" in name:
             first, second = name.split("_")
@@ -702,6 +704,7 @@ class Controller:
             attrs_keys=data["attrs"],
             device_class=data["device_class"],
             translation_key=data.get("translation_key"),
+            suggested_display_precision=data.get("suggested_display_precision"),
             state_class=data.get("state_class", None),
             icon=data["icon"],
             state_func=data.get("state_func", None),

@@ -85,6 +85,7 @@ class ChargerEntity(Entity):
         state_class=None,
         entity_category=None,
         translation_key=None,
+        suggested_display_precision=None,
     ):
 
         """Initialize the entity."""
@@ -101,10 +102,12 @@ class ChargerEntity(Entity):
         self._attr_unique_id = f"{self.data.product.id}_{self._entity_name}"
         self._attr_device_class = device_class
         self._attr_translation_key = translation_key
+        self._attr_suggested_display_precision = suggested_display_precision
         self._attr_icon = icon
         self._attr_should_poll = False
         self._attr_entity_registry_enabled_default = enabled_default
-        self._attr_name = f"{self._entity_name}".capitalize().replace("_", " ")
+        if translation_key is None:
+            self._attr_name = f"{self._entity_name}".capitalize().replace("_", " ")
         self._attr_has_entity_name = True
         self._attr_state_class = state_class
         self._attr_entity_category = entity_category
@@ -150,7 +153,7 @@ class ChargerEntity(Entity):
     @property
     def available(self):
         """Return True if entity is available."""
-        return self._state is not None
+        return True
 
     @property
     def state_attributes(self):
