@@ -157,7 +157,7 @@ class ChargerEntity(Entity):
 
     @property
     def extra_state_attributes(self):
-        """Return the state attributes."""
+        """Return the extra state attributes."""
         try:
             attrs = {
                 "name": self.data.product.name,
