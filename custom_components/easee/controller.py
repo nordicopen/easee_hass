@@ -37,8 +37,6 @@ from pyeasee.exceptions import (
 from .binary_sensor import ChargerBinarySensor, EqualizerBinarySensor
 from .const import (
     CONF_MONITORED_SITES,
-    CUSTOM_UNITS,
-    CUSTOM_UNITS_TABLE,
     DOMAIN,
     EASEE_EQ_ENTITIES,
     MANDATORY_EASEE_ENTITIES,
@@ -686,10 +684,6 @@ class Controller:
         data,
     ):
 
-        custom_units = self.config.options.get(CUSTOM_UNITS, {})
-        if data["units"] in custom_units:
-            data["units"] = CUSTOM_UNITS_TABLE[data["units"]]
-
         entity_type_name = ENTITY_TYPES[object_type]
 
         entity = entity_type_name(
@@ -713,10 +707,11 @@ class Controller:
             entity_category=data.get("entity_category", None),
         )
         _LOGGER.debug(
-            "Adding entity: %s (%s) for product %s",
+            "Adding entity: %s (%s) for product %s, unit %s",
             name,
             object_type,
             product_data.product.name,
+            data["units"],
         )
         if object_type == "sensor":
             self.sensor_entities.append(entity)

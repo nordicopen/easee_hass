@@ -130,14 +130,26 @@
       "export_energy": {
         "name": "Exporterad energi"
       },
+      "export_reactive_energy": {
+        "name": "Exporterad reaktiv energi"
+      },
       "export_power": {
         "name": "Exporterad effekt"
+      },
+      "export_reactive_power": {
+        "name": "Exporterad reaktiv effekt"
       },
       "import_energy": {
         "name": "Importerad energi"
       },
+      "import_reactive_energy": {
+        "name": "Importerad reaktiv energi"
+      },
       "import_power": {
         "name": "Importerad effekt"
+      },
+      "import_reactive_power": {
+        "name": "Importerad reaktiv effekt"
       },
       "internal_temperature": {
         "name": "Intern temperatur"
