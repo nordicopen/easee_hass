@@ -136,7 +136,7 @@
       "export_power": {
         "name": "Export power"
       },
-      "export_reacitve_power": {
+      "export_reactive_power": {
         "name": "Export reactive power"
       },
       "import_energy": {
