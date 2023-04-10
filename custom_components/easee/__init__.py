@@ -89,6 +89,17 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
 
         config_entry.version = 2
 
+    if config_entry.version == 2:
+
+        options = {**config_entry.options}
+        # modify Config Entry data
+        if "custom_units" in options:
+            options.pop("custom_units")
+
+        config_entry.options = {**options}
+
+        config_entry.version = 3
+
     _LOGGER.info("Migration to version %s successful", config_entry.version)
 
     return True
