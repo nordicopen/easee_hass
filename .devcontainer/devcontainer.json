@@ -5,6 +5,7 @@
 	"appPort": [
 		"9125:8123"
 	],
+	"postCreateCommand": "container install && pip install -Ur requirements-devcontainer.txt",
 	"customizations": {
 		"vscode": {
 			"extensions": [
