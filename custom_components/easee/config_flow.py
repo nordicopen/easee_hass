@@ -75,11 +75,11 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
                 errors["base"] = "auth_failure"
                 _LOGGER.debug("AuthorizationFailed")
 
-            except (ConnectionRefusedError):
+            except ConnectionRefusedError:
                 errors["base"] = "refused_failure"
                 _LOGGER.debug("ConnectionRefusedError")
 
-            except (ClientConnectionError):
+            except ClientConnectionError:
                 errors["base"] = "connection_failure"
                 _LOGGER.debug("ClientConnectionError")
 
@@ -94,7 +94,6 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
     async def async_step_sites(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-
         errors = {}
         if user_input is not None:
             if len(user_input[CONF_MONITORED_SITES]) > 0:

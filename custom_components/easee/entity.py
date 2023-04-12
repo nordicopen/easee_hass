@@ -87,7 +87,6 @@ class ChargerEntity(Entity):
         translation_key=None,
         suggested_display_precision=None,
     ):
-
         """Initialize the entity."""
         self.controller = controller
         self.data = data

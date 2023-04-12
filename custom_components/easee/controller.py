@@ -683,7 +683,6 @@ class Controller:
         name,
         data,
     ):
-
         entity_type_name = ENTITY_TYPES[object_type]
 
         entity = entity_type_name(

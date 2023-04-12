@@ -76,7 +76,6 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
     _LOGGER.info("Migrating from version %s", config_entry.version)
 
     if config_entry.version == 1:
-
         options = {**config_entry.options}
         # modify Config Entry data
         if "monitored_conditions" in options:
@@ -90,7 +89,6 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
         config_entry.version = 2
 
     if config_entry.version == 2:
-
         options = {**config_entry.options}
         # modify Config Entry data
         if "custom_units" in options:
