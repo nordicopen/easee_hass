@@ -65,10 +65,10 @@
           "name": "Strøm"
         },
         "dynamic_charger_limit": {
-          "name": "Dynamisk begrensning for lader"
+          "name": "Dynamisk grense for lader"
         },
         "dynamic_circuit_limit": {
-          "name": "Dynamisk begrensning for kurs"
+          "name": "Dynamisk grense for kurs"
         },
         "easee_reason_no_current": {
           "name": "Årsak til at det ikke lades",
@@ -78,13 +78,13 @@
             "charger_in_error_state": "Feil på lader",
             "circuit_fuse_too_low": "Kurssikring for lav",
             "eq_too_low_current": "Equalizer strøm for lav",
-            "ev_behaving_erratic": "Bil oppfører feilaktig",
+            "ev_behaving_erratic": "Bil oppfører seg feilaktig",
             "illegal_grid_type": "Ugyldig type elnett",
             "limited_by_cable_rating": "Begrenset av kabel",
             "limited_by_car": "Begrenset av bil",
-            "limited_by_charger_dynamic_limit": "Begrenset av dynamisk begrensning for lader",
+            "limited_by_charger_dynamic_limit": "Begrenset av dynamisk grense for lader",
             "limited_by_charger_max_limit": "Begrenset av maks grense for lader",
-            "limited_by_circuit_dynamic_limit": "Begrenset av dynamisk begrensning for kurs",
+            "limited_by_circuit_dynamic_limit": "Begrenset av dynamisk grense for kurs",
             "limited_by_circuit_fuse": "Begrenset av kurssikring",
             "limited_by_circuit_max_limit": "Begrenset av maks grense for kurs",
             "limited_by_equalizer": "Begrenset av Equalizer",
@@ -94,8 +94,8 @@
             "limited_by_schedule": "Begrenset av plan",
             "max_charger_current_too_low": "Maks grense for lader er for lav",
             "max_circuit_current_too_low": "Maks grense for kurs er for lav",
-            "max_dynamic_charger_current_too_low": "Maks dynamisk begrensning for lader for lav",
-            "max_dynamic_circuit_current_too_low": "Maks dynamisk begrensning for kurs for lav",
+            "max_dynamic_charger_current_too_low": "Maks dynamisk grense for lader for lav",
+            "max_dynamic_circuit_current_too_low": "Maks dynamisk grense for kurs for lav",
             "max_dynamic_offline_fallback_circuit_current_too_low": "Maks offline grense for lav",
             "no_current_request": "Ber ikke om strøm",
             "none": "Ingen",
@@ -196,7 +196,7 @@
     },
     "issues": {
       "deprecated_service": {
-        "description": "Tjenesten **{deprecation}** er utdatert is deprecated og vil bli fjernet i framtiden.\n\nKonverter dine automatsjoner og skript til å bruke **{recommend}** snarest mulig",
+        "description": "Tjenesten **{deprecation}** er utdatert is deprecated og vil bli fjernet i framtiden.\n\nKonverter dine automasjoner og skript til å bruke **{recommend}** snarest mulig",
         "title": "Utdatert tjeneste: {deprecation}"
       }
     },
