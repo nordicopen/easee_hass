@@ -1,7 +1,7 @@
 {
   "config": {
     "abort": {
-      "already_setup": "Sie können nur eine einzige Easee Verbindung konfigurieren."
+      "already_setup": "Sie können nur eine einzige Easee-Verbindung konfigurieren."
     },
     "error": {
       "auth_failure": "Verbindung zu Easee nicht möglich. Prüfen Sie Username und Passwort.",
@@ -22,39 +22,81 @@
           "password": "Passwort",
           "username": "Username"
         },
-        "description": "Bitte geben Sie Username und Passwort für Ihren Easee Account an",
+        "description": "Bitte geben Sie Username und Passwort für Ihren Easee-Account an",
         "title": "Mit Easee verbinden"
       }
     }
   },
   "entity": {
+    "binary_sensor": {
+      "basic_schedule": {
+        "name": "Zeitplan"
+      },
+      "cable_locked": {
+        "name": "Kabel verriegelt"
+      },
+      "online": {
+        "name": "Online"
+      },
+      "update_available": {
+        "name": "Aktualisierung verfügbar"
+      },
+      "weekly_schedule": {
+        "name": "Wöchentlicher Zeitplan"
+      }
+    },
     "sensor": {
+      "circuit_current": {
+        "name": "Strom Schaltkreis"
+      },
+      "cost_day": {
+        "name": "Kosten Tag"
+      },
+      "cost_month": {
+        "name": "Kosten Monat"
+      },
+      "cost_per_kwh": {
+        "name": "Kosten pro kWh"
+      },
+      "cost_year": {
+        "name": "Kosten Jahr"
+      },
+      "current": {
+        "name": "Strom"
+      },
+      "dynamic_charger_limit": {
+        "name": "Dynamisches Chargerlimit"
+      },
+      "dynamic_circuit_limit": {
+        "name": "Dynamisches Stromkreislimit"
+      },
       "easee_reason_no_current": {
+        "name": "Grund für keinen Strom",
         "state": {
           "car_not_charging": "Fahrzeug lädt nicht",
           "charger_disabled": "Charger deaktiviert",
           "charger_in_error_state": "Charger in Fehlerzustand",
           "circuit_fuse_too_low": "Absicherung zu niedrig",
-          "eq_too_low_current": "Equalizer Strom zu niedrig",
+          "eq_too_low_current": "Equalizerstrom zu niedrig",
           "ev_behaving_erratic": "Fahrzeug verhält sich fehlerhaft",
           "illegal_grid_type": "Ungültiger Stromnetztyp",
           "limited_by_cable_rating": "Durch Kabeleinstufung limitiert",
           "limited_by_car": "Durch Fahrzeug limitiert",
           "limited_by_charger_dynamic_limit": "Durch Charger dynamisch limitiert",
-          "limited_by_charger_max_limit": "Durch Charger Max. limitiert",
+          "limited_by_charger_max_limit": "Durch Chargermaximum limitiert",
           "limited_by_circuit_dynamic_limit": "Durch Schaltkreis dynamisch limitiert",
           "limited_by_circuit_fuse": "Durch Schaltkreissicherung limitiert",
-          "limited_by_circuit_max_limit": "Durch Schaltkreismax. limitiert",
+          "limited_by_circuit_max_limit": "Durch Schaltkreismaximum limitiert",
           "limited_by_equalizer": "Durch Equalizer limitiert",
           "limited_by_load_balancing": "Durch Lastverteilung limitiert",
           "limited_by_local_adjustment": "Durch lokale Einstellung limitiert",
           "limited_by_offline_setting": "Durch Offline-Einstellung limitiert",
           "limited_by_schedule": "Durch Zeitplan limitiert",
-          "max_charger_current_too_low": "Max. Charger Strom zu niedrig",
-          "max_circuit_current_too_low": "Max. Schaltkreisstrom zu niedrig",
-          "max_dynamic_charger_current_too_low": "Max. dynamischer Charger Strom zu niedrig",
-          "max_dynamic_circuit_current_too_low": "Max. dynamischer Schaltkreisstrom zu niedrig",
-          "max_dynamic_offline_fallback_circuit_current_too_low": "Max. dynamischer offline Schaltkreisstrom zu niedrig",
+          "max_charger_current_too_low": "Maximaler Chargerstrom zu niedrig",
+          "max_circuit_current_too_low": "Maximaler Schaltkreisstrom zu niedrig",
+          "max_dynamic_charger_current_too_low": "Maximaler dynamischer Chargerstrom zu niedrig",
+          "max_dynamic_circuit_current_too_low": "Maximaler dynamischer Schaltkreisstrom zu niedrig",
+          "max_dynamic_offline_fallback_circuit_current_too_low": "Maximaler dynamischer Offline-Schaltkreisstrom zu niedrig",
           "no_current_request": "Kein Strom angefordert",
           "none": "Keiner",
           "not_connected_to_master": "Nicht mit dem Master verbunden",
@@ -64,11 +106,12 @@
           "pending_schedule": "Wartet auf Zeitplan",
           "phase_not_connected": "Phase nicht verbunden",
           "undefined": "Unbestimmt",
-          "waiting_in_fully": "Warten",
+          "waiting_in_fully": "Wartet",
           "waiting_in_queue": "In Warteschlange"
         }
       },
       "easee_status": {
+        "name": "Status",
         "state": {
           "awaiting_start": "Wartet auf Start",
           "charging": "Lädt",
@@ -77,7 +120,84 @@
           "error": "Fehler",
           "ready_to_charge": "Bereit zum Laden"
         }
+      },
+      "energy_per_hour": {
+        "name": "Energie pro Stunde"
+      },
+      "equalizer_limit": {
+        "name": "Equalizerlimit"
+      },
+      "export_energy": {
+        "name": "Exportierte Energie"
+      },
+      "export_reactive_energy": {
+        "name": "Exportierte reaktive Energie"
+      },
+      "export_power": {
+        "name": "Exportierte Leistung"
+      },
+      "export_reactive_power": {
+        "name": "Exportierte reaktive Leistung"
+      },
+      "import_energy": {
+        "name": "Importierte Energie"
+      },
+      "import_reactive_energy": {
+        "name": "Importierte reaktive Energie"
+      },
+      "import_power": {
+        "name": "Importierte Leistung"
+      },
+      "import_reactive_power": {
+        "name": "Importierte reaktive Leistung"
+      },
+      "internal_temperature": {
+        "name": "Interne Temperatur"
+      },
+      "lifetime_energy": {
+        "name": "Gesamtenergie"
+      },
+      "max_charger_limit": {
+        "name": "Max Chargerlimit"
+      },
+      "max_circuit_limit": {
+        "name": "Max Schaltkreislimit"
+      },
+      "offline_circuit_limit": {
+        "name": "Offline Schaltkreislimit"
+      },
+      "output_limit": {
+        "name": "Ausgabelimit"
+      },
+      "power": {
+        "name": "Leistung"
+      },
+      "session_energy": {
+        "name": "Sitzungsenergie"
+      },
+      "voltage": {
+        "name": "Spannung"
       }
+    },
+    "switch": {
+      "cable_locked_permanently": {
+        "name": "Kabel dauerhaft verriegelt"
+      },
+      "idle_current": {
+        "name": "Ruhestrom"
+      },
+      "is_enabled": {
+        "name": "Charger aktiviert"
+      },
+      "smart_charging": {
+        "name": "Smart Charging"
+      }
+    }
+  },
+  "issues": {
+    "deprecated_service": {
+      "description": "Der verwendete Dienst **{deprecation}** ist veraltet und wird in Zukunft entfernt werden.\n\nBitte passen Sie Ihre Automatisierungen und Skripte zur Verwendung von **{recommend}** so bald wie möglich an.",
+      "title": "Verwendung eines veralteten Dienstes: {deprecation}"
     }
   },
   "options": {
