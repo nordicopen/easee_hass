@@ -376,6 +376,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
+        "only_master": True,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "equalizer_limit": {
