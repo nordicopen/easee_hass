@@ -1,0 +1,229 @@
+{
+  "config": {
+    "abort": {
+      "already_setup": "Het is niet mogelijk om meerdere Easee verbindingen tegelijk in te stellen."
+    },
+    "error": {
+      "auth_failure": "Kan niet verbinden met Easee. Controleer je gebruikersnaam en wachtwoord.",
+      "connection_failure": "Kan niet verbinden met Easee. Probeer later opnieuw.",
+      "no_sites": "Geen lokatie geselecteerd",
+      "refused_failure": "Verbinding met Easee geweigerd. Probeer later opnieuw."
+    },
+    "step": {
+      "sites": {
+        "data": {
+          "monitored_sites": "Lokaties"
+        },
+        "description": "Selecteer lokatie om te gebruiken",
+        "title": "Easee EV Charger"
+      },
+      "user": {
+        "data": {
+          "password": "Wachtwoord",
+          "username": "Gebruikersnaam"
+        },
+        "description": "Voer a.u.b. je gebruikersnaam en wachtwoord in voor je Easee account",
+        "title": "Verbind met Easee"
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "basic_schedule": {
+        "name": "Basisschema"
+      },
+      "cable_locked": {
+        "name": "Cable lock"
+      },
+      "online": {
+        "name": "Online"
+      },
+      "update_available": {
+        "name": "Update beschikbaar"
+      },
+      "weekly_schedule": {
+        "name": "Weekschema"
+      }
+    },
+    "sensor": {
+      "circuit_current": {
+        "name": "Laadstroom"
+      },
+      "cost_day": {
+        "name": "Kosten dag"
+      },
+      "cost_month": {
+        "name": "Kosten maand"
+      },
+      "cost_per_kwh": {
+        "name": "Kosten per kWh"
+      },
+      "cost_year": {
+        "name": "Kosten jaar"
+      },
+      "current": {
+        "name": "Stroom"
+      },
+      "dynamic_charger_limit": {
+        "name": "Dynamisch laadgrens van lader"
+      },
+      "dynamic_circuit_limit": {
+        "name": "Dynamic laadgrens van stroomcircuit"
+      },
+      "easee_reason_no_current": {
+        "name": "Reden geen stroom",
+        "state": {
+          "car_not_charging": "Auto laadt niet",
+          "charger_disabled": "Lader uitgeschakeld",
+          "charger_in_error_state": "Lader in foutstatus",
+          "circuit_fuse_too_low": "Zekering te laag",
+          "eq_too_low_current": "Equalizer stroom te laag",
+          "ev_behaving_erratic": "Auto geeft onverwachtte reactie",
+          "illegal_grid_type": "Ongeldig stroomnettype",
+          "limited_by_cable_rating": "Begrensd door capaciteit laadkabel",
+          "limited_by_car": "Begrensd door voertuig",
+          "limited_by_charger_dynamic_limit": "Dynamisch begrensd door lader",
+          "limited_by_charger_max_limit": "Begrensd door maximum limiet lader",
+          "limited_by_circuit_dynamic_limit": "Dynamisch begrensd door stroomcircuit",
+          "limited_by_circuit_fuse": "Begrensd door zekering",
+          "limited_by_circuit_max_limit": "Begrensd door maximum limiet stroomcircuit",
+          "limited_by_equalizer": "Begrensd door equalizer",
+          "limited_by_load_balancing": "Begrensd door load balancing",
+          "limited_by_local_adjustment": "Begrensd door lokale instelling",
+          "limited_by_offline_setting": "Begrensd door offline instelling",
+          "limited_by_schedule": "Beperkt door laadschema",
+          "max_charger_current_too_low": "Maximale limiet lader te laag",
+          "max_circuit_current_too_low": "Maximale limiet stroomcircuit te laag",
+          "max_dynamic_charger_current_too_low": "Maximaal dynamisch stroom lader te laag",
+          "max_dynamic_circuit_current_too_low": "Maximaal dynamisch stroom stroomcircuit te laag",
+          "max_dynamic_offline_fallback_circuit_current_too_low": "Maximaal dynamisch stroom offline terugvalcircuit te laag",
+          "no_current_request": "Geen stroomvraag",
+          "none": "Geen",
+          "not_connected_to_master": "Niet verbonden met master",
+          "not_requesting_current": "Geen stroomvraag",
+          "ok": "OK",
+          "pending_authorization": "Wacht op autorisatie",
+          "pending_schedule": "Wacht op laadschema",
+          "phase_not_connected": "Fase niet aangesloten",
+          "undefined": "Ongedefinieerd",
+          "waiting_in_fully": "Wachten",
+          "waiting_in_queue": "In wachtrij"
+        }
+      },
+      "easee_status": {
+        "name": "Status",
+        "state": {
+          "awaiting_start": "Wacht tot laden start",
+          "charging": "Bezig met laden",
+          "completed": "Laden voltooid",
+          "disconnected": "Geen auto aangesloten",
+          "error": "Fout bij laden",
+          "ready_to_charge": "Gereed om te laden"
+        }
+      },
+      "energy_per_hour": {
+        "name": "Energie per uur"
+      },
+      "equalizer_limit": {
+        "name": "Equalizer limiet"
+      },
+      "export_energy": {
+        "name": "Export energie"
+      },
+      "export_reactive_energy": {
+        "name": "Export reactieve energie"
+      },
+      "export_power": {
+        "name": "Export vermogen"
+      },
+      "export_reactive_power": {
+        "name": "Export reactief vermogen"
+      },
+      "import_energy": {
+        "name": "Import energie"
+      },
+      "import_reactive_energy": {
+        "name": "Import reactieve energie"
+      },
+      "import_power": {
+        "name": "Import vermogen"
+      },
+      "import_reactive_power": {
+        "name": "Import reactief vermogen"
+      },
+      "internal_temperature": {
+        "name": "Interne temperatuur"
+      },
+      "lifetime_energy": {
+        "name": "Levensduur verbruik"
+      },
+      "max_charger_limit": {
+        "name": "Maximale limiet lader"
+      },
+      "max_circuit_limit": {
+        "name": "Maximale limiet stroomcircuit"
+      },
+      "offline_circuit_limit": {
+        "name": "Limiet offline stroomcircuit"
+      },
+      "output_limit": {
+        "name": "Limiet uitgangsvermogen"
+      },
+      "power": {
+        "name": "Vermogen"
+      },
+      "session_energy": {
+        "name": "Sessie energie"
+      },
+      "voltage": {
+        "name": "Voltage"
+      }
+    },
+    "switch": {
+      "cable_locked_permanently": {
+        "name": "Kabel permanent vergrendeld"
+      },
+      "idle_current": {
+        "name": "Ruststroom"
+      },
+      "is_enabled": {
+        "name": "Lader ingeschakeld"
+      },
+      "smart_charging": {
+        "name": "Slim laden"
+      }
+    }
+  },
+  "issues": {
+    "deprecated_service": {
+      "description": "Het gebruik van de service **{deprecation}** is verouderd en zal in de toekomst worden verwijderd.\n\nPas je automatiseringen en scripts z.s.m. aan om gebruik te maken van **{recommend}**",
+      "title": "Verouderde service gebruikt: {deprecation}"
+    }
+  },
+  "options": {
+    "error": {
+      "no_sites": "Geen lokaties geselecteerd"
+    },
+    "step": {
+      "init": {
+        "data": {
+          "custom_units": "Aangepaste eenheden",
+          "measured_consumption_days": "Dagen verbruik",
+          "monitored_conditions": "Sensoren lader",
+          "monitored_eq_conditions": "Sensoren equalizer",
+          "monitored_sites": "Lokaties"
+        },
+        "description": "Selecteer opties",
+        "title": "Easee EV lader"
+      }
+    }
+  },
+  "system_health": {
+    "info": {
+      "component_version": "Versie",
+      "connected2stream": "Verbonden met netwerk",
+      "reach_easee_cloud": "Verbonden met Easee Cloud"
+    }
+  },
+  "title": "Easee EV lader"
+}
