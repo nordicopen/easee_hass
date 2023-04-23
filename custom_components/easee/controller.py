@@ -79,6 +79,7 @@ class ProductData:
         streamdata,
         poll_observations,
         circuit: Circuit = None,
+        master=False,
     ):
         """Initialize the product data."""
         self.product = product
@@ -96,6 +97,7 @@ class ProductData:
         self.dirty = False
         self.event_loop = event_loop
         self.poll_observations = poll_observations
+        self.master = master
 
     def is_state_polled(self):
         if self.state is None:
@@ -120,6 +122,9 @@ class ProductData:
             return False
 
         return self.dirty
+
+    def is_master(self):
+        return self.master
 
     def mark_clean(self):
         self.dirty = False
@@ -403,19 +408,28 @@ class Controller:
                             EqualizerStreamData,
                             equalizerObservations,
                         )
-                        _LOGGER.debug("Calling refresh")
                         self.equalizers_data.append(equalizer_data)
                     circuits = site.get_circuits()
                     for circuit in circuits:
                         _LOGGER.debug(
-                            "Found circuit: %s %s", circuit.id, circuit["panelName"]
+                            "Found circuit: %s %s %s",
+                            circuit.id,
+                            circuit["panelName"],
+                            circuit.get_data(),
                         )
                         self.circuits.append(circuit)
                         for charger in circuit.get_chargers():
                             if charger.id is not None:
                                 _LOGGER.debug(
-                                    "Found charger: %s %s", charger.id, charger.name
+                                    "Found charger: %s %s %s",
+                                    charger.id,
+                                    charger.name,
+                                    charger.get_data(),
                                 )
+                                master = False
+                                backPlate = charger["backPlate"]
+                                if backPlate["id"] == backPlate["masterBackPlateId"]:
+                                    master = True
                                 self.chargers.append(charger)
                                 charger_data = ProductData(
                                     self.event_loop,
@@ -424,8 +438,8 @@ class Controller:
                                     ChargerStreamData,
                                     chargerObservations,
                                     circuit,
+                                    master=master,
                                 )
-                                _LOGGER.debug("Calling refresh")
                                 self.chargers_data.append(charger_data)
 
             self.hass.data[DOMAIN]["diagnostics"] = self.diagnostics
@@ -739,10 +753,13 @@ class Controller:
         all_easee_entities = {**MANDATORY_EASEE_ENTITIES, **OPTIONAL_EASEE_ENTITIES}
 
         for charger_data in self.chargers_data:
+            is_slave = not charger_data.is_master()
             for key in all_easee_entities:
                 data = all_easee_entities[key]
                 entity_type = data.get("type", "sensor")
-
+                only_master = data.get("only_master", False)
+                if is_slave and only_master:
+                    continue
                 self._create_entity(
                     entity_type,
                     controller=self,
