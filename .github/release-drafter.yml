@@ -18,8 +18,10 @@ categories:
   - title: "Dependencies"
     labels:
       - "dependency"
-  - title: "Maintenance"
-    label: "maintenance"
+  - title: "Code quality and maintenance"
+    labels: 
+      - "maintenance"
+      - "code quality"
 
   - title: "Development environment and tools"
     label: "dev tools"
