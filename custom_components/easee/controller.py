@@ -100,19 +100,23 @@ class ProductData:
         self.master = master
 
     def is_state_polled(self):
+        """Check if state is polled."""
         if self.state is None:
             return False
         return True
 
     def is_config_polled(self):
+        """Check if config is polled."""
         if self.config is None:
             return False
         return True
 
     def is_schedule_polled(self):
+        """Check if schedule is polled."""
         return self.schedule_polled
 
     def is_dirty(self):
+        """Check if dirty."""
         if self.state is None:
             return False
         if self.config is None:
@@ -124,15 +128,19 @@ class ProductData:
         return self.dirty
 
     def is_master(self):
+        """Check if master."""
         return self.master
 
     def mark_clean(self):
+        """Mark as clean."""
         self.dirty = False
 
     def mark_dirty(self):
+        """Mark as dirty."""
         self.dirty = True
 
     async def firmware_async_refresh(self):
+        """Refresh firmware status."""
         if self.state is None:
             return False
 
@@ -143,6 +151,7 @@ class ProductData:
         )
 
     async def async_refresh(self):
+        """Refresh product data."""
         if self.state is None:
             self.state = await self.product.empty_state(raw=True)
         if self.config is None:
@@ -187,6 +196,7 @@ class ProductData:
                 self.config[second] = value
 
     async def schedules_async_refresh(self):
+        """Refresh schedules."""
         self.schedule_polled = True
 
         try:
@@ -208,6 +218,7 @@ class ProductData:
         _LOGGER.debug("Schedule: %s %s", self.schedule, self.weekly_schedule)
 
     async def cost_async_refresh(self):
+        """Refresh cost."""
         dt_end = dt.now().replace(microsecond=0)
         dt_start = dt.now().replace(hour=0, minute=0, second=0, microsecond=0)
         costs_day = await self.site.get_cost_between_dates(
@@ -236,6 +247,7 @@ class ProductData:
                     self.cost_year = cost
 
     def check_value(self, data_type, reference, value):
+        """Check value."""
         if (
             data_type != DatatypesStreamData.Double.value
             and data_type != DatatypesStreamData.Integer.value
@@ -248,6 +260,7 @@ class ProductData:
         return False
 
     def check_latest_pulse(self):
+        """Check latest pulse."""
         if self.state is None:
             return
 
@@ -261,12 +274,14 @@ class ProductData:
                 _LOGGER.debug("Product %s marked offline", self.product.id)
 
     def set_signalr_state(self, state):
+        """Set signalr state."""
         if self.state is None:
             return
 
         self.state["signalRConnected"] = state
 
     def update_stream_data(self, data_type, data_id, value):
+        """Update stream data."""
         if self.state is None:
             return False
 
@@ -333,16 +348,23 @@ class Controller:
         self.chargers_data: List[ProductData] = []
         self.equalizers: List[Equalizer] = []
         self.equalizers_data: List[ProductData] = []
+        self.binary_sensor_entities = []
         self.switch_entities = []
         self.sensor_entities = []
         self.equalizer_sensor_entities = []
         self.equalizer_binary_sensor_entities = []
         self.diagnostics = {}
+        self.trackers = []
+        self.running_loop = None
+        self.event_loop = None
+        self.monitored_sites = None
+        self._init_count = 0
 
     def __del__(self):
         _LOGGER.debug("Controller deleted")
 
     async def cleanup(self):
+        """Cleanup controller."""
         if self.easee is not None:
             for equalizer in self.equalizers:
                 await self.easee.sr_unsubscribe(equalizer)
@@ -357,7 +379,7 @@ class Controller:
         _LOGGER.debug("Controller refcount after cleanup %d", getrefcount(self))
 
     async def initialize(self):
-        """initialize the session and get initial data"""
+        """Initialize the session and get initial data."""
         client_session = aiohttp_client.async_get_clientsession(self.hass)
         self.easee = Easee(self.username, self.password, client_session)
         self.running_loop = asyncio.get_running_loop()
@@ -427,8 +449,8 @@ class Controller:
                                     charger.get_data(),
                                 )
                                 master = False
-                                backPlate = charger["backPlate"]
-                                if backPlate["id"] == backPlate["masterBackPlateId"]:
+                                back_plate = charger["backPlate"]
+                                if back_plate["id"] == back_plate["masterBackPlateId"]:
                                     master = True
                                 self.chargers.append(charger)
                                 charger_data = ProductData(
@@ -452,17 +474,19 @@ class Controller:
             _LOGGER.debug("Easee server failure %s", err)
             raise ConfigEntryNotReady from err
 
-    async def stream_callback(self, id, data_type, data_id, value):
+    async def stream_callback(self, idx, data_type, data_id, value):
+        """The stream callback."""
         all_data = self.chargers_data + self.equalizers_data
 
         for data in all_data:
-            if data.product.id == id:
+            if data.product.id == idx:
                 if data.update_stream_data(data_type, data_id, value):
                     _LOGGER.debug("Scheduling update")
                     self.update_ha_state()
                     return
 
     def setup_done(self, name):
+        """Entities setup is done."""
         _LOGGER.debug("Entities %s setup done", name)
         self._init_count = self._init_count + 1
 
@@ -470,7 +494,7 @@ class Controller:
             asyncio.run_coroutine_threadsafe(self.add_schedulers(), self.event_loop)
 
     def update_ha_state(self):
-        # Schedule an update for all other included entities
+        """Schedule an update for all other included entities."""
         all_entities = (
             self.switch_entities
             + self.sensor_entities
@@ -602,40 +626,43 @@ class Controller:
         self.update_ha_state()
 
     def get_sites(self):
+        """Get sites."""
         return self.sites
 
     def get_chargers(self):
+        """Get chargers."""
         return self.chargers
 
     def check_circuit_current(
         self,
         circuit_id,
-        currentP1,
-        currentP2,
-        currentP3,
-        compareP1,
-        compareP2,
-        compareP3,
+        current_p1,
+        current_p2,
+        current_p3,
+        compare_p1,
+        compare_p2,
+        compare_p3,
     ):
-        if currentP2 is None:
-            currentP2 = currentP1
-        if currentP3 is None:
-            currentP3 = currentP1
+        """Check circuit current."""
+        if current_p2 is None:
+            current_p2 = current_p1
+        if current_p3 is None:
+            current_p3 = current_p1
 
         for charger_data in self.chargers_data:
             if charger_data.circuit.id == circuit_id:
                 try:
                     if (
-                        charger_data.state[compareP1] != currentP1
-                        or charger_data.state[compareP2] != currentP2
-                        or charger_data.state[compareP3] != currentP3
+                        charger_data.state[compare_p1] != current_p1
+                        or charger_data.state[compare_p2] != current_p2
+                        or charger_data.state[compare_p3] != current_p3
                     ):
                         return charger_data.circuit
                 except KeyError:
                     if (
-                        charger_data.config[compareP1] != currentP1
-                        or charger_data.config[compareP2] != currentP2
-                        or charger_data.config[compareP3] != currentP3
+                        charger_data.config[compare_p1] != current_p1
+                        or charger_data.config[compare_p2] != current_p2
+                        or charger_data.config[compare_p3] != current_p3
                     ):
                         return charger_data.circuit
 
@@ -645,32 +672,33 @@ class Controller:
     def check_charger_current(
         self,
         charger_id,
-        currentP1,
-        currentP2,
-        currentP3,
-        compareP1,
-        compareP2,
-        compareP3,
+        current_p1,
+        current_p2,
+        current_p3,
+        compare_p1,
+        compare_p2,
+        compare_p3,
     ):
-        if currentP2 is None:
-            currentP2 = currentP1
-        if currentP3 is None:
-            currentP3 = currentP1
+        """Check charger current."""
+        if current_p2 is None:
+            current_p2 = current_p1
+        if current_p3 is None:
+            current_p3 = current_p1
 
         for charger_data in self.chargers_data:
             if charger_data.product.id == charger_id:
                 try:
                     if (
-                        charger_data.state[compareP1] != currentP1
-                        or charger_data.state[compareP2] != currentP2
-                        or charger_data.state[compareP3] != currentP3
+                        charger_data.state[compare_p1] != current_p1
+                        or charger_data.state[compare_p2] != current_p2
+                        or charger_data.state[compare_p3] != current_p3
                     ):
                         return charger_data.product
                 except KeyError:
                     if (
-                        charger_data.config[compareP1] != currentP1
-                        or charger_data.config[compareP2] != currentP2
-                        or charger_data.config[compareP3] != currentP3
+                        charger_data.config[compare_p1] != current_p1
+                        or charger_data.config[compare_p2] != current_p2
+                        or charger_data.config[compare_p3] != current_p3
                     ):
                         return charger_data.product
 
@@ -678,15 +706,19 @@ class Controller:
         return None
 
     def get_circuits(self):
+        """Get the circuits."""
         return self.circuits
 
     def get_binary_sensor_entities(self):
+        """Get binary sensor entities."""
         return self.binary_sensor_entities + self.equalizer_binary_sensor_entities
 
     def get_sensor_entities(self):
+        """Get sensor entities."""
         return self.sensor_entities + self.equalizer_sensor_entities
 
     def get_switch_entities(self):
+        """Return switch_entities."""
         return self.switch_entities
 
     def _create_entity(
@@ -754,8 +786,7 @@ class Controller:
 
         for charger_data in self.chargers_data:
             is_slave = not charger_data.is_master()
-            for key in all_easee_entities:
-                data = all_easee_entities[key]
+            for key, data in all_easee_entities.items():
                 entity_type = data.get("type", "sensor")
                 only_master = data.get("only_master", False)
                 if is_slave and only_master:
@@ -769,8 +800,7 @@ class Controller:
                 )
 
         for equalizer_data in self.equalizers_data:
-            for key in EASEE_EQ_ENTITIES:
-                data = EASEE_EQ_ENTITIES[key]
+            for key, data in EASEE_EQ_ENTITIES.items():
                 entity_type = data.get("type", "eq_sensor")
 
                 self._create_entity(
