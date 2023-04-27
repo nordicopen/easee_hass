@@ -700,7 +700,10 @@ EASEE_EQ_ENTITIES = {
         "convert_units_func": None,
         "suggested_display_precision": 1,
         "translation_key": "import_reactive_power",
-        "device_class": SensorDeviceClass.POWER,  # Note, at the time of writing REACTIVE_POWER does not support kVAr, so we can not use it.
+        # TODO
+        # Note, at the time of writing REACTIVE_POWER does not
+        # support kVAr, so we can not use it.
+        "device_class": SensorDeviceClass.POWER,
         "state_class": SensorStateClass.MEASUREMENT,
         "icon": None,
     },
@@ -722,7 +725,10 @@ EASEE_EQ_ENTITIES = {
         "convert_units_func": None,
         "suggested_display_precision": 1,
         "translation_key": "export_reactive_power",
-        "device_class": SensorDeviceClass.POWER,  # Note, at the time of writing REACTIVE_POWER does not support kVAr, so we can not use it.
+        # TODO
+        # Note, at the time of writing REACTIVE_POWER does not
+        # support kVAr, so we can not use it.
+        "device_class": SensorDeviceClass.POWER,
         "state_class": SensorStateClass.MEASUREMENT,
         "icon": None,
     },
@@ -799,7 +805,9 @@ EASEE_EQ_ENTITIES = {
         "convert_units_func": None,
         "suggested_display_precision": 1,
         "translation_key": "import_reactive_energy",
-        "device_class": SensorDeviceClass.ENERGY,  # Note, at the time of writing there is no REACTIVE_ENERGY class.
+        # TODO
+        # Note, at the time of writing there is no REACTIVE_ENERGY class
+        "device_class": SensorDeviceClass.ENERGY,
         "state_class": SensorStateClass.TOTAL_INCREASING,
         "icon": None,
         "entity_category": EntityCategory.DIAGNOSTIC,
@@ -823,7 +831,9 @@ EASEE_EQ_ENTITIES = {
         "convert_units_func": None,
         "suggested_display_precision": 1,
         "translation_key": "export_reactive_energy",
-        "device_class": SensorDeviceClass.ENERGY,  # Note, at the time of writing there is no REACTIVE_ENERGY class.
+        # TODO
+        # Note, at the time of writing there is no REACTIVE_ENERGY class
+        "device_class": SensorDeviceClass.ENERGY,
         "state_class": SensorStateClass.TOTAL_INCREASING,
         "icon": None,
         "entity_category": EntityCategory.DIAGNOSTIC,
