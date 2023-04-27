@@ -5,7 +5,6 @@ from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.issue_registry import IssueSeverity, async_create_issue
 from homeassistant.util import dt
 from pyeasee.exceptions import BadRequestException, ForbiddenServiceException
 import voluptuous as vol
@@ -246,22 +245,6 @@ SERVICE_MAP = {
         "schema": SERVICE_SET_ACCESS_SCHEMA,
     },
 }
-
-
-async def _create_issue(hass, deprecation, recommend):
-    async_create_issue(
-        hass,
-        DOMAIN,
-        deprecation,
-        breaks_in_ha_version="2023.1.0",
-        is_fixable=False,
-        severity=IssueSeverity.WARNING,
-        translation_key="deprecated_service",
-        translation_placeholders={
-            "deprecation": deprecation,
-            "recommend": recommend,
-        },
-    )
 
 
 async def async_setup_services(hass):
