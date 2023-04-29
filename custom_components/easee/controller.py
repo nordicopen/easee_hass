@@ -136,7 +136,13 @@ class ProductData:
         if self.state is None:
             return False
 
-        firmware = await self.product.get_latest_firmware()
+        try:
+            firmware = await self.product.get_latest_firmware()
+        except AuthorizationFailedException:
+            _LOGGER.debug("Failed to fetch latest firmware info")
+            self.state["latestFirmware"] = None
+            return
+
         self.state["latestFirmware"] = firmware["latestFirmware"]
         _LOGGER.debug(
             "Latest Firmware for %s: %s", self.product.id, firmware["latestFirmware"]
