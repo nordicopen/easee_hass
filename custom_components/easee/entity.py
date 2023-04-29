@@ -116,7 +116,7 @@ class ChargerEntity(Entity):
             name=self.data.product.name,
             manufacturer="Easee",
             model="Charging Robot",
-            configuration_url=f"https://easee.cloud/mypage/products/{self.data.product.id}",
+            configuration_url=f"https://easee.cloud/sites/{self.data.site.id}/products/{self.data.product.id}",
         )
 
     async def async_added_to_hass(self) -> None:
