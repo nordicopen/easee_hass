@@ -255,6 +255,8 @@ class ChargerEntity(Entity):
         )
         try:
             self._state = self.get_value_from_key(self._state_key)
+            if self._state == "":
+                self._state = None
             if self._state_func is not None:
                 if self._state_key.startswith("state"):
                     self._state = self._state_func(self.data.state)
