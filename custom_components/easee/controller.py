@@ -272,7 +272,7 @@ class ProductData:
 
         self.state["signalRConnected"] = state
 
-    def update_stream_data(self, data_type, data_id, value):
+    async def update_stream_data(self, data_type, data_id, value):
         if self.state is None:
             return False
 
@@ -299,9 +299,7 @@ class ProductData:
                 oldvalue = self.state[second]
                 self.state[second] = value
                 if second == "lifetimeEnergy" and oldvalue != value:
-                    asyncio.run_coroutine_threadsafe(
-                        self.cost_async_refresh(), self.event_loop
-                    )
+                    await self.cost_async_refresh()
                 if self.check_value(data_type, oldvalue, value):
                     return True
             elif first == "config":
@@ -313,9 +311,7 @@ class ProductData:
             elif first == "schedule":
                 _LOGGER.debug("Schedule update")
                 if self.event_loop is not None:
-                    asyncio.run_coroutine_threadsafe(
-                        self.schedules_async_refresh(), self.event_loop
-                    )
+                    await self.schedules_async_refresh()
             else:
                 _LOGGER.debug("Unkonwn update type: %s", first)
 
@@ -367,7 +363,6 @@ class Controller:
         """initialize the session and get initial data"""
         client_session = aiohttp_client.async_get_clientsession(self.hass)
         self.easee = Easee(self.username, self.password, client_session)
-        self.running_loop = asyncio.get_running_loop()
         self.event_loop = asyncio.get_event_loop()
 
         try:
@@ -464,7 +459,7 @@ class Controller:
 
         for data in all_data:
             if data.product.id == id:
-                if data.update_stream_data(data_type, data_id, value):
+                if await data.update_stream_data(data_type, data_id, value):
                     _LOGGER.debug("Scheduling update")
                     self.update_ha_state()
                     return
