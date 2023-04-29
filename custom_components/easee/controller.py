@@ -326,7 +326,7 @@ class Controller:
         self.password = password
         self.hass = hass
         self.config = entry
-        self.easee: Easee = None
+        self.easee: Easee | None = None
         self.sites: List[Site] = []
         self.circuits: List[Circuit] = []
         self.chargers: List[Charger] = []
@@ -338,6 +338,7 @@ class Controller:
         self.equalizer_sensor_entities = []
         self.equalizer_binary_sensor_entities = []
         self.diagnostics = {}
+        self._init_count = 0
 
     def __del__(self):
         _LOGGER.debug("Controller deleted")
@@ -462,12 +463,12 @@ class Controller:
                     self.update_ha_state()
                     return
 
-    def setup_done(self, name):
+    async def setup_done(self, name):
         _LOGGER.debug("Entities %s setup done", name)
         self._init_count = self._init_count + 1
 
         if self._init_count >= len(PLATFORMS) and self.event_loop is not None:
-            asyncio.run_coroutine_threadsafe(self.add_schedulers(), self.event_loop)
+            await self.add_schedulers()
 
     def update_ha_state(self):
         # Schedule an update for all other included entities
@@ -487,10 +488,10 @@ class Controller:
             entity.data.mark_clean()
 
     async def add_schedulers(self):
-        """Add schedules to udpate data"""
+        """Add schedules to update data"""
         # first update
-        self.hass.async_add_job(self.refresh_sites_state)
-        self.hass.async_add_job(self.refresh_equalizers_state)
+        await self.refresh_sites_state()
+        await self.refresh_equalizers_state()
         await asyncio.gather(
             *[charger.schedules_async_refresh() for charger in self.chargers_data]
         )
