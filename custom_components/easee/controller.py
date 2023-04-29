@@ -73,7 +73,6 @@ class ProductData:
 
     def __init__(
         self,
-        event_loop,
         product,
         site: Site,
         streamdata,
@@ -95,7 +94,6 @@ class ProductData:
         self.schedule_polled = False
         self.streamdata = streamdata
         self.dirty = False
-        self.event_loop = event_loop
         self.poll_observations = poll_observations
         self.master = master
 
@@ -310,8 +308,7 @@ class ProductData:
                     return True
             elif first == "schedule":
                 _LOGGER.debug("Schedule update")
-                if self.event_loop is not None:
-                    await self.schedules_async_refresh()
+                await self.schedules_async_refresh()
             else:
                 _LOGGER.debug("Unkonwn update type: %s", first)
 
@@ -363,7 +360,6 @@ class Controller:
         """initialize the session and get initial data"""
         client_session = aiohttp_client.async_get_clientsession(self.hass)
         self.easee = Easee(self.username, self.password, client_session)
-        self.event_loop = asyncio.get_event_loop()
 
         try:
             with timeout(TIMEOUT):
@@ -404,7 +400,6 @@ class Controller:
                         )
                         self.equalizers.append(equalizer)
                         equalizer_data = ProductData(
-                            self.event_loop,
                             equalizer,
                             site,
                             EqualizerStreamData,
@@ -434,7 +429,6 @@ class Controller:
                                     master = True
                                 self.chargers.append(charger)
                                 charger_data = ProductData(
-                                    self.event_loop,
                                     charger,
                                     site,
                                     ChargerStreamData,
@@ -468,7 +462,7 @@ class Controller:
         _LOGGER.debug("Entities %s setup done", name)
         self._init_count = self._init_count + 1
 
-        if self._init_count >= len(PLATFORMS) and self.event_loop is not None:
+        if self._init_count >= len(PLATFORMS):
             await self.add_schedulers()
 
     def update_ha_state(self):
