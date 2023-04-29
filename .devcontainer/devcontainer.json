@@ -17,8 +17,6 @@
 				"thibault-vanderseypen.i18n-json-editor"
 			],
 			"settings": {
-				"files.eol": "\n",
-				"editor.tabSize": 4,
 				"terminal.integrated.profiles.linux": {
 					"bash": {
 						"path": "bash",
@@ -37,6 +35,10 @@
 				"editor.formatOnPaste": false,
 				"editor.formatOnSave": true,
 				"editor.formatOnType": true,
+				"editor.renderFinalNewline": "dimmed",
+				"editor.tabSize": 4,
+				"files.eol": "\n",
+				"files.insertFinalNewline": true,
 				"files.trimTrailingWhitespace": true,
 				"i18nJsonEditor.forceKeyUPPERCASE": false,
 				"i18nJsonEditor.supportedFolders": [
