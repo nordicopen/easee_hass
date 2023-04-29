@@ -843,20 +843,30 @@ EASEE_EQ_ENTITIES = {
     },
 }
 
-EA_DISCONNECTED = "disconnected"
-EA_AWAITING_START = "awaiting_start"
-EA_CHARGING = "charging"
-EA_COMPLETED = "completed"
-EA_ERROR = "error"
-EA_READY_TO_CHARGE = "ready_to_charge"
-
 EASEE_STATUS = {
-    1: EA_DISCONNECTED,
-    2: EA_AWAITING_START,
-    3: EA_CHARGING,
-    4: EA_COMPLETED,
-    5: EA_ERROR,
-    6: EA_READY_TO_CHARGE,
+    1: "disconnected",
+    2: "awaiting_start",
+    3: "charging",
+    4: "completed",
+    5: "error",
+    6: "ready_to_charge",
+    7: "awaiting_authorization",
+    8: "de_authorizing",
+    100: "start_charging",
+    101: "stop_charging",
+    102: "offline",
+    103: "awaiting_load_balancing",
+    104: "awaiting_authorization",
+    105: "awaiting_smart_start",
+    106: "awaiting_scheduled_start",
+    107: "authenticating",
+    108: "paused_due_to_equalizer",
+    109: "searching_for_master",
+    157: "erratic_ev",
+    158: "error_temperature_too_high",
+    159: "error_dead_powerboard",
+    160: "error_overcurrent",
+    161: "error_pen_fault",
 }
 
 NT_MASTER = "master"

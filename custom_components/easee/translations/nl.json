@@ -130,11 +130,11 @@
       "export_energy": {
         "name": "Export energie"
       },
-      "export_reactive_energy": {
-        "name": "Export reactieve energie"
-      },
       "export_power": {
         "name": "Export vermogen"
+      },
+      "export_reactive_energy": {
+        "name": "Export reactieve energie"
       },
       "export_reactive_power": {
         "name": "Export reactief vermogen"
@@ -142,11 +142,11 @@
       "import_energy": {
         "name": "Import energie"
       },
-      "import_reactive_energy": {
-        "name": "Import reactieve energie"
-      },
       "import_power": {
         "name": "Import vermogen"
+      },
+      "import_reactive_energy": {
+        "name": "Import reactieve energie"
       },
       "import_reactive_power": {
         "name": "Import reactief vermogen"

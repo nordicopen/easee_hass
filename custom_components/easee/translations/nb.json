@@ -1,229 +1,229 @@
 {
-    "config": {
-      "abort": {
-        "already_setup": "Du kan kun koble til en Easee konto."
-      },
-      "error": {
-        "auth_failure": "Kan ikke koble til Easee. Sjekk brukernavn og passord.",
-        "connection_failure": "Kan ikke koble til Easee. Prøv igjen senere.",
-        "no_sites": "Ingen lokasjon valgt",
-        "refused_failure": "Tilkobling til Easee ble avvist. Prøv igjen senere."
-      },
-      "step": {
-        "sites": {
-          "data": {
-            "monitored_sites": "Lokasjoner"
-          },
-          "description": "Velg lokasjoner",
-          "title": "Easee EV Charger"
+  "config": {
+    "abort": {
+      "already_setup": "Du kan kun koble til en Easee konto."
+    },
+    "error": {
+      "auth_failure": "Kan ikke koble til Easee. Sjekk brukernavn og passord.",
+      "connection_failure": "Kan ikke koble til Easee. Prøv igjen senere.",
+      "no_sites": "Ingen lokasjon valgt",
+      "refused_failure": "Tilkobling til Easee ble avvist. Prøv igjen senere."
+    },
+    "step": {
+      "sites": {
+        "data": {
+          "monitored_sites": "Lokasjoner"
         },
-        "user": {
-          "data": {
-            "password": "Passord",
-            "username": "Brukernavn"
-          },
-          "description": "Vennligst fyll ut brukernavn og passord for din Easee-konto.",
-          "title": "Koble til Easee"
-        }
+        "description": "Velg lokasjoner",
+        "title": "Easee EV Charger"
+      },
+      "user": {
+        "data": {
+          "password": "Passord",
+          "username": "Brukernavn"
+        },
+        "description": "Vennligst fyll ut brukernavn og passord for din Easee-konto.",
+        "title": "Koble til Easee"
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "basic_schedule": {
+        "name": "Enkel ladeplan"
+      },
+      "cable_locked": {
+        "name": "Kabellås"
+      },
+      "online": {
+        "name": "Online"
+      },
+      "update_available": {
+        "name": "Oppdatering tilgjengelig"
+      },
+      "weekly_schedule": {
+        "name": "Ukentlig ladeplan"
       }
     },
-      "entity": {
-      "binary_sensor": {
-        "basic_schedule": {
-          "name": "Enkel ladeplan"
-        },
-        "cable_locked": {
-          "name": "Kabellås"
-        },
-        "online": {
-          "name": "Online"
-        },
-        "update_available": {
-          "name": "Oppdatering tilgjengelig"
-        },
-        "weekly_schedule": {
-          "name": "Ukentlig ladeplan"
+    "sensor": {
+      "circuit_current": {
+        "name": "Kursstrøm"
+      },
+      "cost_day": {
+        "name": "Kostnad dag"
+      },
+      "cost_month": {
+        "name": "Kostnad måned"
+      },
+      "cost_per_kwh": {
+        "name": "Kostnad per kWh"
+      },
+      "cost_year": {
+        "name": "Kostnad år"
+      },
+      "current": {
+        "name": "Strøm"
+      },
+      "dynamic_charger_limit": {
+        "name": "Dynamisk grense for lader"
+      },
+      "dynamic_circuit_limit": {
+        "name": "Dynamisk grense for kurs"
+      },
+      "easee_reason_no_current": {
+        "name": "Årsak til at det ikke lades",
+        "state": {
+          "car_not_charging": "Bil lader ikke",
+          "charger_disabled": "Lader deaktivert",
+          "charger_in_error_state": "Feil på lader",
+          "circuit_fuse_too_low": "Kurssikring for lav",
+          "eq_too_low_current": "Equalizer strøm for lav",
+          "ev_behaving_erratic": "Bil oppfører seg feilaktig",
+          "illegal_grid_type": "Ugyldig type elnett",
+          "limited_by_cable_rating": "Begrenset av kabel",
+          "limited_by_car": "Begrenset av bil",
+          "limited_by_charger_dynamic_limit": "Begrenset av dynamisk grense for lader",
+          "limited_by_charger_max_limit": "Begrenset av maks grense for lader",
+          "limited_by_circuit_dynamic_limit": "Begrenset av dynamisk grense for kurs",
+          "limited_by_circuit_fuse": "Begrenset av kurssikring",
+          "limited_by_circuit_max_limit": "Begrenset av maks grense for kurs",
+          "limited_by_equalizer": "Begrenset av Equalizer",
+          "limited_by_load_balancing": "Begrenset av lastbalansering",
+          "limited_by_local_adjustment": "Begrenset av lokale justeringer",
+          "limited_by_offline_setting": "Begrenset av offline grense",
+          "limited_by_schedule": "Begrenset av plan",
+          "max_charger_current_too_low": "Maks grense for lader er for lav",
+          "max_circuit_current_too_low": "Maks grense for kurs er for lav",
+          "max_dynamic_charger_current_too_low": "Maks dynamisk grense for lader for lav",
+          "max_dynamic_circuit_current_too_low": "Maks dynamisk grense for kurs for lav",
+          "max_dynamic_offline_fallback_circuit_current_too_low": "Maks offline grense for lav",
+          "no_current_request": "Ber ikke om strøm",
+          "none": "Ingen",
+          "not_connected_to_master": "Ikke tilkoblet hovedenhet",
+          "not_requesting_current": "Ber ikke om strøm",
+          "ok": "OK",
+          "pending_authorization": "Avventer autorisering",
+          "pending_schedule": "Avventer plan",
+          "phase_not_connected": "Fase ikke tilkoblet",
+          "undefined": "Udefinert",
+          "waiting_in_fully": "Venter fullt",
+          "waiting_in_queue": "Venter i kø"
         }
       },
-      "sensor": {
-        "circuit_current": {
-          "name": "Kursstrøm"
-        },
-        "cost_day": {
-          "name": "Kostnad dag"
-        },
-        "cost_month": {
-          "name": "Kostnad måned"
-        },
-        "cost_per_kwh": {
-          "name": "Kostnad per kWh"
-        },
-        "cost_year": {
-          "name": "Kostnad år"
-        },
-        "current": {
-          "name": "Strøm"
-        },
-        "dynamic_charger_limit": {
-          "name": "Dynamisk grense for lader"
-        },
-        "dynamic_circuit_limit": {
-          "name": "Dynamisk grense for kurs"
-        },
-        "easee_reason_no_current": {
-          "name": "Årsak til at det ikke lades",
-          "state": {
-            "car_not_charging": "Bil lader ikke",
-            "charger_disabled": "Lader deaktivert",
-            "charger_in_error_state": "Feil på lader",
-            "circuit_fuse_too_low": "Kurssikring for lav",
-            "eq_too_low_current": "Equalizer strøm for lav",
-            "ev_behaving_erratic": "Bil oppfører seg feilaktig",
-            "illegal_grid_type": "Ugyldig type elnett",
-            "limited_by_cable_rating": "Begrenset av kabel",
-            "limited_by_car": "Begrenset av bil",
-            "limited_by_charger_dynamic_limit": "Begrenset av dynamisk grense for lader",
-            "limited_by_charger_max_limit": "Begrenset av maks grense for lader",
-            "limited_by_circuit_dynamic_limit": "Begrenset av dynamisk grense for kurs",
-            "limited_by_circuit_fuse": "Begrenset av kurssikring",
-            "limited_by_circuit_max_limit": "Begrenset av maks grense for kurs",
-            "limited_by_equalizer": "Begrenset av Equalizer",
-            "limited_by_load_balancing": "Begrenset av lastbalansering",
-            "limited_by_local_adjustment": "Begrenset av lokale justeringer",
-            "limited_by_offline_setting": "Begrenset av offline grense",
-            "limited_by_schedule": "Begrenset av plan",
-            "max_charger_current_too_low": "Maks grense for lader er for lav",
-            "max_circuit_current_too_low": "Maks grense for kurs er for lav",
-            "max_dynamic_charger_current_too_low": "Maks dynamisk grense for lader for lav",
-            "max_dynamic_circuit_current_too_low": "Maks dynamisk grense for kurs for lav",
-            "max_dynamic_offline_fallback_circuit_current_too_low": "Maks offline grense for lav",
-            "no_current_request": "Ber ikke om strøm",
-            "none": "Ingen",
-            "not_connected_to_master": "Ikke tilkoblet hovedenhet",
-            "not_requesting_current": "Ber ikke om strøm",
-            "ok": "OK",
-            "pending_authorization": "Avventer autorisering",
-            "pending_schedule": "Avventer plan",
-            "phase_not_connected": "Fase ikke tilkoblet",
-            "undefined": "Udefinert",
-            "waiting_in_fully": "Venter fullt",
-            "waiting_in_queue": "Venter i kø"
-          }
-        },
-        "easee_status": {
-          "name": "Status",
-          "state": {
-            "awaiting_start": "Avventer start",
-            "charging": "Lader",
-            "completed": "Fullført",
-            "disconnected": "Frakoblet",
-            "error": "Feil",
-            "ready_to_charge": "Klar til lading"
-          }
-        },
-        "energy_per_hour": {
-          "name": "Energi per time"
-        },
-        "equalizer_limit": {
-          "name": "Equalizer grense"
-        },
-        "export_energy": {
-          "name": "Eksportert energi"
-        },
-        "export_reactive_energy": {
-          "name": "Eksportert reaktiv energi"
-        },
-        "export_power": {
-          "name": "Eksportert effekt"
-        },
-        "export_reactive_power": {
-          "name": "Eksportert reaktiv effekt"
-        },
-        "import_energy": {
-          "name": "Importert energi"
-        },
-        "import_reactive_energy": {
-          "name": "Importert reaktiv energi"
-        },
-        "import_power": {
-          "name": "Importert effekt"
-        },
-        "import_reactive_power": {
-          "name": "Importert reaktiv effekt"
-        },
-        "internal_temperature": {
-          "name": "Intern temperatur"
-        },
-        "lifetime_energy": {
-          "name": "Levetidsforbruk"
-        },
-        "max_charger_limit": {
-          "name": "Maks grense for lader"
-        },
-        "max_circuit_limit": {
-          "name": "Maks grense for kurs"
-        },
-        "offline_circuit_limit": {
-          "name": "Offline grense for kurs"
-        },
-        "output_limit": {
-          "name": "Totalbegrensning"
-        },
-        "power": {
-          "name": "Effekt"
-        },
-        "session_energy": {
-          "name": "Energi ladesesjon"
-        },
-        "voltage": {
-          "name": "Spenning"
+      "easee_status": {
+        "name": "Status",
+        "state": {
+          "awaiting_start": "Avventer start",
+          "charging": "Lader",
+          "completed": "Fullført",
+          "disconnected": "Frakoblet",
+          "error": "Feil",
+          "ready_to_charge": "Klar til lading"
         }
       },
-      "switch": {
-        "cable_locked_permanently": {
-          "name": "Kabel låst permanent"
-        },
-        "idle_current": {
-          "name": "Ventestrøm"
-        },
-        "is_enabled": {
-          "name": "Lader aktivert"
-        },
-        "smart_charging": {
-          "name": "Smartlading"
-        }
-      }
-    },
-    "issues": {
-      "deprecated_service": {
-        "description": "Tjenesten **{deprecation}** er utdatert is deprecated og vil bli fjernet i framtiden.\n\nKonverter dine automasjoner og skript til å bruke **{recommend}** snarest mulig",
-        "title": "Utdatert tjeneste: {deprecation}"
-      }
-    },
-    "options": {
-      "error": {
-        "no_sites": "Ingen lokasjoner valgt"
+      "energy_per_hour": {
+        "name": "Energi per time"
       },
-      "step": {
-        "init": {
-          "data": {
-            "custom_units": "Tilpassede enheter",
-            "measured_consumption_days": "Energiforbruk - antall dager",
-            "monitored_conditions": "Valgte sensorer fra lader",
-            "monitored_eq_conditions": "Valgte sensorer fra Equaliser",
-            "monitored_sites": "Valgte lokasjoner"
-          },
-          "description": "Velg innstillinger",
-          "title": "Easee elbillader"
-        }
+      "equalizer_limit": {
+        "name": "Equalizer grense"
+      },
+      "export_energy": {
+        "name": "Eksportert energi"
+      },
+      "export_power": {
+        "name": "Eksportert effekt"
+      },
+      "export_reactive_energy": {
+        "name": "Eksportert reaktiv energi"
+      },
+      "export_reactive_power": {
+        "name": "Eksportert reaktiv effekt"
+      },
+      "import_energy": {
+        "name": "Importert energi"
+      },
+      "import_power": {
+        "name": "Importert effekt"
+      },
+      "import_reactive_energy": {
+        "name": "Importert reaktiv energi"
+      },
+      "import_reactive_power": {
+        "name": "Importert reaktiv effekt"
+      },
+      "internal_temperature": {
+        "name": "Intern temperatur"
+      },
+      "lifetime_energy": {
+        "name": "Levetidsforbruk"
+      },
+      "max_charger_limit": {
+        "name": "Maks grense for lader"
+      },
+      "max_circuit_limit": {
+        "name": "Maks grense for kurs"
+      },
+      "offline_circuit_limit": {
+        "name": "Offline grense for kurs"
+      },
+      "output_limit": {
+        "name": "Totalbegrensning"
+      },
+      "power": {
+        "name": "Effekt"
+      },
+      "session_energy": {
+        "name": "Energi ladesesjon"
+      },
+      "voltage": {
+        "name": "Spenning"
       }
     },
-    "system_health": {
-      "info": {
-        "component_version": "Versjon",
-        "connected2stream": "Tilkoblet signalr",
-        "reach_easee_cloud": "Tilkoblet cloud"
+    "switch": {
+      "cable_locked_permanently": {
+        "name": "Kabel låst permanent"
+      },
+      "idle_current": {
+        "name": "Ventestrøm"
+      },
+      "is_enabled": {
+        "name": "Lader aktivert"
+      },
+      "smart_charging": {
+        "name": "Smartlading"
       }
+    }
+  },
+  "issues": {
+    "deprecated_service": {
+      "description": "Tjenesten **{deprecation}** er utdatert is deprecated og vil bli fjernet i framtiden.\n\nKonverter dine automasjoner og skript til å bruke **{recommend}** snarest mulig",
+      "title": "Utdatert tjeneste: {deprecation}"
+    }
+  },
+  "options": {
+    "error": {
+      "no_sites": "Ingen lokasjoner valgt"
     },
-    "title": "Easee elbillader"
-  }
+    "step": {
+      "init": {
+        "data": {
+          "custom_units": "Tilpassede enheter",
+          "measured_consumption_days": "Energiforbruk - antall dager",
+          "monitored_conditions": "Valgte sensorer fra lader",
+          "monitored_eq_conditions": "Valgte sensorer fra Equaliser",
+          "monitored_sites": "Valgte lokasjoner"
+        },
+        "description": "Velg innstillinger",
+        "title": "Easee elbillader"
+      }
+    }
+  },
+  "system_health": {
+    "info": {
+      "component_version": "Versjon",
+      "connected2stream": "Tilkoblet signalr",
+      "reach_easee_cloud": "Tilkoblet cloud"
+    }
+  },
+  "title": "Easee elbillader"
+}

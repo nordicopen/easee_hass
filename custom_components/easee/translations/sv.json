@@ -113,12 +113,29 @@
       "easee_status": {
         "name": "Status",
         "state": {
+          "authenticating": "Autentiserar",
+          "awaiting_authentication": "Väntar på autentisering",
+          "awaiting_authorization": "Väntar på godkännande",
+          "awaiting_load_balancing": "Väntar på lastbalansering",
+          "awaiting_scheduled_start": "Väntar på schemalagd start",
+          "awaiting_smart_start": "Väntar på smart start",
           "awaiting_start": "Väntar på start",
           "charging": "Laddar",
           "completed": "Klar",
-          "disconnected": "Bil ej ansluten",
+          "de_authorizing": "Avslutar godkännande",
+          "disconnected": "Fordon ej anslutet",
+          "erratic_ev": "Fel i fordon",
           "error": "Fel",
-          "ready_to_charge": "Redo för laddning"
+          "error_dead_powerboard": "Fel Trasigt kretskort",
+          "error_overcurrent": "Fel Överström",
+          "error_pen_fault": "Fel Jordfel",
+          "error_temperature_too_high": "Error För hög temperatur",
+          "offline": "Offline",
+          "paused_due_to_equalizer": "Pausad av Equalizer",
+          "ready_to_charge": "Redo för laddning",
+          "searching_for_master": "Letar efter master",
+          "start_charging": "Starta laddning",
+          "stop_charging": "Stoppa laddning"
         }
       },
       "energy_per_hour": {
@@ -130,11 +147,11 @@
       "export_energy": {
         "name": "Exporterad energi"
       },
-      "export_reactive_energy": {
-        "name": "Exporterad reaktiv energi"
-      },
       "export_power": {
         "name": "Exporterad effekt"
+      },
+      "export_reactive_energy": {
+        "name": "Exporterad reaktiv energi"
       },
       "export_reactive_power": {
         "name": "Exporterad reaktiv effekt"
@@ -142,11 +159,11 @@
       "import_energy": {
         "name": "Importerad energi"
       },
-      "import_reactive_energy": {
-        "name": "Importerad reaktiv energi"
-      },
       "import_power": {
         "name": "Importerad effekt"
+      },
+      "import_reactive_energy": {
+        "name": "Importerad reaktiv energi"
       },
       "import_reactive_power": {
         "name": "Importerad reaktiv effekt"

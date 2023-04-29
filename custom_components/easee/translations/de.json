@@ -130,11 +130,11 @@
       "export_energy": {
         "name": "Exportierte Energie"
       },
-      "export_reactive_energy": {
-        "name": "Exportierte reaktive Energie"
-      },
       "export_power": {
         "name": "Exportierte Leistung"
+      },
+      "export_reactive_energy": {
+        "name": "Exportierte reaktive Energie"
       },
       "export_reactive_power": {
         "name": "Exportierte reaktive Leistung"
@@ -142,11 +142,11 @@
       "import_energy": {
         "name": "Importierte Energie"
       },
-      "import_reactive_energy": {
-        "name": "Importierte reaktive Energie"
-      },
       "import_power": {
         "name": "Importierte Leistung"
+      },
+      "import_reactive_energy": {
+        "name": "Importierte reaktive Energie"
       },
       "import_reactive_power": {
         "name": "Importierte reaktive Leistung"
