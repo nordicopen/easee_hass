@@ -576,8 +576,11 @@ OPTIONAL_EASEE_ENTITIES = {
         "translation_key": "update_available",
         "device_class": None,
         "icon": "mdi:file-download",
-        "state_func": lambda state: int(state["chargerFirmware"])
-        < int(state["latestFirmware"]),
+        "state_func": lambda state: (
+            int(state["chargerFirmware"]) < int(state["latestFirmware"])
+        )
+        if state["latestFirmware"] is not None
+        else None,
         "enabled_default": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },

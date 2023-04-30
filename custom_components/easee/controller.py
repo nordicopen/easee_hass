@@ -98,6 +98,7 @@ class ProductData:
         self.event_loop = event_loop
         self.poll_observations = poll_observations
         self.master = master
+        self.firmware_auth_failure = None
 
     def is_state_polled(self):
         if self.state is None:
@@ -138,8 +139,10 @@ class ProductData:
 
         try:
             firmware = await self.product.get_latest_firmware()
-        except AuthorizationFailedException:
-            _LOGGER.debug("Failed to fetch latest firmware info")
+        except AuthorizationFailedException as ex:
+            if self.firmware_auth_failure is None:
+                _LOGGER.error("Authorization failure when fetching firmware info: %s", ex)
+                self.firmware_auth_failure = True
             self.state["latestFirmware"] = None
             return
 
