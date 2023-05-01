@@ -16,7 +16,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_binary_sensor_entities()
     async_add_entities(entities)
-    controller.setup_done("binary_sensor")
+    await controller.setup_done("binary_sensor")
 
 
 class ChargerBinarySensor(ChargerEntity, BinarySensorEntity):

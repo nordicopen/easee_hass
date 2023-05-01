@@ -73,7 +73,6 @@ class ProductData:
 
     def __init__(
         self,
-        event_loop,
         product,
         site: Site,
         streamdata,
@@ -95,9 +94,9 @@ class ProductData:
         self.schedule_polled = False
         self.streamdata = streamdata
         self.dirty = False
-        self.event_loop = event_loop
         self.poll_observations = poll_observations
         self.master = master
+        self.firmware_auth_failure = None
 
     def is_state_polled(self):
         """Check if state is polled."""
@@ -144,7 +143,15 @@ class ProductData:
         if self.state is None:
             return False
 
-        firmware = await self.product.get_latest_firmware()
+        try:
+            firmware = await self.product.get_latest_firmware()
+        except AuthorizationFailedException as ex:
+            if self.firmware_auth_failure is None:
+                _LOGGER.error("Authorization failure when fetching firmware info: %s", ex)
+                self.firmware_auth_failure = True
+            self.state["latestFirmware"] = None
+            return
+
         self.state["latestFirmware"] = firmware["latestFirmware"]
         _LOGGER.debug(
             "Latest Firmware for %s: %s", self.product.id, firmware["latestFirmware"]
@@ -280,7 +287,7 @@ class ProductData:
 
         self.state["signalRConnected"] = state
 
-    def update_stream_data(self, data_type, data_id, value):
+    async def update_stream_data(self, data_type, data_id, value):
         """Update stream data."""
         if self.state is None:
             return False
@@ -308,9 +315,7 @@ class ProductData:
                 oldvalue = self.state[second]
                 self.state[second] = value
                 if second == "lifetimeEnergy" and oldvalue != value:
-                    asyncio.run_coroutine_threadsafe(
-                        self.cost_async_refresh(), self.event_loop
-                    )
+                    await self.cost_async_refresh()
                 if self.check_value(data_type, oldvalue, value):
                     return True
             elif first == "config":
@@ -321,10 +326,7 @@ class ProductData:
                     return True
             elif first == "schedule":
                 _LOGGER.debug("Schedule update")
-                if self.event_loop is not None:
-                    asyncio.run_coroutine_threadsafe(
-                        self.schedules_async_refresh(), self.event_loop
-                    )
+                await self.schedules_async_refresh()
             else:
                 _LOGGER.debug("Unkonwn update type: %s", first)
 
@@ -341,7 +343,7 @@ class Controller:
         self.password = password
         self.hass = hass
         self.config = entry
-        self.easee: Easee = None
+        self.easee: Easee | None = None
         self.sites: List[Site] = []
         self.circuits: List[Circuit] = []
         self.chargers: List[Charger] = []
@@ -355,8 +357,6 @@ class Controller:
         self.equalizer_binary_sensor_entities = []
         self.diagnostics = {}
         self.trackers = []
-        self.running_loop = None
-        self.event_loop = None
         self.monitored_sites = None
         self._init_count = 0
 
@@ -382,8 +382,6 @@ class Controller:
         """Initialize the session and get initial data."""
         client_session = aiohttp_client.async_get_clientsession(self.hass)
         self.easee = Easee(self.username, self.password, client_session)
-        self.running_loop = asyncio.get_running_loop()
-        self.event_loop = asyncio.get_event_loop()
 
         try:
             with timeout(TIMEOUT):
@@ -424,7 +422,6 @@ class Controller:
                         )
                         self.equalizers.append(equalizer)
                         equalizer_data = ProductData(
-                            self.event_loop,
                             equalizer,
                             site,
                             EqualizerStreamData,
@@ -454,7 +451,6 @@ class Controller:
                                     master = True
                                 self.chargers.append(charger)
                                 charger_data = ProductData(
-                                    self.event_loop,
                                     charger,
                                     site,
                                     ChargerStreamData,
@@ -480,18 +476,18 @@ class Controller:
 
         for data in all_data:
             if data.product.id == idx:
-                if data.update_stream_data(data_type, data_id, value):
+                if await data.update_stream_data(data_type, data_id, value):
                     _LOGGER.debug("Scheduling update")
                     self.update_ha_state()
                     return
 
-    def setup_done(self, name):
+    async def setup_done(self, name):
         """Entities setup is done."""
         _LOGGER.debug("Entities %s setup done", name)
         self._init_count = self._init_count + 1
 
-        if self._init_count >= len(PLATFORMS) and self.event_loop is not None:
-            asyncio.run_coroutine_threadsafe(self.add_schedulers(), self.event_loop)
+        if self._init_count >= len(PLATFORMS):
+            await self.add_schedulers()
 
     def update_ha_state(self):
         """Schedule an update for all other included entities."""
@@ -511,10 +507,10 @@ class Controller:
             entity.data.mark_clean()
 
     async def add_schedulers(self):
-        """Add schedules to udpate data"""
+        """Add schedules to update data"""
         # first update
-        self.hass.async_add_job(self.refresh_sites_state)
-        self.hass.async_add_job(self.refresh_equalizers_state)
+        await self.refresh_sites_state()
+        await self.refresh_equalizers_state()
         await asyncio.gather(
             *[charger.schedules_async_refresh() for charger in self.chargers_data]
         )
