@@ -1,7 +1,8 @@
 """ Easee Connector class """
 import asyncio
-from datetime import timedelta
+from datetime import datetime, timedelta
 from gc import collect
+import json
 import logging
 from random import random
 from sys import getrefcount
@@ -19,7 +20,9 @@ from homeassistant.helpers.event import (
 from homeassistant.util import dt
 from pyeasee import (
     Charger,
+    ChargerSchedule,
     ChargerStreamData,
+    ChargerWeeklySchedule,
     Circuit,
     DatatypesStreamData,
     Easee,
@@ -45,6 +48,8 @@ from .const import (
     TIMEOUT,
     chargerObservations,
     equalizerObservations,
+    weeklyScheduleStartDays,
+    weeklyScheduleStopDays,
 )
 from .entity import convert_units_funcs
 from .sensor import ChargerSensor, EqualizerSensor
@@ -139,7 +144,9 @@ class ProductData:
             firmware = await self.product.get_latest_firmware()
         except AuthorizationFailedException as ex:
             if self.firmware_auth_failure is None:
-                _LOGGER.error("Authorization failure when fetching firmware info: %s", ex)
+                _LOGGER.error(
+                    "Authorization failure when fetching firmware info: %s", ex
+                )
                 self.firmware_auth_failure = True
             self.state["latestFirmware"] = None
             return
@@ -192,6 +199,10 @@ class ProductData:
                 self.state[second] = value
             elif first == "config":
                 self.config[second] = value
+            elif first == "schedule":
+                if value == "":
+                    value = "{}"
+                self.schedules_interpret(json.loads(value))
 
     async def schedules_async_refresh(self):
         self.schedule_polled = True
@@ -213,6 +224,44 @@ class ProductData:
             self.weekly_schedule = None
 
         _LOGGER.debug("Schedule: %s %s", self.schedule, self.weekly_schedule)
+
+    def schedules_interpret(self, data):
+        self.schedule_polled = True
+
+        startEpoch = data.get("StartSchedule", 0)
+        kind = data.get("ProfileKind")
+        recurrency = data.get("RecurrencyKind")
+        periods = data.get("Periods")
+        tzinfo = datetime.utcnow().astimezone().tzinfo
+
+        self.schedule = ChargerSchedule({"isEnabled": False})
+        self.weekly_schedule = ChargerWeeklySchedule({"isEnabled": False})
+
+        # Weekly schedule
+        if kind == "Recurring" and recurrency == "Weekly":
+            self.weekly_schedule["isEnabled"] = True
+            for period in periods:
+                time = datetime.fromtimestamp(startEpoch + period[0]).astimezone(tzinfo)
+                day = time.weekday()
+                if period[1] != 0:  # Start
+                    savedDay = day
+                    self.weekly_schedule[
+                        weeklyScheduleStartDays[savedDay]
+                    ] = time.strftime("%H:%M")
+                elif period[1] == 0:
+                    self.weekly_schedule[
+                        weeklyScheduleStopDays[savedDay]
+                    ] = time.strftime("%H:%M")
+        # Delayed or Daily schedule
+        elif (kind == "Recurring" and recurrency == "Daily") or kind == "Absolute":
+            self.schedule["isEnabled"] = True
+            self.schedule["repeat"] = kind == "Recurring"
+            for period in periods:
+                time = datetime.fromtimestamp(startEpoch + period[0]).astimezone(tzinfo)
+                if period[1] != 0:  # Start
+                    self.schedule["chargeStartTime"] = time.strftime("%H:%M")
+                elif period[1] == 0:
+                    self.schedule["chargeStopTime"] = time.strftime("%H:%M")
 
     async def cost_async_refresh(self):
         dt_end = dt.now().replace(microsecond=0)
@@ -311,7 +360,9 @@ class ProductData:
                     return True
             elif first == "schedule":
                 _LOGGER.debug("Schedule update")
-                await self.schedules_async_refresh()
+                if value == "":
+                    value = "{}"
+                self.schedules_interpret(json.loads(value))
             else:
                 _LOGGER.debug("Unkonwn update type: %s", first)
 
@@ -490,9 +541,6 @@ class Controller:
         # first update
         await self.refresh_sites_state()
         await self.refresh_equalizers_state()
-        await asyncio.gather(
-            *[charger.schedules_async_refresh() for charger in self.chargers_data]
-        )
         await asyncio.gather(
             *[charger.cost_async_refresh() for charger in self.chargers_data]
         )
