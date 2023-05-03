@@ -1,6 +1,6 @@
 """ Easee Connector class """
 import asyncio
-from datetime import datetime, timedelta
+from datetime import timedelta
 from gc import collect
 import json
 import logging
@@ -232,7 +232,6 @@ class ProductData:
         kind = data.get("ProfileKind")
         recurrency = data.get("RecurrencyKind")
         periods = data.get("Periods")
-        tzinfo = datetime.utcnow().astimezone().tzinfo
 
         self.schedule = ChargerSchedule({"isEnabled": False})
         self.weekly_schedule = ChargerWeeklySchedule({"isEnabled": False})
@@ -241,7 +240,7 @@ class ProductData:
         if kind == "Recurring" and recurrency == "Weekly":
             self.weekly_schedule["isEnabled"] = True
             for period in periods:
-                time = datetime.fromtimestamp(startEpoch + period[0]).astimezone(tzinfo)
+                time = dt.as_local(dt.utc_from_timestamp(startEpoch + period[0]))
                 day = time.weekday()
                 if period[1] != 0:  # Start
                     savedDay = day
@@ -257,7 +256,7 @@ class ProductData:
             self.schedule["isEnabled"] = True
             self.schedule["repeat"] = kind == "Recurring"
             for period in periods:
-                time = datetime.fromtimestamp(startEpoch + period[0]).astimezone(tzinfo)
+                time = dt.as_local(dt.utc_from_timestamp(startEpoch + period[0]))
                 if period[1] != 0:  # Start
                     self.schedule["chargeStartTime"] = time.strftime("%H:%M")
                 elif period[1] == 0:
