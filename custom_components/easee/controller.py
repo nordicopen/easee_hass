@@ -117,6 +117,7 @@ class ProductData:
         return self.schedule_polled
 
     def is_dirty(self):
+        """Check if there are changes that needs to be sent to HA"""
         if self.state is None:
             return False
         if self.config is None:
@@ -137,6 +138,7 @@ class ProductData:
         self.dirty = True
 
     async def firmware_async_refresh(self):
+        """Poll latest firmware version"""
         if self.state is None:
             return False
 
@@ -157,6 +159,7 @@ class ProductData:
         )
 
     async def async_refresh(self):
+        """Poll observations"""
         if self.state is None:
             self.state = await self.product.empty_state(raw=True)
         if self.config is None:
@@ -205,6 +208,7 @@ class ProductData:
                 self.schedules_interpret(json.loads(value))
 
     async def schedules_async_refresh(self):
+        """Poll schedule data"""
         self.schedule_polled = True
 
         try:
@@ -250,20 +254,21 @@ class ProductData:
                     ] = time.strftime("%H:%M")
                 else:
                     self.weekly_schedule[
-                        weeklyScheduleStopDays[savedDay]
+                        weeklyScheduleStopDays[saved_day]
                     ] = time.strftime("%H:%M")
         # Delayed or Daily schedule
         elif (kind == "Recurring" and recurrency == "Daily") or kind == "Absolute":
             self.schedule["isEnabled"] = True
             self.schedule["repeat"] = kind == "Recurring"
             for period in periods:
-                time = dt.as_local(dt.utc_from_timestamp(startEpoch + period[0]))
+                time = dt.as_local(dt.utc_from_timestamp(start_epoch + period[0]))
                 if period[1] != 0:  # Start
                     self.schedule["chargeStartTime"] = time.strftime("%H:%M")
                 else:
                     self.schedule["chargeStopTime"] = time.strftime("%H:%M")
 
     async def cost_async_refresh(self):
+        """Poll cost data"""
         dt_end = dt.now().replace(microsecond=0)
         dt_start = dt.now().replace(hour=0, minute=0, second=0, microsecond=0)
         costs_day = await self.site.get_cost_between_dates(
@@ -292,6 +297,7 @@ class ProductData:
                     self.cost_year = cost
 
     def check_value(self, data_type, reference, value):
+        """Check if recieved data is a change"""
         if (
             data_type != DatatypesStreamData.Double.value
             and data_type != DatatypesStreamData.Integer.value
@@ -304,6 +310,7 @@ class ProductData:
         return False
 
     def check_latest_pulse(self):
+        """Check if product has timed out"""
         if self.state is None:
             return
 
@@ -317,12 +324,14 @@ class ProductData:
                 _LOGGER.debug("Product %s marked offline", self.product.id)
 
     def set_signalr_state(self, state):
+        """Update status of SignalR stream"""
         if self.state is None:
             return
 
         self.state["signalRConnected"] = state
 
     async def update_stream_data(self, data_type, data_id, value):
+        """Update data with received data from SignalR stream"""
         if self.state is None:
             return False
 
