@@ -85,6 +85,7 @@ chargerObservations = {
     ChargerStreamData.state_eqAvailableCurrentP2.value,
     ChargerStreamData.state_eqAvailableCurrentP3.value,
     ChargerStreamData.state_tempMax.value,
+    ChargerStreamData.schedule_chargingSchedule.value,
 }
 equalizerObservations = {
     EqualizerStreamData.state_currentL1.value,
@@ -124,6 +125,25 @@ equalizerObservations = {
     EqualizerStreamData.config_numPhases.value,
 }
 
+weeklyScheduleStartDays = {
+    0: "MondayStartTime",
+    1: "TuesdayStartTime",
+    2: "WednesdayStartTime",
+    3: "ThursdayStartTime",
+    4: "FridayStartTime",
+    5: "SaturdayStartTime",
+    6: "SundayStartTime",
+}
+
+weeklyScheduleStopDays = {
+    0: "MondayStopTime",
+    1: "TuesdayStopTime",
+    2: "WednesdayStopTime",
+    3: "ThursdayStopTime",
+    4: "FridayStopTime",
+    5: "SaturdayStopTime",
+    6: "SundayStopTime",
+}
 
 MANDATORY_EASEE_ENTITIES = {
     "status": {
@@ -380,7 +400,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "equalizer_limit": {
-        "key": "state.dynamicCircuitCurrentP1",
+        "key": "state.eqAvailableCurrentP1",
         "attrs": [
             "state.eqAvailableCurrentP1",
             "state.eqAvailableCurrentP2",
@@ -588,7 +608,6 @@ OPTIONAL_EASEE_ENTITIES = {
         "type": "binary_sensor",
         "key": "schedule.isEnabled",
         "attrs": [
-            "schedule.id",
             "schedule.isEnabled",
             "schedule.chargeStartTime",
             "schedule.chargeStopTime",

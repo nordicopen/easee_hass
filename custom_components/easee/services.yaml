@@ -1,43 +1,3 @@
-start:
-  name: "Start"
-  description: "Deprecated HA 2023.1.0, see easee.action_command. Starts charger. Also authorizes if configured to use authorization."
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-
-stop:
-  name: "Stop"
-  description: "Deprecated HA 2023.1.0, see easee.action_command. Stop charger. Also deauthorizes if configured to use authorization."
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-
-pause:
-  name: "Pause"
-  description: "Deprecated HA 2023.1.0, see easee.action_command. Pause charger. Keeps current charge session authorized."
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-
-toggle:
-  name: "Toggle"
-  description: "Deprecated HA 2023.1.0, see easee.action_command. Toggle charger. Corresponds to pause/resume if not configured to use authorization, stop/start if configured."
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-
-resume:
-  name: "Resume"
-  description: "Deprecated HA 2023.1.0, see easee.action_command. Resume charger. Keeps current charge session authorized."
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-
 action_command:
   name: "Action command"
   description: "Execute action command on charger"
@@ -113,22 +73,6 @@ set_basic_charge_plan:
       selector:
         boolean:
 
-delete_basic_charge_plan:
-  name: "Delete basic charge plan"
-  description: "Deprecated HA 2023.1.0, see easee.action_command. Delete basic charge plan"
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-
-override_schedule:
-  name: "Override schedule"
-  description: "Deprecated HA 2023.1.0, see easee.action_command. Override charger schedule and start charging"
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-
 smart_charging:
   name: "Smart charging"
   description: "Enable/disable smart charging"
@@ -149,22 +93,6 @@ smart_charging:
       example: True
       selector:
         boolean:
-
-reboot:
-  name: "Reboot"
-  description: "Deprecated HA 2023.1.0, see easee.action_command. Reboot charger"
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-
-update_firmware:
-  name: "Update firmware"
-  description: "Deprecated HA 2023.1.0, see easee.action_command. Update charger firmware"
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
 
 set_circuit_max_limit:
   name: "Set circuit max limit"
@@ -218,57 +146,6 @@ set_circuit_max_limit:
           step: 1
           unit_of_measurement: "A"
           mode: slider
-
-set_charger_circuit_dynamic_limit:
-  name: "Set charger circuit dynmic limit"
-  description: "Deprecated. Will be removed in HA 2023.1.0, see easee.set_circuit_dynamic_limit. Set circuit dynamic limit (current available to share by all chargers on a circuit)."
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-    currentP1:
-      description: "Phase 1 current"
-      example: 10
-    currentP2:
-      description: "Phase 2 current (Optional)"
-      example: 10
-    currentP3:
-      description: "Phase 3 current (Optional)"
-      example: 10
-
-set_charger_circuit_max_limit:
-  name: "Set charger circuit max limit"
-  description: "Deprecated. Will be removed in HA 2023.1.0, see easee.set_circuit_max_limit. Set circuit dynamic limit (current available to share by all chargers on a circuit)."
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-    currentP1:
-      description: "Phase 1 current"
-      example: 10
-    currentP2:
-      description: "Phase 2 current (Optional)"
-      example: 10
-    currentP3:
-      description: "Phase 3 current (Optional)"
-      example: 10
-
-set_charger_circuit_offline_limit:
-  name: "Set charger circuit offline limit"
-  description: "Deprecated. Will be removed in HA 2023.1.0, see easee.set_circuit_offline_limit. Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
-  fields:
-    charger_id:
-      description: "The charger id"
-      example: "EH123456"
-    currentP1:
-      description: "Phase 1 current"
-      example: 10
-    currentP2:
-      description: "Phase 2 current (Optional)"
-      example: 10
-    currentP3:
-      description: "Phase 3 current (Optional)"
-      example: 10
 
 set_circuit_offline_limit:
   name: "Set circuit offline limit"
