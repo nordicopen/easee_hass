@@ -248,7 +248,7 @@ class ProductData:
                     self.weekly_schedule[
                         weeklyScheduleStartDays[saved_day]
                     ] = time.strftime("%H:%M")
-                elif period[1] == 0:
+                else:
                     self.weekly_schedule[
                         weeklyScheduleStopDays[savedDay]
                     ] = time.strftime("%H:%M")
