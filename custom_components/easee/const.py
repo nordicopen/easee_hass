@@ -380,7 +380,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "equalizer_limit": {
-        "key": "state.dynamicCircuitCurrentP1",
+        "key": "state.eqAvailableCurrentP1",
         "attrs": [
             "state.eqAvailableCurrentP1",
             "state.eqAvailableCurrentP2",
