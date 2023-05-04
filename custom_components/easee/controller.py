@@ -241,7 +241,7 @@ class ProductData:
         if kind == "Recurring" and recurrency == "Weekly":
             self.weekly_schedule["isEnabled"] = True
             for period in periods:
-                time = dt.as_local(dt.utc_from_timestamp(startEpoch + period[0]))
+                time = dt.as_local(dt.utc_from_timestamp(start_epoch + period[0]))
                 day = time.weekday()
                 if period[1] != 0:  # Start
                     savedDay = day
