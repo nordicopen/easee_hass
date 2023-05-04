@@ -5,7 +5,6 @@ from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.issue_registry import IssueSeverity, async_create_issue
 from homeassistant.util import dt
 from pyeasee.exceptions import BadRequestException, ForbiddenServiceException
 import voluptuous as vol
@@ -91,13 +90,6 @@ exclusive_schema3 = vol.Schema(
     required=True,
 )
 
-# Deprecated 2023.1.0
-SERVICE_CHARGER_ACTION_COMMAND_SCHEMA = vol.Schema(
-    {
-        vol.Optional(CHARGER_ID): cv.string,
-    }
-)
-
 ext_charger_actions_command = {
     vol.Required(ACTION_COMMAND): vol.In(ACTIONS),
 }
@@ -146,35 +138,6 @@ SERVICE_SET_CIRCUIT_CURRENT_SCHEMA_TTL = vol.All(
     exclusive_schema3.extend(ext_circuit_current).extend(ext_ttl),
 )
 
-# Deprecated 2023.1.0
-SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA = vol.Schema(
-    {
-        vol.Required(CHARGER_ID): cv.string,
-        vol.Required(ATTR_SET_CURRENTP1): cv.positive_int,
-        vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
-        vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
-    }
-)
-
-# Deprecated 2023.1.0
-SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA_NEW = vol.Schema(
-    {
-        vol.Required(CONF_DEVICE_ID): cv.string,
-        vol.Required(ATTR_SET_CURRENTP1): vol.All(
-            cv.positive_int, vol.Range(min=MIN_CURRENT, max=40)
-        ),
-        vol.Optional(ATTR_SET_CURRENTP2): vol.All(
-            cv.positive_int, vol.Range(min=MIN_CURRENT, max=MAX_CURRENT)
-        ),
-        vol.Optional(ATTR_SET_CURRENTP3): vol.All(
-            cv.positive_int, vol.Range(min=MIN_CURRENT, max=MAX_CURRENT)
-        ),
-        vol.Optional(ATTR_TTL): vol.All(
-            cv.positive_int, vol.Range(min=MIN_CURRENT, max=1080)
-        ),
-    }
-)
-
 ext_current = {
     vol.Required(ATTR_SET_CURRENT, default=DEFAULT_CURRENT): vol.All(
         cv.positive_int, vol.Range(min=MIN_CURRENT, max=MAX_CURRENT)
@@ -207,73 +170,19 @@ SERVICE_SET_ACCESS_SCHEMA = vol.All(
 
 
 SERVICE_MAP = {
-    # Deprecated 2023.1.0
-    "start": {
-        "handler": "charger_execute_service",
-        "function_call": "start",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    },
-    # Deprecated 2023.1.0
-    "stop": {
-        "handler": "charger_execute_service",
-        "function_call": "stop",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    },
-    # Deprecated 2023.1.0
-    "pause": {
-        "handler": "charger_execute_service",
-        "function_call": "pause",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    },
-    # Deprecated 2023.1.0
-    "resume": {
-        "handler": "charger_execute_service",
-        "function_call": "resume",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    },
-    # Deprecated 2023.1.0
-    "toggle": {
-        "handler": "charger_execute_service",
-        "function_call": "toggle",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    },
     "action_command": {
         "handler": "charger_execute_action_command",
         "schema": SERVICE_CHARGER_ACTIONS_COMMAND_SCHEMA,
-    },
-    # Deprecated 2023.1.0
-    "override_schedule": {
-        "handler": "charger_execute_service",
-        "function_call": "override_schedule",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
     "smart_charging": {
         "handler": "charger_execute_service",
         "function_call": "smart_charging",
         "schema": SERVICE_CHARGER_ENABLE_SCHEMA,
     },
-    # Deprecated 2023.1.0
-    "reboot": {
-        "handler": "charger_execute_service",
-        "function_call": "reboot",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    },
-    # Deprecated 2023.1.0
-    "update_firmware": {
-        "handler": "charger_execute_service",
-        "function_call": "update_firmware",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
-    },
     "set_basic_charge_plan": {
         "handler": "charger_set_schedule",
         "function_call": "set_basic_charge_plan",
         "schema": SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA,
-    },
-    # Deprecated 2023.1.0
-    "delete_basic_charge_plan": {
-        "handler": "charger_execute_service",
-        "function_call": "delete_basic_charge_plan",
-        "schema": SERVICE_CHARGER_ACTION_COMMAND_SCHEMA,
     },
     "set_circuit_dynamic_limit": {
         "handler": "circuit_execute_set_current",
@@ -285,17 +194,6 @@ SERVICE_MAP = {
         },
         "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA_TTL,
     },
-    # Deprecated 2023.1.0
-    "set_charger_circuit_dynamic_limit": {
-        "handler": "charger_execute_set_circuit_current",
-        "function_call": "set_dynamic_charger_circuit_current",
-        "compare_currents": {
-            "P1": "dynamicCircuitCurrentP1",
-            "P2": "dynamicCircuitCurrentP2",
-            "P3": "dynamicCircuitCurrentP3",
-        },
-        "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
-    },
     "set_circuit_max_limit": {
         "handler": "circuit_execute_set_current",
         "function_call": "set_max_current",
@@ -305,28 +203,6 @@ SERVICE_MAP = {
             "P3": "circuitMaxCurrentP3",
         },
         "schema": SERVICE_SET_CIRCUIT_CURRENT_SCHEMA,
-    },
-    # Deprecated 2023.1.0
-    "set_charger_circuit_max_limit": {
-        "handler": "charger_execute_set_circuit_current",
-        "function_call": "set_max_charger_circuit_current",
-        "compare_currents": {
-            "P1": "circuitMaxCurrentP1",
-            "P2": "circuitMaxCurrentP2",
-            "P3": "circuitMaxCurrentP3",
-        },
-        "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
-    },
-    # Deprecated 2023.1.0
-    "set_charger_circuit_offline_limit": {
-        "handler": "charger_execute_set_circuit_current",
-        "function_call": "set_max_offline_charger_circuit_current",
-        "compare_currents": {
-            "P1": "offlineMaxCircuitCurrentP1",
-            "P2": "offlineMaxCircuitCurrentP2",
-            "P3": "offlineMaxCircuitCurrentP3",
-        },
-        "schema": SERVICE_SET_CHARGER_CIRCUIT_CURRENT_SCHEMA,
     },
     "set_circuit_offline_limit": {
         "handler": "charger_execute_set_current_3",
@@ -371,22 +247,6 @@ SERVICE_MAP = {
 }
 
 
-async def _create_issue(hass, deprecation, recommend):
-    async_create_issue(
-        hass,
-        DOMAIN,
-        deprecation,
-        breaks_in_ha_version="2023.1.0",
-        is_fixable=False,
-        severity=IssueSeverity.WARNING,
-        translation_key="deprecated_service",
-        translation_placeholders={
-            "deprecation": deprecation,
-            "recommend": recommend,
-        },
-    )
-
-
 async def async_setup_services(hass):
     """Setup services for Easee."""
     controller = hass.data[DOMAIN]["controller"]
@@ -419,20 +279,6 @@ async def async_setup_services(hass):
 
     async def charger_execute_service(call):
         """Execute a service to Easee charging station."""
-
-        # Create issue for deprecated services
-        if call.service in [
-            "start",
-            "stop",
-            "pause",
-            "resume",
-            "toggle",
-            "delete_basic_charge_plan",
-            "override_schedule",
-            "update_firmware",
-            "reboot",
-        ]:
-            await _create_issue(hass, call.service, "action_command")
 
         charger = await async_get_charger(call)
         enable = call.data.get(ATTR_ENABLE)
@@ -611,66 +457,6 @@ async def async_setup_services(hass):
 
         if circuit is None:
             raise HomeAssistantError(f"Could not find circuit {circuit_id}")
-
-    async def charger_execute_set_circuit_current(call):
-        """Execute a service to set currents for Easee circuit for specific charger."""
-
-        # Handle deprecation
-        recommendations = {
-            "set_charger_circuit_dynamic_limit": "set_circuit_dynamic_limit",
-            "set_charger_dynamic_limit": "set_circuit_dynamic_limit",
-            "set_charger_circuit_offline_limit": "set_circuit_offline_limit",
-        }
-        if call.service in recommendations:
-            await _create_issue(hass, call.service, recommendations[call.service])
-
-        charger_id = call.data.get(CHARGER_ID)
-        currentP1 = call.data.get(ATTR_SET_CURRENTP1)
-        currentP2 = call.data.get(ATTR_SET_CURRENTP2)
-        currentP3 = call.data.get(ATTR_SET_CURRENTP3)
-
-        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
-
-        function_name = SERVICE_MAP[call.service]
-        compare = function_name["compare_currents"]
-        charger = controller.check_charger_current(
-            charger_id,
-            currentP1,
-            currentP2,
-            currentP3,
-            compare["P1"],
-            compare["P2"],
-            compare["P3"],
-        )
-        if charger:
-            function_call = getattr(charger, function_name["function_call"])
-            try:
-                return await function_call(currentP1, currentP2, currentP3)
-            except BadRequestException as ex:
-                _LOGGER.error(
-                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
-                    str(call.service),
-                    ex,
-                )
-                return
-            except ForbiddenServiceException as ex:
-                _LOGGER.error(
-                    "Forbidden : [%s] - Check your access privileges: %s",
-                    str(call.service),
-                    ex,
-                )
-                return
-            except Exception:
-                _LOGGER.error(
-                    "Failed to execute service: %s with data %s",
-                    str(call.service),
-                    str(call.data),
-                )
-                return
-
-        if charger is None:
-            _LOGGER.error("Could not find charger %s", charger_id)
-            raise HomeAssistantError(f"Could not find charger {charger_id}")
 
     async def charger_execute_set_current(call):
         """Execute a service to set currents for Easee charger."""
