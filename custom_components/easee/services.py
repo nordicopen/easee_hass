@@ -11,6 +11,8 @@ import voluptuous as vol
 
 from .const import DOMAIN
 
+# pylint: disable=broad-except
+
 _LOGGER = logging.getLogger(__name__)
 
 ACCESS_LEVEL = "access_level"
@@ -412,9 +414,9 @@ async def async_setup_services(hass):
         """Execute a service to set currents for Easee circuit."""
         circuit_id = await async_get_circuit_id(call)
 
-        currentP1 = call.data.get(ATTR_SET_CURRENTP1)
-        currentP2 = call.data.get(ATTR_SET_CURRENTP2)
-        currentP3 = call.data.get(ATTR_SET_CURRENTP3)
+        current_p1 = call.data.get(ATTR_SET_CURRENTP1)
+        current_p2 = call.data.get(ATTR_SET_CURRENTP2)
+        current_p3 = call.data.get(ATTR_SET_CURRENTP3)
 
         _LOGGER.debug("Execute_service: %s %s", str(call.service), str(call.data))
 
@@ -422,9 +424,9 @@ async def async_setup_services(hass):
         compare = function_name["compare_currents"]
         circuit = controller.check_circuit_current(
             circuit_id,
-            currentP1,
-            currentP2,
-            currentP3,
+            current_p1,
+            current_p2,
+            current_p3,
             compare["P1"],
             compare["P2"],
             compare["P3"],
@@ -432,7 +434,7 @@ async def async_setup_services(hass):
         if circuit:
             function_call = getattr(circuit, function_name["function_call"])
             try:
-                return await function_call(currentP1, currentP2, currentP3)
+                return await function_call(current_p1, current_p2, current_p3)
             except BadRequestException as ex:
                 _LOGGER.error(
                     "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
@@ -520,9 +522,9 @@ async def async_setup_services(hass):
 
         _LOGGER.debug("Call set_current service on charger_id: %s", charger_id)
 
-        currentP1 = call.data.get(ATTR_SET_CURRENTP1)
-        currentP2 = call.data.get(ATTR_SET_CURRENTP2)
-        currentP3 = call.data.get(ATTR_SET_CURRENTP3)
+        current_p1 = call.data.get(ATTR_SET_CURRENTP1)
+        current_p2 = call.data.get(ATTR_SET_CURRENTP2)
+        current_p3 = call.data.get(ATTR_SET_CURRENTP3)
 
         _LOGGER.debug("Execute_service: %s %s", str(call.service), str(call.data))
 
@@ -530,9 +532,9 @@ async def async_setup_services(hass):
         compare = function_name["compare_currents"]
         charger = controller.check_charger_current(
             charger_id,
-            currentP1,
-            currentP2,
-            currentP3,
+            current_p1,
+            current_p2,
+            current_p3,
             compare["P1"],
             compare["P2"],
             compare["P3"],
@@ -540,7 +542,7 @@ async def async_setup_services(hass):
         if charger:
             function_call = getattr(charger, function_name["function_call"])
             try:
-                return await function_call(currentP1, currentP2, currentP3)
+                return await function_call(current_p1, current_p2, current_p3)
             except BadRequestException as ex:
                 _LOGGER.error(
                     "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
@@ -641,7 +643,6 @@ async def async_setup_services(hass):
             f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
         )
 
-    for service in SERVICE_MAP:
-        data = SERVICE_MAP[service]
+    for service, data in SERVICE_MAP.items():
         handler = locals()[data["handler"]]
         hass.services.async_register(DOMAIN, service, handler, schema=data["schema"])

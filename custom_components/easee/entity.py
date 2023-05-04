@@ -242,7 +242,7 @@ class ChargerEntity(Entity):
                 _LOGGER.error("Unknown first part of key: %s", key)
                 raise IndexError("Unknown first part of key")
 
-            if type(value) is datetime:
+            if isinstance(value, datetime):
                 value = dt.as_local(value)
         except KeyError:
             value = ""
