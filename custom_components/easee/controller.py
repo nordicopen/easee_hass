@@ -226,6 +226,7 @@ class ProductData:
         _LOGGER.debug("Schedule: %s %s", self.schedule, self.weekly_schedule)
 
     def schedules_interpret(self, data):
+        """Interpret schedule data."""
         self.schedule_polled = True
 
         startEpoch = data.get("StartSchedule", 0)
