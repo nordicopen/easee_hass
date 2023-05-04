@@ -244,7 +244,7 @@ class ProductData:
                 time = dt.as_local(dt.utc_from_timestamp(start_epoch + period[0]))
                 day = time.weekday()
                 if period[1] != 0:  # Start
-                    savedDay = day
+                    saved_day = day
                     self.weekly_schedule[
                         weeklyScheduleStartDays[savedDay]
                     ] = time.strftime("%H:%M")
