@@ -260,7 +260,7 @@ class ProductData:
                 time = dt.as_local(dt.utc_from_timestamp(startEpoch + period[0]))
                 if period[1] != 0:  # Start
                     self.schedule["chargeStartTime"] = time.strftime("%H:%M")
-                elif period[1] == 0:
+                else:
                     self.schedule["chargeStopTime"] = time.strftime("%H:%M")
 
     async def cost_async_refresh(self):
