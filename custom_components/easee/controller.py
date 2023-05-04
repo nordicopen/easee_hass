@@ -229,7 +229,7 @@ class ProductData:
         """Interpret schedule data."""
         self.schedule_polled = True
 
-        startEpoch = data.get("StartSchedule", 0)
+        start_epoch = data.get("StartSchedule", 0)
         kind = data.get("ProfileKind")
         recurrency = data.get("RecurrencyKind")
         periods = data.get("Periods")
