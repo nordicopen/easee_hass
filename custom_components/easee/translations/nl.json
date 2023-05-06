@@ -131,7 +131,7 @@
           "error_temperature_too_high": "Fout Temperatuur te hoog",
           "offline": "Offline",
           "paused_due_to_equalizer": "Laden gepauseerd door Equalizer",
-          "ready_to_charge": "Gereed om te laden"
+          "ready_to_charge": "Gereed om te laden",
           "searching_for_master": "Zoeken naar master",
           "start_charging": "Start laden",
           "stop_charging": "Stop laden"
