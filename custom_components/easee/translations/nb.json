@@ -7,6 +7,7 @@
       "auth_failure": "Kan ikke koble til Easee. Sjekk brukernavn og passord.",
       "connection_failure": "Kan ikke koble til Easee. Prøv igjen senere.",
       "no_sites": "Ingen lokasjon valgt",
+      "no_sites_in_account": "No sites found in this account.",
       "refused_failure": "Tilkobling til Easee ble avvist. Prøv igjen senere."
     },
     "step": {
