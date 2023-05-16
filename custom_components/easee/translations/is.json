@@ -1,0 +1,230 @@
+{
+    "config": {
+      "abort": {
+        "already_setup": "Það er einungis hægt að vera með eina Easee tengingu"
+      },
+      "error": {
+        "auth_failure": "Ekki hægt að tengjast Easee. Athugaðu hvort notandanafnið og lykilorðið séu rétt.",
+        "connection_failure": "Ekki hægt að tengjast Easee. Reyndu aftur seinna.",
+        "no_sites": "Enginn staðsetning valin.",
+        "refused_failure": "Tenging við Easee var hafnað. Reyndu aftur seinna."
+      },
+      "step": {
+        "sites": {
+          "data": {
+            "monitored_sites": "Staðsetningar"
+          },
+          "description": "Veldu staðsetningarnar til að vakta",
+          "title": "Easee bílahleðsla"
+        },
+        "user": {
+          "data": {
+            "password": "Lykilorð",
+            "username": "Notandanafn"
+          },
+          "description": "Vinsamlegast settu inn notandanafn og lykilorð fyrir Easee aðganginn þinn",
+          "title": "Tengjast við Easee"
+        }
+      }
+    },
+    "entity": {
+      "binary_sensor": {
+        "basic_schedule": {
+          "name": "Áætlun"
+        },
+        "cable_locked": {
+          "name": "Kapallinn er læstur"
+        },
+        "online": {
+          "name": "Nettengt"
+        },
+        "update_available": {
+          "name": "Uppfærslan er til staðar"
+        },
+        "weekly_schedule": {
+          "name": "Vikuleg áætlun"
+        }
+      },
+      "sensor": {
+        "circuit_current": {
+          "name": "Straumur"
+        },
+        "cost_day": {
+          "name": "Kostnaður á dag"
+        },
+        "cost_month": {
+          "name": "Kostnaður á mánúði"
+        },
+        "cost_per_kwh": {
+          "name": "Kostnaður per kWh"
+        },
+        "cost_year": {
+          "name": "Kostnaður á ári"
+        },
+        "current": {
+          "name": "Straumur"
+        },
+        "dynamic_charger_limit": {
+          "name": "Breytileg hleðlsumörk"
+        },
+        "dynamic_circuit_limit": {
+          "name": "Breytileg straummörk"
+        },
+        "easee_reason_no_current": {
+          "name": "Ástæðan fyrir engan straum",
+          "state": {
+            "car_not_charging": "Bíllinn hleðst ekki",
+            "charger_disabled": "Hleðslustöðin er ekki virk",
+            "charger_in_error_state": "Hleðslustöðin sýnir villu",
+            "circuit_fuse_too_low": "Öryggisvar of lítið",
+            "eq_too_low_current": "Jafningastraumur of lág",
+            "ev_behaving_erratic": "Bíllinn er með villuhegðun",
+            "illegal_grid_type": "Ógilt tegund straumnets",
+            "limited_by_cable_rating": "Takmarkað af kapaltegund",
+            "limited_by_car": "Takmarkað af bílnum",
+            "limited_by_charger_dynamic_limit": "Takmarkað af hleðslustöðinni",
+            "limited_by_charger_max_limit": "Takmarkað af hleðsluhámark",
+            "limited_by_circuit_dynamic_limit": "Takmarkað af hringrás",
+            "limited_by_circuit_fuse": "Takmarkað af öryggisvari",
+            "limited_by_circuit_max_limit": "Takmarkað af hringráshámarki",
+            "limited_by_equalizer": "Takmarkað af jöfnunarbúnaði",
+            "limited_by_load_balancing": "Takmarkað af álagsjönunarbúnaði",
+            "limited_by_local_adjustment": "Takmarkað af staðbundum stillingum",
+            "limited_by_offline_setting": "Takmarkað af offline stillingunum",
+            "limited_by_schedule": "Takmarkað af tímaáætlun",
+            "max_charger_current_too_low": "Hámarksstraumur af hleðslustöðinni of lítill",
+            "max_circuit_current_too_low": "Hámarksstraumur af kerfinu of lítill",
+            "max_dynamic_charger_current_too_low": "Breytilegur hámarksstraumur af hleðslustöðinni of lítill",
+            "max_dynamic_circuit_current_too_low": "Breytilegur hámarksstraumur af kerfinu of lítill",
+            "max_dynamic_offline_fallback_circuit_current_too_low": "Breytilegur offline hámarksstraumur af kerfinu of lítill",
+            "no_current_request": "Enginn straumur krafist",
+            "none": "Ekkert",
+            "not_connected_to_master": "Tenging við stjórnstöðinni ekki til staðar",
+            "not_requesting_current": "Enginn straumur óskast eftir",
+            "ok": "OK",
+            "pending_authorization": "Bíða eftir auðkenningu",
+            "pending_schedule": "Bíða eftir tímaáætlun",
+            "phase_not_connected": "Fasinn ekki tengdur",
+            "undefined": "Ekki vitað",
+            "waiting_in_fully": "Í bíðstöðu",
+            "waiting_in_queue": "Í bíðröð"
+          }
+        },
+        "easee_status": {
+          "name": "Staðan",
+          "state": {
+            "awaiting_start": "Bíða eftir að byrja",
+            "charging": "Í hleðslu",
+            "completed": "Hleðslu lokið",
+            "disconnected": "Enginn bíll tengdur",
+            "error": "Mistök",
+            "ready_to_charge": "Tilbúin"
+          }
+        },
+        "energy_per_hour": {
+          "name": "Orka per klukkutíma"
+        },
+        "equalizer_limit": {
+          "name": "Jöfnunarhámark"
+        },
+        "export_energy": {
+          "name": "Útflutta orka"
+        },
+        "export_power": {
+          "name": "Útlfluttan kraft"
+        },
+        "export_reactive_energy": {
+          "name": "Útflutta hvarfgjarna orku"
+        },
+        "export_reactive_power": {
+          "name": "Útfluttan hvarfgjarnan kraft"
+        },
+        "import_energy": {
+          "name": "Innflutta orka"
+        },
+        "import_power": {
+          "name": "Innfluttan kraft"
+        },
+        "import_reactive_energy": {
+          "name": "Innflutta varfgjarna orku"
+        },
+        "import_reactive_power": {
+          "name": "Innfluttan hvarfgjarnan kraft"
+        },
+        "internal_temperature": {
+          "name": "Innra hitastigið"
+        },
+        "lifetime_energy": {
+          "name": "Orka samtals"
+        },
+        "max_charger_limit": {
+          "name": "Hleðsluhámark"
+        },
+        "max_circuit_limit": {
+          "name": "Hámark raforkukerfis"
+        },
+        "offline_circuit_limit": {
+          "name": "Offline hámark raforkukerfis"
+        },
+        "output_limit": {
+          "name": "Afkastahámark"
+        },
+        "power": {
+          "name": "Kraftur"
+        },
+        "session_energy": {
+          "name": "Hleðslu orka"
+        },
+        "voltage": {
+          "name": "Spenna"
+        }
+      },
+      "switch": {
+        "cable_locked_permanently": {
+          "name": "Kapall alltaf læstur"
+        },
+        "idle_current": {
+          "name": "Hvíldastraumur"
+        },
+        "is_enabled": {
+          "name": "Hleðslustöðin virkjuð"
+        },
+        "smart_charging": {
+          "name": "Klár hleðsla"
+        }
+      }
+    },
+    "issues": {
+      "deprecated_service": {
+        "description": "**{deprecation}** þjónustan er úrelt og mun vera fjarlægt í framtíðinni.\n\nVinsamlegast aðlagðu alla sjálfvirknisreglur og skriftur til að nota **{recommend}** eins fljótt og mögulegt er.",
+        "title": "Notkun á úrelta þjónustu: {deprecation}"
+      }
+    },
+    "options": {
+      "error": {
+        "no_sites": "Engin tengingu valin"
+      },
+      "step": {
+        "init": {
+          "data": {
+            "custom_units": "Einingar",
+            "measured_consumption_days": "Sýna notkun í dögum",
+            "monitored_conditions": "Hleðslustöðvaskynjarar",
+            "monitored_eq_conditions": "Jafningaskynjarar",
+            "monitored_sites": "Staðsetningar"
+          },
+          "description": "Velja möguleika",
+          "title": "Easee bílahleðslustöð"
+        }
+      }
+    },
+    "system_health": {
+      "info": {
+        "component_version": "Útgáfa",
+        "connected2stream": "Tengt við skýjaþjónustuna",
+        "reach_easee_cloud": "Easee skýjaþjónustuna fáanleg"
+      }
+    },
+    "title": "Easee hleðslustöð"
+  }
+  
