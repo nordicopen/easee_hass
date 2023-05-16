@@ -6,7 +6,8 @@
       "error": {
         "auth_failure": "Ekki hægt að tengjast Easee. Athugaðu hvort notandanafnið og lykilorðið séu rétt.",
         "connection_failure": "Ekki hægt að tengjast Easee. Reyndu aftur seinna.",
-        "no_sites": "Enginn staðsetning valin.",
+        "no_sites": "Engin staðsetning valin.",
+        "no_sites_in_account": "Engin staðsetning fannst fyrir þennan notanda",
         "refused_failure": "Tenging við Easee var hafnað. Reyndu aftur seinna."
       },
       "step": {
