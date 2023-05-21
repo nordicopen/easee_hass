@@ -87,7 +87,7 @@ exclusive_schema3 = vol.Schema(
     {
         vol.Exclusive(CONF_DEVICE_ID, GRP1): cv.string,
         vol.Exclusive(CHARGER_ID, GRP1): cv.string,
-        vol.Exclusive(CIRCUIT_ID, GRP1): cv.string,
+        vol.Exclusive(CIRCUIT_ID, GRP1): cv.positive_int,
     },
     required=True,
 )
