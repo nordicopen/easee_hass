@@ -15,7 +15,7 @@
           "monitored_sites": "Lokaties"
         },
         "description": "Selecteer lokatie om te gebruiken",
-        "title": "Easee EV Charger"
+        "title": "Easee EV Lader"
       },
       "user": {
         "data": {
@@ -33,7 +33,7 @@
         "name": "Basisschema"
       },
       "cable_locked": {
-        "name": "Cable lock"
+        "name": "Kabelvergrendeling"
       },
       "online": {
         "name": "Online"
@@ -113,12 +113,28 @@
       "easee_status": {
         "name": "Status",
         "state": {
+          "authenticating": "Bezig met authenticeren",
+          "awaiting_authentication": "Wacht op authenticatie",
+          "awaiting_authorization": "Wacht op autorisatie",
+          "awaiting_load_balancing": "Wacht op load balancing",
+          "awaiting_scheduled_start": "Wacht op geplande start",
+          "awaiting_smart_start": "Wacht op slimme start",
           "awaiting_start": "Wacht tot laden start",
           "charging": "Bezig met laden",
           "completed": "Laden voltooid",
           "disconnected": "Geen auto aangesloten",
+          "erratic_ev": "Auto geeft onverwachtte reactie",
           "error": "Fout bij laden",
-          "ready_to_charge": "Gereed om te laden"
+          "error_dead_powerboard": "Fout Defecte voedingsprintplaat",
+          "error_overcurrent": "Fout Overbelasting",
+          "error_pen_fault": "Fout in beschermende aarde-nulleider (PEN)",
+          "error_temperature_too_high": "Fout Temperatuur te hoog",
+          "offline": "Offline",
+          "paused_due_to_equalizer": "Laden gepauseerd door Equalizer",
+          "ready_to_charge": "Gereed om te laden",
+          "searching_for_master": "Zoeken naar master",
+          "start_charging": "Start laden",
+          "stop_charging": "Stop laden"
         }
       },
       "energy_per_hour": {
