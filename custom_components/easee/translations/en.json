@@ -7,6 +7,7 @@
       "auth_failure": "Unable to connect to Easee. Check your username and password.",
       "connection_failure": "Unable to connect to Easee. Test again later.",
       "no_sites": "No monitored sites selected",
+      "no_sites_in_account": "No sites found in this account.",
       "refused_failure": "Connection refused to Easee. Test again later."
     },
     "step": {

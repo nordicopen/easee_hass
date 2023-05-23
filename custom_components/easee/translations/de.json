@@ -7,6 +7,7 @@
       "auth_failure": "Verbindung zu Easee nicht möglich. Prüfen Sie Username und Passwort.",
       "connection_failure": "Verbindung zu Easee nicht möglich. Versuchen Sie es später erneut.",
       "no_sites": "Keine Standorte ausgewählt.",
+      "no_sites_in_account": "No sites found in this account.",
       "refused_failure": "Verbindung zu Easee abgelehnt. Versuchen Sie es später erneut."
     },
     "step": {

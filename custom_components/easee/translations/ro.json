@@ -7,6 +7,7 @@
       "auth_failure": "Nu se poate conecta la Easee. Verificati numele de utilizator si parola.",
       "connection_failure": "Nu se poate conecta la Easee. Incercati mai tarziu.",
       "no_sites": "Nu a fost selectat nici un site de monitorizat",
+      "no_sites_in_account": "No sites found in this account.",
       "refused_failure": "Conexiune refuzata la Easee. Incercati mai tarziu."
     },
     "step": {

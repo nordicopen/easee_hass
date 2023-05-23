@@ -47,6 +47,7 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
             return self.async_abort(reason="already_setup")
 
         errors = {}
+        _default_username = None
 
         if user_input is not None:
             username = user_input[CONF_USERNAME]
@@ -67,12 +68,17 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
                         data=self.data,
                         options={CONF_MONITORED_SITES: self.sites},
                     )
+                if len(self.sites) > 1:
+                    # Account has more than one site, select sites to add
+                    return await self.async_step_sites()
 
-                # Account has more than one site, select sites to add
-                return await self.async_step_sites()
+                errors["base"] = "no_sites_in_account"
+                _default_username = user_input[CONF_USERNAME]
+                _LOGGER.debug("No sites in this account")
 
             except AuthorizationFailedException:
                 errors["base"] = "auth_failure"
+                _default_username = user_input[CONF_USERNAME]
                 _LOGGER.debug("AuthorizationFailed")
 
             except ConnectionRefusedError:
@@ -86,7 +92,10 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
-                {vol.Required(CONF_USERNAME): str, vol.Required(CONF_PASSWORD): str}
+                {
+                    vol.Required(CONF_USERNAME, default=_default_username): str,
+                    vol.Required(CONF_PASSWORD): str,
+                }
             ),
             errors=errors,
         )
@@ -94,6 +103,7 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
     async def async_step_sites(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
+        """Select sites to monitor."""
         errors = {}
         if user_input is not None:
             if len(user_input[CONF_MONITORED_SITES]) > 0:
