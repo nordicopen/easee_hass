@@ -87,7 +87,7 @@ exclusive_schema3 = vol.Schema(
     {
         vol.Exclusive(CONF_DEVICE_ID, GRP1): cv.string,
         vol.Exclusive(CHARGER_ID, GRP1): cv.string,
-        vol.Exclusive(CIRCUIT_ID, GRP1): cv.string,
+        vol.Exclusive(CIRCUIT_ID, GRP1): cv.positive_int,
     },
     required=True,
 )
@@ -275,7 +275,7 @@ async def async_setup_services(hass):
 
     async def async_get_circuit_id(call):
         if CIRCUIT_ID in call.data.keys():
-            return call.data[CIRCUIT_ID]
+            return int(call.data[CIRCUIT_ID])
         charger = await async_get_charger(call)
         return charger.circuit.id
 
