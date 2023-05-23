@@ -7,7 +7,7 @@
       "auth_failure": "Kan niet verbinden met Easee. Controleer je gebruikersnaam en wachtwoord.",
       "connection_failure": "Kan niet verbinden met Easee. Probeer later opnieuw.",
       "no_sites": "Geen lokatie geselecteerd",
-      "no_sites_in_account": "No sites found in this account.",
+      "no_sites_in_account": "Geen lokaties in dit account gevonden.",
       "refused_failure": "Verbinding met Easee geweigerd. Probeer later opnieuw."
     },
     "step": {
