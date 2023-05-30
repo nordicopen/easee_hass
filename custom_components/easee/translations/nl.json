@@ -136,7 +136,7 @@
           "ready_to_charge": "Gereed om te laden",
           "searching_for_master": "Zoeken naar master",
           "start_charging": "Start laden",
-          "stop_charging": "Stop chargingStop laden"
+          "stop_charging": "Stop laden"
         }
       },
       "energy_per_hour": {
