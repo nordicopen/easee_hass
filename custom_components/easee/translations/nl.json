@@ -123,6 +123,7 @@
           "awaiting_start": "Wacht tot laden start",
           "charging": "Bezig met laden",
           "completed": "Laden voltooid",
+          "de_authorizing": "Closing authorization",
           "disconnected": "Geen auto aangesloten",
           "erratic_ev": "Auto geeft onverwachtte reactie",
           "error": "Fout bij laden",

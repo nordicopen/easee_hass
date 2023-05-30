@@ -70,15 +70,110 @@
         }
       },
       "easee_status": {
+        "name": "Status",
         "state": {
+          "authenticating": "Authenticating",
+          "awaiting_authentication": "Waiting for authentication",
+          "awaiting_authorization": "Waiting for authorization",
+          "awaiting_load_balancing": "Waiting for load balancing",
+          "awaiting_scheduled_start": "Waiting for scheduled start",
+          "awaiting_smart_start": "Waiting for smart start",
           "awaiting_start": "Asteptare pornire",
           "charging": "Incarcare",
           "completed": "Finzalizat",
+          "de_authorizing": "Closing authorization",
           "disconnected": "Deconectat",
+          "erratic_ev": "Erratic EV",
           "error": "Eroare",
-          "ready_to_charge": "Pregatit de incarcare"
+          "error_dead_powerboard": "Error Dead powerboard",
+          "error_overcurrent": "Error Overcurrent",
+          "error_pen_fault": "Error PEN fault",
+          "error_temperature_too_high": "Error Temperature too high",
+          "offline": "Offline",
+          "paused_due_to_equalizer": "Paused due to Equalizer",
+          "ready_to_charge": "Pregatit de incarcare",
+          "searching_for_master": "Searching for master",
+          "start_charging": "Start charging",
+          "stop_charging": "Stop charging"
         }
+      },
+      "energy_per_hour": {
+        "name": "Energy per hour"
+      },
+      "equalizer_limit": {
+        "name": "Equalizer limit"
+      },
+      "export_energy": {
+        "name": "Export energy"
+      },
+      "export_power": {
+        "name": "Export power"
+      },
+      "export_reactive_energy": {
+        "name": "Export reactive energy"
+      },
+      "export_reactive_power": {
+        "name": "Export reactive power"
+      },
+      "import_energy": {
+        "name": "Import energy"
+      },
+      "import_power": {
+        "name": "Import power"
+      },
+      "import_reactive_energy": {
+        "name": "Import reactive energy"
+      },
+      "import_reactive_power": {
+        "name": "Import reactive power"
+      },
+      "internal_temperature": {
+        "name": "Internal temperature"
+      },
+      "lifetime_energy": {
+        "name": "Lifetime energy"
+      },
+      "max_charger_limit": {
+        "name": "Max charger limit"
+      },
+      "max_circuit_limit": {
+        "name": "Max circuit limit"
+      },
+      "offline_circuit_limit": {
+        "name": "Offline circuit limit"
+      },
+      "output_limit": {
+        "name": "Output limit"
+      },
+      "power": {
+        "name": "Power"
+      },
+      "session_energy": {
+        "name": "Session Energy"
+      },
+      "voltage": {
+        "name": "Voltage"
       }
+    },
+    "switch": {
+      "cable_locked_permanently": {
+        "name": "Cable locked permanently"
+      },
+      "idle_current": {
+        "name": "Idle current"
+      },
+      "is_enabled": {
+        "name": "Charger enabled"
+      },
+      "smart_charging": {
+        "name": "Smart charging"
+      }
+    }
+  },
+  "issues": {
+    "deprecated_service": {
+      "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\n\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
+      "title": "Use of deprecated service: {deprecation}"
     }
   },
   "options": {
