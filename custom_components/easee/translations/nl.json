@@ -123,6 +123,7 @@
           "awaiting_start": "Wacht tot laden start",
           "charging": "Bezig met laden",
           "completed": "Laden voltooid",
+          "de_authorizing": "Closing authorization",
           "disconnected": "Geen auto aangesloten",
           "erratic_ev": "Auto geeft onverwachtte reactie",
           "error": "Fout bij laden",
@@ -135,7 +136,7 @@
           "ready_to_charge": "Gereed om te laden",
           "searching_for_master": "Zoeken naar master",
           "start_charging": "Start laden",
-          "stop_charging": "Stop laden"
+          "stop_charging": "Stop chargingStop laden"
         }
       },
       "energy_per_hour": {

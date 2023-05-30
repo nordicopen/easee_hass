@@ -130,7 +130,7 @@
           "error_dead_powerboard": "Fel Trasigt kretskort",
           "error_overcurrent": "Fel Överström",
           "error_pen_fault": "Fel Jordfel",
-          "error_temperature_too_high": "Error För hög temperatur",
+          "error_temperature_too_high": "Fel För hög temperatur",
           "offline": "Offline",
           "paused_due_to_equalizer": "Pausad av Equalizer",
           "ready_to_charge": "Redo för laddning",
