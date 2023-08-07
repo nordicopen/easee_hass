@@ -7,7 +7,7 @@
       "auth_failure": "Nu se poate conecta la Easee. Verificati numele de utilizator si parola.",
       "connection_failure": "Nu se poate conecta la Easee. Incercati mai tarziu.",
       "no_sites": "Nu a fost selectat nici un site de monitorizat",
-      "no_sites_in_account": "No sites found in this account.",
+      "no_sites_in_account": "Nu au fost gasite site-uri in acest cont.",
       "refused_failure": "Conexiune refuzata la Easee. Incercati mai tarziu."
     },
     "step": {
@@ -15,7 +15,7 @@
         "data": {
           "monitored_sites": "Site-uri"
         },
-        "description": "Selectati site-ul de monitorizat",
+        "description": "Selectati site-urile de monitorizat",
         "title": "Easee EV Charger"
       },
       "user": {
@@ -23,14 +23,56 @@
           "password": "Parola",
           "username": "Utilizator"
         },
-        "description": "Introduceti utilizatorul si parola de la contul dvs Easee",
+        "description": "Introduceti utilizatorul si parola contului dvs Easee",
         "title": "Conectare la Easee"
       }
     }
   },
   "entity": {
+    "binary_sensor": {
+      "basic_schedule": {
+        "name": "Program de baza"
+      },
+      "cable_locked": {
+        "name": "Blocare cablu"
+      },
+      "online": {
+        "name": "Online"
+      },
+      "update_available": {
+        "name": "Actualizare disponibila"
+      },
+      "weekly_schedule": {
+        "name": "Program saptamanal"
+      }
+    },
     "sensor": {
+      "circuit_current": {
+        "name": "Curent circuit"
+      },
+      "cost_day": {
+        "name": "Cost zi"
+      },
+      "cost_month": {
+        "name": "Cost luna"
+      },
+      "cost_per_kwh": {
+        "name": "Cost pe kWh"
+      },
+      "cost_year": {
+        "name": "Cost an"
+      },
+      "current": {
+        "name": "Curent"
+      },
+      "dynamic_charger_limit": {
+        "name": "Limita incarcator dinamic"
+      },
+      "dynamic_circuit_limit": {
+        "name": "Limita circuit dinamic"
+      },
       "easee_reason_no_current": {
+        "name": "Motiv pentru lipsa curentului",
         "state": {
           "car_not_charging": "EV nu se incarca",
           "charger_disabled": "Incarcator dezactivat",
@@ -55,13 +97,13 @@
           "max_circuit_current_too_low": "Curent max circuit prea mic",
           "max_dynamic_charger_current_too_low": "Limita incarcare dinamica maxima prea mica",
           "max_dynamic_circuit_current_too_low": "Curent max circuit prea mic",
-          "max_dynamic_offline_fallback_circuit_current_too_low": "Curent max circuit dinamic neconectat prea mic",
+          "max_dynamic_offline_fallback_circuit_current_too_low": "Curent max circuit dinamic offline de rezerva prea mic",
           "no_current_request": "Nu exista solicitare curent",
-          "none": "Nu sunt probleme",
+          "none": "Fara",
           "not_connected_to_master": "Nu este conectat la principal",
           "not_requesting_current": "Nu este solicitat curent",
           "ok": "OK",
-          "pending_authorization": "Asteaptare autorizare",
+          "pending_authorization": "Asteptare autorizare",
           "pending_schedule": "Asteptare program",
           "phase_not_connected": "Faza de alimentare nu este conectata",
           "undefined": "Nedefinit",
@@ -72,113 +114,113 @@
       "easee_status": {
         "name": "Status",
         "state": {
-          "authenticating": "Authenticating",
-          "awaiting_authentication": "Waiting for authentication",
-          "awaiting_authorization": "Waiting for authorization",
-          "awaiting_load_balancing": "Waiting for load balancing",
-          "awaiting_scheduled_start": "Waiting for scheduled start",
-          "awaiting_smart_start": "Waiting for smart start",
+          "authenticating": "Autentificare",
+          "awaiting_authentication": "Asteptarea autentificarii",
+          "awaiting_authorization": "Asteptarea autorizarii",
+          "awaiting_load_balancing": "Asteptare load balancing",
+          "awaiting_scheduled_start": "Asteptare pentru pornirea programata",
+          "awaiting_smart_start": "Asteptare pornire desteapta",
           "awaiting_start": "Asteptare pornire",
           "charging": "Incarcare",
-          "completed": "Finzalizat",
-          "de_authorizing": "Closing authorization",
+          "completed": "Finalizat",
+          "de_authorizing": "Deautorizare",
           "disconnected": "Deconectat",
-          "erratic_ev": "Erratic EV",
+          "erratic_ev": "EV haotic",
           "error": "Eroare",
-          "error_dead_powerboard": "Error Dead powerboard",
-          "error_overcurrent": "Error Overcurrent",
-          "error_pen_fault": "Error PEN fault",
-          "error_temperature_too_high": "Error Temperature too high",
+          "error_dead_powerboard": "Eroare powerboard",
+          "error_overcurrent": "Eroare supralimentare curent",
+          "error_pen_fault": "Erore PEN fault",
+          "error_temperature_too_high": "Eroare temperatura prea mare",
           "offline": "Offline",
-          "paused_due_to_equalizer": "Paused due to Equalizer",
-          "ready_to_charge": "Pregatit de incarcare",
-          "searching_for_master": "Searching for master",
-          "start_charging": "Start charging",
-          "stop_charging": "Stop charging"
+          "paused_due_to_equalizer": "Pauzat din cauza egalizatorului",
+          "ready_to_charge": "Pregatit pentru incarcare",
+          "searching_for_master": "Cautare principal",
+          "start_charging": "Start incarcare",
+          "stop_charging": "Stop incarcare"
         }
       },
       "energy_per_hour": {
-        "name": "Energy per hour"
+        "name": "Energie pe hour"
       },
       "equalizer_limit": {
-        "name": "Equalizer limit"
+        "name": "Limita egalizator"
       },
       "export_energy": {
-        "name": "Export energy"
+        "name": "Export energie"
       },
       "export_power": {
-        "name": "Export power"
+        "name": "Export putere"
       },
       "export_reactive_energy": {
-        "name": "Export reactive energy"
+        "name": "Export energie reactiva"
       },
       "export_reactive_power": {
-        "name": "Export reactive power"
+        "name": "Export putere reactiva"
       },
       "import_energy": {
-        "name": "Import energy"
+        "name": "Import energie"
       },
       "import_power": {
-        "name": "Import power"
+        "name": "Import putere"
       },
       "import_reactive_energy": {
-        "name": "Import reactive energy"
+        "name": "Import energie reactiva"
       },
       "import_reactive_power": {
-        "name": "Import reactive power"
+        "name": "Import putere reactiva"
       },
       "internal_temperature": {
-        "name": "Internal temperature"
+        "name": "Temperatura interna"
       },
       "lifetime_energy": {
-        "name": "Lifetime energy"
+        "name": "Total absolut energie"
       },
       "max_charger_limit": {
-        "name": "Max charger limit"
+        "name": "Limita max incarcator"
       },
       "max_circuit_limit": {
-        "name": "Max circuit limit"
+        "name": "Limita max circuit "
       },
       "offline_circuit_limit": {
-        "name": "Offline circuit limit"
+        "name": "Limita circuit offline"
       },
       "output_limit": {
-        "name": "Output limit"
+        "name": "Limita iesire"
       },
       "power": {
-        "name": "Power"
+        "name": "Putere"
       },
       "session_energy": {
-        "name": "Session Energy"
+        "name": "Energie sesiune"
       },
       "voltage": {
-        "name": "Voltage"
+        "name": "Voltaj"
       }
     },
     "switch": {
       "cable_locked_permanently": {
-        "name": "Cable locked permanently"
+        "name": "Blocare cablu permanenta"
       },
       "idle_current": {
-        "name": "Idle current"
+        "name": "Curent asteptare"
       },
       "is_enabled": {
-        "name": "Charger enabled"
+        "name": "Incarcator activat"
       },
       "smart_charging": {
-        "name": "Smart charging"
+        "name": "Incarcare smart"
       }
     }
   },
   "issues": {
     "deprecated_service": {
-      "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\n\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
-      "title": "Use of deprecated service: {deprecation}"
+      "description": "Utilizarea serviciului **{deprecation}** este depasit/indisponibil, iar serviciul va fi eliminat în viitor. Va rugm sa va convertiti automatizările si scripturile pentru a utiliza **{recommend}** cat mai curand posibil",
+      "title": "Utilizarea unui serviciu depasit/indisponibil: {deprecation}"
     }
   },
   "options": {
     "error": {
-      "no_sites": "Nici un site selectat pentru monitorizare"
+      "no_sites": "Niciun site selectat pentru monitorizare"
     },
     "step": {
       "init": {
