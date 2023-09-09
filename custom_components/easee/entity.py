@@ -12,7 +12,7 @@ from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.util import dt
 
-from .const import DOMAIN, EASEE_STATUS, REASON_NO_CURRENT
+from .const import DOMAIN, EASEE_PRODUCT_CODES, EASEE_STATUS, REASON_NO_CURRENT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -111,11 +111,15 @@ class ChargerEntity(Entity):
         self._attr_state_class = state_class
         self._attr_entity_category = entity_category
         self._attr_native_unit_of_measurement = self._units
+
+        for charger in self.data.product.circuit["chargers"]:
+            if charger["id"] == self.data.product.id:
+                product_code = charger["productCode"]
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self.data.product.id)},
             name=self.data.product.name,
             manufacturer="Easee",
-            model="Charging Robot",
+            model=EASEE_PRODUCT_CODES.get(product_code, f"productCode: {product_code}"),
             configuration_url=(
                 f"https://easee.cloud/sites/{self.data.site.id}"
                 f"/products/{self.data.product.id}"
