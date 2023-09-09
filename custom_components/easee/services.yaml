@@ -37,6 +37,8 @@ action_command:
               value: "override_schedule"
             - label: Delete basic charge plan
               value: "delete_basic_charge_plan"
+            - label: Delete weekly charge plan
+              value: "delete_weekly_charge_plan"
 
 set_basic_charge_plan:
   name: "Set basic charge plan"
@@ -72,6 +74,56 @@ set_basic_charge_plan:
       example: true
       selector:
         boolean:
+
+set_weekly_charge_plan:
+  name: "Set weekly charge plan"
+  description: "Set weekly charge plan"
+  fields:
+    device_id:
+      name: Target device
+      description: "Select the charger to control"
+      required: true
+      example: "b40f1f45d28b0891fe8d"
+      selector:
+        device:
+          integration: "easee"
+          model: "Charging Robot"
+    day:
+      name: "Day"
+      description: "Schedule for day, 0 = monday"
+      required: true
+      example: 0
+      selector:
+        select:
+          options:
+            - label: Monday
+              value: "0"
+            - label: Tuesday
+              value: "1"
+            - label: Wednesday
+              value: "2"
+            - label: Thursday
+              value: "3"
+            - label: Friday
+              value: "4"
+            - label: Saturday
+              value: "5"
+            - label: Sunday
+              value: "6"
+    start_time:
+      name: "Start time"
+      description: "Plan start time"
+      required: true
+      example: "19:51"
+      selector:
+        time:
+    stop_time:
+      name: "Stop time"
+      description: "Plan stop time"
+      required: true
+      example: "20:51"
+      selector:
+        time:
 
 smart_charging:
   name: "Smart charging"
