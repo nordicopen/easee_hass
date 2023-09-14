@@ -1,16 +1,16 @@
+"""Easee Charger base entity class.
+
+Author: Niklas Fondberg<niklas.fondberg@gmail.com>.
 """
-Easee Charger base entity class.
-Author: Niklas Fondberg<niklas.fondberg@gmail.com>
-"""
+from collections.abc import Callable
 from datetime import datetime
 import logging
-from typing import Callable, List
 
 from homeassistant.const import UnitOfEnergy, UnitOfPower
-from homeassistant.helpers import device_registry, entity_registry
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.entity_registry import async_entries_for_device
-from homeassistant.util import dt
+from homeassistant.util import dt as dt_util
 
 from .const import DOMAIN, EASEE_PRODUCT_CODES, EASEE_STATUS, REASON_NO_CURRENT
 
@@ -21,7 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def round_to_dec(value, decimals=None, unit=None):
     """Round to selected no of decimals."""
-    if unit == UnitOfPower.WATT or unit == UnitOfEnergy.WATT_HOUR:
+    if unit in (UnitOfPower.WATT, UnitOfEnergy.WATT_HOUR):
         value = value * 1000
         decimals = None
     try:
@@ -76,7 +76,7 @@ class ChargerEntity(Entity):
         state_key: str,
         units: str,
         convert_units_func: Callable,
-        attrs_keys: List[str],
+        attrs_keys: list[str],
         device_class: str,
         icon: str,
         state_func=None,
@@ -112,9 +112,7 @@ class ChargerEntity(Entity):
         self._attr_entity_category = entity_category
         self._attr_native_unit_of_measurement = self._units
 
-        for charger in self.data.product.circuit["chargers"]:
-            if charger["id"] == self.data.product.id:
-                product_code = charger["productCode"]
+        product_code = self.data.product.product_code
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self.data.product.id)},
             name=self.data.product.name,
@@ -142,10 +140,10 @@ class ChargerEntity(Entity):
         if self in self.controller.equalizer_sensor_entities:
             self.controller.equalizer_sensor_entities.remove(self)
         self.controller = None
-        ent_reg = entity_registry.async_get(self.hass)
+        ent_reg = er.async_get(self.hass)
         entity_entry = ent_reg.async_get(self.entity_id)
 
-        dev_reg = device_registry.async_get(self.hass)
+        dev_reg = dr.async_get(self.hass)
         device_entry = dev_reg.async_get(entity_entry.device_id)
 
         _LOGGER.debug("Removing _entity_name: %s", self._entity_name)
@@ -247,7 +245,7 @@ class ChargerEntity(Entity):
                 raise IndexError("Unknown first part of key")
 
             if isinstance(value, datetime):
-                value = dt.as_local(value)
+                value = dt_util.as_local(value)
         except KeyError:
             value = ""
 
