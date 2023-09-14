@@ -1,7 +1,5 @@
-colorlog
-black
-isort
-flake8
+colorlog==6.7.0
+ruff==0.0.288
 bump2version
 wheel
 
