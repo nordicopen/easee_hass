@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+read -p 'Set Home Assistant version: ' -r version
+python3 -m pip --disable-pip-version-check install --upgrade homeassistant=="$version"

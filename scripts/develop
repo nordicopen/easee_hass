@@ -14,7 +14,8 @@ echo -n "
 logger:
   default: info
   logs:
-    homeassistant.components.viva: debug
+    custom_components.easee: debug
+    pyeasee: debug
 " >> config/configuration.yaml
 fi
 if ! grep -R "debugpy:" config/configuration.yaml >> /dev/null;then
