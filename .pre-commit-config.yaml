@@ -1,0 +1,34 @@
+repos:
+    - repo: https://github.com/astral-sh/ruff-pre-commit
+      rev: v0.0.278
+      hooks:
+          - id: ruff
+            args:
+                - --fix
+    - repo: https://github.com/psf/black
+      rev: 23.1.0
+      hooks:
+          - id: black
+            args:
+                - --quiet
+            files: ^((custom_components|homeassistant|pylint|script|tests)/.+)?[^/]+\.py$
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.4.0
+      hooks:
+          - id: trailing-whitespace
+          - id: end-of-file-fixer
+          - id: check-json
+            exclude: (.vscode|.devcontainer)
+          - id: pretty-format-json
+            args: ['--autofix', '--no-ensure-ascii', '--top-keys=domain,name']
+            files: manifest.json
+          - id: pretty-format-json
+            args: ['--autofix', '--no-ensure-ascii', '--top-keys=name']
+            files: hacs.json
+          - id: pretty-format-json
+            args: ['--autofix', '--no-ensure-ascii', '--no-sort-keys']
+            files: (/strings\.json$|translations/.+\.json$)
+          - id: check-yaml
+            args: ['--unsafe']
+          - id: check-added-large-files
+          - id: check-shebang-scripts-are-executable

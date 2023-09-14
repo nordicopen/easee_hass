@@ -1,29 +1,35 @@
 {
     "version": "2.0.0",
     "tasks": [
-        {
-            "label": "Run Home Assistant on port 9125",
-            "type": "shell",
-            "command": "container start",
-            "problemMatcher": []
-        },
-        {
-            "label": "Run Home Assistant configuration against /config",
-            "type": "shell",
-            "command": "container check",
-            "problemMatcher": []
-        },
-        {
-            "label": "Upgrade Home Assistant to latest dev",
-            "type": "shell",
-            "command": "container install",
-            "problemMatcher": []
-        },
-        {
-            "label": "Install a specific version of Home Assistant",
-            "type": "shell",
-            "command": "container set-version",
-            "problemMatcher": []
-        }
+      {
+        "label": "Run Home Assistant on port 9125",
+        "type": "shell",
+        "command": "scripts/develop",
+        "problemMatcher": []
+      },
+      {
+        "label": "Upgrade Home Assistant to latest (beta)",
+        "type": "shell",
+        "command": "scripts/upgrade",
+        "problemMatcher": []
+      },
+      {
+        "label": "Load Home Assistant from github - dev branch",
+        "type": "shell",
+        "command": "scripts/dev-branch",
+        "problemMatcher": []
+      },
+      {
+        "label": "Load specific version of Home Assistant",
+        "type": "shell",
+        "command": "scripts/specific-version",
+        "problemMatcher": []
+      },
+      {
+        "label": "Lint with ruff",
+        "type": "shell",
+        "command": "scripts/lint",
+        "problemMatcher": []
+      }
     ]
-}
+  }
