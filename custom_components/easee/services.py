@@ -21,6 +21,9 @@ CIRCUIT_ID = "circuit_id"
 ATTR_CHARGEPLAN_START_DATETIME = "start_datetime"
 ATTR_CHARGEPLAN_STOP_DATETIME = "stop_datetime"
 ATTR_CHARGEPLAN_REPEAT = "repeat"
+ATTR_CHARGEPLAN_DAY = "day"
+ATTR_CHARGEPLAN_START_TIME = "start_time"
+ATTR_CHARGEPLAN_STOP_TIME = "stop_time"
 ATTR_SET_CURRENT = "current"
 ATTR_SET_CURRENTP1 = "currentP1"
 ATTR_SET_CURRENTP2 = "currentP2"
@@ -41,6 +44,7 @@ ACTION_REBOOT = "reboot"
 ACTION_UPDATE_FIRMWARE = "update_firmware"
 ACTION_OVERRIDE_SCHEDULE = "override_schedule"
 ACTION_DELETE_BASIC_CHARGE_PLAN = "delete_basic_charge_plan"
+ACTION_DELETE_WEEKLY_CHARGE_PLAN = "delete_weekly_charge_plan"
 ACTIONS = {
     ACTION_START,
     ACTION_STOP,
@@ -51,6 +55,7 @@ ACTIONS = {
     ACTION_UPDATE_FIRMWARE,
     ACTION_OVERRIDE_SCHEDULE,
     ACTION_DELETE_BASIC_CHARGE_PLAN,
+    ACTION_DELETE_WEEKLY_CHARGE_PLAN,
 }
 
 MIN_CURRENT = 0
@@ -120,6 +125,17 @@ SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.All(
     exclusive_schema2.extend(ext_basic_chargeplan),
 )
 
+ext_weekly_chargeplan = {
+    vol.Required(ATTR_CHARGEPLAN_DAY, default=0): cv.positive_int,
+    vol.Optional(ATTR_CHARGEPLAN_START_TIME): cv.time,
+    vol.Optional(ATTR_CHARGEPLAN_STOP_TIME): cv.time,
+}
+
+SERVICE_CHARGER_SET_WEEKLY_CHARGEPLAN_SCHEMA = vol.All(
+    target_schema2,
+    exclusive_schema2.extend(ext_weekly_chargeplan),
+)
+
 ext_circuit_current = {
     vol.Required(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
     vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
@@ -185,6 +201,11 @@ SERVICE_MAP = {
         "handler": "charger_set_schedule",
         "function_call": "set_basic_charge_plan",
         "schema": SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA,
+    },
+    "set_weekly_charge_plan": {
+        "handler": "charger_set_weekly_schedule",
+        "function_call": "set_weekly_charge_plan",
+        "schema": SERVICE_CHARGER_SET_WEEKLY_CHARGEPLAN_SCHEMA,
     },
     "set_circuit_dynamic_limit": {
         "handler": "circuit_execute_set_current",
@@ -384,6 +405,52 @@ async def async_setup_services(hass):
                     dt.as_utc(start_datetime),
                     stop_d,
                     repeat,
+                )
+            except BadRequestException as ex:
+                _LOGGER.error(
+                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
+            except ForbiddenServiceException as ex:
+                _LOGGER.error(
+                    "Forbidden : [%s] - Check your access privileges: %s",
+                    str(call.service),
+                    ex,
+                )
+                return
+            except Exception as ex:  # pylint: disable=broad-except
+                _LOGGER.error(
+                    "Failed to execute service: %s : %s with data %s",
+                    str(call.service),
+                    ex,
+                    str(call.data),
+                )
+                return
+
+        raise HomeAssistantError("Could not find charger.")
+
+    async def charger_set_weekly_schedule(call):
+        """Execute a set schedule call to Easee charging station."""
+        charger = await async_get_charger(call)
+        start_time = call.data.get(ATTR_CHARGEPLAN_START_TIME)
+        stop_time = call.data.get(ATTR_CHARGEPLAN_STOP_TIME)
+        day = call.data.get(ATTR_CHARGEPLAN_DAY)
+
+        _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
+
+        if charger:
+            function_name = SERVICE_MAP[call.service]
+            function_call = getattr(charger, function_name["function_call"])
+            start_t = None if start_time is None else start_time.strftime("%H:%M")
+            stop_t = None if stop_time is None else stop_time.strftime("%H:%M")
+
+            try:
+                return await function_call(
+                    day,
+                    start_t,
+                    stop_t,
                 )
             except BadRequestException as ex:
                 _LOGGER.error(
