@@ -16,6 +16,7 @@ ready_to_charge
 completed
 error
 ```
+Some of the other non-common sensors like Current and Voltage are disabled by default (shown as "unavailable"). They can be enabled in the HA GUI via Integrations->[Easee Name]->Devices->[Easee Equilizer Name] and under Diagnostic click on Current/Voltage->gear_icon and then Enable it. Each of these sensors has also attributes which contain values like current and voltage per phase. See [#271](https://github.com/fondberg/easee_hass/issues/271) on how to use these attributes.
 
 ## Installation
 
