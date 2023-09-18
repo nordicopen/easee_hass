@@ -66,7 +66,7 @@
         "name": "Strom"
       },
       "dynamic_charger_limit": {
-        "name": "Dynamisches Chargerlimit"
+        "name": "Dynamisches Ladelimit"
       },
       "dynamic_circuit_limit": {
         "name": "Dynamisches Stromkreislimit"
@@ -93,9 +93,9 @@
           "limited_by_local_adjustment": "Durch lokale Einstellung limitiert",
           "limited_by_offline_setting": "Durch Offline-Einstellung limitiert",
           "limited_by_schedule": "Durch Zeitplan limitiert",
-          "max_charger_current_too_low": "Maximaler Chargerstrom zu niedrig",
+          "max_charger_current_too_low": "Maximaler Ladestrom zu niedrig",
           "max_circuit_current_too_low": "Maximaler Schaltkreisstrom zu niedrig",
-          "max_dynamic_charger_current_too_low": "Maximaler dynamischer Chargerstrom zu niedrig",
+          "max_dynamic_charger_current_too_low": "Maximaler dynamischer Ladestrom zu niedrig",
           "max_dynamic_circuit_current_too_low": "Maximaler dynamischer Schaltkreisstrom zu niedrig",
           "max_dynamic_offline_fallback_circuit_current_too_low": "Maximaler dynamischer Offline-Schaltkreisstrom zu niedrig",
           "no_current_request": "Kein Strom angefordert",
@@ -114,29 +114,29 @@
       "easee_status": {
         "name": "Status",
         "state": {
-          "authenticating": "Authenticating",
-          "awaiting_authentication": "Waiting for authentication",
-          "awaiting_authorization": "Waiting for authorization",
-          "awaiting_load_balancing": "Waiting for load balancing",
-          "awaiting_scheduled_start": "Waiting for scheduled start",
-          "awaiting_smart_start": "Waiting for smart start",
+          "authenticating": "Authentifiziert",
+          "awaiting_authentication": "Wartet auf Authentifizierung",
+          "awaiting_authorization": "Wartet auf Autorisierung",
+          "awaiting_load_balancing": "Wartet auf Lastausgleich",
+          "awaiting_scheduled_start": "Wartet auf zeitgesteuerten Start",
+          "awaiting_smart_start": "Wartet auf smarten Start",
           "awaiting_start": "Wartet auf Start",
           "charging": "Lädt",
           "completed": "Abgeschlossen",
-          "de_authorizing": "Closing authorization",
+          "de_authorizing": "Beendet Autorisierung",
           "disconnected": "Kein Fahrzeug verbunden",
-          "erratic_ev": "Erratic EV",
+          "erratic_ev": "Fahrzeug fehlerhaft",
           "error": "Fehler",
-          "error_dead_powerboard": "Error Dead powerboard",
-          "error_overcurrent": "Error Overcurrent",
-          "error_pen_fault": "Error PEN fault",
-          "error_temperature_too_high": "Error Temperature too high",
+          "error_dead_powerboard": "Defektes Powerboard",
+          "error_overcurrent": "Überspannung",
+          "error_pen_fault": "PEN Fehler",
+          "error_temperature_too_high": "Temperatur zu hoch",
           "offline": "Offline",
-          "paused_due_to_equalizer": "Paused due to Equalizer",
+          "paused_due_to_equalizer": "Wegen Equalizer pausiert",
           "ready_to_charge": "Bereit zum Laden",
-          "searching_for_master": "Searching for master",
-          "start_charging": "Start charging",
-          "stop_charging": "Stop charging"
+          "searching_for_master": "Sucht Master",
+          "start_charging": "Startet Ladung",
+          "stop_charging": "Stoppt Ladung"
         }
       },
       "energy_per_hour": {
