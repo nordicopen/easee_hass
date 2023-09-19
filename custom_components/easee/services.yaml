@@ -10,7 +10,9 @@ action_command:
       selector:
         device:
           integration: "easee"
-          model: "Charging Robot"
+          # This is needed to exclude Equalizers from the target list"
+          entity:
+            device_class: "monetary"
     action_command:
       name: "Action command"
       description: "Select the command to execute"
@@ -52,7 +54,8 @@ set_basic_charge_plan:
       selector:
         device:
           integration: "easee"
-          model: "Charging Robot"
+          entity:
+            device_class: "monetary"
     start_datetime:
       name: "Start datetime"
       description: "Plan start time"
@@ -87,7 +90,8 @@ set_weekly_charge_plan:
       selector:
         device:
           integration: "easee"
-          model: "Charging Robot"
+          entity:
+            device_class: "monetary"
     day:
       name: "Day"
       description: "Schedule for day, 0 = monday"
@@ -137,7 +141,8 @@ smart_charging:
       selector:
         device:
           integration: "easee"
-          model: "Charging Robot"
+          entity:
+            device_class: "monetary"
     enable:
       name: "Enable"
       description: "Enable smart charging"
@@ -158,7 +163,8 @@ set_circuit_max_limit:
       selector:
         device:
           integration: "easee"
-          model: "Charging Robot"
+          entity:
+            device_class: "monetary"
     currentP1:
       name: "Current Phase 1"
       required: true
@@ -211,7 +217,8 @@ set_circuit_offline_limit:
       selector:
         device:
           integration: "easee"
-          model: "Charging Robot"
+          entity:
+            device_class: "monetary"
     currentP1:
       name: "Current Phase 1"
       required: true
@@ -264,7 +271,8 @@ set_charger_dynamic_limit:
       selector:
         device:
           integration: "easee"
-          model: "Charging Robot"
+          entity:
+            device_class: "monetary"
     current:
       name: "Current"
       required: true
@@ -291,7 +299,8 @@ set_circuit_dynamic_limit:
       selector:
         device:
           integration: "easee"
-          model: "Charging Robot"
+          entity:
+            device_class: "monetary"
     currentP1:
       name: "Current Phase 1"
       required: true
@@ -357,7 +366,8 @@ set_charger_max_limit:
       selector:
         device:
           integration: "easee"
-          model: "Charging Robot"
+          entity:
+            device_class: "monetary"
     current:
       name: "Current"
       required: true
@@ -384,7 +394,8 @@ set_charging_cost:
       selector:
         device:
           integration: "easee"
-          model: "Charging Robot"
+          entity:
+            device_class: "monetary"
     cost_per_kwh:
       name: "Cost per kWh"
       description: "Cost per kWh"
@@ -427,7 +438,8 @@ set_charger_access:
       selector:
         device:
           integration: "easee"
-          model: "Charging Robot"
+          entity:
+            device_class: "monetary"
     access_level:
       name: "Access level"
       description: "Select one of the levels"
