@@ -112,7 +112,11 @@ class ChargerEntity(Entity):
         self._attr_entity_category = entity_category
         self._attr_native_unit_of_measurement = self._units
 
-        product_code = self.data.product.product_code
+        try:
+            product_code = self.data.product.product_code
+        except AttributeError:
+            product_code = None
+
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self.data.product.id)},
             name=self.data.product.name,
