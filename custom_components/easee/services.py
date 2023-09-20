@@ -1,13 +1,14 @@
-""" easee services."""
+"""easee services."""
 import logging
 
-from homeassistant.const import CONF_DEVICE_ID
-from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers import device_registry as dr
-from homeassistant.util import dt
 from pyeasee.exceptions import BadRequestException, ForbiddenServiceException
 import voluptuous as vol
+
+from datetime import timedelta
+from homeassistant.const import CONF_DEVICE_ID
+from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers import config_validation as cv, device_registry as dr
+from homeassistant.util import dt as dt_util
 
 from .const import DOMAIN
 
@@ -69,7 +70,7 @@ def has_at_least_one(keys):
     """Ensure that at least one key is present."""
 
     def fkey(obj):
-        for k in obj.keys():
+        for k in obj:
             if k in keys:
                 return obj
         raise vol.Invalid(f"Must contain one of {keys}")
@@ -287,7 +288,7 @@ async def async_setup_services(hass):
         return charger_id
 
     async def async_get_charger(call):
-        if CONF_DEVICE_ID in call.data.keys():
+        if CONF_DEVICE_ID in call.data:
             charger_id = await async_convert_device_id_to_charger_id(call)
         else:
             charger_id = call.data[CHARGER_ID]
@@ -295,7 +296,7 @@ async def async_setup_services(hass):
         return charger
 
     async def async_get_circuit_id(call):
-        if CIRCUIT_ID in call.data.keys():
+        if CIRCUIT_ID in call.data:
             return int(call.data[CIRCUIT_ID])
         charger = await async_get_charger(call)
         return charger.circuit.id
@@ -398,11 +399,11 @@ async def async_setup_services(hass):
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
-            stop_d = None if stop_datetime is None else dt.as_utc(stop_datetime)
+            stop_d = None if stop_datetime is None else dt_util.as_utc(stop_datetime)
             try:
                 return await function_call(
                     schedule_id,
-                    dt.as_utc(start_datetime),
+                    dt_util.as_utc(start_datetime),
                     stop_d,
                     repeat,
                 )
@@ -443,8 +444,15 @@ async def async_setup_services(hass):
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
-            start_t = None if start_time is None else start_time.strftime("%H:%M")
-            stop_t = None if stop_time is None else stop_time.strftime("%H:%M")
+            now_dt = dt_util.now()
+            now_wd = now_dt.weekday()
+            now_td = timedelta(days=(now_wd - day))
+            now_dt = now_dt - now_td
+            start_dt = dt_util.as_utc(now_dt.replace(hour=start_time.hour, minute=start_time.minute, second=0, microsecond=0))
+            stop_dt = dt_util.as_utc(now_dt.replace(hour=stop_time.hour, minute=stop_time.minute, second=0, microsecond=0))
+            start_t = start_dt.strftime("%H:%M")
+            stop_t = stop_dt.strftime("%H:%M")
+            day = start_dt.weekday()
 
             try:
                 return await function_call(
@@ -676,7 +684,7 @@ async def async_setup_services(hass):
         raise HomeAssistantError("Could not find charger")
 
     async def charger_execute_set_access(call):
-        """Execute a service to set access level on a charger"""
+        """Execute a service to set access level on a charger."""
         access_level = call.data.get(ACCESS_LEVEL)
         charger = await async_get_charger(call)
 
