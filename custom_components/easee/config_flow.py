@@ -2,18 +2,18 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from aiohttp import ClientConnectionError
+from pyeasee import AuthorizationFailedException, Easee, Site
+import voluptuous as vol
+
 from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.helpers import aiohttp_client
-from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import aiohttp_client, config_validation as cv
 from homeassistant.helpers.typing import ConfigType
-from pyeasee import AuthorizationFailedException, Easee, Site
-import voluptuous as vol
 
 from .const import CONF_MONITORED_SITES, DOMAIN
 
@@ -28,7 +28,7 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_PUSH
 
     def __init__(self):
-        """Setup the config flow."""
+        """Set up the config flow."""
 
         self.sites = {}
         self.data = {}
@@ -59,7 +59,7 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
                 easee = Easee(username, password, client_session)
                 # Check that login is possible
                 await easee.connect()
-                the_sites: List[Site] = await easee.get_account_products()
+                the_sites: list[Site] = await easee.get_account_products()
                 self.sites = [site.name for site in the_sites]
 
                 if len(self.sites) == 1:
@@ -144,7 +144,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         errors = {}
         controller = self.hass.data[DOMAIN]["controller"]
-        sites: List[Site] = controller.get_sites()
+        sites: list[Site] = controller.get_sites()
         sites_multi_select = {x["name"]: x["name"] for x in sites}
         default_sites = [x["name"] for x in sites]
 

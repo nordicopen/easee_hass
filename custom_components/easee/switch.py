@@ -2,8 +2,9 @@
 
 import logging
 
-from homeassistant.components.switch import SwitchEntity
 from pyeasee.exceptions import ForbiddenServiceException
+
+from homeassistant.components.switch import SwitchEntity
 
 from .const import DOMAIN
 from .entity import ChargerEntity
@@ -12,7 +13,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Setup switch platform."""
+    """Set up switch platform."""
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_switch_entities()
     async_add_entities(entities)

@@ -1,5 +1,5 @@
-"""
-Easee charger sensor
+"""Easee charger sensor.
+
 Author: Niklas Fondberg<niklas.fondberg@gmail.com>
 """
 
@@ -18,7 +18,7 @@ SCAN_INTERVAL = timedelta(minutes=15)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Setup sensor platform."""
+    """Set up sensor platform."""
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_sensor_entities()
     async_add_entities(entities)

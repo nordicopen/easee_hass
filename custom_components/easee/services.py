@@ -1,10 +1,10 @@
 """easee services."""
+from datetime import timedelta
 import logging
 
 from pyeasee.exceptions import BadRequestException, ForbiddenServiceException
 import voluptuous as vol
 
-from datetime import timedelta
 from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv, device_registry as dr
@@ -271,8 +271,8 @@ SERVICE_MAP = {
 }
 
 
-async def async_setup_services(hass):
-    """Setup services for Easee."""
+async def async_setup_services(hass):  # noqa: C901
+    """Set up services for Easee."""
     controller = hass.data[DOMAIN]["controller"]
     chargers = controller.get_chargers()
 
@@ -448,8 +448,22 @@ async def async_setup_services(hass):
             now_wd = now_dt.weekday()
             now_td = timedelta(days=(now_wd - day))
             now_dt = now_dt - now_td
-            start_dt = dt_util.as_utc(now_dt.replace(hour=start_time.hour, minute=start_time.minute, second=0, microsecond=0))
-            stop_dt = dt_util.as_utc(now_dt.replace(hour=stop_time.hour, minute=stop_time.minute, second=0, microsecond=0))
+            start_dt = dt_util.as_utc(
+                now_dt.replace(
+                    hour=start_time.hour,
+                    minute=start_time.minute,
+                    second=0,
+                    microsecond=0,
+                )
+            )
+            stop_dt = dt_util.as_utc(
+                now_dt.replace(
+                    hour=stop_time.hour,
+                    minute=stop_time.minute,
+                    second=0,
+                    microsecond=0,
+                )
+            )
             start_t = start_dt.strftime("%H:%M")
             stop_t = stop_dt.strftime("%H:%M")
             day = start_dt.weekday()
