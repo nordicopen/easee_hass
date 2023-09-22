@@ -1,4 +1,4 @@
-""" Easee Connector class """
+"""Easee Connector class."""
 import asyncio
 from datetime import timedelta
 from gc import collect
@@ -6,18 +6,8 @@ import json
 import logging
 from random import random
 from sys import getrefcount
-from typing import List
 
 from async_timeout import timeout
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
-from homeassistant.helpers import aiohttp_client
-from homeassistant.helpers.event import (
-    async_track_time_change,
-    async_track_time_interval,
-)
-from homeassistant.util import dt
 from pyeasee import (
     Charger,
     ChargerSchedule,
@@ -36,6 +26,16 @@ from pyeasee.exceptions import (
     ServerFailureException,
     TooManyRequestsException,
 )
+
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
+from homeassistant.helpers import aiohttp_client
+from homeassistant.helpers.event import (
+    async_track_time_change,
+    async_track_time_interval,
+)
+from homeassistant.util import dt as dt_util
 
 from .binary_sensor import ChargerBinarySensor, EqualizerBinarySensor
 from .const import (
@@ -251,7 +251,9 @@ class ProductData:
         if kind == "Recurring" and recurrency == "Weekly":
             self.weekly_schedule["isEnabled"] = True
             for period in periods:
-                time = dt.as_local(dt.utc_from_timestamp(start_epoch + period[0]))
+                time = dt_util.as_local(
+                    dt_util.utc_from_timestamp(start_epoch + period[0])
+                )
                 day = time.weekday()
                 if period[1] != 0:  # Start
                     saved_day = day
@@ -267,7 +269,9 @@ class ProductData:
             self.schedule["isEnabled"] = True
             self.schedule["repeat"] = kind == "Recurring"
             for period in periods:
-                time = dt.as_local(dt.utc_from_timestamp(start_epoch + period[0]))
+                time = dt_util.as_local(
+                    dt_util.utc_from_timestamp(start_epoch + period[0])
+                )
                 if period[1] != 0:  # Start
                     self.schedule["chargeStartTime"] = time.strftime("%H:%M")
                 else:
@@ -275,18 +279,18 @@ class ProductData:
 
     async def cost_async_refresh(self):
         """Poll cost data."""
-        dt_end = dt.now().replace(microsecond=0)
-        dt_start = dt.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        dt_end = dt_util.now().replace(microsecond=0)
+        dt_start = dt_util.now().replace(hour=0, minute=0, second=0, microsecond=0)
         costs_day = await self.site.get_cost_between_dates(
-            dt.as_utc(dt_start), dt.as_utc(dt_end)
+            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
         )
         dt_start = dt_start.replace(day=1)
         costs_month = await self.site.get_cost_between_dates(
-            dt.as_utc(dt_start), dt.as_utc(dt_end)
+            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
         )
         dt_start = dt_start.replace(month=1)
         costs_year = await self.site.get_cost_between_dates(
-            dt.as_utc(dt_start), dt.as_utc(dt_end)
+            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
         )
         _LOGGER.debug("Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
         if costs_day is not None:
@@ -304,9 +308,9 @@ class ProductData:
 
     def check_value(self, data_type, reference, value):
         """Check if recieved data is a change."""
-        if (
-            data_type != DatatypesStreamData.Double.value
-            and data_type != DatatypesStreamData.Integer.value
+        if data_type not in (
+            DatatypesStreamData.Double.value,
+            DatatypesStreamData.Integer.value,
         ):
             return True
 
@@ -320,7 +324,7 @@ class ProductData:
         if self.state is None:
             return
 
-        now = dt.utcnow().replace(microsecond=0)
+        now = dt_util.utcnow().replace(microsecond=0)
         elapsed = now - self.state["latestPulse"]
 
         if elapsed.total_seconds() > OFFLINE_DELAY:
@@ -343,7 +347,7 @@ class ProductData:
 
         self.state["signalRConnected"] = True
         self.dirty = True
-        now = dt.utcnow().replace(microsecond=0)
+        now = dt_util.utcnow().replace(microsecond=0)
         self.state["latestPulse"] = now
         self.state["isOnline"] = True
         try:
@@ -385,22 +389,23 @@ class ProductData:
 
 
 class Controller:
-    """Controller class orchestrating the data fetching and entitities"""
+    """Controller class orchestrating the data fetching and entitities."""
 
     def __init__(
         self, username: str, password: str, hass: HomeAssistant, entry: ConfigEntry
     ):
+        """Init the Controller class."""
         self.username = username
         self.password = password
         self.hass = hass
         self.config = entry
         self.easee: Easee | None = None
-        self.sites: List[Site] = []
-        self.circuits: List[Circuit] = []
-        self.chargers: List[Charger] = []
-        self.chargers_data: List[ProductData] = []
-        self.equalizers: List[Equalizer] = []
-        self.equalizers_data: List[ProductData] = []
+        self.sites: list[Site] = []
+        self.circuits: list[Circuit] = []
+        self.chargers: list[Charger] = []
+        self.chargers_data: list[ProductData] = []
+        self.equalizers: list[Equalizer] = []
+        self.equalizers_data: list[ProductData] = []
         self.binary_sensor_entities = []
         self.switch_entities = []
         self.sensor_entities = []
@@ -412,6 +417,7 @@ class Controller:
         self._init_count = 0
 
     def __del__(self):
+        """Log deletion."""
         _LOGGER.debug("Controller deleted")
 
     async def cleanup(self):
@@ -454,7 +460,7 @@ class Controller:
             return None
 
         try:
-            self.sites: List[Site] = await self.easee.get_account_products()
+            self.sites: list[Site] = await self.easee.get_account_products()
             self.diagnostics["sites"] = self.sites
 
             self.monitored_sites = self.config.options.get(
@@ -522,7 +528,7 @@ class Controller:
             raise ConfigEntryNotReady from err
 
     async def stream_callback(self, idx, data_type, data_id, value):
-        """The stream callback."""
+        """Handle the he stream callback."""
         all_data = self.chargers_data + self.equalizers_data
 
         for data in all_data:
@@ -558,7 +564,7 @@ class Controller:
             entity.data.mark_clean()
 
     async def add_schedulers(self):
-        """Add schedules to update data"""
+        """Add schedules to update data."""
         # first update
         await self.refresh_sites_state()
         await self.refresh_equalizers_state()
@@ -619,7 +625,7 @@ class Controller:
             await self.easee.sr_subscribe(charger, self.stream_callback)
 
     async def refresh_midnight(self, now=None):
-        """Refreshes the cost data"""
+        """Refresh the cost data."""
         _LOGGER.debug("Midnight refresh started")
         for charger in self.chargers_data:
             await charger.cost_async_refresh()
@@ -631,7 +637,7 @@ class Controller:
         self.update_ha_state()
 
     async def refresh_schedules(self, now=None):
-        """Refreshes the charging schedules data"""
+        """Refresh the charging schedules data."""
         for charger in self.chargers_data:
             if charger.is_schedule_polled() and self.easee.sr_is_connected():
                 continue
@@ -640,7 +646,7 @@ class Controller:
         self.update_ha_state()
 
     async def refresh_sites_state(self, now=None):
-        """gets site state for all sites and updates the chargers state and config"""
+        """Get site state for all sites and updates the chargers state and config."""
 
         for charger_data in self.chargers_data:
             charger_data.set_signalr_state(self.easee.sr_is_connected())
@@ -655,7 +661,7 @@ class Controller:
         self.update_ha_state()
 
     async def refresh_equalizers_state(self, now=None):
-        """gets equalizer state for all equalizers"""
+        """Get equalizer state for all equalizers."""
 
         for equalizer_data in self.equalizers_data:
             equalizer_data.set_signalr_state(self.easee.sr_is_connected())
