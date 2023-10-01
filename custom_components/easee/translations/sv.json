@@ -212,6 +212,12 @@
       }
     }
   },
+  "issues": {
+    "deprecated_service": {
+      "description": "",
+      "title": ""
+    }
+  },
   "options": {
     "error": {
       "no_sites": "Ingen monitorerad plats vald"
@@ -228,6 +234,13 @@
         "description": "Välj inställningar",
         "title": "Easee EV Charger"
       }
+    }
+  },
+  "system_health": {
+    "info": {
+      "component_version": "",
+      "connected2stream": "",
+      "reach_easee_cloud": ""
     }
   },
   "title": "Easee EV Charger"
