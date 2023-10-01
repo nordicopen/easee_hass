@@ -214,8 +214,8 @@
   },
   "issues": {
     "deprecated_service": {
-      "description": "Utilizarea serviciului **{deprecation}** este depasit/indisponibil, iar serviciul va fi eliminat în viitor. Va rugm sa va convertiti automatizările si scripturile pentru a utiliza **{recommend}** cat mai curand posibil",
-      "title": "Utilizarea unui serviciu depasit/indisponibil: {deprecation}"
+      "description": "Utilizarea serviciului **{deprecation}** este depasit\/indisponibil, iar serviciul va fi eliminat în viitor. Va rugm sa va convertiti automatizările si scripturile pentru a utiliza **{recommend}** cat mai curand posibil",
+      "title": "Utilizarea unui serviciu depasit\/indisponibil: {deprecation}"
     }
   },
   "options": {
