@@ -105,7 +105,7 @@ To handle submission of translations we are using [Lokalise](https://lokalise.co
 
 To help out with the translation of Miele integration  you need an account on Lokalise, the easiest way to get one is to [click here](https://lokalise.com/login/)  then select "Log in with GitHub".
 
-When you have created the account, the [click here](https://app.lokalise.com/public/50153460650965e9a01e21.29484567/) to join the project. If you want to add a new language, please open an issue.
+When you have created the account, the [click here](https://app.lokalise.com/public/3637181265197452b3dc34.70096810/) to join the project. If you want to add a new language, please open an issue.
 
 The translations are pulled when a new release of the integration is prepared. So you must wait until there is a new release until your look for your updates.
 
