@@ -12,3 +12,5 @@ ln -s custom_components/easee/services.yaml .
 ln -s custom_components/easee/switch.py .
 ln -s custom_components/easee/system_health.py .
 ln -s custom_components/easee/translations .
+ln -s custom_components/easee/device_condition.py .
+ln -s custom_components/easee/device_trigger.py .

@@ -28,6 +28,59 @@
       }
     }
   },
+  "device_automation": {
+    "action_type": {},
+    "condition_type": {
+      "authenticating": "{entity_name} is authenticating",
+      "awaiting_authentication": "{entity_name} is waiting for authentication",
+      "awaiting_authorization": "{entity_name} is waiting for authorization",
+      "awaiting_load_balancing": "{entity_name} is waiting for load balancing",
+      "awaiting_scheduled_start": "{entity_name} is waiting for scheduled start",
+      "awaiting_smart_start": "{entity_name} is waiting for smart start",
+      "awaiting_start": "{entity_name} is awaiting start",
+      "charging": "{entity_name} is charging",
+      "completed": "{entity_name} is completed",
+      "de_authorizing": "{entity_name} is closing authorization",
+      "disconnected": "{entity_name} is car disconnected",
+      "erratic_ev": "{entity_name} is erratic EV",
+      "error": "{entity_name} is error",
+      "error_dead_powerboard": "{entity_name} is error Dead powerboard",
+      "error_overcurrent": "{entity_name} is error Overcurrent",
+      "error_pen_fault": "{entity_name} is error PEN fault",
+      "error_temperature_too_high": "{entity_name} is error Temperature too high",
+      "offline": "{entity_name} is offline",
+      "paused_due_to_equalizer": "{entity_name} is paused due to Equalizer",
+      "ready_to_charge": "{entity_name} is ready to charge",
+      "searching_for_master": "{entity_name} is searching for master",
+      "start_charging": "{entity_name} is start charging",
+      "stop_charging": "{entity_name} is stop charging"
+    },
+    "trigger_type": {
+      "authenticating": "{entity_name} Authenticating",
+      "awaiting_authentication": "{entity_name} Waiting for authentication",
+      "awaiting_authorization": "{entity_name} Waiting for authorization",
+      "awaiting_load_balancing": "{entity_name} Waiting for load balancing",
+      "awaiting_scheduled_start": "{entity_name} Waiting for scheduled start",
+      "awaiting_smart_start": "{entity_name} Waiting for smart start",
+      "awaiting_start": "{entity_name} Awaiting start",
+      "charging": "{entity_name} Charging",
+      "completed": "{entity_name} Completed",
+      "de_authorizing": "{entity_name} Closing authorization",
+      "disconnected": "{entity_name} Car disconnected",
+      "erratic_ev": "{entity_name} Erratic EV",
+      "error": "{entity_name} Error",
+      "error_dead_powerboard": "{entity_name} Error Dead powerboard",
+      "error_overcurrent": "{entity_name} Error Overcurrent",
+      "error_pen_fault": "{entity_name} Error PEN fault",
+      "error_temperature_too_high": "{entity_name} Error Temperature too high",
+      "offline": "{entity_name} Offline",
+      "paused_due_to_equalizer": "{entity_name} Paused due to Equalizer",
+      "ready_to_charge": "{entity_name} Ready to charge",
+      "searching_for_master": "{entity_name} Searching for master",
+      "start_charging": "{entity_name} Start charging",
+      "stop_charging": "{entity_name} Stop charging"
+    }
+  },
   "entity": {
     "binary_sensor": {
       "basic_schedule": {
