@@ -21,11 +21,6 @@ from homeassistant.helpers.typing import ConfigType
 
 from .const import DOMAIN, EASEE_STATUS
 
-TURNED_DISCONNECTED = "disconnected"
-TURNED_AWAITING_START = "awaiting_start"
-TURNED_CHARGING = "charging"
-TURNED_COMPLETED = "completed"
-
 TRIGGER_TYPES = list(EASEE_STATUS.values())
 
 TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
