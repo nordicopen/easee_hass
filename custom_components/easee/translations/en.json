@@ -29,7 +29,15 @@
     }
   },
   "device_automation": {
-    "action_type": {},
+    "action_type": {
+      "override_schedule": "Override schedule",
+      "pause": "Pause charging",
+      "reboot": "Reboot charger",
+      "resume": "Resume charging",
+      "start": "Start charging",
+      "stop": "Stop charging",
+      "toggle": "Toggle charging"
+    },
     "condition_type": {
       "authenticating": "{entity_name} is authenticating",
       "awaiting_authentication": "{entity_name} is waiting for authentication",
