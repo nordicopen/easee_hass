@@ -119,6 +119,7 @@ class ChargerEntity(Entity):
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self.data.product.id)},
+            serial_number=self.data.product.id,
             name=self.data.product.name,
             manufacturer="Easee",
             model=EASEE_PRODUCT_CODES.get(product_code, f"productCode: {product_code}"),

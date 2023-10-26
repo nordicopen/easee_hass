@@ -67,6 +67,7 @@ class EqualizerSensor(ChargerEntity, SensorEntity):
         """Return the device information."""
         return DeviceInfo(
             identifiers={(DOMAIN, self.data.product.id)},
+            serial_number=self.data.product.id,
             name=self.data.product.name,
             manufacturer=MANUFACTURER,
             model=MODEL_EQUALIZER,
