@@ -1,7 +1,8 @@
 {
   "config": {
     "abort": {
-      "already_setup": "You can only configure a single Easee connection."
+      "already_setup": "You can only configure a single Easee connection.",
+      "reauth_successful": "Reauthentication successful."
     },
     "error": {
       "auth_failure": "Unable to connect to Easee. Check your username and password.",
@@ -11,6 +12,13 @@
       "refused_failure": "Connection refused to Easee. Test again later."
     },
     "step": {
+      "reauth_confirm": {
+        "data": {
+          "password": "Password"
+        },
+        "description": "The Easee integration needs to reauthenticate your account.",
+        "title": "Re-authenticate with Easee"
+      },
       "sites": {
         "data": {
           "monitored_sites": "Sites"

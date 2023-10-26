@@ -6,6 +6,7 @@ from awesomeversion import AwesomeVersion
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .const import DOMAIN, LISTENER_FN_CLOSE, MIN_HA_VERSION, PLATFORMS, VERSION
 from .controller import Controller
@@ -36,8 +37,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
 
-    controller = Controller(username, password, hass, entry)
-    await controller.initialize()
+    try:
+        controller = Controller(username, password, hass, entry)
+        await controller.initialize()
+    except ConfigEntryAuthFailed as err:
+        raise ConfigEntryAuthFailed from err
+
     hass.data[DOMAIN]["controller"] = controller
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
