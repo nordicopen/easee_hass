@@ -75,6 +75,7 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
         return self.async_show_form(
             step_id="reauth_confirm",
             data_schema=vol.Schema({vol.Required(CONF_PASSWORD): str}),
+            description_placeholders={"username": self.entry.data[CONF_USERNAME]},
             errors=errors,
         )
 

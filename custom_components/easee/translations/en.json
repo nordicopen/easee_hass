@@ -16,7 +16,7 @@
         "data": {
           "password": "Password"
         },
-        "description": "The Easee integration needs to reauthenticate your account.",
+        "description": "The Easee integration needs to re-authenticate the account {username}.",
         "title": "Re-authenticate with Easee"
       },
       "sites": {
