@@ -454,11 +454,11 @@ class Controller:
             _LOGGER.debug("Easee server too many requests")
             raise ConfigEntryNotReady from err
         except AuthorizationFailedException as err:
-            _LOGGER.error("Authorization failed to easee #1")
+            _LOGGER.error("Authorization failed to Easee")
             raise ConfigEntryAuthFailed from err
         except BadRequestException as err:
             if err.args[0]["errorCode"] == 100:
-                _LOGGER.error("Authorization failed to easee #2")
+                _LOGGER.error("Authorization (username/password) failed to Easee")
                 raise ConfigEntryAuthFailed from err
             else:
                 _LOGGER.error("Bad request %s", err)
