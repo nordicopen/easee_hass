@@ -102,7 +102,7 @@ before pushing your changes.
 ## Translation
 To handle submission of translations we are using [Lokalise](https://lokalise.com/login/). They provide us with an amazing platform that is easy to use and maintain.
 
-To help out with the translation of Miele integration  you need an account on Lokalise, the easiest way to get one is to [click here](https://lokalise.com/login/)  then select "Log in with GitHub".
+To help out with the translation of Easee integration  you need an account on Lokalise, the easiest way to get one is to [click here](https://lokalise.com/login/)  then select "Log in with GitHub".
 
 When you have created the account, the [click here](https://app.lokalise.com/public/3637181265197452b3dc34.70096810/) to join the project. If you want to add a new language, please open an issue.
 
