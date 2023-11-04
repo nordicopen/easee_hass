@@ -214,7 +214,7 @@
   },
   "issues": {
     "deprecated_service": {
-      "description": "Het gebruik van de service **{deprecation}** is verouderd en zal in de toekomst worden verwijderd.\n\nPas je automatiseringen en scripts z.s.m. aan om gebruik te maken van **{recommend}**",
+      "description": "Het gebruik van de service **{deprecation}** is verouderd en zal in de toekomst worden verwijderd.\\n\\nPas je automatiseringen en scripts z.s.m. aan om gebruik te maken van **{recommend}**",
       "title": "Verouderde service gebruikt: {deprecation}"
     }
   },
