@@ -5,7 +5,7 @@ import logging
 from typing import Any, Optional
 
 from aiohttp import ClientConnectionError
-from pyeasee import AuthorizationFailedException, Easee, Site
+from pyeasee import AuthorizationFailedException, BadRequestException, Easee, Site
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -32,12 +32,52 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
 
         self.sites = {}
         self.data = {}
+        self.entry = {}
 
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
         """Get the options flow for this handler."""
         return OptionsFlowHandler(config_entry)
+
+    async def async_step_reauth(self, entry_data) -> FlowResult:
+        """Perform reauth upon an API authentication error."""
+        self.entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Dialog that informs the user that reauth is required."""
+        errors = {}
+        if user_input is not None:
+            new_input = self.entry.data | user_input
+            try:
+                client_session = aiohttp_client.async_get_clientsession(self.hass)
+                easee = Easee(
+                    self.entry.data[CONF_USERNAME],
+                    user_input[CONF_PASSWORD],
+                    client_session,
+                )
+                await easee.connect()
+                self.hass.config_entries.async_update_entry(self.entry, data=new_input)
+                await self.hass.config_entries.async_reload(self.entry.entry_id)
+                return self.async_abort(reason="reauth_successful")
+            except (AuthorizationFailedException, BadRequestException):
+                errors["base"] = "auth_failure"
+
+            except ConnectionRefusedError:
+                errors["base"] = "refused_failure"
+
+            except ClientConnectionError:
+                errors["base"] = "connection_failure"
+
+        return self.async_show_form(
+            step_id="reauth_confirm",
+            data_schema=vol.Schema({vol.Required(CONF_PASSWORD): str}),
+            description_placeholders={"username": self.entry.data[CONF_USERNAME]},
+            errors=errors,
+        )
 
     async def async_step_user(self, user_input: Optional[ConfigType] = None):
         """Handle a flow start."""

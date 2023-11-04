@@ -22,6 +22,7 @@ from pyeasee import (
 )
 from pyeasee.exceptions import (
     AuthorizationFailedException,
+    BadRequestException,
     NotFoundException,
     ServerFailureException,
     TooManyRequestsException,
@@ -29,7 +30,7 @@ from pyeasee.exceptions import (
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady, Unauthorized
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.event import (
     async_track_time_change,
@@ -453,10 +454,16 @@ class Controller:
             _LOGGER.debug("Easee server too many requests")
             raise ConfigEntryNotReady from err
         except AuthorizationFailedException as err:
-            _LOGGER.error("Authorization failed to easee")
-            raise Unauthorized from err
-        except Exception:  # pylint: disable=broad-except
-            _LOGGER.error("Unexpected error creating device")
+            _LOGGER.error("Authorization failed to Easee")
+            raise ConfigEntryAuthFailed from err
+        except BadRequestException as err:
+            if err.args[0]["errorCode"] == 100:
+                _LOGGER.error("Authorization (username/password) failed to Easee")
+                raise ConfigEntryAuthFailed from err
+            else:
+                _LOGGER.error("Bad request %s", err)
+        except Exception as err:  # pylint: disable=broad-except
+            _LOGGER.exception("Unexpected error creating device: %s", err)
             return None
 
         try:
