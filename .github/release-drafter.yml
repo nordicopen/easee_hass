@@ -19,7 +19,7 @@ categories:
     labels:
       - "dependency"
   - title: "Code quality and maintenance"
-    labels: 
+    labels:
       - "maintenance"
       - "code quality"
 
@@ -29,7 +29,7 @@ change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 
 template: |
-  [![Downloads for this release](https://img.shields.io/github/downloads/fondberg/easee_hass/v$RESOLVED_VERSION/total.svg)](https://github.com/fondberg/easee_hass/releases/v$RESOLVED_VERSION)
+  [![Downloads for this release](https://img.shields.io/github/downloads/nordicopen/easee_hass/v$RESOLVED_VERSION/total.svg)](https://github.com/nordicopen/easee_hass/releases/v$RESOLVED_VERSION)
 
   ### Don't forget to run `make lint` and `make bump` before releasing new version
 

@@ -1,6 +1,5 @@
-[![easee_hass](https://img.shields.io/github/release/fondberg/easee_hass.svg?1)](https://github.com/fondberg/easee_hass) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration) ![Validate with hassfest](https://github.com/fondberg/easee_hass/workflows/Validate%20with%20hassfest/badge.svg) ![Maintenance](https://img.shields.io/maintenance/yes/2023.svg) [![Easee_downloads](https://img.shields.io/github/downloads/fondberg/easee_hass/total)](https://github.com/fondberg/easee_hass) [![easee_hass_downloads](https://img.shields.io/github/downloads/fondberg/easee_hass/latest/total)](https://github.com/fondberg/easee_hass)
+[![easee_hass](https://img.shields.io/github/release/nordicopen/easee_hass.svg?1)](https://github.com/nordicopen/easee_hass) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration) ![Validate with hassfest](https://github.com/nordicopen/easee_hass/workflows/Validate%20with%20hassfest/badge.svg) ![Maintenance](https://img.shields.io/maintenance/yes/2023.svg) [![Easee_downloads](https://img.shields.io/github/downloads/nordicopen/easee_hass/total)](https://github.com/nordicopen/easee_hass) [![easee_hass_downloads](https://img.shields.io/github/downloads/nordicopen/easee_hass/latest/total)](https://github.com/nordicopen/easee_hass)
 
-[![Buy me a coffee](https://img.shields.io/static/v1.svg?label=Buy%20me%20a%20coffee&message=🥨&color=black&logo=buy%20me%20a%20coffee&logoColor=white&labelColor=6f4e37)](https://www.buymeacoffee.com/fondberg)
 
 # Easee EV charger component for Home Assistant
 
@@ -16,7 +15,7 @@ ready_to_charge
 completed
 error
 ```
-Some of the other non-common sensors like Current and Voltage are disabled by default (shown as "unavailable"). They can be enabled in the HA GUI via Integrations->[Easee Name]->Devices->[Easee Equilizer Name] and under Diagnostic click on Current/Voltage->gear_icon and then Enable it. Each of these sensors has also attributes which contain values like current and voltage per phase. See [#271](https://github.com/fondberg/easee_hass/issues/271) on how to use these attributes.
+Some of the other non-common sensors like Current and Voltage are disabled by default (shown as "unavailable"). They can be enabled in the HA GUI via Integrations->[Easee Name]->Devices->[Easee Equilizer Name] and under Diagnostic click on Current/Voltage->gear_icon and then Enable it. Each of these sensors has also attributes which contain values like current and voltage per phase. See [#271](https://github.com/nordicopen/easee_hass/issues/271) on how to use these attributes.
 
 ## Installation
 
@@ -33,7 +32,7 @@ There are 2 different methods of installing the custom component
 1. Make sure you have git installed on your machine.
 2. Navigate to you home assistant configuration folder.
 3. Create a `custom_components` folder of it does not exist, navigate down into it after creation.
-4. Execute the following command: `git clone https://github.com/fondberg/easee_hass.git easee`
+4. Execute the following command: `git clone https://github.com/nordicopen/easee_hass.git easee`
 5. Run `bash links.sh`
 
 ## Monitored chargers/equalizers
@@ -111,7 +110,10 @@ The translations are pulled when a new release of the integration is prepared. S
 
 If you want to add new elements that needs translation you should enter them in /translations/en.json and submit a PR. The new keys will appear in Lokalise when the PR is merged.
 
-## Support and cooperation
-This project is supported by
+## Attribution, support and cooperation
+
+This project was started by the late Niklas Fondberg, @fondberg. The repository has been inherited by his collaborators.
+
+The project is supported by
 
 [<img src="https://raw.githubusercontent.com/astrandb/documents/fef0776bbb7924e0253b9755d7928631fb19d5c7/img/Lokalise_logo_colour_black_text.svg" width=120>](https://lokalise.com)
