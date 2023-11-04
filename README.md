@@ -110,7 +110,10 @@ The translations are pulled when a new release of the integration is prepared. S
 
 If you want to add new elements that needs translation you should enter them in /translations/en.json and submit a PR. The new keys will appear in Lokalise when the PR is merged.
 
-## Support and cooperation
-This project is supported by
+## Attribution, support and cooperation
+
+This project was started by the late Niklas Fondberg, @fondberg. The repository has been inherited by his collaborators.
+
+The project is supported by
 
 [<img src="https://raw.githubusercontent.com/astrandb/documents/fef0776bbb7924e0253b9755d7928631fb19d5c7/img/Lokalise_logo_colour_black_text.svg" width=120>](https://lokalise.com)
