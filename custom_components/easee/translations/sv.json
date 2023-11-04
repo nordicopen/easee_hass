@@ -1,7 +1,8 @@
 {
   "config": {
     "abort": {
-      "already_setup": "Endast en anslutning för Easee kan konfigureras."
+      "already_setup": "Endast en anslutning för Easee kan konfigureras.",
+      "reauth_successful": "Återautentisering lyckades."
     },
     "error": {
       "auth_failure": "Autentisering misslyckades. Kontrollera användarnamn och lösenord.",
@@ -25,6 +26,13 @@
         },
         "description": "Ange användarnamn och lösenord för ditt Easee-konto",
         "title": "Anslut till Easee"
+      },
+      "reauth_confirm": {
+        "data": {
+          "password": "Lösenord"
+        },
+        "description": "Easee-integrationen måste autentisera kontot {username} igen.",
+        "title": "Identifiera dig på nytt med Easee"
       }
     }
   },
@@ -122,7 +130,7 @@
           "awaiting_smart_start": "Väntar på smart start",
           "awaiting_start": "Väntar på start",
           "charging": "Laddar",
-          "completed": "Klar",
+          "completed": "Slutförd",
           "de_authorizing": "Avslutar godkännande",
           "disconnected": "Fordon ej anslutet",
           "erratic_ev": "Fel i fordon",
@@ -212,6 +220,12 @@
       }
     }
   },
+  "issues": {
+    "deprecated_service": {
+      "description": "Tjänsten **{deprecation}** är utfasad och kommer att tas bort i framtiden. \\n\\nVänligen konvertera automationer och skript till att använda **{recommend}** så snart som möjligt",
+      "title": "Användning av utfasad tjänst: {deprecation}"
+    }
+  },
   "options": {
     "error": {
       "no_sites": "Ingen monitorerad plats vald"
@@ -230,5 +244,73 @@
       }
     }
   },
-  "title": "Easee EV Charger"
+  "system_health": {
+    "info": {
+      "component_version": "Version",
+      "connected2stream": "Ansluten till signalr",
+      "reach_easee_cloud": "Kontakt med Easees molntjänst"
+    }
+  },
+  "title": "Easee EV Charger",
+  "device_automation": {
+    "action_type": {
+      "override_schedule": "Åsidosätt schema",
+      "pause": "Pausa laddningen",
+      "reboot": "Starta om laddaren",
+      "resume": "Återuppta laddningen",
+      "start": "Starta laddning",
+      "stop": "Stoppa laddning",
+      "toggle": "Växla laddning"
+    },
+    "condition_type": {
+      "authenticating": "{entity_name} autentiserar",
+      "awaiting_authentication": "{entity_name} väntar på autentisering",
+      "awaiting_authorization": "{entity_name} väntar på auktorisering",
+      "awaiting_load_balancing": "{entity_name} väntar på lastbalansering",
+      "awaiting_scheduled_start": "{entity_name} väntar på schemalagd start",
+      "awaiting_smart_start": "{entity_name} väntar på smart start",
+      "awaiting_start": "{entity_name} inväntar start",
+      "charging": "{entity_name} laddar",
+      "completed": "{entity_name} är slutförd",
+      "de_authorizing": "{entity_name} stänger auktorisationen",
+      "disconnected": "{entity_name} bilen är frånkopplad",
+      "erratic_ev": "{entity_name} visar fel i fordon",
+      "error": "{entity_name} visar fel",
+      "error_dead_powerboard": "{entity_name} visar fel Trasigt kretskort",
+      "error_overcurrent": "{entity_name} visar fel För hög ström",
+      "error_pen_fault": "{entity_name} visar fel Jord-fel",
+      "error_temperature_too_high": "{entity_name} visar fel Temperatur för hög",
+      "offline": "{entity_name} är offline",
+      "paused_due_to_equalizer": "{entity_name} är pausad på grund av Equalizer",
+      "ready_to_charge": "{entity_name} är redo att ladda",
+      "searching_for_master": "{entity_name} söker efter master",
+      "start_charging": "{entity_name} är i Starta laddning",
+      "stop_charging": "{entity_name} är i  Stoppa laddning"
+    },
+    "trigger_type": {
+      "authenticating": "{entity_name} Autentiserar",
+      "awaiting_authentication": "{entity_name} Väntar på autentisering",
+      "awaiting_authorization": "{entity_name} Väntar på auktorisation",
+      "awaiting_load_balancing": "{entity_name} Väntar på lastbalansering",
+      "awaiting_scheduled_start": "{entity_name} Väntar på schemalagd start",
+      "awaiting_smart_start": "{entity_name} Väntar på smart start",
+      "awaiting_start": "{entity_name} Väntar på start",
+      "charging": "{entity_name} Laddar",
+      "completed": "{entity_name} Slutförd",
+      "de_authorizing": "{entity_name} Stänger auktorisation",
+      "disconnected": "{entity_name} Bil bortkopplad",
+      "erratic_ev": "{entity_name} Fel i fordon",
+      "error": "{entity_name} Fel",
+      "error_dead_powerboard": "{entity_name} Fel Trasigt kretskort",
+      "error_overcurrent": "{entity_name} Fel För hög ström",
+      "error_pen_fault": "{entity_name} Fel Jordfel",
+      "error_temperature_too_high": "{entity_name} Fel För hög temperatur",
+      "offline": "{entity_name} Offline",
+      "paused_due_to_equalizer": "{entity_name} Pausad pga Equalizer",
+      "ready_to_charge": "{entity_name} Redo att ladda",
+      "searching_for_master": "{entity_name} Söker master-enhet",
+      "start_charging": "{entity_name} Starta laddning",
+      "stop_charging": "{entity_name} Stoppa laddning"
+    }
+  }
 }

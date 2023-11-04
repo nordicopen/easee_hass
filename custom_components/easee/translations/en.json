@@ -12,13 +12,6 @@
       "refused_failure": "Connection refused to Easee. Test again later."
     },
     "step": {
-      "reauth_confirm": {
-        "data": {
-          "password": "Password"
-        },
-        "description": "The Easee integration needs to re-authenticate the account {username}.",
-        "title": "Re-authenticate with Easee"
-      },
       "sites": {
         "data": {
           "monitored_sites": "Sites"
@@ -33,68 +26,14 @@
         },
         "description": "Please enter the username and password for your Easee account",
         "title": "Connect to Easee"
+      },
+      "reauth_confirm": {
+        "data": {
+          "password": "Password"
+        },
+        "description": "The Easee integration needs to re-authenticate the account {username}.",
+        "title": "Re-authenticate with Easee"
       }
-    }
-  },
-  "device_automation": {
-    "action_type": {
-      "override_schedule": "Override schedule",
-      "pause": "Pause charging",
-      "reboot": "Reboot charger",
-      "resume": "Resume charging",
-      "start": "Start charging",
-      "stop": "Stop charging",
-      "toggle": "Toggle charging"
-    },
-    "condition_type": {
-      "authenticating": "{entity_name} is authenticating",
-      "awaiting_authentication": "{entity_name} is waiting for authentication",
-      "awaiting_authorization": "{entity_name} is waiting for authorization",
-      "awaiting_load_balancing": "{entity_name} is waiting for load balancing",
-      "awaiting_scheduled_start": "{entity_name} is waiting for scheduled start",
-      "awaiting_smart_start": "{entity_name} is waiting for smart start",
-      "awaiting_start": "{entity_name} is awaiting start",
-      "charging": "{entity_name} is charging",
-      "completed": "{entity_name} is completed",
-      "de_authorizing": "{entity_name} is closing authorization",
-      "disconnected": "{entity_name} is car disconnected",
-      "erratic_ev": "{entity_name} is erratic EV",
-      "error": "{entity_name} is error",
-      "error_dead_powerboard": "{entity_name} is error Dead powerboard",
-      "error_overcurrent": "{entity_name} is error Overcurrent",
-      "error_pen_fault": "{entity_name} is error PEN fault",
-      "error_temperature_too_high": "{entity_name} is error Temperature too high",
-      "offline": "{entity_name} is offline",
-      "paused_due_to_equalizer": "{entity_name} is paused due to Equalizer",
-      "ready_to_charge": "{entity_name} is ready to charge",
-      "searching_for_master": "{entity_name} is searching for master",
-      "start_charging": "{entity_name} is start charging",
-      "stop_charging": "{entity_name} is stop charging"
-    },
-    "trigger_type": {
-      "authenticating": "{entity_name} Authenticating",
-      "awaiting_authentication": "{entity_name} Waiting for authentication",
-      "awaiting_authorization": "{entity_name} Waiting for authorization",
-      "awaiting_load_balancing": "{entity_name} Waiting for load balancing",
-      "awaiting_scheduled_start": "{entity_name} Waiting for scheduled start",
-      "awaiting_smart_start": "{entity_name} Waiting for smart start",
-      "awaiting_start": "{entity_name} Awaiting start",
-      "charging": "{entity_name} Charging",
-      "completed": "{entity_name} Completed",
-      "de_authorizing": "{entity_name} Closing authorization",
-      "disconnected": "{entity_name} Car disconnected",
-      "erratic_ev": "{entity_name} Erratic EV",
-      "error": "{entity_name} Error",
-      "error_dead_powerboard": "{entity_name} Error Dead powerboard",
-      "error_overcurrent": "{entity_name} Error Overcurrent",
-      "error_pen_fault": "{entity_name} Error PEN fault",
-      "error_temperature_too_high": "{entity_name} Error Temperature too high",
-      "offline": "{entity_name} Offline",
-      "paused_due_to_equalizer": "{entity_name} Paused due to Equalizer",
-      "ready_to_charge": "{entity_name} Ready to charge",
-      "searching_for_master": "{entity_name} Searching for master",
-      "start_charging": "{entity_name} Start charging",
-      "stop_charging": "{entity_name} Stop charging"
     }
   },
   "entity": {
@@ -283,7 +222,7 @@
   },
   "issues": {
     "deprecated_service": {
-      "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\n\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
+      "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\\n\\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
       "title": "Use of deprecated service: {deprecation}"
     }
   },
@@ -312,5 +251,66 @@
       "reach_easee_cloud": "Reach Easee Cloud"
     }
   },
-  "title": "Easee EV Charger"
+  "title": "Easee EV Charger",
+  "device_automation": {
+    "action_type": {
+      "override_schedule": "Override schedule",
+      "pause": "Pause charging",
+      "reboot": "Reboot charger",
+      "resume": "Resume charging",
+      "start": "Start charging",
+      "stop": "Stop charging",
+      "toggle": "Toggle charging"
+    },
+    "condition_type": {
+      "authenticating": "{entity_name} is authenticating",
+      "awaiting_authentication": "{entity_name} is waiting for authentication",
+      "awaiting_authorization": "{entity_name} is waiting for authorization",
+      "awaiting_load_balancing": "{entity_name} is waiting for load balancing",
+      "awaiting_scheduled_start": "{entity_name} is waiting for scheduled start",
+      "awaiting_smart_start": "{entity_name} is waiting for smart start",
+      "awaiting_start": "{entity_name} is awaiting start",
+      "charging": "{entity_name} is charging",
+      "completed": "{entity_name} is completed",
+      "de_authorizing": "{entity_name} is closing authorization",
+      "disconnected": "{entity_name} is car disconnected",
+      "erratic_ev": "{entity_name} is erratic EV",
+      "error": "{entity_name} is error",
+      "error_dead_powerboard": "{entity_name} is error Dead powerboard",
+      "error_overcurrent": "{entity_name} is error Overcurrent",
+      "error_pen_fault": "{entity_name} is error PEN fault",
+      "error_temperature_too_high": "{entity_name} is error Temperature too high",
+      "offline": "{entity_name} is offline",
+      "paused_due_to_equalizer": "{entity_name} is paused due to Equalizer",
+      "ready_to_charge": "{entity_name} is ready to charge",
+      "searching_for_master": "{entity_name} is searching for master",
+      "start_charging": "{entity_name} is start charging",
+      "stop_charging": "{entity_name} is stop charging"
+    },
+    "trigger_type": {
+      "authenticating": "{entity_name} Authenticating",
+      "awaiting_authentication": "{entity_name} Waiting for authentication",
+      "awaiting_authorization": "{entity_name} Waiting for authorization",
+      "awaiting_load_balancing": "{entity_name} Waiting for load balancing",
+      "awaiting_scheduled_start": "{entity_name} Waiting for scheduled start",
+      "awaiting_smart_start": "{entity_name} Waiting for smart start",
+      "awaiting_start": "{entity_name} Awaiting start",
+      "charging": "{entity_name} Charging",
+      "completed": "{entity_name} Completed",
+      "de_authorizing": "{entity_name} Closing authorization",
+      "disconnected": "{entity_name} Car disconnected",
+      "erratic_ev": "{entity_name} Erratic EV",
+      "error": "{entity_name} Error",
+      "error_dead_powerboard": "{entity_name} Error Dead powerboard",
+      "error_overcurrent": "{entity_name} Error Overcurrent",
+      "error_pen_fault": "{entity_name} Error PEN fault",
+      "error_temperature_too_high": "{entity_name} Error Temperature too high",
+      "offline": "{entity_name} Offline",
+      "paused_due_to_equalizer": "{entity_name} Paused due to Equalizer",
+      "ready_to_charge": "{entity_name} Ready to charge",
+      "searching_for_master": "{entity_name} Searching for master",
+      "start_charging": "{entity_name} Start charging",
+      "stop_charging": "{entity_name} Stop charging"
+    }
+  }
 }
