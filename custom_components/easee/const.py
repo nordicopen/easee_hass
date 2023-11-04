@@ -877,6 +877,8 @@ EASEE_EQ_ENTITIES = {
     },
 }
 
+# When adding or modifying this dict remember to update state,
+# device_triggers and device_conditions in en.json
 EASEE_STATUS = {
     1: "disconnected",
     2: "awaiting_start",
