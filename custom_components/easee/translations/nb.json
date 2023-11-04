@@ -214,7 +214,7 @@
   },
   "issues": {
     "deprecated_service": {
-      "description": "Tjenesten **{deprecation}** er utdatert is deprecated og vil bli fjernet i framtiden.\n\nKonverter dine automasjoner og skript til å bruke **{recommend}** snarest mulig",
+      "description": "Tjenesten **{deprecation}** er utdatert is deprecated og vil bli fjernet i framtiden.\\n\\nKonverter dine automasjoner og skript til å bruke **{recommend}** snarest mulig",
       "title": "Utdatert tjeneste: {deprecation}"
     }
   },

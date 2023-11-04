@@ -214,7 +214,7 @@
   },
   "issues": {
     "deprecated_service": {
-      "description": "Der verwendete Dienst **{deprecation}** ist veraltet und wird in Zukunft entfernt werden.\n\nBitte passen Sie Ihre Automatisierungen und Skripte zur Verwendung von **{recommend}** so bald wie möglich an.",
+      "description": "Der verwendete Dienst **{deprecation}** ist veraltet und wird in Zukunft entfernt werden.\\n\\nBitte passen Sie Ihre Automatisierungen und Skripte zur Verwendung von **{recommend}** so bald wie möglich an.",
       "title": "Verwendung eines veralteten Dienstes: {deprecation}"
     }
   },

@@ -214,7 +214,7 @@
   },
   "issues": {
     "deprecated_service": {
-      "description": "**{deprecation}** þjónustan er úrelt og mun vera fjarlægt í framtíðinni.\n\nVinsamlegast aðlagðu alla sjálfvirknisreglur og skriftur til að nota **{recommend}** eins fljótt og mögulegt er.",
+      "description": "**{deprecation}** þjónustan er úrelt og mun vera fjarlægt í framtíðinni.\\n\\nVinsamlegast aðlagðu alla sjálfvirknisreglur og skriftur til að nota **{recommend}** eins fljótt og mögulegt er.",
       "title": "Notkun á úrelta þjónustu: {deprecation}"
     }
   },
