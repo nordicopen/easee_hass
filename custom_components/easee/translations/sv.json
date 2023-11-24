@@ -276,6 +276,9 @@
       "is_enabled": {
         "name": "Laddare aktiverad"
       },
+      "smart_button": {
+        "name": "Touch-knapp aktiverad"
+      },
       "smart_charging": {
         "name": "Smart laddning"
       }
@@ -283,7 +286,7 @@
   },
   "issues": {
     "deprecated_service": {
-      "description": "Tjänsten **{deprecation}** är utfasad och kommer att tas bort i framtiden. \\n\\nVänligen konvertera automationer och skript till att använda **{recommend}** så snart som möjligt",
+      "description": "Tjänsten **{deprecation}** är utfasad och kommer att tas bort i framtiden. \n\nVänligen konvertera automationer och skript till att använda **{recommend}** så snart som möjligt",
       "title": "Användning av utfasad tjänst: {deprecation}"
     }
   },

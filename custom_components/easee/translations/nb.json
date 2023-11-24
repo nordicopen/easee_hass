@@ -1,7 +1,8 @@
 {
   "config": {
     "abort": {
-      "already_setup": "Du kan kun koble til en Easee konto."
+      "already_setup": "Du kan kun koble til en Easee konto.",
+      "reauth_successful": "Autentisering vellykket"
     },
     "error": {
       "auth_failure": "Kan ikke koble til Easee. Sjekk brukernavn og passord.",
@@ -11,6 +12,13 @@
       "refused_failure": "Tilkobling til Easee ble avvist. Prøv igjen senere."
     },
     "step": {
+      "reauth_confirm": {
+        "data": {
+          "password": "Passord"
+        },
+        "description": "Easee-integrasjonen må autentisere på nytt med kontoen for {username}",
+        "title": "Autentiser på nytt med Easee"
+      },
       "sites": {
         "data": {
           "monitored_sites": "Lokasjoner"
@@ -26,6 +34,35 @@
         "description": "Vennligst fyll ut brukernavn og passord for din Easee-konto.",
         "title": "Koble til Easee"
       }
+    }
+  },
+  "device_automation": {
+    "action_type": {
+      "override_schedule": "Overstyr tidsplan",
+      "pause": "Sett ladingen på pause",
+      "reboot": "Start laderen på nytt",
+      "resume": "Gjenoppta lading",
+      "start": "Start lading",
+      "stop": "Stopp ladingen"
+    },
+    "condition_type": {
+      "authenticating": "{entity_name} autoriserer",
+      "awaiting_authentication": "{entity_name} venter på godkjenning",
+      "awaiting_authorization": "{entity_name} venter på autorisasjon",
+      "awaiting_load_balancing": "{entity_name} venter på lastbalansering"
+    },
+    "trigger_type": {
+      "awaiting_load_balancing": "{entity_name} Satt på pause grunnet lastbalansering",
+      "charging": "{entity_name} Lader",
+      "disconnected": "{entity_name} Bil frakoblet",
+      "error": "{entity_name} Feil",
+      "error_temperature_too_high": "{entity_name} Feil: Temperaturen er for høy",
+      "offline": "{entity_name} frakoblet",
+      "paused_due_to_equalizer": "{entity_name} satt på pause på grunn av Equalizer",
+      "ready_to_charge": "{entity_name} Klar til å lade",
+      "searching_for_master": "{entity_name} søker etter hovedenhet",
+      "start_charging": "{entity_name} Start lading",
+      "stop_charging": "{entity_name} Stopp lading"
     }
   },
   "entity": {
@@ -214,7 +251,7 @@
   },
   "issues": {
     "deprecated_service": {
-      "description": "Tjenesten **{deprecation}** er utdatert is deprecated og vil bli fjernet i framtiden.\\n\\nKonverter dine automasjoner og skript til å bruke **{recommend}** snarest mulig",
+      "description": "Tjenesten **{deprecation}** er utdatert is deprecated og vil bli fjernet i framtiden.\n\nKonverter dine automasjoner og skript til å bruke **{recommend}** snarest mulig",
       "title": "Utdatert tjeneste: {deprecation}"
     }
   },
