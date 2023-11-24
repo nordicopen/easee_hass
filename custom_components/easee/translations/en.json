@@ -276,6 +276,9 @@
       "is_enabled": {
         "name": "Charger enabled"
       },
+      "smart_button": {
+        "name": "Smart button enabled"
+      },
       "smart_charging": {
         "name": "Smart charging"
       }
