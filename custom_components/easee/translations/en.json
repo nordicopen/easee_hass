@@ -17,7 +17,7 @@
           "password": "Password"
         },
         "description": "The Easee integration needs to re-authenticate the account {username}.",
-        "title": "Re-authenticate with Easee"
+        "title": "Reauthenticate with Easee"
       },
       "sites": {
         "data": {
@@ -277,7 +277,7 @@
         "name": "Charger enabled"
       },
       "smart_button": {
-        "name": "Smart button enabled"
+        "name": "Touch button enabled"
       },
       "smart_charging": {
         "name": "Smart charging"
@@ -286,7 +286,7 @@
   },
   "issues": {
     "deprecated_service": {
-      "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\\n\\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
+      "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\n\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
       "title": "Use of deprecated service: {deprecation}"
     }
   },

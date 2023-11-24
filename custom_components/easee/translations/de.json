@@ -1,7 +1,8 @@
 {
   "config": {
     "abort": {
-      "already_setup": "Sie können nur eine einzige Easee-Verbindung konfigurieren."
+      "already_setup": "Sie können nur eine einzige Easee-Verbindung konfigurieren.",
+      "reauth_successful": "Erneute Anmeldung erfolgreich."
     },
     "error": {
       "auth_failure": "Verbindung zu Easee nicht möglich. Prüfen Sie Username und Passwort.",
@@ -11,6 +12,13 @@
       "refused_failure": "Verbindung zu Easee abgelehnt. Versuchen Sie es später erneut."
     },
     "step": {
+      "reauth_confirm": {
+        "data": {
+          "password": "Passwort"
+        },
+        "description": "Die Easee Integration muss sich erneut mit dem Account {username} anmelden.",
+        "title": "Erneut bei Easee anmelden"
+      },
       "sites": {
         "data": {
           "monitored_sites": "Standorte"
@@ -26,6 +34,46 @@
         "description": "Bitte geben Sie Username und Passwort für Ihren Easee-Account an",
         "title": "Mit Easee verbinden"
       }
+    }
+  },
+  "device_automation": {
+    "action_type": {
+      "override_schedule": "Zeitplan überschreiben",
+      "pause": "Ladevorgang pausieren",
+      "reboot": "Charger neu starten",
+      "resume": "Ladevorgang fortsetzen",
+      "start": "Ladevorgang starten",
+      "stop": "Ladevorgang stoppen"
+    },
+    "condition_type": {
+      "searching_for_master": "{entity_name} ist Nach Master suchen",
+      "start_charging": "{entity_name} ist Ladevorgang starten",
+      "stop_charging": "{entity_name} ist Ladevorgang stoppen"
+    },
+    "trigger_type": {
+      "authenticating": "{entity_name} Authentifiziert",
+      "awaiting_authentication": "{entity_name} Wartet auf Authentifizierung",
+      "awaiting_authorization": "{entity_name} Wartet auf Autorisierung",
+      "awaiting_load_balancing": "{entity_name} Wartet auf Lastausgleich",
+      "awaiting_scheduled_start": "{entity_name} Wartet auf geplanten Start",
+      "awaiting_smart_start": "{entity_name} Wartet auf smarten Start",
+      "awaiting_start": "{entity_name} Wartet auf Start",
+      "charging": "{entity_name} Lädt",
+      "completed": "{entity_name} Abgeschlossen",
+      "de_authorizing": "{entity_name} Beendet Autorisierung",
+      "disconnected": "{entity_name} Kein Fahrzeug verbunden",
+      "erratic_ev": "{entity_name} Fehlerhaftes Fahrzeug",
+      "error": "{entity_name} Fehler",
+      "error_dead_powerboard": "{entity_name} Fehler defektes Powerboard",
+      "error_overcurrent": "{entity_name} Fehler Überspannung",
+      "error_pen_fault": "Fehler PEN-Versagen",
+      "error_temperature_too_high": "{entity_name} Fehler Temperatur zu hoch",
+      "offline": "{entity_name} Offline",
+      "paused_due_to_equalizer": "{entity_name} Wegen Equalizer pausiert",
+      "ready_to_charge": "{entity_name} Bereit zum Laden",
+      "searching_for_master": "{entity_name} Suche Master",
+      "start_charging": "{entity_name} Ladevorgang starten",
+      "stop_charging": "{entity_name} Ladevorgang stoppen"
     }
   },
   "entity": {
@@ -214,7 +262,7 @@
   },
   "issues": {
     "deprecated_service": {
-      "description": "Der verwendete Dienst **{deprecation}** ist veraltet und wird in Zukunft entfernt werden.\\n\\nBitte passen Sie Ihre Automatisierungen und Skripte zur Verwendung von **{recommend}** so bald wie möglich an.",
+      "description": "Der verwendete Dienst **{deprecation}** ist veraltet und wird in Zukunft entfernt werden.\n\nBitte passen Sie Ihre Automatisierungen und Skripte zur Verwendung von **{recommend}** so bald wie möglich an.",
       "title": "Verwendung eines veralteten Dienstes: {deprecation}"
     }
   },

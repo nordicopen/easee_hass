@@ -1,21 +1,29 @@
 {
   "config": {
     "abort": {
-      "already_setup": "Het is niet mogelijk om meerdere Easee verbindingen tegelijk in te stellen."
+      "already_setup": "Het is niet mogelijk om meerdere Easee verbindingen tegelijk in te stellen.",
+      "reauth_successful": "Herauthenticatie geslaagd."
     },
     "error": {
       "auth_failure": "Kan niet verbinden met Easee. Controleer je gebruikersnaam en wachtwoord.",
       "connection_failure": "Kan niet verbinden met Easee. Probeer later opnieuw.",
-      "no_sites": "Geen lokatie geselecteerd",
-      "no_sites_in_account": "Geen lokaties in dit account gevonden.",
+      "no_sites": "Geen locaties geselecteerd",
+      "no_sites_in_account": "Geen locaties in dit account gevonden.",
       "refused_failure": "Verbinding met Easee geweigerd. Probeer later opnieuw."
     },
     "step": {
+      "reauth_confirm": {
+        "data": {
+          "password": "Wachtwoord"
+        },
+        "description": "De Easee integratie moet je account opnieuw authenticeren {username}.",
+        "title": "Opnieuw authenticeren met Easee"
+      },
       "sites": {
         "data": {
-          "monitored_sites": "Lokaties"
+          "monitored_sites": "Locaties"
         },
-        "description": "Selecteer lokatie om te gebruiken",
+        "description": "Selecteer locatie om te gebruiken",
         "title": "Easee EV Lader"
       },
       "user": {
@@ -26,6 +34,67 @@
         "description": "Voer a.u.b. je gebruikersnaam en wachtwoord in voor je Easee account",
         "title": "Verbind met Easee"
       }
+    }
+  },
+  "device_automation": {
+    "action_type": {
+      "override_schedule": "Laadschema negeren",
+      "pause": "Laden onderbreken",
+      "reboot": "Lader herstarten",
+      "resume": "Laden hervatten",
+      "start": "Start laden",
+      "stop": "Stop laden",
+      "toggle": "Laden omschakelen"
+    },
+    "condition_type": {
+      "authenticating": "{entity_name} is bezig met authenticeren",
+      "awaiting_authentication": "{entity_name} is aan het wachten op authenticatie",
+      "awaiting_authorization": "{entity_name} wacht op goedkeuring",
+      "awaiting_load_balancing": "{entity_name} wacht op load balancing",
+      "awaiting_scheduled_start": "{entity_name} wacht op geplande start",
+      "awaiting_smart_start": "{entity_name} wacht op slimme start",
+      "awaiting_start": "{entity_name} wacht tot laden start",
+      "charging": "{entity_name} is bezig met laden",
+      "completed": "Laden voor {entity_name} is voltooid",
+      "de_authorizing": "{entity_name} trekt goedkeuring in",
+      "disconnected": "{entity_name} heeft geen auto aangesloten",
+      "erratic_ev": "Auto geeft onverwachtte reactie bij {entity_name}",
+      "error": "{entity_name} geeft fout aan",
+      "error_dead_powerboard": "Fout bij {entity_name}: Defecte voedingsprintplaat",
+      "error_overcurrent": "Fout bij {entity_name}: Overbelasting",
+      "error_pen_fault": "Fout in beschermende aarde-nulleider (PEN) bij {entity_name}",
+      "error_temperature_too_high": "Fout bij {entity_name}: Temperatuur te hoog",
+      "offline": "{entity_name} is offline",
+      "paused_due_to_equalizer": "Laden bij {entity_name} onderbroken door Equalizer",
+      "ready_to_charge": "{entity_name} is gereed om te laden",
+      "searching_for_master": "{entity_name} zoekt naar master",
+      "start_charging": "{entity_name} start met laden",
+      "stop_charging": "{entity_name} stopt met laden"
+    },
+    "trigger_type": {
+      "authenticating": "{entity_name} Bezig met authenticeren",
+      "awaiting_authentication": "{entity_name}  Wacht op authenticatie",
+      "awaiting_authorization": "{entity_name} Wacht op goedkeuring",
+      "awaiting_load_balancing": "{entity_name} Wacht op load balancing",
+      "awaiting_scheduled_start": "{entity_name} Wacht op geplande start",
+      "awaiting_smart_start": "Wacht op slimme start",
+      "awaiting_start": "{entity_name} Wacht tot laden start",
+      "charging": "{entity_name} Bezig met laden",
+      "completed": "{entity_name} Laden voltooid",
+      "de_authorizing": "{entity_name} Goedkeuring intrekken",
+      "disconnected": "{entity_name} Geen auto aangesloten",
+      "erratic_ev": "{entity_name} Auto geeft onverwachtte reactie",
+      "error": "{entity_name} Fout bij laden",
+      "error_dead_powerboard": "{entity_name} Fout Defecte voedingsprintplaat",
+      "error_overcurrent": "{entity_name} Fout Overbelasting",
+      "error_pen_fault": "{entity_name} Fout in beschermende aarde-nulleider (PEN)",
+      "error_temperature_too_high": "{entity_name} Fout Temperatuur te hoog",
+      "offline": "{entity_name} Offline",
+      "paused_due_to_equalizer": "{entity_name} onderbroken door Equalizer",
+      "ready_to_charge": "{entity_name} Gereed om te laden",
+      "searching_for_master": "{entity_name} Zoeken naar master",
+      "start_charging": "{entity_name} Start laden",
+      "stop_charging": "{entity_name} Stop laden"
     }
   },
   "entity": {
@@ -132,7 +201,7 @@
           "error_pen_fault": "Fout in beschermende aarde-nulleider (PEN)",
           "error_temperature_too_high": "Fout Temperatuur te hoog",
           "offline": "Offline",
-          "paused_due_to_equalizer": "Laden gepauseerd door Equalizer",
+          "paused_due_to_equalizer": "Laden onderbroken door Equalizer",
           "ready_to_charge": "Gereed om te laden",
           "searching_for_master": "Zoeken naar master",
           "start_charging": "Start laden",
@@ -214,7 +283,7 @@
   },
   "issues": {
     "deprecated_service": {
-      "description": "Het gebruik van de service **{deprecation}** is verouderd en zal in de toekomst worden verwijderd.\\n\\nPas je automatiseringen en scripts z.s.m. aan om gebruik te maken van **{recommend}**",
+      "description": "Het gebruik van de service **{deprecation}** is verouderd en zal in de toekomst worden verwijderd.\n\nPas je automatiseringen en scripts z.s.m. aan om gebruik te maken van **{recommend}**",
       "title": "Verouderde service gebruikt: {deprecation}"
     }
   },
