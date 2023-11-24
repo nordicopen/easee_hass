@@ -56,4 +56,6 @@ autolabeler:
       - "/fix/i"
   - label: "translation"
     title:
-      - "/translation/i"
+      - "Lokalise:"
+    files:
+      - "*/translations/*.json"
