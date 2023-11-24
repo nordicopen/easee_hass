@@ -23,7 +23,7 @@ jobs:
           cd ${{ github.workspace }}/custom_components/easee
           zip easee.zip -r ./
       - name: Upload zip to release
-        uses: svenstaro/upload-release-action@v2.7.0
+        uses: svenstaro/upload-release-action@2.7.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ github.workspace }}/custom_components/easee/easee.zip
