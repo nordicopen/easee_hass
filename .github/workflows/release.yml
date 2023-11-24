@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v4.1.1
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
@@ -23,8 +23,7 @@ jobs:
           cd ${{ github.workspace }}/custom_components/easee
           zip easee.zip -r ./
       - name: Upload zip to release
-        uses: svenstaro/upload-release-action@v1-release
-
+        uses: svenstaro/upload-release-action@v2.7.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ github.workspace }}/custom_components/easee/easee.zip
