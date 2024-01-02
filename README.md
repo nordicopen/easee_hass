@@ -39,6 +39,7 @@ There are 2 different methods of installing the custom component
 
 Since v0.9.47 the integration only includes the chargers and equalizers that has been added to the Easee official app, rather than showing all that are available to the logged in user. This change was done becuase in larger installations there could be 10s or 100s of chargers listed which in most cases does not make much sense.
 So if you do not see all your products in the integration, open the official app and make sure they are listed there first.
+Note also that if no chargers at all are added to the app the error message "No sites found in this account" will be displayed at installation.
 
 ## Configuration
 
