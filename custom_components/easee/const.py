@@ -462,6 +462,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
+        "only_master": True,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "max_circuit_limit": {
