@@ -436,6 +436,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
+        "only_master": True,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "dynamic_circuit_limit": {
@@ -462,6 +463,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
+        "only_master": True,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "max_circuit_limit": {
@@ -488,6 +490,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
+        "only_master": True,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "dynamic_charger_limit": {
@@ -528,6 +531,7 @@ OPTIONAL_EASEE_ENTITIES = {
             )
         ),
         "enabled_default": False,
+        "only_master": True,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "max_charger_limit": {
