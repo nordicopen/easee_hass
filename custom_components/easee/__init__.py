@@ -15,8 +15,8 @@ from .services import async_setup_services
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup(hass: HomeAssistant, config: dict):
-    """Set up the Easee integration component."""
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+    """Set up Easee integration from a config entry."""
     current = AwesomeVersion(HA_VERSION)
     req_min = AwesomeVersion(MIN_HA_VERSION)
     if current < req_min:
@@ -24,11 +24,6 @@ async def async_setup(hass: HomeAssistant, config: dict):
             "Integration requires Home Assistant version %s or later", req_min
         )
         return False
-    return True
-
-
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Set up Easee integration from a config entry."""
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
     hass.data[DOMAIN]["entities"] = []
