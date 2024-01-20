@@ -128,6 +128,11 @@ equalizerObservations = {
     EqualizerStreamData.config_numPhases.value,
 }
 
+equalizerEnergyObservations = {
+    EqualizerStreamData.state_cumulativeActivePowerImport.value,
+    EqualizerStreamData.state_cumulativeActivePowerExport.value,
+}
+
 weeklyScheduleStartDays = {
     0: "MondayStartTime",
     1: "TuesdayStartTime",
