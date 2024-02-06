@@ -525,7 +525,7 @@ async def async_setup_services(hass):  # noqa: C901
         if circuit:
             function_call = getattr(circuit, function_name["function_call"])
             try:
-                if time_to_live != 0:
+                if time_to_live is not None:
                     return await function_call(current_p1, current_p2, current_p3, time_to_live)
                 else:
                     return await function_call(current_p1, current_p2, current_p3)
