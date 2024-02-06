@@ -507,6 +507,8 @@ async def async_setup_services(hass):  # noqa: C901
         current_p2 = call.data.get(ATTR_SET_CURRENTP2)
         current_p3 = call.data.get(ATTR_SET_CURRENTP3)
 
+        time_to_live = call.data.get(ATTR_TTL)
+
         _LOGGER.debug("Execute_service: %s %s", str(call.service), str(call.data))
 
         function_name = SERVICE_MAP[call.service]
@@ -523,7 +525,10 @@ async def async_setup_services(hass):  # noqa: C901
         if circuit:
             function_call = getattr(circuit, function_name["function_call"])
             try:
-                return await function_call(current_p1, current_p2, current_p3)
+                if time_to_live != 0:
+                    return await function_call(current_p1, current_p2, current_p3, time_to_live)
+                else:
+                    return await function_call(current_p1, current_p2, current_p3)
             except BadRequestException as ex:
                 _LOGGER.error(
                     "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
