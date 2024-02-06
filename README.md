@@ -68,7 +68,7 @@ data:
   circuit_id: 30456
   currentP1: 10
 ```
-For details on the Easee API, please refer to https://developer.easee.cloud/reference
+For details on the Easee API, please refer to [https://developer.easee.cloud/reference](https://developer.easee.com/reference/)
 
 ## Debug logging
 A full debug log can be enabled by entering following into `configuration.yaml` and restarting Home Assistant
