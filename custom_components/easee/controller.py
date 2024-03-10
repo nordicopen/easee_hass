@@ -195,7 +195,7 @@ class ProductData:
                 name = self.streamdata(data_id).name
             except ValueError:
                 # Unsupported data
-                _LOGGER.debug("Unsupported data id %s %s", data_id, value)
+                _LOGGER.debug("Unsupported data id %s %s %s", self.product.id, data_id, value)
                 return False
 
             _LOGGER.debug(
@@ -319,7 +319,10 @@ class ProductData:
         ):
             return True
 
-        if abs(reference - value) > abs(reference * MINIMUM_UPDATE):
+        try:
+            if abs(reference - value) > abs(reference * MINIMUM_UPDATE):
+                return True
+        except Exception:
             return True
 
         return False
@@ -359,7 +362,7 @@ class ProductData:
             name = self.streamdata(data_id).name
         except ValueError:
             # Unsupported data
-            _LOGGER.debug("Unsupported data id %s %s", data_id, value)
+            _LOGGER.debug("Unsupported data id %s %s %s", self.product.id, data_id, value)
             return False
 
         _LOGGER.debug(
@@ -367,10 +370,19 @@ class ProductData:
         )
 
         if "_" in name:
-            first, second = name.split("_")
+            try:
+                first, second = name.split("_")
+            except Exception as ex:
+                _LOGGER.print("Exception %s when splitting %s", ex, name)
+                return False
 
             if first == "state":
-                oldvalue = self.state[second]
+                try:
+                    oldvalue = self.state[second]
+                except KeyError:
+                    _LOGGER.debug("No old value for %s %s", self.product.id, name)
+                    self.state[second] = value
+                    return True
                 self.state[second] = value
                 if second == "lifetimeEnergy" and oldvalue != value:
                     await self.cost_async_refresh()
@@ -379,7 +391,13 @@ class ProductData:
             elif first == "config":
                 if self.config is None:
                     return False
-                if self.config[second] != value:
+                try:
+                    oldvalue = self.config[second]
+                except KeyError:
+                    _LOGGER.debug("No old value for %s %s", self.product.id, name)
+                    self.config[second] = value
+                    return True
+                if oldvalue != value:
                     self.config[second] = value
                     return True
             elif first == "schedule":
