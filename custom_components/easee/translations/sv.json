@@ -16,7 +16,7 @@
         "data": {
           "password": "Lösenord"
         },
-        "description": "Easee-integrationen måste autentisera kontot {username} igen.",
+        "description": "Easee-integrationen behöver autentisera kontot på nytt {username}.",
         "title": "Identifiera dig på nytt med Easee"
       },
       "sites": {
