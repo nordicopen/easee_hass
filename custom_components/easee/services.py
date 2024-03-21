@@ -1,4 +1,5 @@
 """easee services."""
+
 from datetime import timedelta
 import logging
 
@@ -17,6 +18,16 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 ACCESS_LEVEL = "access_level"
+ACCESS_LEVELS = {"open_for_all": 1, "require_easee_account": 2, "whitelist": 3}
+WEEKDAYS = {
+    "monday": 0,
+    "tuesday": 1,
+    "wednesday": 2,
+    "thursday": 3,
+    "friday": 4,
+    "saturday": 5,
+    "sunday": 6,
+}
 CHARGER_ID = "charger_id"
 CIRCUIT_ID = "circuit_id"
 ATTR_CHARGEPLAN_START_DATETIME = "start_datetime"
@@ -127,7 +138,7 @@ SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.All(
 )
 
 ext_weekly_chargeplan = {
-    vol.Required(ATTR_CHARGEPLAN_DAY, default=0): cv.positive_int,
+    vol.Required(ATTR_CHARGEPLAN_DAY, default="monday"): vol.In(WEEKDAYS),
     vol.Optional(ATTR_CHARGEPLAN_START_TIME): cv.time,
     vol.Optional(ATTR_CHARGEPLAN_STOP_TIME): cv.time,
 }
@@ -180,7 +191,7 @@ SERVICE_SET_SITE_CHARGING_COST_SCHEMA = vol.All(
 )
 
 ext_access = {
-    vol.Required(ACCESS_LEVEL): vol.All(cv.positive_int, vol.Range(min=1, max=3)),
+    vol.Required(ACCESS_LEVEL): vol.In(ACCESS_LEVELS),
 }
 SERVICE_SET_ACCESS_SCHEMA = vol.All(
     target_schema2,
@@ -437,7 +448,7 @@ async def async_setup_services(hass):  # noqa: C901
         charger = await async_get_charger(call)
         start_time = call.data.get(ATTR_CHARGEPLAN_START_TIME)
         stop_time = call.data.get(ATTR_CHARGEPLAN_STOP_TIME)
-        day = call.data.get(ATTR_CHARGEPLAN_DAY)
+        day = WEEKDAYS[call.data.get(ATTR_CHARGEPLAN_DAY)]
 
         _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
@@ -526,7 +537,9 @@ async def async_setup_services(hass):  # noqa: C901
             function_call = getattr(circuit, function_name["function_call"])
             try:
                 if time_to_live is not None:
-                    return await function_call(current_p1, current_p2, current_p3, time_to_live)
+                    return await function_call(
+                        current_p1, current_p2, current_p3, time_to_live
+                    )
                 else:
                     return await function_call(current_p1, current_p2, current_p3)
             except BadRequestException as ex:
@@ -704,7 +717,7 @@ async def async_setup_services(hass):  # noqa: C901
 
     async def charger_execute_set_access(call):
         """Execute a service to set access level on a charger."""
-        access_level = call.data.get(ACCESS_LEVEL)
+        access_level = ACCESS_LEVELS[call.data.get(ACCESS_LEVEL)]
         charger = await async_get_charger(call)
 
         if charger:

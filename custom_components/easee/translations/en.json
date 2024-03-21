@@ -308,6 +308,70 @@
       }
     }
   },
+  "selector": {
+    "access_level": {
+      "options": {
+        "open_for_all": "Open for all",
+        "require_easee_account": "Require Easee account",
+        "whitelist": "Whitelist"
+      }
+    },
+    "action_command": {
+      "options": {
+        "start": "Start",
+        "stop": "Stop",
+        "toggle": "Toggle",
+        "pause": "Pause",
+        "resume": "Resume",
+        "reboot": "Reboot charger",
+        "update_firmware": "Update firmware",
+        "override_schedule": "Override schedule",
+        "delete_basic_charge_plan": "Delete basic charge plan",
+        "delete_weekly_charge_plan": "Delete weekly charge plan"
+      }
+    },
+    "weekday": {
+      "options": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      }
+    }
+  },
+  "services": {
+    "set_charger_access": {
+      "name": "Set access to charger",
+      "description": "Select who should be able to charge",
+      "fields": {
+        "device_id": {
+          "name": "Target device",
+          "description": "Select device to be controlled"
+        },
+        "access_level": {
+          "name": "Access",
+          "description": "Set access to charging"
+        }
+      }
+    },
+    "action_command": {
+      "name": "Action command",
+      "description": "Send command to charger",
+      "fields": {
+        "device_id": {
+          "name": "Target device",
+          "description": "Select device to be controlled"
+        },
+        "action_command": {
+          "name": "Command",
+          "description": "Select the command to execute"
+        }
+      }
+    }
+  },
   "system_health": {
     "info": {
       "component_version": "Version",

@@ -12,7 +12,8 @@ action_command:
           integration: "easee"
           # This is needed to exclude Equalizers from the target list"
           entity:
-            device_class: "monetary"
+            domain: "switch"
+            # device_class: "monetary"
     action_command:
       name: "Action command"
       description: "Select the command to execute"
@@ -20,27 +21,17 @@ action_command:
       example: "resume"
       selector:
         select:
+          translation_key: action_command
           options:
-            - label: Start
-              value: "start"
-            - label: Stop
-              value: "stop"
-            - label: Toggle
-              value: "toggle"
-            - label: Pause
-              value: "pause"
-            - label: Resume
-              value: "resume"
-            - label: Reboot
-              value: "reboot"
-            - label: Update firmware
-              value: "update_firmware"
-            - label: Override schedule
-              value: "override_schedule"
-            - label: Delete basic charge plan
-              value: "delete_basic_charge_plan"
-            - label: Delete weekly charge plan
-              value: "delete_weekly_charge_plan"
+            - start
+            - stop
+            - toggle
+            - pause
+            - resume
+            - update_firmware
+            - override_schedule
+            - delete_basic_charge_plan
+            - delete_weekly_charge_plan
 
 set_basic_charge_plan:
   name: "Set basic charge plan"
@@ -447,10 +438,8 @@ set_charger_access:
       required: true
       selector:
         select:
+          translation_key: access_level
           options:
-            - label: Open for all
-              value: "1"
-            - label: Require Easee account
-              value: "2"
-            - label: Whitelist
-              value: "3"
+            - open_for_all
+            - require_easee_account
+            - whitelist
