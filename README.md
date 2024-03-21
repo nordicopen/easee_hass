@@ -54,19 +54,19 @@ Three examples that will do the same thing:
 service: easee.set_circuit_dynamic_limit
 data:
   device_id: b40f1f45d28b0891
-  currentP1: 10
+  current_p1: 10
 ```
 ```yaml
 service: easee.set_circuit_dynamic_limit
 data:
   charger_id: EVK1234
-  currentP1: 10
+  current_p1: 10
 ```
 ```yaml
 service: easee.set_circuit_dynamic_limit
 data:
   circuit_id: 30456
-  currentP1: 10
+  current_p1: 10
 ```
 For details on the Easee API, please refer to [https://developer.easee.cloud/reference](https://developer.easee.com/reference/)
 
@@ -103,7 +103,7 @@ before pushing your changes.
 ## Translation
 We are using [Lokalise](https://lokalise.com/login/) to handle submission of translations. They provide us with an amazing platform that is easy to use and maintain.
 
-To help out with the translation of the Easee integration [click here](https://app.lokalise.com/public/3637181265197452b3dc34.70096810/). If you are asked to login it is normally easiest to use "Log in with GitHub". 
+To help out with the translation of the Easee integration [click here](https://app.lokalise.com/public/3637181265197452b3dc34.70096810/). If you are asked to login it is normally easiest to use "Log in with GitHub".
 
 If you want to add a new language, please open an issue here in this repo.
 
