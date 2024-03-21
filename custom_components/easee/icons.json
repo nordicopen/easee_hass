@@ -1,0 +1,59 @@
+{
+    "entity": {
+        "binary_sensor": {
+            "update_available": {
+                "default": "mdi:file-download"
+            },
+            "basic_schedule": {
+                "default": "mdi:clock-check"
+            },
+            "weekly_schedule": {
+                "default": "mdi:clock-check"
+            }
+        },
+        "sensor": {
+            "easee_status": {
+                "default": "mdi:ev-station"
+            },
+            "lifetime_energy": {
+                "default": "mdi:counter"
+            },
+            "easee_reason_no_current": {
+                "default": "mdi:alert-circle"
+            }
+        },
+        "switch": {
+            "cable_locked_permanently": {
+                "default": "mdi:lock",
+                "state": {
+                    "off": "mdi:lock-open"
+                }
+            },
+            "idle_current": {
+                "default": "mdi:current-ac"
+            },
+            "smart_button": {
+                "default": "mdi:gesture-tap-button"
+            },
+            "is_enabled": {
+                "default": "mdi:power-standby"
+            },
+            "smart_charging": {
+                "default": "mdi:auto-fix"
+            }
+        }
+    },
+    "services": {
+        "action_command": "mdi:apple-keyboard-command",
+        "set_basic_charge_plan": "mdi:clock-check",
+        "set_charger_access": "mdi:cloud-key-outline",
+        "set_charger_dynamic_limit": "mdi:arrow-collapse-right",
+        "set_charger_max_limit": "mdi:arrow-collapse-right",
+        "set_charging_cost": "mdi:cash-multiple",
+        "set_circuit_dynamic_limit": "mdi:arrow-collapse-right",
+        "set_circuit_max_limit": "mdi:arrow-collapse-right",
+        "set_circuit_offline_limit": "mdi:arrow-collapse-right",
+        "set_weekly_charge_plan": "mdi:clock-check",
+        "smart_charging": "mdi:auto-fix"
+    }
+}
