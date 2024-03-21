@@ -24,7 +24,10 @@
         },
         "switch": {
             "cable_locked_permanently": {
-                "default": "mdi:lock"
+                "default": "mdi:lock",
+                "state": {
+                    "off": "mdi:lock-open"
+                }
             },
             "idle_current": {
                 "default": "mdi:current-ac"
