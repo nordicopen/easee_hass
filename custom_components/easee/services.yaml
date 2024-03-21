@@ -1,10 +1,6 @@
 action_command:
-  name: "Action command"
-  description: "Execute action command on charger"
   fields:
     device_id:
-      name: Target device
-      description: "Select the charger to control"
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -15,8 +11,6 @@ action_command:
             domain: "switch"
             # device_class: "monetary"
     action_command:
-      name: "Action command"
-      description: "Select the command to execute"
       required: true
       example: "resume"
       selector:
@@ -34,12 +28,8 @@ action_command:
             - delete_weekly_charge_plan
 
 set_basic_charge_plan:
-  name: "Set basic charge plan"
-  description: "Set basic charge plan"
   fields:
     device_id:
-      name: Target device
-      description: "Select the charger to control"
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -48,34 +38,24 @@ set_basic_charge_plan:
           entity:
             device_class: "monetary"
     start_datetime:
-      name: "Start datetime"
-      description: "Plan start time"
       required: true
       example: "2020-07-28T19:51"
       selector:
         datetime:
     stop_datetime:
-      name: "Stop datetime"
-      description: "Plan stop time"
       required: false
       example: "2020-07-28T19:51"
       selector:
         datetime:
     repeat:
-      name: "Repeat plan"
-      description: "Repeat plan"
       required: true
       example: true
       selector:
         boolean:
 
 set_weekly_charge_plan:
-  name: "Set weekly charge plan"
-  description: "Set weekly charge plan"
   fields:
     device_id:
-      name: Target device
-      description: "Select the charger to control"
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -84,49 +64,33 @@ set_weekly_charge_plan:
           entity:
             device_class: "monetary"
     day:
-      name: "Day"
-      description: "Schedule for day, 0 = monday"
       required: true
-      example: 0
+      example: monday
       selector:
         select:
+          translation_key: weekday
           options:
-            - label: Monday
-              value: "0"
-            - label: Tuesday
-              value: "1"
-            - label: Wednesday
-              value: "2"
-            - label: Thursday
-              value: "3"
-            - label: Friday
-              value: "4"
-            - label: Saturday
-              value: "5"
-            - label: Sunday
-              value: "6"
+            - monday
+            - tuesday
+            - wednesday
+            - thursday
+            - friday
+            - saturday
+            - sunday
     start_time:
-      name: "Start time"
-      description: "Plan start time"
       required: true
       example: "19:51"
       selector:
         time:
     stop_time:
-      name: "Stop time"
-      description: "Plan stop time"
       required: true
       example: "20:51"
       selector:
         time:
 
 smart_charging:
-  name: "Smart charging"
-  description: "Enable/disable smart charging"
   fields:
     device_id:
-      name: Target device
-      description: "Select the charger that should be controlled."
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -135,20 +99,14 @@ smart_charging:
           entity:
             device_class: "monetary"
     enable:
-      name: "Enable"
-      description: "Enable smart charging"
       required: True
       example: True
       selector:
         boolean:
 
 set_circuit_max_limit:
-  name: "Set circuit max limit"
-  description: "Set circuit max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
   fields:
     device_id:
-      name: Target device
-      description: "Select one of the chargers in the circuit that should be controlled."
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -156,10 +114,8 @@ set_circuit_max_limit:
           integration: "easee"
           entity:
             device_class: "monetary"
-    currentP1:
-      name: "Current Phase 1"
+    current_p1:
       required: true
-      description: "Max charging current"
       example: 16
       default: 16
       selector:
@@ -169,10 +125,8 @@ set_circuit_max_limit:
           step: 1
           unit_of_measurement: "A"
           mode: slider
-    currentP2:
-      name: "Current Phase 2"
+    current_p2:
       required: false
-      description: "Max charging current. If disabled, the value of Current Phase 1 will be used"
       example: 16
       default: 16
       selector:
@@ -182,10 +136,8 @@ set_circuit_max_limit:
           step: 1
           unit_of_measurement: "A"
           mode: slider
-    currentP3:
-      name: "Current Phase 3"
+    current_p3:
       required: false
-      description: "Max charging current. If disabled, the value of Current Phase 1 will be used"
       example: 16
       default: 16
       selector:
@@ -197,12 +149,8 @@ set_circuit_max_limit:
           mode: slider
 
 set_circuit_offline_limit:
-  name: "Set circuit offline limit"
-  description: "Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
   fields:
     device_id:
-      name: Target device
-      description: "Select one of the chargers in the circuit that should be controlled."
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -210,10 +158,8 @@ set_circuit_offline_limit:
           integration: "easee"
           entity:
             device_class: "monetary"
-    currentP1:
-      name: "Current Phase 1"
+    current_p1:
       required: true
-      description: "Max charging current"
       example: 16
       default: 16
       selector:
@@ -223,10 +169,8 @@ set_circuit_offline_limit:
           step: 1
           unit_of_measurement: "A"
           mode: slider
-    currentP2:
-      name: "Current Phase 2"
+    current_p2:
       required: false
-      description: "Max charging current. If disabled, the value of Current Phase 1 will be used"
       example: 16
       default: 16
       selector:
@@ -236,10 +180,8 @@ set_circuit_offline_limit:
           step: 1
           unit_of_measurement: "A"
           mode: slider
-    currentP3:
-      name: "Current Phase 3"
+    current_p3:
       required: false
-      description: "Max charging current. If disabled, the value of Current Phase 1 will be used"
       example: 16
       default: 16
       selector:
@@ -251,12 +193,8 @@ set_circuit_offline_limit:
           mode: slider
 
 set_charger_dynamic_limit:
-  name: "Set charger dynamic limit"
-  description: "Set charger dynamic limit"
   fields:
     device_id:
-      name: Target device
-      description: "Select one of the chargers in the circuit that should be controlled."
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -265,9 +203,7 @@ set_charger_dynamic_limit:
           entity:
             device_class: "monetary"
     current:
-      name: "Current"
       required: true
-      description: "Max charging current"
       example: 16
       default: 16
       selector:
@@ -279,12 +215,8 @@ set_charger_dynamic_limit:
           mode: slider
 
 set_circuit_dynamic_limit:
-  name: "Set circuit dynamic limit"
-  description: "Set circuit dynamic limit (shared betwwen chargers on that circuit). This service can be used in automations."
   fields:
     device_id:
-      name: Target device
-      description: "Select one of the chargers in the circuit that should be controlled."
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -292,10 +224,8 @@ set_circuit_dynamic_limit:
           integration: "easee"
           entity:
             device_class: "monetary"
-    currentP1:
-      name: "Current Phase 1"
+    current_p1:
       required: true
-      description: "Max charging current"
       example: 16
       default: 16
       selector:
@@ -305,10 +235,8 @@ set_circuit_dynamic_limit:
           step: 1
           unit_of_measurement: "A"
           mode: slider
-    currentP2:
-      name: "Current Phase 2"
+    current_p2:
       required: false
-      description: "Max charging current. If disabled, the value of Current Phase 1 will be used"
       example: 16
       default: 16
       selector:
@@ -318,10 +246,8 @@ set_circuit_dynamic_limit:
           step: 1
           unit_of_measurement: "A"
           mode: slider
-    currentP3:
-      name: "Current Phase 3"
+    current_p3:
       required: false
-      description: "Max charging current. If disabled, the value of Current Phase 1 will be used"
       example: 16
       default: 16
       selector:
@@ -332,9 +258,7 @@ set_circuit_dynamic_limit:
           unit_of_measurement: "A"
           mode: slider
     time_to_live:
-      name: "Time to live"
       required: false
-      description: "Set time in minutes for the command to live. 0 = indefinitely."
       example: 0
       default: 0
       selector:
@@ -346,12 +270,8 @@ set_circuit_dynamic_limit:
           mode: box
 
 set_charger_max_limit:
-  name: "Set charger max limit"
-  description: "Set charger max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently)."
   fields:
     device_id:
-      name: Target device
-      description: "Select one of the chargers in the circuit that should be controlled."
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -360,9 +280,7 @@ set_charger_max_limit:
           entity:
             device_class: "monetary"
     current:
-      name: "Current"
       required: true
-      description: "Max charging current"
       example: 16
       default: 16
       selector:
@@ -374,12 +292,8 @@ set_charger_max_limit:
           mode: slider
 
 set_charging_cost:
-  name: "Set charging cost"
-  description: "Set charging cost per kWh for charger site"
   fields:
     device_id:
-      name: Target device
-      description: "Select one of the chargers in the circuit that should be controlled."
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -388,8 +302,6 @@ set_charging_cost:
           entity:
             device_class: "monetary"
     cost_per_kwh:
-      name: "Cost per kWh"
-      description: "Cost per kWh"
       example: 0.3
       default: 0
       required: true
@@ -397,8 +309,6 @@ set_charging_cost:
         number:
           mode: box
     vat:
-      name: VAT
-      description: "VAT"
       required: False
       example: 25.0
       default: 0
@@ -409,8 +319,6 @@ set_charging_cost:
           unit_of_measurement: "%"
           mode: box
     currency_id:
-      name: "Currency"
-      description: "Currency code"
       example: "EUR"
       required: false
       selector:
@@ -418,12 +326,8 @@ set_charging_cost:
           type: text
 
 set_charger_access:
-  name: "Set charger access"
-  description: "Set access level on the charger"
   fields:
     device_id:
-      name: Target device
-      description: "Select the charger to control"
       required: true
       example: "b40f1f45d28b0891fe8d"
       selector:
@@ -432,8 +336,6 @@ set_charger_access:
           entity:
             device_class: "monetary"
     access_level:
-      name: "Access level"
-      description: "Select one of the levels"
       example: 1
       required: true
       selector:
