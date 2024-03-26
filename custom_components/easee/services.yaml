@@ -289,7 +289,7 @@ set_charger_dynamic_limit:
 
 set_circuit_dynamic_limit:
   name: "Set circuit dynamic limit"
-  description: "Set circuit dynamic limit (shared betwwen chargers on that circuit). This service can be used in automations."
+  description: "Set circuit dynamic limit (shared between chargers on that circuit). This service can be used in automations."
   fields:
     device_id:
       name: Target device
