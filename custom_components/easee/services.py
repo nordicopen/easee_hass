@@ -398,9 +398,8 @@ async def async_setup_services(hass):  # noqa: C901
     async def charger_set_schedule(call):
         """Execute a set schedule call to Easee charging station."""
         charger = await async_get_charger(call)
-        schedule_id = (
-            charger.id
-        )  # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
+        # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
+        schedule_id = charger.id
         start_datetime = call.data.get(ATTR_CHARGEPLAN_START_DATETIME)
         stop_datetime = call.data.get(ATTR_CHARGEPLAN_STOP_DATETIME)
         repeat = call.data.get(ATTR_CHARGEPLAN_REPEAT)
@@ -457,7 +456,7 @@ async def async_setup_services(hass):  # noqa: C901
             function_call = getattr(charger, function_name["function_call"])
             now_dt = dt_util.now()
             now_wd = now_dt.weekday()
-            now_td = timedelta(days=(now_wd - day))
+            now_td = timedelta(days=now_wd - day)
             now_dt = now_dt - now_td
             start_dt = dt_util.as_utc(
                 now_dt.replace(

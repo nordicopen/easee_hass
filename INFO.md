@@ -1,4 +1,4 @@
-[![easee_hass](https://img.shields.io/github/release/nordicopen/easee_hass.svg?1)](https://github.com/nordicopen/easee_hass) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs) ![Validate with hassfest](https://github.com/nordicopen/easee_hass/workflows/Validate%20with%20hassfest/badge.svg) ![Maintenance](https://img.shields.io/maintenance/yes/2023.svg) [![Easee_downloads](https://img.shields.io/github/downloads/nordicopen/easee_hass/total)](https://github.com/nordicopen/easee_hass)
+[![easee_hass](https://img.shields.io/github/release/nordicopen/easee_hass.svg?1)](https://github.com/nordicopen/easee_hass) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs) ![Validate with hassfest](https://github.com/nordicopen/easee_hass/workflows/Validate%20with%20hassfest/badge.svg) ![Maintenance](https://img.shields.io/maintenance/yes/2024.svg) [![Easee_downloads](https://img.shields.io/github/downloads/nordicopen/easee_hass/total)](https://github.com/nordicopen/easee_hass)
 
 
 

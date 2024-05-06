@@ -9,7 +9,6 @@ action_command:
           # This is needed to exclude Equalizers from the target list"
           entity:
             domain: "switch"
-            # device_class: "monetary"
     action_command:
       required: true
       example: "resume"
@@ -36,7 +35,7 @@ set_basic_charge_plan:
         device:
           integration: "easee"
           entity:
-            device_class: "monetary"
+            domain: "switch"
     start_datetime:
       required: true
       example: "2020-07-28T19:51"
@@ -62,7 +61,7 @@ set_weekly_charge_plan:
         device:
           integration: "easee"
           entity:
-            device_class: "monetary"
+            domain: "switch"
     day:
       required: true
       example: monday
@@ -97,7 +96,7 @@ smart_charging:
         device:
           integration: "easee"
           entity:
-            device_class: "monetary"
+            domain: "switch"
     enable:
       required: True
       example: True
@@ -113,7 +112,7 @@ set_circuit_max_limit:
         device:
           integration: "easee"
           entity:
-            device_class: "monetary"
+            domain: "switch"
     current_p1:
       required: true
       example: 16
@@ -157,7 +156,7 @@ set_circuit_offline_limit:
         device:
           integration: "easee"
           entity:
-            device_class: "monetary"
+            domain: "switch"
     current_p1:
       required: true
       example: 16
@@ -201,7 +200,7 @@ set_charger_dynamic_limit:
         device:
           integration: "easee"
           entity:
-            device_class: "monetary"
+            domain: "switch"
     current:
       required: true
       example: 16
@@ -223,7 +222,7 @@ set_circuit_dynamic_limit:
         device:
           integration: "easee"
           entity:
-            device_class: "monetary"
+            domain: "switch"
     current_p1:
       required: true
       example: 16
@@ -278,7 +277,7 @@ set_charger_max_limit:
         device:
           integration: "easee"
           entity:
-            device_class: "monetary"
+            domain: "switch"
     current:
       required: true
       example: 16
@@ -300,7 +299,7 @@ set_charging_cost:
         device:
           integration: "easee"
           entity:
-            device_class: "monetary"
+            domain: "switch"
     cost_per_kwh:
       example: 0.3
       default: 0
@@ -334,7 +333,7 @@ set_charger_access:
         device:
           integration: "easee"
           entity:
-            device_class: "monetary"
+            domain: "switch"
     access_level:
       example: 1
       required: true

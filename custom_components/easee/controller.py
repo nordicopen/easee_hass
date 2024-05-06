@@ -1,4 +1,5 @@
 """Easee Connector class."""
+
 import asyncio
 from datetime import timedelta
 from gc import collect
@@ -195,7 +196,9 @@ class ProductData:
                 name = self.streamdata(data_id).name
             except ValueError:
                 # Unsupported data
-                _LOGGER.debug("Unsupported data id %s %s %s", self.product.id, data_id, value)
+                _LOGGER.debug(
+                    "Unsupported data id %s %s %s", self.product.id, data_id, value
+                )
                 return False
 
             _LOGGER.debug(
@@ -322,7 +325,7 @@ class ProductData:
         try:
             if abs(reference - value) > abs(reference * MINIMUM_UPDATE):
                 return True
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             return True
 
         return False
@@ -362,7 +365,9 @@ class ProductData:
             name = self.streamdata(data_id).name
         except ValueError:
             # Unsupported data
-            _LOGGER.debug("Unsupported data id %s %s %s", self.product.id, data_id, value)
+            _LOGGER.debug(
+                "Unsupported data id %s %s %s", self.product.id, data_id, value
+            )
             return False
 
         _LOGGER.debug(
@@ -372,7 +377,7 @@ class ProductData:
         if "_" in name:
             try:
                 first, second = name.split("_")
-            except Exception as ex:
+            except Exception as ex:  # pylint: disable=broad-except
                 _LOGGER.print("Exception %s when splitting %s", ex, name)
                 return False
 
@@ -466,7 +471,7 @@ class Controller:
         try:
             with timeout(TIMEOUT):
                 await self.easee.connect()
-        except asyncio.TimeoutError as err:
+        except TimeoutError as err:
             _LOGGER.debug("Connection to easee login timed out")
             raise ConfigEntryNotReady from err
         except ServerFailureException as err:
@@ -680,7 +685,7 @@ class Controller:
         _LOGGER.debug("Hour refresh started")
 
         for equalizer in self.equalizers_data:
-            await equalizer.async_refresh(poll_observations = equalizerEnergyObservations)
+            await equalizer.async_refresh(poll_observations=equalizerEnergyObservations)
 
         self.update_ha_state()
 
@@ -835,19 +840,16 @@ class Controller:
             name=name,
             state_key=data["key"],
             units=data["units"],
-            convert_units_func=convert_units_funcs.get(
-                data["convert_units_func"], None
-            ),
+            convert_units_func=convert_units_funcs.get(data["convert_units_func"]),
             attrs_keys=data["attrs"],
             device_class=data["device_class"],
             translation_key=data.get("translation_key"),
             suggested_display_precision=data.get("suggested_display_precision"),
-            state_class=data.get("state_class", None),
-            icon=data["icon"],
-            state_func=data.get("state_func", None),
-            switch_func=data.get("switch_func", None),
+            state_class=data.get("state_class"),
+            state_func=data.get("state_func"),
+            switch_func=data.get("switch_func"),
             enabled_default=data.get("enabled_default", True),
-            entity_category=data.get("entity_category", None),
+            entity_category=data.get("entity_category"),
         )
         _LOGGER.debug(
             "Adding entity: %s (%s) for product %s, unit %s",
