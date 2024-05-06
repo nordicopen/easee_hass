@@ -288,6 +288,10 @@
     "deprecated_service": {
       "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\n\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
       "title": "Use of deprecated service: {deprecation}"
+    },
+    "numeric_deprecation": {
+      "description": "The use of numeric value for {argument} is deprecated and will not be accepted in the future. Please convert your automations and scripts to use strings {recommendation} instead",
+      "title": "Use of numeric value for {argument} in service call"
     }
   },
   "options": {

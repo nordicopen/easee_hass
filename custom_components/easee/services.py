@@ -8,7 +8,11 @@ import voluptuous as vol
 
 from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import config_validation as cv, device_registry as dr
+from homeassistant.helpers import (
+    config_validation as cv,
+    device_registry as dr,
+    issue_registry as ir,
+)
 from homeassistant.util import dt as dt_util
 
 from .const import DOMAIN
@@ -137,8 +141,11 @@ SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.All(
     exclusive_schema2.extend(ext_basic_chargeplan),
 )
 
+# Todo: Remove deprecated cv.positive_int
 ext_weekly_chargeplan = {
-    vol.Required(ATTR_CHARGEPLAN_DAY, default="monday"): vol.In(WEEKDAYS),
+    vol.Required(ATTR_CHARGEPLAN_DAY, default="monday"): vol.Or(
+        vol.In(WEEKDAYS), cv.positive_int
+    ),
     vol.Optional(ATTR_CHARGEPLAN_START_TIME): cv.time,
     vol.Optional(ATTR_CHARGEPLAN_STOP_TIME): cv.time,
 }
@@ -189,9 +196,9 @@ SERVICE_SET_SITE_CHARGING_COST_SCHEMA = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_cost),
 )
-
+# Todo: Remove deprecated cv.positive_int
 ext_access = {
-    vol.Required(ACCESS_LEVEL): vol.In(ACCESS_LEVELS),
+    vol.Required(ACCESS_LEVEL): vol.Or(vol.In(ACCESS_LEVELS), cv.positive_int),
 }
 SERVICE_SET_ACCESS_SCHEMA = vol.All(
     target_schema2,
@@ -447,7 +454,27 @@ async def async_setup_services(hass):  # noqa: C901
         charger = await async_get_charger(call)
         start_time = call.data.get(ATTR_CHARGEPLAN_START_TIME)
         stop_time = call.data.get(ATTR_CHARGEPLAN_STOP_TIME)
-        day = WEEKDAYS[call.data.get(ATTR_CHARGEPLAN_DAY)]
+        # Todo: Remove deprecation code.
+        if isinstance(call.data.get(ATTR_CHARGEPLAN_DAY), int):
+            day = call.data.get(ATTR_CHARGEPLAN_DAY)
+            ir.async_create_issue(
+                hass,
+                DOMAIN,
+                "weekday_deprecation",
+                breaks_in_ha_version="2024.7.0",
+                is_fixable=False,
+                is_persistent=False,
+                severity=ir.IssueSeverity.WARNING,
+                translation_key="numeric_deprecation",
+                translation_placeholders={
+                    "argument": "weekday",
+                    "recommendation": "`monday...sunday`",
+                },
+                learn_more_url="https://github.com/nordicopen/easee_hass/pull/400",
+            )
+
+        else:
+            day = WEEKDAYS[call.data.get(ATTR_CHARGEPLAN_DAY)]
 
         _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
@@ -716,7 +743,28 @@ async def async_setup_services(hass):  # noqa: C901
 
     async def charger_execute_set_access(call):
         """Execute a service to set access level on a charger."""
-        access_level = ACCESS_LEVELS[call.data.get(ACCESS_LEVEL)]
+        # Todo: Remove deprecation code
+        if isinstance(call.data.get(ACCESS_LEVEL), int):
+            access_level = call.data.get(ACCESS_LEVEL)
+            ir.async_create_issue(
+                hass,
+                DOMAIN,
+                "access_level_deprecation",
+                breaks_in_ha_version="2024.7.0",
+                is_fixable=False,
+                is_persistent=False,
+                severity=ir.IssueSeverity.WARNING,
+                translation_key="numeric_deprecation",
+                translation_placeholders={
+                    "argument": "access_level",
+                    "recommendation": "`open_for_all...whitelist`",
+                },
+                learn_more_url="https://github.com/nordicopen/easee_hass/pull/400",
+            )
+
+        else:
+            access_level = ACCESS_LEVELS[call.data.get(ACCESS_LEVEL)]
+
         charger = await async_get_charger(call)
 
         if charger:
