@@ -290,8 +290,12 @@
       "title": "Use of deprecated service: {deprecation}"
     },
     "numeric_deprecation": {
-      "description": "The use of numeric value for {argument} is deprecated and will not be accepted in the future. Please convert your automations and scripts to use strings {recommendation} instead",
+      "description": "The use of numeric value for {argument} is deprecated and will not be accepted in future versions. Please convert your automations and scripts to use strings {recommendation} instead",
       "title": "Use of numeric value for {argument} in service call"
+    },
+    "currentpx_deprecation": {
+      "description": "The use of {argument} as phase current is deprecated and will not be accepted in future verions. Please convert your automations and scripts to use {recommendation} instead",
+      "title": "Use of {argument} in service call"
     }
   },
   "options": {

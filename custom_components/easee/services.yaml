@@ -158,7 +158,8 @@ set_circuit_offline_limit:
           entity:
             domain: "switch"
     current_p1:
-      required: true
+      # Todo: Reinstate after deprecation period
+      # required: true
       example: 16
       default: 16
       selector:

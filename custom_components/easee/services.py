@@ -156,9 +156,14 @@ SERVICE_CHARGER_SET_WEEKLY_CHARGEPLAN_SCHEMA = vol.All(
 )
 
 ext_circuit_current = {
-    vol.Required(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
+    # Todo: Remove deprecation code
+    vol.Optional(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
+    # vol.Required(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
     vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
     vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
+    vol.Optional("currentP1"): cv.positive_int,
+    vol.Optional("currentP2"): cv.positive_int,
+    vol.Optional("currentP3"): cv.positive_int,
 }
 
 SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = vol.All(
@@ -539,10 +544,34 @@ async def async_setup_services(hass):  # noqa: C901
     async def circuit_execute_set_current(call):
         """Execute a service to set currents for Easee circuit."""
         circuit_id = await async_get_circuit_id(call)
-
-        current_p1 = call.data.get(ATTR_SET_CURRENTP1)
-        current_p2 = call.data.get(ATTR_SET_CURRENTP2)
-        current_p3 = call.data.get(ATTR_SET_CURRENTP3)
+        # Todo: Remove deprecation code
+        if (
+            "currentP1" in call.data
+            or "currentP2" in call.data
+            or "currentP3" in call.data
+        ):
+            current_p1 = call.data.get("currentP1")
+            current_p2 = call.data.get("currentP2")
+            current_p3 = call.data.get("currentP3")
+            ir.async_create_issue(
+                hass,
+                DOMAIN,
+                "currentpx_deprecation",
+                breaks_in_ha_version="2024.7.0",
+                is_fixable=False,
+                is_persistent=False,
+                severity=ir.IssueSeverity.WARNING,
+                translation_key="currentpx_deprecation",
+                translation_placeholders={
+                    "argument": "currentP#",
+                    "recommendation": "`current_p1, current_p2 or current_p3`",
+                },
+                learn_more_url="https://github.com/nordicopen/easee_hass/pull/400",
+            )
+        else:
+            current_p1 = call.data.get(ATTR_SET_CURRENTP1)
+            current_p2 = call.data.get(ATTR_SET_CURRENTP2)
+            current_p3 = call.data.get(ATTR_SET_CURRENTP3)
 
         time_to_live = call.data.get(ATTR_TTL)
 
@@ -655,9 +684,34 @@ async def async_setup_services(hass):  # noqa: C901
 
         _LOGGER.debug("Call set_current service on charger_id: %s", charger_id)
 
-        current_p1 = call.data.get(ATTR_SET_CURRENTP1)
-        current_p2 = call.data.get(ATTR_SET_CURRENTP2)
-        current_p3 = call.data.get(ATTR_SET_CURRENTP3)
+        # Todo: Remove deprecation code
+        if (
+            "currentP1" in call.data
+            or "currentP2" in call.data
+            or "currentP3" in call.data
+        ):
+            current_p1 = call.data.get("currentP1")
+            current_p2 = call.data.get("currentP2")
+            current_p3 = call.data.get("currentP3")
+            ir.async_create_issue(
+                hass,
+                DOMAIN,
+                "currentpx_deprecation",
+                breaks_in_ha_version="2024.7.0",
+                is_fixable=False,
+                is_persistent=False,
+                severity=ir.IssueSeverity.WARNING,
+                translation_key="currentpx_deprecation",
+                translation_placeholders={
+                    "argument": "currentP#",
+                    "recommendation": "`current_p1, current_p2 or current_p3`",
+                },
+                learn_more_url="https://github.com/nordicopen/easee_hass/pull/400",
+            )
+        else:
+            current_p1 = call.data.get(ATTR_SET_CURRENTP1)
+            current_p2 = call.data.get(ATTR_SET_CURRENTP2)
+            current_p3 = call.data.get(ATTR_SET_CURRENTP3)
 
         _LOGGER.debug("Execute_service: %s %s", str(call.service), str(call.data))
 
