@@ -8,7 +8,11 @@ import voluptuous as vol
 
 from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import config_validation as cv, device_registry as dr
+from homeassistant.helpers import (
+    config_validation as cv,
+    device_registry as dr,
+    issue_registry as ir,
+)
 from homeassistant.util import dt as dt_util
 
 from .const import DOMAIN
@@ -18,6 +22,16 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 ACCESS_LEVEL = "access_level"
+ACCESS_LEVELS = {"open_for_all": 1, "require_easee_account": 2, "whitelist": 3}
+WEEKDAYS = {
+    "monday": 0,
+    "tuesday": 1,
+    "wednesday": 2,
+    "thursday": 3,
+    "friday": 4,
+    "saturday": 5,
+    "sunday": 6,
+}
 CHARGER_ID = "charger_id"
 CIRCUIT_ID = "circuit_id"
 ATTR_CHARGEPLAN_START_DATETIME = "start_datetime"
@@ -27,9 +41,9 @@ ATTR_CHARGEPLAN_DAY = "day"
 ATTR_CHARGEPLAN_START_TIME = "start_time"
 ATTR_CHARGEPLAN_STOP_TIME = "stop_time"
 ATTR_SET_CURRENT = "current"
-ATTR_SET_CURRENTP1 = "currentP1"
-ATTR_SET_CURRENTP2 = "currentP2"
-ATTR_SET_CURRENTP3 = "currentP3"
+ATTR_SET_CURRENTP1 = "current_p1"
+ATTR_SET_CURRENTP2 = "current_p2"
+ATTR_SET_CURRENTP3 = "current_p3"
 ATTR_COST_PER_KWH = "cost_per_kwh"
 ATTR_COST_CURRENCY = "currency_id"
 ATTR_COST_VAT = "vat"
@@ -127,8 +141,11 @@ SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.All(
     exclusive_schema2.extend(ext_basic_chargeplan),
 )
 
+# Todo: Remove deprecated cv.positive_int
 ext_weekly_chargeplan = {
-    vol.Required(ATTR_CHARGEPLAN_DAY, default=0): cv.positive_int,
+    vol.Required(ATTR_CHARGEPLAN_DAY, default="monday"): vol.Or(
+        vol.In(WEEKDAYS), cv.positive_int
+    ),
     vol.Optional(ATTR_CHARGEPLAN_START_TIME): cv.time,
     vol.Optional(ATTR_CHARGEPLAN_STOP_TIME): cv.time,
 }
@@ -139,9 +156,14 @@ SERVICE_CHARGER_SET_WEEKLY_CHARGEPLAN_SCHEMA = vol.All(
 )
 
 ext_circuit_current = {
-    vol.Required(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
+    # Todo: Remove deprecation code
+    vol.Optional(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
+    # vol.Required(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
     vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
     vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
+    vol.Optional("currentP1"): cv.positive_int,
+    vol.Optional("currentP2"): cv.positive_int,
+    vol.Optional("currentP3"): cv.positive_int,
 }
 
 SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = vol.All(
@@ -179,9 +201,9 @@ SERVICE_SET_SITE_CHARGING_COST_SCHEMA = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_cost),
 )
-
+# Todo: Remove deprecated cv.positive_int
 ext_access = {
-    vol.Required(ACCESS_LEVEL): vol.All(cv.positive_int, vol.Range(min=1, max=3)),
+    vol.Required(ACCESS_LEVEL): vol.Or(vol.In(ACCESS_LEVELS), cv.positive_int),
 }
 SERVICE_SET_ACCESS_SCHEMA = vol.All(
     target_schema2,
@@ -437,7 +459,27 @@ async def async_setup_services(hass):  # noqa: C901
         charger = await async_get_charger(call)
         start_time = call.data.get(ATTR_CHARGEPLAN_START_TIME)
         stop_time = call.data.get(ATTR_CHARGEPLAN_STOP_TIME)
-        day = call.data.get(ATTR_CHARGEPLAN_DAY)
+        # Todo: Remove deprecation code.
+        if isinstance(call.data.get(ATTR_CHARGEPLAN_DAY), int):
+            day = call.data.get(ATTR_CHARGEPLAN_DAY)
+            ir.async_create_issue(
+                hass,
+                DOMAIN,
+                "weekday_deprecation",
+                breaks_in_ha_version="2024.7.0",
+                is_fixable=False,
+                is_persistent=False,
+                severity=ir.IssueSeverity.WARNING,
+                translation_key="numeric_deprecation",
+                translation_placeholders={
+                    "argument": "weekday",
+                    "recommendation": "`monday...sunday`",
+                },
+                learn_more_url="https://github.com/nordicopen/easee_hass/pull/400",
+            )
+
+        else:
+            day = WEEKDAYS[call.data.get(ATTR_CHARGEPLAN_DAY)]
 
         _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
@@ -502,10 +544,34 @@ async def async_setup_services(hass):  # noqa: C901
     async def circuit_execute_set_current(call):
         """Execute a service to set currents for Easee circuit."""
         circuit_id = await async_get_circuit_id(call)
-
-        current_p1 = call.data.get(ATTR_SET_CURRENTP1)
-        current_p2 = call.data.get(ATTR_SET_CURRENTP2)
-        current_p3 = call.data.get(ATTR_SET_CURRENTP3)
+        # Todo: Remove deprecation code
+        if (
+            "currentP1" in call.data
+            or "currentP2" in call.data
+            or "currentP3" in call.data
+        ):
+            current_p1 = call.data.get("currentP1")
+            current_p2 = call.data.get("currentP2")
+            current_p3 = call.data.get("currentP3")
+            ir.async_create_issue(
+                hass,
+                DOMAIN,
+                "currentpx_deprecation",
+                breaks_in_ha_version="2024.7.0",
+                is_fixable=False,
+                is_persistent=False,
+                severity=ir.IssueSeverity.WARNING,
+                translation_key="currentpx_deprecation",
+                translation_placeholders={
+                    "argument": "currentP#",
+                    "recommendation": "`current_p1, current_p2 or current_p3`",
+                },
+                learn_more_url="https://github.com/nordicopen/easee_hass/pull/400",
+            )
+        else:
+            current_p1 = call.data.get(ATTR_SET_CURRENTP1)
+            current_p2 = call.data.get(ATTR_SET_CURRENTP2)
+            current_p3 = call.data.get(ATTR_SET_CURRENTP3)
 
         time_to_live = call.data.get(ATTR_TTL)
 
@@ -618,9 +684,34 @@ async def async_setup_services(hass):  # noqa: C901
 
         _LOGGER.debug("Call set_current service on charger_id: %s", charger_id)
 
-        current_p1 = call.data.get(ATTR_SET_CURRENTP1)
-        current_p2 = call.data.get(ATTR_SET_CURRENTP2)
-        current_p3 = call.data.get(ATTR_SET_CURRENTP3)
+        # Todo: Remove deprecation code
+        if (
+            "currentP1" in call.data
+            or "currentP2" in call.data
+            or "currentP3" in call.data
+        ):
+            current_p1 = call.data.get("currentP1")
+            current_p2 = call.data.get("currentP2")
+            current_p3 = call.data.get("currentP3")
+            ir.async_create_issue(
+                hass,
+                DOMAIN,
+                "currentpx_deprecation",
+                breaks_in_ha_version="2024.7.0",
+                is_fixable=False,
+                is_persistent=False,
+                severity=ir.IssueSeverity.WARNING,
+                translation_key="currentpx_deprecation",
+                translation_placeholders={
+                    "argument": "currentP#",
+                    "recommendation": "`current_p1, current_p2 or current_p3`",
+                },
+                learn_more_url="https://github.com/nordicopen/easee_hass/pull/400",
+            )
+        else:
+            current_p1 = call.data.get(ATTR_SET_CURRENTP1)
+            current_p2 = call.data.get(ATTR_SET_CURRENTP2)
+            current_p3 = call.data.get(ATTR_SET_CURRENTP3)
 
         _LOGGER.debug("Execute_service: %s %s", str(call.service), str(call.data))
 
@@ -706,7 +797,28 @@ async def async_setup_services(hass):  # noqa: C901
 
     async def charger_execute_set_access(call):
         """Execute a service to set access level on a charger."""
-        access_level = call.data.get(ACCESS_LEVEL)
+        # Todo: Remove deprecation code
+        if isinstance(call.data.get(ACCESS_LEVEL), int):
+            access_level = call.data.get(ACCESS_LEVEL)
+            ir.async_create_issue(
+                hass,
+                DOMAIN,
+                "access_level_deprecation",
+                breaks_in_ha_version="2024.7.0",
+                is_fixable=False,
+                is_persistent=False,
+                severity=ir.IssueSeverity.WARNING,
+                translation_key="numeric_deprecation",
+                translation_placeholders={
+                    "argument": "access_level",
+                    "recommendation": "`open_for_all...whitelist`",
+                },
+                learn_more_url="https://github.com/nordicopen/easee_hass/pull/400",
+            )
+
+        else:
+            access_level = ACCESS_LEVELS[call.data.get(ACCESS_LEVEL)]
+
         charger = await async_get_charger(call)
 
         if charger:
