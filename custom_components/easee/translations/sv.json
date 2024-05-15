@@ -285,9 +285,17 @@
     }
   },
   "issues": {
+    "currentpx_deprecation": {
+      "description": "Användningen av {argument} som fasström är utfasad och kommer inte att accepteras i framtida versioner. Konvertera dina automatiseringar och skript till att använda {recommendation} istället",
+      "title": "Användning av {argument} i tjänstanrop"
+    },
     "deprecated_service": {
       "description": "Tjänsten **{deprecation}** är utfasad och kommer att tas bort i framtiden. \n\nVänligen konvertera automationer och skript till att använda **{recommend}** så snart som möjligt",
       "title": "Användning av utfasad tjänst: {deprecation}"
+    },
+    "numeric_deprecation": {
+      "description": "Användningen av numeriskt värde för {argument} är utfasad och kommer inte att accepteras i framtida versioner. Konvertera dina automatiseringar och skript till att använda strängar {recommendation} istället",
+      "title": "Användning av numeriskt värde för {argument} i tjänstanrop"
     }
   },
   "options": {
@@ -306,6 +314,248 @@
         "description": "Välj inställningar",
         "title": "Easee EV Charger"
       }
+    }
+  },
+  "selector": {
+    "access_level": {
+      "options": {
+        "open_for_all": "Öppet för alla",
+        "require_easee_account": "Kräv Easee-konto",
+        "whitelist": "Vitlista"
+      }
+    },
+    "action_command": {
+      "options": {
+        "delete_basic_charge_plan": "Ta bort grundläggande schema för laddning",
+        "delete_weekly_charge_plan": "Ta bort veckoschema för laddning",
+        "override_schedule": "Åsidosätt schema",
+        "pause": "Pausa",
+        "reboot": "Starta om laddaren",
+        "resume": "Återuppta",
+        "start": "Starta",
+        "stop": "Stoppa",
+        "toggle": "Växla",
+        "update_firmware": "Uppdatera firmware"
+      }
+    },
+    "weekday": {
+      "options": {
+        "friday": "Fredag",
+        "monday": "Måndag",
+        "saturday": "Lördag",
+        "sunday": "Söndag",
+        "thursday": "Torsdag",
+        "tuesday": "Tisdag",
+        "wednesday": "Onsdag"
+      }
+    }
+  },
+  "services": {
+    "action_command": {
+      "description": "Skicka kommando till laddaren",
+      "fields": {
+        "action_command": {
+          "description": "Välj det kommando som ska köras",
+          "name": "Kommando"
+        },
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Åtgärdskommando"
+    },
+    "set_basic_charge_plan": {
+      "description": "Ställ in grundläggande schema för laddning",
+      "fields": {
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        },
+        "repeat": {
+          "description": "Upprepa schema",
+          "name": "Upprepa schema"
+        },
+        "start_datetime": {
+          "description": "Starttid för schema",
+          "name": "Starttidpunkt"
+        },
+        "stop_datetime": {
+          "description": "Stopptid för schema",
+          "name": "Stopptidpunkt"
+        }
+      },
+      "name": "Ställ in grundläggande schema för laddning"
+    },
+    "set_charger_access": {
+      "description": "Välj vem som ska kunna ladda",
+      "fields": {
+        "access_level": {
+          "description": "Ställ in åtkomst till laddning",
+          "name": "Åtkomst"
+        },
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Ställ in åtkomst till laddare"
+    },
+    "set_charger_dynamic_limit": {
+      "description": "Ställ in laddarens dynamiska gräns",
+      "fields": {
+        "current": {
+          "description": "Max laddningsström",
+          "name": "Ström"
+        },
+        "device_id": {
+          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Ställ in laddarens dynamiska gräns"
+    },
+    "set_charger_max_limit": {
+      "description": "Ställ in laddarens maxgräns. Försiktighet! Bör inte användas av automatisering (kan slita ut flashminnet om det ställs in för ofta).",
+      "fields": {
+        "current": {
+          "description": "Max laddningsström",
+          "name": "Ström"
+        },
+        "device_id": {
+          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Ställ in laddarens maxgräns"
+    },
+    "set_charging_cost": {
+      "description": "Ställ in laddningskostnad per kWh för laddplats",
+      "fields": {
+        "cost_per_kwh": {
+          "description": "Kostnad per kWh",
+          "name": "Kostnad per kWh"
+        },
+        "currency_id": {
+          "description": "Valutakod",
+          "name": "Valuta"
+        },
+        "device_id": {
+          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "name": "Målenhet"
+        },
+        "vat": {
+          "description": "Mervärdesskatt",
+          "name": "MOMS"
+        }
+      },
+      "name": "Ställ in laddningskostnad"
+    },
+    "set_circuit_dynamic_limit": {
+      "description": "Ställ in kretsens dynamiska gräns (delad mellan laddare på den kretsen). Denna tjänst kan användas i automatiseringar.",
+      "fields": {
+        "current_p1": {
+          "description": "Max laddningsström",
+          "name": "Ström fas 1"
+        },
+        "current_p2": {
+          "description": "Max laddningsström. Om det är inaktiverat kommer värdet för Ström fas 1 att användas",
+          "name": "Ström fas 2"
+        },
+        "current_p3": {
+          "description": "Max laddningsström. Om det är inaktiverat kommer värdet för Ström fas 1 att användas",
+          "name": "Ström fas 3"
+        },
+        "device_id": {
+          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "name": "Målenhet"
+        },
+        "time_to_live": {
+          "description": "Ange tid i minuter för att kommandot ska vara aktivt. 0 = på obegränsad tid.",
+          "name": "Tid att leva"
+        }
+      },
+      "name": "Ställ in kretsens dynamiska gräns"
+    },
+    "set_circuit_max_limit": {
+      "description": "Ställ in kretsens maxgräns. Försiktighet! Bör inte användas av automatisering (kan slita ut flashminnet om det ställs in för ofta).",
+      "fields": {
+        "current_p1": {
+          "description": "Max laddningsström",
+          "name": "Ström fas 1"
+        },
+        "current_p2": {
+          "description": "Max laddningsström. Om det är inaktiverat kommer värdet för Ström fas 1 att användas",
+          "name": "Ström fas 2"
+        },
+        "current_p3": {
+          "description": "Max laddningsström. Om det är inaktiverat kommer värdet för Ström fas 1 att användas",
+          "name": "Ström fas 3"
+        },
+        "device_id": {
+          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Ställ in maxgräns för krets"
+    },
+    "set_circuit_offline_limit": {
+      "description": "Ställ in kretsens offlinegräns som används om laddaren är offline (reserv). Försiktighet! Bör inte användas av automatisering (kan slita ut flashminnet om det ställs in för ofta).",
+      "fields": {
+        "current_p1": {
+          "description": "Max laddningsström",
+          "name": "Ström fas 1"
+        },
+        "current_p2": {
+          "description": "Max laddningsström. Om det är inaktiverat kommer värdet för Ström fas 1 att användas",
+          "name": "Ström fas 2"
+        },
+        "current_p3": {
+          "description": "Max laddningsström. Om det är inaktiverat kommer värdet för Ström fas 1 att användas",
+          "name": "Ström fas 3"
+        },
+        "device_id": {
+          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Ange offlinegräns för krets"
+    },
+    "set_weekly_charge_plan": {
+      "description": "Ställ in veckoschema för laddning",
+      "fields": {
+        "day": {
+          "description": "Veckodag för detta schema",
+          "name": "Veckodag"
+        },
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        },
+        "start_time": {
+          "description": "Starttid för schema",
+          "name": "Starttid"
+        },
+        "stop_time": {
+          "description": "Stopptid för schema",
+          "name": "Stopptid"
+        }
+      },
+      "name": "Ställ in veckoschema för laddning"
+    },
+    "smart_charging": {
+      "description": "Aktivera/inaktivera smart laddning",
+      "fields": {
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        },
+        "enable": {
+          "description": "Aktivera smart laddning",
+          "name": "Aktivera"
+        }
+      },
+      "name": "Smart laddning"
     }
   },
   "system_health": {
