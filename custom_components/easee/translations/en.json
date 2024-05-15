@@ -285,6 +285,10 @@
     }
   },
   "issues": {
+    "currentpx_deprecation": {
+      "description": "The use of {argument} as phase current is deprecated and will not be accepted in future verions. Please convert your automations and scripts to use {recommendation} instead",
+      "title": "Use of {argument} in service call"
+    },
     "deprecated_service": {
       "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\n\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
       "title": "Use of deprecated service: {deprecation}"
@@ -292,10 +296,6 @@
     "numeric_deprecation": {
       "description": "The use of numeric value for {argument} is deprecated and will not be accepted in future versions. Please convert your automations and scripts to use strings {recommendation} instead",
       "title": "Use of numeric value for {argument} in service call"
-    },
-    "currentpx_deprecation": {
-      "description": "The use of {argument} as phase current is deprecated and will not be accepted in future verions. Please convert your automations and scripts to use {recommendation} instead",
-      "title": "Use of {argument} in service call"
     }
   },
   "options": {
@@ -326,236 +326,236 @@
     },
     "action_command": {
       "options": {
+        "delete_basic_charge_plan": "Delete basic charge plan",
+        "delete_weekly_charge_plan": "Delete weekly charge plan",
+        "override_schedule": "Override schedule",
+        "pause": "Pause",
+        "reboot": "Reboot charger",
+        "resume": "Resume",
         "start": "Start",
         "stop": "Stop",
         "toggle": "Toggle",
-        "pause": "Pause",
-        "resume": "Resume",
-        "reboot": "Reboot charger",
-        "update_firmware": "Update firmware",
-        "override_schedule": "Override schedule",
-        "delete_basic_charge_plan": "Delete basic charge plan",
-        "delete_weekly_charge_plan": "Delete weekly charge plan"
+        "update_firmware": "Update firmware"
       }
     },
     "weekday": {
       "options": {
-        "monday": "Monday",
-        "tuesday": "Tuesday",
-        "wednesday": "Wednesday",
-        "thursday": "Thursday",
         "friday": "Friday",
+        "monday": "Monday",
         "saturday": "Saturday",
-        "sunday": "Sunday"
+        "sunday": "Sunday",
+        "thursday": "Thursday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday"
       }
     }
   },
   "services": {
+    "action_command": {
+      "description": "Send command to charger",
+      "fields": {
+        "action_command": {
+          "description": "Select the command to execute",
+          "name": "Command"
+        },
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        }
+      },
+      "name": "Action command"
+    },
     "set_basic_charge_plan": {
-      "name": "Set basic charge plan",
       "description": "Set basic charge plan",
       "fields": {
         "device_id": {
-          "name": "Target device",
-          "description": "Select device to be controlled"
-        },
-        "start_datetime": {
-          "name": "Start datetime",
-          "description": "Start time for plan"
-        },
-        "stop_datetime": {
-          "name": "Stop datetime",
-          "description": "Stop time for plan"
+          "description": "Select device to be controlled",
+          "name": "Target device"
         },
         "repeat": {
-          "name": "Repeat plan",
-          "description": "Repeat plan"
+          "description": "Repeat plan",
+          "name": "Repeat plan"
+        },
+        "start_datetime": {
+          "description": "Start time for plan",
+          "name": "Start datetime"
+        },
+        "stop_datetime": {
+          "description": "Stop time for plan",
+          "name": "Stop datetime"
         }
-      }
+      },
+      "name": "Set basic charge plan"
+    },
+    "set_charger_access": {
+      "description": "Select who should be able to charge",
+      "fields": {
+        "access_level": {
+          "description": "Set access to charging",
+          "name": "Access"
+        },
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        }
+      },
+      "name": "Set access to charger"
+    },
+    "set_charger_dynamic_limit": {
+      "description": "Set charger dynamic limit",
+      "fields": {
+        "current": {
+          "description": "Max charging current",
+          "name": "Current"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        }
+      },
+      "name": "Set charger dynamic limit"
+    },
+    "set_charger_max_limit": {
+      "description": "Set charger max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently).",
+      "fields": {
+        "current": {
+          "description": "Max charging current",
+          "name": "Current"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        }
+      },
+      "name": "Set charger max limit"
+    },
+    "set_charging_cost": {
+      "description": "Set charging cost per kWh for charger site",
+      "fields": {
+        "cost_per_kwh": {
+          "description": "Cost per kWh",
+          "name": "Cost per kWh"
+        },
+        "currency_id": {
+          "description": "Currency code",
+          "name": "Currency"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        },
+        "vat": {
+          "description": "Value added tax",
+          "name": "VAT"
+        }
+      },
+      "name": "Set charging cost"
+    },
+    "set_circuit_dynamic_limit": {
+      "description": "Set circuit dynamic limit (shared betwwen chargers on that circuit). This service can be used in automations.",
+      "fields": {
+        "current_p1": {
+          "description": "Max charging current",
+          "name": "Current phase 1"
+        },
+        "current_p2": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used",
+          "name": "Current phase 2"
+        },
+        "current_p3": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used",
+          "name": "Current phase 3"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        },
+        "time_to_live": {
+          "description": "Set time in minutes for the command to live. 0 = indefinitely.",
+          "name": "Time to live"
+        }
+      },
+      "name": "Set circuit dynamic limit"
+    },
+    "set_circuit_max_limit": {
+      "description": "Set circuit max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently).",
+      "fields": {
+        "current_p1": {
+          "description": "Max charging current",
+          "name": "Current phase 1"
+        },
+        "current_p2": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used",
+          "name": "Current phase 2"
+        },
+        "current_p3": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used",
+          "name": "Current phase 3"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        }
+      },
+      "name": "Set circuit max limit"
+    },
+    "set_circuit_offline_limit": {
+      "description": "Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently).",
+      "fields": {
+        "current_p1": {
+          "description": "Max charging current",
+          "name": "Current phase 1"
+        },
+        "current_p2": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used",
+          "name": "Current phase 2"
+        },
+        "current_p3": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used",
+          "name": "Current phase 3"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        }
+      },
+      "name": "Set circuit offline limit"
     },
     "set_weekly_charge_plan": {
-      "name": "Set weekly charge plan",
       "description": "Set weekly charge plan",
       "fields": {
-        "device_id": {
-          "name": "Target device",
-          "description": "Select device to be controlled"
-        },
         "day": {
-          "name": "Weekday",
-          "description": "Weekday for this schedule"
+          "description": "Weekday for this schedule",
+          "name": "Weekday"
+        },
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
         },
         "start_time": {
-          "name": "Start time",
-          "description": "Start time for plan"
+          "description": "Start time for plan",
+          "name": "Start time"
         },
         "stop_time": {
-          "name": "Stop time",
-          "description": "Stop time for plan"
+          "description": "Stop time for plan",
+          "name": "Stop time"
         }
-      }
+      },
+      "name": "Set weekly charge plan"
     },
     "smart_charging": {
-      "name": "Smart charging",
       "description": "Enable/disable smart charging",
       "fields": {
         "device_id": {
-          "name": "Target device",
-          "description": "Select device to be controlled"
+          "description": "Select device to be controlled",
+          "name": "Target device"
         },
         "enable": {
-          "name": "Enable",
-          "description": "Enable smart charging"
+          "description": "Enable smart charging",
+          "name": "Enable"
         }
-      }
-    },
-    "set_circuit_max_limit": {
-      "name": "Set circuit max limit",
-      "description": "Set circuit max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently).",
-      "fields": {
-        "device_id": {
-          "name": "Target device",
-          "description": "Select one of the chargers in the circuit that should be controlled."
-        },
-        "current_p1": {
-          "name": "Current phase 1",
-          "description": "Max charging current"
-        },
-        "current_p2": {
-          "name": "Current phase 2",
-          "description": "Max charging current. If disabled, the value of Current phase 1 will be used"
-        },
-        "current_p3": {
-          "name": "Current phase 3",
-          "description": "Max charging current. If disabled, the value of Current phase 1 will be used"
-        }
-      }
-    },
-    "set_circuit_offline_limit": {
-      "name": "Set circuit offline limit",
-      "description": "Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently).",
-      "fields": {
-        "device_id": {
-          "name": "Target device",
-          "description": "Select one of the chargers in the circuit that should be controlled."
-        },
-        "current_p1": {
-          "name": "Current phase 1",
-          "description": "Max charging current"
-        },
-        "current_p2": {
-          "name": "Current phase 2",
-          "description": "Max charging current. If disabled, the value of Current phase 1 will be used"
-        },
-        "current_p3": {
-          "name": "Current phase 3",
-          "description": "Max charging current. If disabled, the value of Current phase 1 will be used"
-        }
-      }
-    },
-    "set_charger_dynamic_limit": {
-      "name": "Set charger dynamic limit",
-      "description": "Set charger dynamic limit",
-      "fields": {
-        "device_id": {
-          "name": "Target device",
-          "description": "Select one of the chargers in the circuit that should be controlled."
-        },
-        "current": {
-          "name": "Current",
-          "description": "Max charging current"
-        }
-      }
-    },
-    "set_circuit_dynamic_limit": {
-      "name": "Set circuit dynamic limit",
-      "description": "Set circuit dynamic limit (shared betwwen chargers on that circuit). This service can be used in automations.",
-      "fields": {
-        "device_id": {
-          "name": "Target device",
-          "description": "Select one of the chargers in the circuit that should be controlled."
-        },
-        "current_p1": {
-          "name": "Current phase 1",
-          "description": "Max charging current"
-        },
-        "current_p2": {
-          "name": "Current phase 2",
-          "description": "Max charging current. If disabled, the value of Current phase 1 will be used"
-        },
-        "current_p3": {
-          "name": "Current phase 3",
-          "description": "Max charging current. If disabled, the value of Current phase 1 will be used"
-        },
-        "time_to_live": {
-          "name": "Time to live",
-          "description": "Set time in minutes for the command to live. 0 = indefinitely."
-        }
-      }
-    },
-    "set_charger_max_limit": {
-      "name": "Set charger max limit",
-      "description": "Set charger max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently).",
-      "fields": {
-        "device_id": {
-          "name": "Target device",
-          "description": "Select one of the chargers in the circuit that should be controlled."
-        },
-        "current": {
-          "name": "Current",
-          "description": "Max charging current"
-        }
-      }
-    },
-    "set_charging_cost": {
-      "name": "Set charging cost",
-      "description": "Set charging cost per kWh for charger site",
-      "fields": {
-        "device_id": {
-          "name": "Target device",
-          "description": "Select one of the chargers in the circuit that should be controlled."
-        },
-        "cost_per_kwh": {
-          "name": "Cost per kWh",
-          "description": "Cost per kWh"
-        },
-        "vat": {
-          "name": "VAT",
-          "description": "Value added tax"
-        },
-        "currency_id": {
-          "name": "Currency",
-          "description": "Currency code"
-        }
-      }
-    },
-    "set_charger_access": {
-      "name": "Set access to charger",
-      "description": "Select who should be able to charge",
-      "fields": {
-        "device_id": {
-          "name": "Target device",
-          "description": "Select device to be controlled"
-        },
-        "access_level": {
-          "name": "Access",
-          "description": "Set access to charging"
-        }
-      }
-    },
-    "action_command": {
-      "name": "Action command",
-      "description": "Send command to charger",
-      "fields": {
-        "device_id": {
-          "name": "Target device",
-          "description": "Select device to be controlled"
-        },
-        "action_command": {
-          "name": "Command",
-          "description": "Select the command to execute"
-        }
-      }
+      },
+      "name": "Smart charging"
     }
   },
   "system_health": {
