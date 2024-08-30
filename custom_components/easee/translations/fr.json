@@ -1,0 +1,569 @@
+{
+  "config": {
+    "abort": {
+      "already_setup": "Vous ne pouvez configurer qu’une seule connexion Easee.",
+      "reauth_successful": "Ré-authentification réussie."
+    },
+    "error": {
+      "auth_failure": "Impossible de se connecter à Easee. Vérifiez votre nom d’utilisateur et votre mot de passe.",
+      "connection_failure": "Impossible de se connecter à Easee. Testez à nouveau plus tard.",
+      "no_sites": "Aucun site surveillé n'a été sélectionné",
+      "no_sites_in_account": "Aucun site n’a été trouvé sur ce compte.",
+      "refused_failure": "La connexion à Easee a été refusée. Testez à nouveau plus tard."
+    },
+    "step": {
+      "reauth_confirm": {
+        "data": {
+          "password": "Mot de passe"
+        },
+        "description": "L’intégration Easee doit ré-authentifier le compte {username}.",
+        "title": "Se ré-authentifier avec Easee"
+      },
+      "sites": {
+        "data": {
+          "monitored_sites": "Sites"
+        },
+        "description": "Sélectionner les sites à surveiller",
+        "title": "Easee EV Charger"
+      },
+      "user": {
+        "data": {
+          "password": "Mot de passe",
+          "username": "Nom d’utilisateur"
+        },
+        "description": "Veuillez entrer le nom d’utilisateur et le mot de passe de votre compte Easee",
+        "title": "Se connecter à Easee"
+      }
+    }
+  },
+  "device_automation": {
+    "action_type": {
+      "override_schedule": "Outrepasser la planification",
+      "pause": "Pause de la charge",
+      "reboot": "Redémarrer le chargeur",
+      "resume": "Reprendre la charge",
+      "start": "Commencer la charge",
+      "stop": "Arrêter la charge",
+      "toggle": "Basculer la charge"
+    },
+    "condition_type": {
+      "authenticating": "{entity_name} est Authentification",
+      "awaiting_authentication": "{entity_name} est En attente d’authentification",
+      "awaiting_authorization": "{entity_name} est En attente d’une autorisation",
+      "awaiting_load_balancing": "{entity_name} est En attente de l’équilibrage de charge",
+      "awaiting_scheduled_start": "{entity_name} est En attente du démarrage programmé",
+      "awaiting_smart_start": "{entity_name} est En attente d’un démarrage intelligent",
+      "awaiting_start": "{entity_name} est En attente de démarrage",
+      "charging": "{entity_name} est En charge",
+      "completed": "{entity_name} est Terminé",
+      "de_authorizing": "{entity_name} est Autorisation de clôture",
+      "disconnected": "{entity_name} est Voiture déconnectée",
+      "erratic_ev": "{entity_name} est Comportement EV erratique",
+      "error": "{entity_name} est en erreur",
+      "error_dead_powerboard": "{entity_name} est en erreur Carte électronique défectueuse",
+      "error_overcurrent": "{entity_name} est en erreur Surintensité",
+      "error_pen_fault": "{entity_name} est en erreur PEN fault",
+      "error_temperature_too_high": "{entity_name} est en erreur Température trop élevée",
+      "offline": "{entity_name} est hors ligne",
+      "paused_due_to_equalizer": "{entity_name} est mis en pause en raison de l’Equalizer",
+      "ready_to_charge": "{entity_name} est prêt à charger",
+      "searching_for_master": "{entity_name} recherche master",
+      "start_charging": "{entity_name} commence à charger",
+      "stop_charging": "{entity_name} arrête la charge"
+    },
+    "trigger_type": {
+      "authenticating": "{entity_name} Authentification",
+      "awaiting_authentication": "{entity_name} En attente d’authentification",
+      "awaiting_authorization": "{entity_name} En attente d’une autorisation",
+      "awaiting_load_balancing": "{entity_name} En attente de l’équilibrage de charge",
+      "awaiting_scheduled_start": "{entity_name} En attente du démarrage programmé",
+      "awaiting_smart_start": "{entity_name} En attente d’un démarrage intelligent",
+      "awaiting_start": "{entity_name} En attente de démarrage",
+      "charging": "{entity_name} En charge",
+      "completed": "{entity_name} Terminé",
+      "de_authorizing": "{entity_name} Autorisation de clôture",
+      "disconnected": "{entity_name} Voiture déconnectée",
+      "erratic_ev": "{entity_name} Comportement EV erratique",
+      "error": "{entity_name} Erreur",
+      "error_dead_powerboard": "{entity_name} Erreur Carte électronique défectueuse",
+      "error_overcurrent": "{entity_name} Erreur Surintensité",
+      "error_pen_fault": "{entity_name} Erreur PEN fault",
+      "error_temperature_too_high": "{entity_name} Erreur Température trop élevée",
+      "offline": "{entity_name} Hors-ligne",
+      "paused_due_to_equalizer": "{entity_name} Mis en pause en raison de l’Equalizer",
+      "ready_to_charge": "{entity_name} Prêt à charger",
+      "searching_for_master": "{entity_name} Recherche du master",
+      "start_charging": "{entity_name} Commencer la charge",
+      "stop_charging": "{entity_name} Arrêter la charge"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "basic_schedule": {
+        "name": "Planification basique"
+      },
+      "cable_locked": {
+        "name": "Câble verrouillé"
+      },
+      "online": {
+        "name": "En ligne"
+      },
+      "update_available": {
+        "name": "Mise à jour disponible"
+      },
+      "weekly_schedule": {
+        "name": "Planification hebdomadaire"
+      }
+    },
+    "sensor": {
+      "circuit_current": {
+        "name": "Courant du circuit"
+      },
+      "cost_day": {
+        "name": "Coût par jour"
+      },
+      "cost_month": {
+        "name": "Coût par mois"
+      },
+      "cost_per_kwh": {
+        "name": "Coût par kWh"
+      },
+      "cost_year": {
+        "name": "Coût à l'année"
+      },
+      "current": {
+        "name": "Courant"
+      },
+      "dynamic_charger_limit": {
+        "name": "Limite de chargeur dynamique"
+      },
+      "dynamic_circuit_limit": {
+        "name": "Limite de circuit dynamique"
+      },
+      "easee_reason_no_current": {
+        "name": "Raison de l’absence de courant",
+        "state": {
+          "car_not_charging": "La voiture ne se charge pas",
+          "charger_disabled": "Chargeur désactivé",
+          "charger_in_error_state": "Chargeur en état d’erreur",
+          "circuit_fuse_too_low": "Fusible du circuit trop faible",
+          "eq_too_low_current": "Courant de l’Equalizer trop faible",
+          "ev_behaving_erratic": "Comportement erratique de l'EV",
+          "illegal_grid_type": "Type de réseau illégal",
+          "limited_by_cable_rating": "Limité par la puissance du câble",
+          "limited_by_car": "Limité par la voiture",
+          "limited_by_charger_dynamic_limit": "Limité par la limite dynamique du chargeur",
+          "limited_by_charger_max_limit": "Limité par la limite maximale du chargeur",
+          "limited_by_circuit_dynamic_limit": "Limité par la limite dynamique du circuit",
+          "limited_by_circuit_fuse": "Limité par le fusible du circuit",
+          "limited_by_circuit_max_limit": "Limité par la limite maximale du circuit",
+          "limited_by_equalizer": "Limité par l’Equalizer",
+          "limited_by_load_balancing": "Limité par l’équilibrage de charge",
+          "limited_by_local_adjustment": "Limité par l’ajustement local",
+          "limited_by_offline_setting": "Limité par les paramètres hors ligne",
+          "limited_by_schedule": "Limité par la planification",
+          "max_charger_current_too_low": "Limite maximale du chargeur trop basse",
+          "max_circuit_current_too_low": "Courant maximal du circuit trop faible",
+          "max_dynamic_charger_current_too_low": "Limite dynamique maximale du chargeur trop basse",
+          "max_dynamic_circuit_current_too_low": "Courant maximal du circuit trop faible",
+          "max_dynamic_offline_fallback_circuit_current_too_low": "Courant maximal du circuit de repli dynamique hors ligne trop faible",
+          "no_current_request": "Aucune demande de courant",
+          "none": "Aucun",
+          "not_connected_to_master": "Non connecté au master",
+          "not_requesting_current": "Ne demande pas de courant",
+          "ok": "OK",
+          "pending_authorization": "En attente d'autorisation",
+          "pending_schedule": "Démarrage planifié",
+          "phase_not_connected": "Phase non connectée",
+          "undefined": "Non défini",
+          "waiting_in_fully": "Attente complète",
+          "waiting_in_queue": "En attente"
+        }
+      },
+      "easee_status": {
+        "name": "Statut",
+        "state": {
+          "authenticating": "Authentification",
+          "awaiting_authentication": "En attente d’authentification",
+          "awaiting_authorization": "En attente d’une autorisation",
+          "awaiting_load_balancing": "En attente de l’équilibrage de charge",
+          "awaiting_scheduled_start": "Attente du démarrage programmé",
+          "awaiting_smart_start": "En attente d’un démarrage intelligent",
+          "awaiting_start": "En attente de démarrage",
+          "charging": "En charge",
+          "completed": "Terminé",
+          "de_authorizing": "Autorisation de clôture",
+          "disconnected": "Voiture déconnectée",
+          "erratic_ev": "Comportement EV erratique",
+          "error": "Erreur",
+          "error_dead_powerboard": "Erreur Carte électronique défectueuse",
+          "error_overcurrent": "Erreur Surintensité",
+          "error_pen_fault": "Erreur PEN fault",
+          "error_temperature_too_high": "Erreur Température trop élevée",
+          "offline": "Hors-ligne",
+          "paused_due_to_equalizer": "Mis en pause en raison de l’Equalizer",
+          "ready_to_charge": "Prêt à charger",
+          "searching_for_master": "Recherche du master",
+          "start_charging": "Début de la charge",
+          "stop_charging": "Arrêt de la charge"
+        }
+      },
+      "energy_per_hour": {
+        "name": "Énergie par heure"
+      },
+      "equalizer_limit": {
+        "name": "Limite de l'Equalizer"
+      },
+      "export_energy": {
+        "name": "Énergie exportée"
+      },
+      "export_power": {
+        "name": "Puissance exportée"
+      },
+      "export_reactive_energy": {
+        "name": "Énergie réactive exportée"
+      },
+      "export_reactive_power": {
+        "name": "Puissance réactive exportée"
+      },
+      "import_energy": {
+        "name": "Énergie importée"
+      },
+      "import_power": {
+        "name": "Puissance importée"
+      },
+      "import_reactive_energy": {
+        "name": "Énergie réactive importée"
+      },
+      "import_reactive_power": {
+        "name": "Puissance réactive importée"
+      },
+      "internal_temperature": {
+        "name": "Température interne"
+      },
+      "lifetime_energy": {
+        "name": "Énergie totale"
+      },
+      "max_charger_limit": {
+        "name": "Limite maximale du chargeur"
+      },
+      "max_circuit_limit": {
+        "name": "Limite maximale du circuit"
+      },
+      "offline_circuit_limit": {
+        "name": "Limite de circuit hors ligne"
+      },
+      "output_limit": {
+        "name": "Limite de sortie"
+      },
+      "power": {
+        "name": "Puissance"
+      },
+      "session_energy": {
+        "name": "Énergie de la session"
+      },
+      "voltage": {
+        "name": "Tension"
+      }
+    },
+    "switch": {
+      "cable_locked_permanently": {
+        "name": "Câble verrouillé en permanence"
+      },
+      "idle_current": {
+        "name": "Courant de repos"
+      },
+      "is_enabled": {
+        "name": "Chargeur activé"
+      },
+      "smart_button": {
+        "name": "Bouton tactile activé"
+      },
+      "smart_charging": {
+        "name": "Recharge intelligente"
+      }
+    }
+  },
+  "issues": {
+    "currentpx_deprecation": {
+      "description": "L’utilisation de {argument} comme courant de phase est obsolète et ne sera pas acceptée dans les versions futures. Veuillez convertir vos automatisations et scripts pour utiliser {recommendation} à la place",
+      "title": "Utilisation de {argument} dans l’appel de service"
+    },
+    "deprecated_service": {
+      "description": "L’utilisation du service **{deprecation}** est obsolète et le service sera supprimé à l’avenir.\n\nVeuillez convertir vos automatisations et scripts pour utiliser **{recommander}** dès que possible",
+      "title": "Utilisation d'un service obsolète : {deprecation}"
+    },
+    "numeric_deprecation": {
+      "description": "L’utilisation de la valeur numérique pour {argument} est obsolète et ne sera pas acceptée dans les versions futures. Veuillez convertir vos automatisations et scripts pour utiliser les chaînes {recommendation} à la place.",
+      "title": "Utilisation de la valeur numérique pour {argument} dans l’appel de service"
+    }
+  },
+  "options": {
+    "error": {
+      "no_sites": "Aucun site n'a été sélectionné"
+    },
+    "step": {
+      "init": {
+        "data": {
+          "custom_units": "Unités personnalisées",
+          "measured_consumption_days": "Journées de suivi de la consommation",
+          "monitored_conditions": "Charger surveillés",
+          "monitored_eq_conditions": "Equalizer surveillés",
+          "monitored_sites": "Sites surveillés"
+        },
+        "description": "Sélectionnez les options",
+        "title": "Easee EV Charger"
+      }
+    }
+  },
+  "selector": {
+    "access_level": {
+      "options": {
+        "open_for_all": "Ouvert à tous",
+        "require_easee_account": "Nécessite un compte Easee",
+        "whitelist": "Liste blanche"
+      }
+    },
+    "action_command": {
+      "options": {
+        "delete_basic_charge_plan": "Supprimer le plan de charge de base",
+        "delete_weekly_charge_plan": "Supprimer le plan de charge hebdomadaire",
+        "override_schedule": "Outrepasser la planification",
+        "pause": "Pause",
+        "reboot": "Redémarrer le chargeur",
+        "resume": "Reprendre",
+        "start": "Démarrer",
+        "stop": "Arrêter",
+        "toggle": "Basculer",
+        "update_firmware": "Mettre à jour le firmware"
+      }
+    },
+    "weekday": {
+      "options": {
+        "friday": "Vendredi",
+        "monday": "Lundi",
+        "saturday": "Samedi",
+        "sunday": "Dimanche",
+        "thursday": "Jeudi",
+        "tuesday": "Mardi",
+        "wednesday": "Mercredi"
+      }
+    }
+  },
+  "services": {
+    "action_command": {
+      "description": "Envoyer une commande au chargeur",
+      "fields": {
+        "action_command": {
+          "description": "Sélectionnez la commande à exécuter",
+          "name": "Commande"
+        },
+        "device_id": {
+          "description": "Sélectionnez l'appareil à contrôler",
+          "name": "Cible"
+        }
+      },
+      "name": "Commande"
+    },
+    "set_basic_charge_plan": {
+      "description": "Définissez un plan de charge de base",
+      "fields": {
+        "device_id": {
+          "description": "Sélectionnez l'appareil à contrôler",
+          "name": "Cible"
+        },
+        "repeat": {
+          "description": "Répéter le plan",
+          "name": "Répéter le plan"
+        },
+        "start_datetime": {
+          "description": "Heure de début de la planification",
+          "name": "Date et heure de début"
+        },
+        "stop_datetime": {
+          "description": "Heure de fin de la planification",
+          "name": "Date et heure de fin"
+        }
+      },
+      "name": "Définissez un plan de charge de base"
+    },
+    "set_charger_access": {
+      "description": "Sélectionnez qui devrait pouvoir charger",
+      "fields": {
+        "access_level": {
+          "description": "Définissez l'accès à la charge",
+          "name": "Accès"
+        },
+        "device_id": {
+          "description": "Sélectionnez l'appareil à contrôler",
+          "name": "Cible"
+        }
+      },
+      "name": "Définissez l'accès au chargeur"
+    },
+    "set_charger_dynamic_limit": {
+      "description": "Définissez la limite dynamique du chargeur",
+      "fields": {
+        "current": {
+          "description": "Courant de charge maximal",
+          "name": "Courant"
+        },
+        "device_id": {
+          "description": "Sélectionnez l’un des chargeurs du circuit qui doit être contrôlé.",
+          "name": "Cible"
+        }
+      },
+      "name": "Définissez la limite dynamique du chargeur"
+    },
+    "set_charger_max_limit": {
+      "description": "Définissez la limite maximale du chargeur. Attention ! Ne doit pas être utilisé par l'automatisation (peut user la mémoire flash si réglé trop fréquemment).",
+      "fields": {
+        "current": {
+          "description": "Courant de charge maximal",
+          "name": "Courant"
+        },
+        "device_id": {
+          "description": "Sélectionnez l’un des chargeurs du circuit qui doit être contrôlé.",
+          "name": "Cible"
+        }
+      },
+      "name": "Définissez la limite maximale du chargeur"
+    },
+    "set_charging_cost": {
+      "description": "Définissez le coût de charge par kWh pour le site de charge",
+      "fields": {
+        "cost_per_kwh": {
+          "description": "Coût par kWh",
+          "name": "Coût par kWh"
+        },
+        "currency_id": {
+          "description": "Code de la devise",
+          "name": "Devise"
+        },
+        "device_id": {
+          "description": "Sélectionnez l’un des chargeurs du circuit qui doit être contrôlé.",
+          "name": "Cible"
+        },
+        "vat": {
+          "description": "TVA",
+          "name": "TVA"
+        }
+      },
+      "name": "Définissez le coût de charge"
+    },
+    "set_circuit_dynamic_limit": {
+      "description": "Définissez la limite dynamique du circuit (partagée entre les chargeurs sur ce circuit). Ce service peut être utilisé dans les automatisations.",
+      "fields": {
+        "current_p1": {
+          "description": "Courant de charge maximal",
+          "name": "Courant de la phase 1"
+        },
+        "current_p2": {
+          "description": "Courant de charge maximal. Si cette option est désactivée, la valeur de courant de la phase 1 sera utilisée.",
+          "name": "Courant de la phase 2"
+        },
+        "current_p3": {
+          "description": "Courant de charge maximal. Si cette option est désactivée, la valeur de courant de la phase 1 sera utilisée.",
+          "name": "Courant de la phase 3"
+        },
+        "device_id": {
+          "description": "Sélectionnez l’un des chargeurs du circuit qui doit être contrôlé.",
+          "name": "Cible"
+        },
+        "time_to_live": {
+          "description": "Définissez la durée en minutes pendant laquelle la commande doit être active. 0 = indéfiniment.",
+          "name": "Limite de temps"
+        }
+      },
+      "name": "Définissez la limite dynamique du circuit"
+    },
+    "set_circuit_max_limit": {
+      "description": "Définissez la limite maximale du circuit. Attention ! Ne doit pas être utilisé par l’automatisation (peut user la mémoire flash si elle est réglée trop fréquemment).",
+      "fields": {
+        "current_p1": {
+          "description": "Courant de charge maximal",
+          "name": "Courant de la phase 1"
+        },
+        "current_p2": {
+          "description": "Courant de charge maximal. Si cette option est désactivée, la valeur de courant de la phase 1 sera utilisée.",
+          "name": "Courant de la phase 2"
+        },
+        "current_p3": {
+          "description": "Courant de charge maximal. Si cette option est désactivée, la valeur de courant de la phase 1 sera utilisée.",
+          "name": "Courant de la phase 3"
+        },
+        "device_id": {
+          "description": "Sélectionnez l’un des chargeurs du circuit qui doit être contrôlé.",
+          "name": "Cible"
+        }
+      },
+      "name": "Définissez la limite maximale du circuit"
+    },
+    "set_circuit_offline_limit": {
+      "description": "Définissez la limite de mise hors ligne du circuit utilisée si le chargeur est hors ligne (solution de secours). Attention! Ne doit pas être utilisé par l’automatisation (peut user la mémoire flash si elle est réglée trop fréquemment).",
+      "fields": {
+        "current_p1": {
+          "description": "Courant de charge maximal",
+          "name": "Courant de la phase 1"
+        },
+        "current_p2": {
+          "description": "Courant de charge maximal. Si cette option est désactivée, la valeur de courant de la phase 1 sera utilisée.",
+          "name": "Courant de la phase 2"
+        },
+        "current_p3": {
+          "description": "Courant de charge maximal. Si cette option est désactivée, la valeur de courant de la phase 1 sera utilisée.",
+          "name": "Courant de la phase 3"
+        },
+        "device_id": {
+          "description": "Sélectionnez l’un des chargeurs du circuit qui doit être contrôlé.",
+          "name": "Cible"
+        }
+      },
+      "name": "Définissez la limite hors ligne du circuit"
+    },
+    "set_weekly_charge_plan": {
+      "description": "Définissez un plan de charge hebdomadaire",
+      "fields": {
+        "day": {
+          "description": "Jour de la semaine de la planification",
+          "name": "Jour de la semaine"
+        },
+        "device_id": {
+          "description": "Sélectionnez l'appareil à contrôler",
+          "name": "Cible"
+        },
+        "start_time": {
+          "description": "Heure de début de la planification",
+          "name": "Heure de début"
+        },
+        "stop_time": {
+          "description": "Heure de fin de la planification",
+          "name": "Heure de fin"
+        }
+      },
+      "name": "Définissez un plan de charge hebdomadaire"
+    },
+    "smart_charging": {
+      "description": "Activer/désactiver la charge intelligente",
+      "fields": {
+        "device_id": {
+          "description": "Sélectionnez l'appareil à contrôler",
+          "name": "Cible"
+        },
+        "enable": {
+          "description": "Activer la charge intelligente",
+          "name": "Activer"
+        }
+      },
+      "name": "Recharge intelligente"
+    }
+  },
+  "system_health": {
+    "info": {
+      "component_version": "Version",
+      "connected2stream": "Connecté à signalr",
+      "reach_easee_cloud": "Atteindre Easee Cloud"
+    }
+  },
+  "title": "Easee EV Charger"
+}
