@@ -336,7 +336,10 @@ class ProductData:
             return
 
         now = dt_util.utcnow().replace(microsecond=0)
-        elapsed = now - self.state["latestPulse"]
+        try:
+            elapsed = now - self.state["latestPulse"]
+        except KeyError:
+            return
 
         if elapsed.total_seconds() > OFFLINE_DELAY:
             if self.state["isOnline"] is True:
