@@ -757,7 +757,10 @@ class Controller:
                 try:
                     compare_p1 = charger_data.state[compare_str_p1]
                 except KeyError:
-                    compare_p1 = charger_data.config[compare_str_p1]
+                    try:
+                        compare_p1 = charger_data.config[compare_str_p1]
+                    except KeyError:
+                        compare_p1 = None
                 try:
                     compare_p2 = charger_data.state[compare_str_p2]
                 except KeyError:
@@ -803,7 +806,10 @@ class Controller:
                 try:
                     compare_p1 = charger_data.state[compare_str_p1]
                 except KeyError:
-                    compare_p1 = charger_data.config[compare_str_p1]
+                    try:
+                        compare_p1 = charger_data.config[compare_str_p1]
+                    except KeyError:
+                        compare_p1 = None
                 try:
                     compare_p2 = charger_data.state[compare_str_p2]
                 except KeyError:
