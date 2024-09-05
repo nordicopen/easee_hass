@@ -411,7 +411,7 @@ class ProductData:
                     value = "{}"
                 self.schedules_interpret(json.loads(value))
             else:
-                _LOGGER.debug("Unkonwn update type: %s", first)
+                _LOGGER.debug("Unknown update type: %s", first)
 
         return False
 
@@ -742,9 +742,9 @@ class Controller:
         current_p1,
         current_p2,
         current_p3,
-        compare_p1,
-        compare_p2,
-        compare_p3,
+        compare_str_p1,
+        compare_str_p2,
+        compare_str_p3,
     ):
         """Check circuit current."""
         if current_p2 is None:
@@ -755,17 +755,27 @@ class Controller:
         for charger_data in self.chargers_data:
             if charger_data.circuit.id == circuit_id:
                 try:
-                    if (
-                        charger_data.state[compare_p1] != current_p1
-                        or charger_data.state[compare_p2] != current_p2
-                        or charger_data.state[compare_p3] != current_p3
-                    ):
-                        return charger_data.circuit
+                    compare_p1 = charger_data.state[compare_str_p1]
                 except KeyError:
-                    if (
-                        charger_data.config[compare_p1] != current_p1
-                        or charger_data.config[compare_p2] != current_p2
-                        or charger_data.config[compare_p3] != current_p3
+                    compare_p1 = charger_data.config[compare_str_p1]
+                try:
+                    compare_p2 = charger_data.state[compare_str_p2]
+                except KeyError:
+                    try:
+                        compare_p2 = charger_data.config[compare_str_p2]
+                    except KeyError:
+                        compare_p2 = compare_p1
+                try:
+                    compare_p3 = charger_data.state[compare_str_p3]
+                except KeyError:
+                    try:
+                        compare_p3 = charger_data.config[compare_str_p3]
+                    except KeyError:
+                        compare_p3 = compare_p1
+
+                if (compare_p1 != current_p1
+                    or compare_p2 != current_p2
+                    or compare_p3 != current_p3
                     ):
                         return charger_data.circuit
 
@@ -778,9 +788,9 @@ class Controller:
         current_p1,
         current_p2,
         current_p3,
-        compare_p1,
-        compare_p2,
-        compare_p3,
+        compare_str_p1,
+        compare_str_p2,
+        compare_str_p3,
     ):
         """Check charger current."""
         if current_p2 is None:
@@ -791,17 +801,27 @@ class Controller:
         for charger_data in self.chargers_data:
             if charger_data.product.id == charger_id:
                 try:
-                    if (
-                        charger_data.state[compare_p1] != current_p1
-                        or charger_data.state[compare_p2] != current_p2
-                        or charger_data.state[compare_p3] != current_p3
-                    ):
-                        return charger_data.product
+                    compare_p1 = charger_data.state[compare_str_p1]
                 except KeyError:
-                    if (
-                        charger_data.config[compare_p1] != current_p1
-                        or charger_data.config[compare_p2] != current_p2
-                        or charger_data.config[compare_p3] != current_p3
+                    compare_p1 = charger_data.config[compare_str_p1]
+                try:
+                    compare_p2 = charger_data.state[compare_str_p2]
+                except KeyError:
+                    try:
+                        compare_p2 = charger_data.config[compare_str_p2]
+                    except KeyError:
+                        compare_p2 = compare_p1
+                try:
+                    compare_p3 = charger_data.state[compare_str_p3]
+                except KeyError:
+                    try:
+                        compare_p3 = charger_data.config[compare_str_p3]
+                    except KeyError:
+                        compare_p3 = compare_p1
+
+                if (compare_p1 != current_p1
+                    or compare_p2 != current_p2
+                    or compare_p3 != current_p3
                     ):
                         return charger_data.product
 
