@@ -285,9 +285,16 @@
     }
   },
   "issues": {
+    "currentpx_deprecation": {
+      "description": "Het gebruik van {argument} als fasestroom is verouderd en zal niet geaccepteerd worden in toekomstige versies. Pas je automatiseringen en scripts z.s.m. aan om gebruik te maken van strings {recommendation}",
+      "title": "Gebruik van {argument} in serviceaanroep"
+    },
     "deprecated_service": {
       "description": "Het gebruik van de service **{deprecation}** is verouderd en zal in de toekomst worden verwijderd.\n\nPas je automatiseringen en scripts z.s.m. aan om gebruik te maken van **{recommend}**",
       "title": "Verouderde service gebruikt: {deprecation}"
+    },
+    "numeric_deprecation": {
+      "description": "Het gebruik van numerieke waarden voor {argument} is verouderd en zal in de toekomst worden verwijderd. Pas je automatiseringen en scripts z.s.m. aan om gebruik te maken van strings {recommendation}"
     }
   },
   "options": {
@@ -306,6 +313,239 @@
         "description": "Selecteer opties",
         "title": "Easee EV lader"
       }
+    }
+  },
+  "selector": {
+    "access_level": {
+      "options": {
+        "open_for_all": "Toegankelijk voor iedereen",
+        "require_easee_account": "Easee-account vereist",
+        "whitelist": "Toegestane lijst"
+      }
+    },
+    "action_command": {
+      "options": {
+        "delete_basic_charge_plan": "Standaard laadschema verwijderen",
+        "delete_weekly_charge_plan": "Wekelijks laadschema verwijderen",
+        "override_schedule": "Laadschema negeren",
+        "pause": "Pauze",
+        "reboot": "Herstarten",
+        "resume": "Hervatten",
+        "start": "Start",
+        "stop": "Stop",
+        "toggle": "Omschakelen",
+        "update_firmware": "Firmware updaten"
+      }
+    },
+    "weekday": {
+      "options": {
+        "friday": "Vrijdag",
+        "monday": "Maandag",
+        "saturday": "Zaterdag",
+        "sunday": "Zondag",
+        "thursday": "Donderdag",
+        "tuesday": "Dinsdag",
+        "wednesday": "Woensdag"
+      }
+    }
+  },
+  "services": {
+    "action_command": {
+      "description": "Verstuur commando naar lader",
+      "fields": {
+        "action_command": {
+          "description": "Selecteer het commando om uit te voeren",
+          "name": "Commando"
+        },
+        "device_id": {
+          "description": "Selecteer apparaat om te gebruiken",
+          "name": "Doelapparaat"
+        }
+      },
+      "name": "Actie commando"
+    },
+    "set_basic_charge_plan": {
+      "description": "Standaard laadschema instellen",
+      "fields": {
+        "device_id": {
+          "description": "Selecteer apparaat om te gebruiken",
+          "name": "Doelapparaat"
+        },
+        "repeat": {
+          "description": "Herhaal schema",
+          "name": "Herhaal schema"
+        },
+        "start_datetime": {
+          "description": "Starttijd voor schema",
+          "name": "Start datumtijd"
+        },
+        "stop_datetime": {
+          "description": "Stoptijd voor schema",
+          "name": "Stop datumtijd"
+        }
+      },
+      "name": "Standaard laadschema instellen"
+    },
+    "set_charger_access": {
+      "description": "Selecteer wie er mag laden",
+      "fields": {
+        "access_level": {
+          "name": "Toegang"
+        },
+        "device_id": {
+          "description": "Selecteer het te bedienen apparaat",
+          "name": "Doelapparaat"
+        }
+      },
+      "name": "Toegang tot lader instellen"
+    },
+    "set_charger_dynamic_limit": {
+      "description": "Stel de dynamische limiet van de oplader in",
+      "fields": {
+        "current": {
+          "description": "Max laadstroom",
+          "name": "Stroom"
+        },
+        "device_id": {
+          "description": "Selecteer een van de laders in het circuit die moet worden aangestuurd.",
+          "name": "Doelapparaat"
+        }
+      },
+      "name": "Stel de dynamische limiet van de oplader in"
+    },
+    "set_charger_max_limit": {
+      "fields": {
+        "current": {
+          "description": "Max laadstroom",
+          "name": "Stroom"
+        },
+        "device_id": {
+          "description": "Selecteer een van de laders in het circuit die moet worden aangestuurd.",
+          "name": "Doelapparaat"
+        }
+      }
+    },
+    "set_charging_cost": {
+      "description": "Stel de laadkosten in per kWh voor de opladerlocatie",
+      "fields": {
+        "cost_per_kwh": {
+          "description": "Prijs per kWh",
+          "name": "Prijs per kWh"
+        },
+        "currency_id": {
+          "description": "Valutacode",
+          "name": "Munteenheid"
+        },
+        "device_id": {
+          "name": "Doelapparaat"
+        },
+        "vat": {
+          "description": "Belasting over de toegevoegde waarde",
+          "name": "BTW"
+        }
+      },
+      "name": "Laadtarief instellen"
+    },
+    "set_circuit_dynamic_limit": {
+      "fields": {
+        "current_p1": {
+          "description": "Max laadstroom instellen",
+          "name": "Stroom fase 1"
+        },
+        "current_p2": {
+          "description": "Maximale laadstroom. Indien uitgeschakeld, wordt de waarde van stroom fase 1 gebruikt",
+          "name": "Stroom fase 2"
+        },
+        "current_p3": {
+          "description": "Maximale laadstroom. Indien uitgeschakeld, wordt de waarde van stroom fase 1 gebruikt",
+          "name": "Stroom fase 3"
+        },
+        "device_id": {
+          "description": "Selecteer een van de laders in het circuit die moet worden aangestuurd.",
+          "name": "Doelapparaat"
+        }
+      },
+      "name": "Stel de dynamische limiet van het circuit in"
+    },
+    "set_circuit_max_limit": {
+      "description": "Maximum limiet stroomcircuit instellen. Let op! Niet gebruiken in automatiseringen (veelvuldig gebruik kan de levensduur van het flashgeheugen verkorten).",
+      "fields": {
+        "current_p1": {
+          "description": "Maximale laadstroom",
+          "name": "Stroom fase 1"
+        },
+        "current_p2": {
+          "description": "Maximale laadstroom. Indien uitgeschakeld, zal de waarde van Stroom fase 1 gebruikt worden.",
+          "name": "Stroom fase 2"
+        },
+        "current_p3": {
+          "description": "Maximale laadstroom. Indien uitgeschakeld, zal de waarde van Stroom fase 1 gebruikt worden.",
+          "name": "Stroom fase 3"
+        },
+        "device_id": {
+          "description": "Selecteer een van de laders in het stroomcircuit om te gebruiken.",
+          "name": "Doelapparaat"
+        }
+      },
+      "name": "Maximum limiet stroomcircuit instellen"
+    },
+    "set_circuit_offline_limit": {
+      "description": "Offline limiet stroomcircuit instellen om te gebruiken indien de lader offline is (terugval). Let op! Niet gebruiken in automatiseringen (veelvuldig gebruik kan de levensduur van het flashgeheugen verkorten).",
+      "fields": {
+        "current_p1": {
+          "description": "Maximale laadstroom",
+          "name": "Stroom fase 1"
+        },
+        "current_p2": {
+          "description": "Maximale laadstroom. Indien uitgeschakeld, zal de waarde van Stroom fase 1 gebruikt worden.",
+          "name": "Stroom fase 2"
+        },
+        "current_p3": {
+          "description": "Maximale laadstroom. Indien uitgeschakeld, zal de waarde van Stroom fase 1 gebruikt worden.",
+          "name": "Stroom fase 3"
+        },
+        "device_id": {
+          "description": "Selecteer een van de laders in het stroomcircuit om te gebruiken.",
+          "name": "Doelapparaat"
+        }
+      },
+      "name": "Offline limiet stroomcircuit instellen"
+    },
+    "set_weekly_charge_plan": {
+      "description": "Wekelijks laadschema instellen",
+      "fields": {
+        "day": {
+          "description": "Weekdag voor dit schema",
+          "name": "Weekdag"
+        },
+        "device_id": {
+          "description": "Selecteer apparaat om te gebruiken",
+          "name": "Doelapparaat"
+        },
+        "start_time": {
+          "description": "Starttijd voor schema",
+          "name": "Starttijd"
+        },
+        "stop_time": {
+          "description": "Stoptijd voor schema",
+          "name": "Stoptijd"
+        }
+      },
+      "name": "Wekelijks laadschema instellen"
+    },
+    "smart_charging": {
+      "description": "Slim laden in/uitschakelen",
+      "fields": {
+        "device_id": {
+          "description": "Selecteer apparaat om te gebruiken",
+          "name": "Doelapparaat"
+        },
+        "enable": {
+          "description": "Slim laden inschakelen",
+          "name": "Inschakelen"
+        }
+      },
+      "name": "Slim laden"
     }
   },
   "system_health": {

@@ -1,0 +1,30 @@
+{
+  "services": {
+    "action_command": {
+      "description": "Enviar comando para o carregador",
+      "fields": {
+        "action_command": {
+          "description": "Selecione o comando a ser executado",
+          "name": "Comando"
+        },
+        "device_id": {
+          "description": "Selecione o dispositivo a ser controlado",
+          "name": "Dispositivo alvo"
+        }
+      },
+      "name": "Comando de ação"
+    },
+    "set_charger_access": {
+      "fields": {
+        "access_level": {
+          "description": "Definir acesso ao carregamento",
+          "name": "Acesso"
+        },
+        "device_id": {
+          "description": "Selecione o dispositivo a ser controlado",
+          "name": "Dispositivo alvo"
+        }
+      }
+    }
+  }
+}
