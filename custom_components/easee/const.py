@@ -26,7 +26,7 @@ MODEL_EQUALIZER = "Equalizer"
 MODEL_CHARGING_ROBOT = "Charging Robot"
 PLATFORMS = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.SWITCH]
 LISTENER_FN_CLOSE = "update_listener_close_fn"
-EASEE_PRODUCT_CODES = {1: "Easee Home", 100: "Easee Charge", 2: "Charge Lite"}
+EASEE_PRODUCT_CODES = {1: "Easee Home", 100: "Easee Charge", 2: "Charge Lite", 102: "Charge Core", 400: "Charge One"}
 
 chargerObservations = {
     ChargerStreamData.config_phaseMode.value,
