@@ -258,6 +258,7 @@ class ChargerEntity(Entity):
             self.data.product.id,
             self._entity_name,
         )
+        self._state = None
         try:
             self._state = self.get_value_from_key(self._state_key)
             if self._state == "":
@@ -275,7 +276,7 @@ class ChargerEntity(Entity):
                 self._state = self._convert_units_func(self._state, self._units)
 
         except KeyError:
-            self._state = None
+            pass
         except IndexError as exc:
             raise IndexError(f"Wrong key for entity: {self._state_key}") from exc
         except TypeError:
