@@ -108,15 +108,11 @@ class ProductData:
 
     def is_state_polled(self):
         """Check if state is polled."""
-        if self.state is None:
-            return False
-        return True
+        return self.state is not None
 
     def is_config_polled(self):
         """Check if config is polled."""
-        if self.config is None:
-            return False
-        return True
+        return self.config is not None
 
     def is_schedule_polled(self):
         """Check if schedule is polled."""
@@ -265,13 +261,13 @@ class ProductData:
                 day = time.weekday()
                 if period[1] != 0:  # Start
                     saved_day = day
-                    self.weekly_schedule[
-                        weeklyScheduleStartDays[saved_day]
-                    ] = time.strftime("%H:%M")
+                    self.weekly_schedule[weeklyScheduleStartDays[saved_day]] = (
+                        time.strftime("%H:%M")
+                    )
                 else:
-                    self.weekly_schedule[
-                        weeklyScheduleStopDays[saved_day]
-                    ] = time.strftime("%H:%M")
+                    self.weekly_schedule[weeklyScheduleStopDays[saved_day]] = (
+                        time.strftime("%H:%M")
+                    )
         # Delayed or Daily schedule
         elif (kind == "Recurring" and recurrency == "Daily") or kind == "Absolute":
             self.schedule["isEnabled"] = True
