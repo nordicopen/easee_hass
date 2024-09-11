@@ -109,16 +109,10 @@ class ProductData:
     def is_state_polled(self):
         """Check if state is polled."""
         return self.state is not None
-        # if self.state is None:
-        #     return False
-        # return True
 
     def is_config_polled(self):
         """Check if config is polled."""
         return self.config is not None
-        # if self.config is None:
-        #     return False
-        # return True
 
     def is_schedule_polled(self):
         """Check if schedule is polled."""
