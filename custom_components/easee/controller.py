@@ -48,6 +48,7 @@ from .const import (
     OPTIONAL_EASEE_ENTITIES,
     PLATFORMS,
     TIMEOUT,
+    VERSION,
     chargerObservations,
     equalizerEnergyObservations,
     equalizerObservations,
@@ -465,7 +466,9 @@ class Controller:
     async def initialize(self):
         """Initialize the session and get initial data."""
         client_session = aiohttp_client.async_get_clientsession(self.hass)
-        self.easee = Easee(self.username, self.password, client_session)
+        self.easee = Easee(
+            self.username, self.password, client_session, f"easee_hass_{VERSION}"
+        )
 
         try:
             with timeout(TIMEOUT):
@@ -775,11 +778,12 @@ class Controller:
                     except KeyError:
                         compare_p3 = compare_p1
 
-                if (compare_p1 != current_p1
+                if (
+                    compare_p1 != current_p1
                     or compare_p2 != current_p2
                     or compare_p3 != current_p3
-                    ):
-                        return charger_data.circuit
+                ):
+                    return charger_data.circuit
 
                 return False
         return None
@@ -824,11 +828,12 @@ class Controller:
                     except KeyError:
                         compare_p3 = compare_p1
 
-                if (compare_p1 != current_p1
+                if (
+                    compare_p1 != current_p1
                     or compare_p2 != current_p2
                     or compare_p3 != current_p3
-                    ):
-                        return charger_data.product
+                ):
+                    return charger_data.product
 
                 return False
         return None

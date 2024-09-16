@@ -1,4 +1,5 @@
 """Config flow to configure Easee component."""
+
 from __future__ import annotations
 
 import logging
@@ -15,7 +16,7 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import aiohttp_client, config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
-from .const import CONF_MONITORED_SITES, DOMAIN
+from .const import CONF_MONITORED_SITES, DOMAIN, VERSION
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,6 +59,7 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
                     self.entry.data[CONF_USERNAME],
                     user_input[CONF_PASSWORD],
                     client_session,
+                    f"easee_hass_{VERSION}",
                 )
                 await easee.connect()
                 self.hass.config_entries.async_update_entry(self.entry, data=new_input)
@@ -96,7 +98,9 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
 
             try:
                 client_session = aiohttp_client.async_get_clientsession(self.hass)
-                easee = Easee(username, password, client_session)
+                easee = Easee(
+                    username, password, client_session, f"easee_hass_{VERSION}"
+                )
                 # Check that login is possible
                 await easee.connect()
                 the_sites: list[Site] = await easee.get_account_products()
