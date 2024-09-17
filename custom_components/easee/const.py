@@ -18,7 +18,7 @@ from homeassistant.helpers.entity import EntityCategory
 
 DOMAIN = "easee"
 TIMEOUT = 30
-VERSION = "0.9.59"
+VERSION = "0.9.60"
 MIN_HA_VERSION = "2024.5.0"
 CONF_MONITORED_SITES = "monitored_sites"
 MANUFACTURER = "Easee"
@@ -26,7 +26,13 @@ MODEL_EQUALIZER = "Equalizer"
 MODEL_CHARGING_ROBOT = "Charging Robot"
 PLATFORMS = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.SWITCH]
 LISTENER_FN_CLOSE = "update_listener_close_fn"
-EASEE_PRODUCT_CODES = {1: "Easee Home", 100: "Easee Charge", 2: "Charge Lite", 102: "Charge Core", 400: "Charge One"}
+EASEE_PRODUCT_CODES = {
+    1: "Easee Home",
+    100: "Easee Charge",
+    2: "Charge Lite",
+    102: "Charge Core",
+    400: "Charge One",
+}
 
 chargerObservations = {
     ChargerStreamData.config_phaseMode.value,
