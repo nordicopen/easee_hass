@@ -11,6 +11,15 @@ body:
         Please make sure that you have the latest version of Easee integration and that your Home Assistant is also upgraded to the latest version.
 
         If you have a feature or enhancement request, please use the applicable form
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Which operating systems have you used?
+      description: You may select more than one.
+      options:
+        - label: macOS
+        - label: Windows
+        - label: Linux
   - type: textarea
     validations:
       required: true
