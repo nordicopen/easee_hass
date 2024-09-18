@@ -14,12 +14,12 @@ body:
   - type: checkboxes
     id: prerequisites
     attributes:
-      label: Which operating systems have you used?
-      description: You may select more than one.
+      label: Before creating an issue...
+      description: Please tick applicable boxes.
       options:
-        - label: macOS
-        - label: Windows
-        - label: Linux
+        - label: There is no open issue describing the same problem
+        - label: I am running latest versions of the integration and of Home Assistant
+        - label: I have checked the operational status of the Easee API
   - type: textarea
     validations:
       required: true
@@ -42,7 +42,7 @@ body:
       label: Version of Easee integration having the issue?
       placeholder: easee-
       description: >
-        Can be found in the Configuration panel -> Info.
+        See Settings->Devices and services->Integrations->Easee.
   - type: input
     id: version
     validations:
@@ -51,7 +51,7 @@ body:
       label: Version of Home Assistant Core having the issue?
       placeholder: core-
       description: >
-        Can be found in the Configuration panel -> Info.
+        See Settings->About.
   - type: textarea
     attributes:
       label: Anything in the logs that might be useful for us?
