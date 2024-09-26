@@ -15,7 +15,7 @@
     "pyeasee"
   ],
   "requirements": [
-    "pyeasee==0.8.3"
+    "pyeasee==0.8.4"
   ],
-  "version": "0.9.60"
+  "version": "0.9.61"
 }
