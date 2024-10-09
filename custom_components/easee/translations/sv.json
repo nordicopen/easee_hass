@@ -114,6 +114,9 @@
       "weekly_schedule": {
         "name": "Veckoschema"
       }
+      "surplus": {
+         "name": "Överskottsladdning"
+      }
     },
     "sensor": {
       "circuit_current": {
