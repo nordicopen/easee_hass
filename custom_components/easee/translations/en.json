@@ -582,7 +582,7 @@
         },
         "phase_mode": {
           "description": "Charger phase mode",
-          "name": "Phase mode",
+          "name": "Phase mode"
         }
       },
       "name": "Set charger phase mode"
