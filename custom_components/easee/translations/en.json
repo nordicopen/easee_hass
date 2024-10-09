@@ -113,6 +113,9 @@
       },
       "weekly_schedule": {
         "name": "Weekly schedule"
+      },
+      "surplus": {
+        "name": "Surplus charging"
       }
     },
     "sensor": {
@@ -556,6 +559,43 @@
         }
       },
       "name": "Smart charging"
+    },
+    "set_charger_phase_mode": {
+      "description": "Set charger phase mode",
+      "fields": {
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        },
+        "phase_mode": {
+          "description": "Charger phase mode",
+          "name": "Phase mode",
+          "options": {
+            "1_phase": "One phase mode",
+            "auto_phase": "Auto phase mode",
+            "3_phase": "Three phase mode"
+          }
+        }
+      },
+      "name": "Set charger phase mode"
+    },
+    "set_load_balancing": {
+      "description": "Set equalizer load balancing",
+      "fields": {
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        },
+        "enable": {
+          "description": "Enable load balancing",
+          "name": "Enable"
+        },
+        "current": {
+          "description": "Max additional current from grid",
+          "name": "Current"
+        }
+      },
+      "name": "Set load balancing"
     }
   },
   "system_health": {
