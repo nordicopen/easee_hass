@@ -351,6 +351,11 @@
         "tuesday": "Tuesday",
         "wednesday": "Wednesday"
       }
+    },
+    "phase_mode": {
+      "1_phase": "1 phase mode",
+      "auto_phase": "Auto phase mode",
+      "3_phase": "3 phase mode"
     }
   },
   "services": {
@@ -578,11 +583,6 @@
         "phase_mode": {
           "description": "Charger phase mode",
           "name": "Phase mode",
-          "options": {
-            "1_phase": "One phase mode",
-            "auto_phase": "Auto phase mode",
-            "3_phase": "Three phase mode"
-          }
         }
       },
       "name": "Set charger phase mode"
