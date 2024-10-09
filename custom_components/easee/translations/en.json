@@ -353,9 +353,11 @@
       }
     },
     "phase_mode": {
-      "1_phase": "1 phase mode",
-      "auto_phase": "Auto phase mode",
-      "3_phase": "3 phase mode"
+      "options": {
+        "1_phase": "1 phase mode",
+        "auto_phase": "Auto phase mode",
+        "3_phase": "3 phase mode"
+      }
     }
   },
   "services": {

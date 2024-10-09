@@ -357,9 +357,11 @@
       }
     },
     "phase_mode": {
-      "1_phase": "1-fas-läge",
-      "auto_phase": "Auto-fas-läge",
-      "3_phase": "3-fas-läge"
+      "options": {
+        "1_phase": "1-fas-läge",
+        "auto_phase": "Auto-fas-läge",
+        "3_phase": "3-fas-läge"
+      }
     }
   },
   "services": {
