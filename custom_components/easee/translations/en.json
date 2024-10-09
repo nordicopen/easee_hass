@@ -386,6 +386,10 @@
         "stop_datetime": {
           "description": "Stop time for plan",
           "name": "Stop datetime"
+        },
+        "current": {
+          "description": "Maximum current during plan",
+          "name": "Maximum curent"
         }
       },
       "name": "Set basic charge plan"
@@ -542,6 +546,10 @@
         "stop_time": {
           "description": "Stop time for plan",
           "name": "Stop time"
+        },
+        "current": {
+          "description": "Maximum current during plan",
+          "name": "Maximum current"
         }
       },
       "name": "Set weekly charge plan"
