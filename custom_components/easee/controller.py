@@ -281,6 +281,7 @@ class ProductData:
                 )
                 if period[1] != 0:  # Start
                     self.schedule["chargeStartTime"] = time.strftime("%H:%M")
+                    self.schedule["chargeLimit"] = period[1]
                 else:
                     self.schedule["chargeStopTime"] = time.strftime("%H:%M")
 

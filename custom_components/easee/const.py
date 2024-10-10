@@ -651,6 +651,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "schedule.isEnabled",
             "schedule.chargeStartTime",
             "schedule.chargeStopTime",
+            "schedule.chargeLimit",
             "schedule.repeat",
         ],
         "units": None,
