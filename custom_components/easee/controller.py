@@ -52,6 +52,7 @@ from .const import (
     chargerObservations,
     equalizerEnergyObservations,
     equalizerObservations,
+    weeklyScheduleLimit,
     weeklyScheduleStartDays,
     weeklyScheduleStopDays,
 )
@@ -265,6 +266,7 @@ class ProductData:
                     self.weekly_schedule[weeklyScheduleStartDays[saved_day]] = (
                         time.strftime("%H:%M")
                     )
+                    self.weekly_schedule[weeklyScheduleLimit[saved_day]] = period[1]
                 else:
                     self.weekly_schedule[weeklyScheduleStopDays[saved_day]] = (
                         time.strftime("%H:%M")
@@ -279,6 +281,7 @@ class ProductData:
                 )
                 if period[1] != 0:  # Start
                     self.schedule["chargeStartTime"] = time.strftime("%H:%M")
+                    self.schedule["chargeLimit"] = period[1]
                 else:
                     self.schedule["chargeStopTime"] = time.strftime("%H:%M")
 
@@ -402,6 +405,10 @@ class ProductData:
                     _LOGGER.debug("No old value for %s %s", self.product.id, name)
                     self.config[second] = value
                     return True
+                if second == "surplusCharging":
+                    jsondata = json.loads(value)
+                    self.config["surplusChargingMode"] = jsondata["mode"]
+                    self.config["surplusChargingCurrent"] = jsondata["standbycurrent"]
                 if oldvalue != value:
                     self.config[second] = value
                     return True
@@ -737,6 +744,10 @@ class Controller:
     def get_chargers(self):
         """Get chargers."""
         return self.chargers
+
+    def get_equalizers(self):
+        """Get equalizers."""
+        return self.equalizers
 
     def check_circuit_current(
         self,

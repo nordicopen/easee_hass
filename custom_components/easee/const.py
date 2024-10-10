@@ -1,7 +1,6 @@
 """Easee Charger constants."""
 
 # pylint: disable=too-many-lines
-
 from pyeasee import ChargerStreamData, EqualizerStreamData
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
@@ -149,7 +148,7 @@ equalizerObservations = {
     EqualizerStreamData.state_availableCurrentL2.value,
     EqualizerStreamData.state_availableCurrentL3.value,
     EqualizerStreamData.state_meterEncryptionStatus.value,
-    EqualizerStreamData.state_surplusCharging.value,
+    EqualizerStreamData.config_surplusCharging.value,
     EqualizerStreamData.config_ssid.value,
     EqualizerStreamData.config_equalizerID.value,
     EqualizerStreamData.config_masterBackPlateID.value,
@@ -185,6 +184,16 @@ weeklyScheduleStopDays = {
     4: "FridayStopTime",
     5: "SaturdayStopTime",
     6: "SundayStopTime",
+}
+
+weeklyScheduleLimit = {
+    0: "MondayLimit",
+    1: "TuesdayLimit",
+    2: "WednesdayLimit",
+    3: "ThursdayLimit",
+    4: "FridayLimit",
+    5: "SaturdayLimit",
+    6: "SundayLimit",
 }
 
 MANDATORY_EASEE_ENTITIES = {
@@ -642,6 +651,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "schedule.isEnabled",
             "schedule.chargeStartTime",
             "schedule.chargeStopTime",
+            "schedule.chargeLimit",
             "schedule.repeat",
         ],
         "units": None,
@@ -659,18 +669,25 @@ OPTIONAL_EASEE_ENTITIES = {
             "weekly_schedule.isEnabled",
             "weekly_schedule.MondayStartTime",
             "weekly_schedule.MondayStopTime",
+            "weekly_schedule.MondayLimit",
             "weekly_schedule.TuesdayStartTime",
             "weekly_schedule.TuesdayStopTime",
+            "weekly_schedule.TuesdayLimit",
             "weekly_schedule.WednesdayStartTime",
             "weekly_schedule.WednesdayStopTime",
+            "weekly_schedule.WednesdayLimit",
             "weekly_schedule.ThursdayStartTime",
             "weekly_schedule.ThursdayStopTime",
+            "weekly_schedule.ThursdayLimit",
             "weekly_schedule.FridayStartTime",
             "weekly_schedule.FridayStopTime",
+            "weekly_schedule.FridayLimit",
             "weekly_schedule.SaturdayStartTime",
             "weekly_schedule.SaturdayStopTime",
+            "weekly_schedule.SaturdayLimit",
             "weekly_schedule.SundayStartTime",
             "weekly_schedule.SundayStopTime",
+            "weekly_schedule.SundayLimit",
         ],
         "units": None,
         "convert_units_func": None,
@@ -886,6 +903,19 @@ EASEE_EQ_ENTITIES = {
         "device_class": SensorDeviceClass.TEMPERATURE,
         "state_class": SensorStateClass.MEASUREMENT,
         "enabled_default": True,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+    },
+    "surplus": {
+        "type": "eq_binary_sensor",
+        "key": "config.surplusChargingMode",
+        "state_func": lambda config: bool(config["surplusChargingMode"] == 1),
+        "attrs": [
+            "config.surplusChargingCurrent",
+        ],
+        "units": None,
+        "convert_units_func": None,
+        "translation_key": "surplus",
+        "device_class": SensorDeviceClass.CURRENT,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
 }

@@ -40,7 +40,7 @@
     "action_type": {
       "override_schedule": "Åsidosätt schema",
       "pause": "Pausa laddningen",
-      "reboot": "Starta om laddaren",
+      "reboot": "Starta om laddboxen",
       "resume": "Återuppta laddningen",
       "start": "Starta laddning",
       "stop": "Stoppa laddning",
@@ -113,6 +113,9 @@
       },
       "weekly_schedule": {
         "name": "Veckoschema"
+      },
+      "surplus": {
+         "name": "Överskottsladdning"
       }
     },
     "sensor": {
@@ -144,8 +147,8 @@
         "name": "Anledning för ingen ström",
         "state": {
           "car_not_charging": "Fordonet laddar inte",
-          "charger_disabled": "Laddaren avstängd",
-          "charger_in_error_state": "Laddaren i felläge",
+          "charger_disabled": "Laddboxen avstängd",
+          "charger_in_error_state": "Laddboxen i felläge",
           "circuit_fuse_too_low": "Kretssäkring för låg",
           "eq_too_low_current": "Equalizerström för låg",
           "ev_behaving_erratic": "Fordonsfel",
@@ -162,9 +165,9 @@
           "limited_by_local_adjustment": "Begränsad av lokal justering",
           "limited_by_offline_setting": "Begränsad av offline-läge",
           "limited_by_schedule": "Begränsad av schema",
-          "max_charger_current_too_low": "Laddarens maxström för låg",
+          "max_charger_current_too_low": "Laddboxens maxström för låg",
           "max_circuit_current_too_low": "Max kretsström för låg",
-          "max_dynamic_charger_current_too_low": "Laddarens dynamiska maxström för låg",
+          "max_dynamic_charger_current_too_low": "Laddboxens dynamiska maxström för låg",
           "max_dynamic_circuit_current_too_low": "Max dynamisk kretsström för låg",
           "max_dynamic_offline_fallback_circuit_current_too_low": "Max dynamic offline fallback circuit current too low",
           "no_current_request": "Ingen begäran om ström från sekundär enhet",
@@ -274,7 +277,7 @@
         "name": "Viloström"
       },
       "is_enabled": {
-        "name": "Laddare aktiverad"
+        "name": "Laddboxen aktiverad"
       },
       "smart_button": {
         "name": "Touch-knapp aktiverad"
@@ -327,10 +330,14 @@
     "action_command": {
       "options": {
         "delete_basic_charge_plan": "Ta bort grundläggande schema för laddning",
+        "enable_basic_charge_plan": "Slå på grundläggande schema för laddning",
+        "disable_basic_charge_plan": "Stäng av grundläggande schema för laddning",
         "delete_weekly_charge_plan": "Ta bort veckoschema för laddning",
+        "enable_weekly_charge_plan": "Slå på veckoschema för laddning",
+        "disable_weekly_charge_plan": "Stäng av veckoschema för laddning",
         "override_schedule": "Åsidosätt schema",
         "pause": "Pausa",
-        "reboot": "Starta om laddaren",
+        "reboot": "Starta om laddboxen",
         "resume": "Återuppta",
         "start": "Starta",
         "stop": "Stoppa",
@@ -348,11 +355,18 @@
         "tuesday": "Tisdag",
         "wednesday": "Onsdag"
       }
+    },
+    "phase_mode": {
+      "options": {
+        "1_phase": "1-fas-läge",
+        "auto_phase": "Auto-fas-läge",
+        "3_phase": "3-fas-läge"
+      }
     }
   },
   "services": {
     "action_command": {
-      "description": "Skicka kommando till laddaren",
+      "description": "Skicka kommando till laddboxen",
       "fields": {
         "action_command": {
           "description": "Välj det kommando som ska köras",
@@ -399,10 +413,10 @@
           "name": "Målenhet"
         }
       },
-      "name": "Ställ in åtkomst till laddare"
+      "name": "Ställ in åtkomst till laddbox"
     },
     "set_charger_dynamic_limit": {
-      "description": "Ställ in laddarens dynamiska gräns",
+      "description": "Ställ in laddboxens dynamiska gräns",
       "fields": {
         "current": {
           "description": "Max laddningsström",
@@ -413,10 +427,10 @@
           "name": "Målenhet"
         }
       },
-      "name": "Ställ in laddarens dynamiska gräns"
+      "name": "Ställ in laddboxens dynamiska gräns"
     },
     "set_charger_max_limit": {
-      "description": "Ställ in laddarens maxgräns. Försiktighet! Bör inte användas av automatisering (kan slita ut flashminnet om det ställs in för ofta).",
+      "description": "Ställ in laddboxens maxgräns. Försiktighet! Bör inte användas av automatisering (kan slita ut flashminnet om det ställs in för ofta).",
       "fields": {
         "current": {
           "description": "Max laddningsström",
@@ -427,7 +441,7 @@
           "name": "Målenhet"
         }
       },
-      "name": "Ställ in laddarens maxgräns"
+      "name": "Ställ in laddboxens maxgräns"
     },
     "set_charging_cost": {
       "description": "Ställ in laddningskostnad per kWh för laddplats",
@@ -452,7 +466,7 @@
       "name": "Ställ in laddningskostnad"
     },
     "set_circuit_dynamic_limit": {
-      "description": "Ställ in kretsens dynamiska gräns (delad mellan laddare på den kretsen). Denna tjänst kan användas i automatiseringar.",
+      "description": "Ställ in kretsens dynamiska gräns (delad mellan laddboxar på den kretsen). Denna tjänst kan användas i automatiseringar.",
       "fields": {
         "current_p1": {
           "description": "Max laddningsström",
@@ -500,7 +514,7 @@
       "name": "Ställ in maxgräns för krets"
     },
     "set_circuit_offline_limit": {
-      "description": "Ställ in kretsens offlinegräns som används om laddaren är offline (reserv). Försiktighet! Bör inte användas av automatisering (kan slita ut flashminnet om det ställs in för ofta).",
+      "description": "Ställ in kretsens offlinegräns som används om laddboxen är offline (reserv). Försiktighet! Bör inte användas av automatisering (kan slita ut flashminnet om det ställs in för ofta).",
       "fields": {
         "current_p1": {
           "description": "Max laddningsström",
@@ -556,6 +570,38 @@
         }
       },
       "name": "Smart laddning"
+    },
+    "set_charger_phase_mode": {
+      "description": "Ställ in fas-läge",
+      "fields": {
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        },
+        "phase_mode": {
+          "description": "Laddboxens fas-läge ",
+          "name": "Fas-läge"
+        }
+      },
+      "name": "Ställ in laddboxens fas-läge"
+    },
+    "set_load_balancing": {
+      "description": "Ställ in equalizer lastbalansering",
+      "fields": {
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        },
+        "enable": {
+          "description": "Aktivera lastbalansering",
+          "name": "Aktivera"
+        },
+        "current": {
+          "description": "Maximal ström från elnätet",
+          "name": "Ström"
+        }
+      },
+      "name": "Ställ in lastbalansering"
     }
   },
   "system_health": {

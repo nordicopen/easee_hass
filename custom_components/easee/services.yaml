@@ -24,7 +24,11 @@ action_command:
             - update_firmware
             - override_schedule
             - delete_basic_charge_plan
+            - enable_basic_charge_plan
+            - disable_basic_charge_plan
             - delete_weekly_charge_plan
+            - enable_weekly_charge_plan
+            - disable_weekly_charge_plan
 
 set_basic_charge_plan:
   fields:
@@ -51,6 +55,17 @@ set_basic_charge_plan:
       example: true
       selector:
         boolean:
+    current:
+      required: false
+      example: 16
+      default: 32
+      selector:
+        number:
+          min: 0
+          max: 40
+          step: 1
+          unit_of_measurement: "A"
+          mode: slider
 
 set_weekly_charge_plan:
   fields:
@@ -86,6 +101,17 @@ set_weekly_charge_plan:
       example: "20:51"
       selector:
         time:
+    current:
+      required: false
+      example: 16
+      default: 32
+      selector:
+        number:
+          min: 0
+          max: 40
+          step: 1
+          unit_of_measurement: "A"
+          mode: slider
 
 smart_charging:
   fields:
@@ -345,3 +371,50 @@ set_charger_access:
             - open_for_all
             - require_easee_account
             - whitelist
+
+set_charger_phase_mode:
+  fields:
+    device_id:
+      required: true
+      example: "b40f1f45d28b0891fe8d"
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    phase_mode:
+      example: auto_phase
+      required: true
+      selector:
+        select:
+          translation_key: phase_mode
+          options:
+            - 1_phase
+            - auto_phase
+            - 3_phase
+
+set_load_balancing:
+  fields:
+    device_id:
+      required: true
+      example: "b40f1f45d28b0891fe8d"
+      selector:
+        device:
+          integration: "easee"
+          model: "Equalizer"
+    enable:
+      required: True
+      example: True
+      selector:
+        boolean:
+    current:
+      required: true
+      example: 16
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 40
+          step: 1
+          unit_of_measurement: "A"
+          mode: slider

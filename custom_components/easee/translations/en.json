@@ -113,6 +113,9 @@
       },
       "weekly_schedule": {
         "name": "Weekly schedule"
+      },
+      "surplus": {
+        "name": "Surplus charging"
       }
     },
     "sensor": {
@@ -327,7 +330,11 @@
     "action_command": {
       "options": {
         "delete_basic_charge_plan": "Delete basic charge plan",
+        "enable_basic_charge_plan": "Enable basic charge plan",
+        "disable_basic_charge_plan": "Disable basic charge plan",
         "delete_weekly_charge_plan": "Delete weekly charge plan",
+        "enable_weekly_charge_plan": "Enable weekly charge plan",
+        "disable_weekly_charge_plan": "Disable weekly charge plan",
         "override_schedule": "Override schedule",
         "pause": "Pause",
         "reboot": "Reboot charger",
@@ -347,6 +354,13 @@
         "thursday": "Thursday",
         "tuesday": "Tuesday",
         "wednesday": "Wednesday"
+      }
+    },
+    "phase_mode": {
+      "options": {
+        "1_phase": "1 phase mode",
+        "auto_phase": "Auto phase mode",
+        "3_phase": "3 phase mode"
       }
     }
   },
@@ -383,6 +397,10 @@
         "stop_datetime": {
           "description": "Stop time for plan",
           "name": "Stop datetime"
+        },
+        "current": {
+          "description": "Maximum current during plan",
+          "name": "Maximum curent"
         }
       },
       "name": "Set basic charge plan"
@@ -539,6 +557,10 @@
         "stop_time": {
           "description": "Stop time for plan",
           "name": "Stop time"
+        },
+        "current": {
+          "description": "Maximum current during plan",
+          "name": "Maximum current"
         }
       },
       "name": "Set weekly charge plan"
@@ -556,6 +578,38 @@
         }
       },
       "name": "Smart charging"
+    },
+    "set_charger_phase_mode": {
+      "description": "Set charger phase mode",
+      "fields": {
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        },
+        "phase_mode": {
+          "description": "Charger phase mode",
+          "name": "Phase mode"
+        }
+      },
+      "name": "Set charger phase mode"
+    },
+    "set_load_balancing": {
+      "description": "Set equalizer load balancing",
+      "fields": {
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        },
+        "enable": {
+          "description": "Enable load balancing",
+          "name": "Enable"
+        },
+        "current": {
+          "description": "Max additional current from grid",
+          "name": "Current"
+        }
+      },
+      "name": "Set load balancing"
     }
   },
   "system_health": {
