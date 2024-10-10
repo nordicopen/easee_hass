@@ -330,7 +330,11 @@
     "action_command": {
       "options": {
         "delete_basic_charge_plan": "Delete basic charge plan",
+        "enable_basic_charge_plan": "Enable basic charge plan",
+        "disable_basic_charge_plan": "Disable basic charge plan",
         "delete_weekly_charge_plan": "Delete weekly charge plan",
+        "enable_weekly_charge_plan": "Enable weekly charge plan",
+        "disable_weekly_charge_plan": "Disable weekly charge plan",
         "override_schedule": "Override schedule",
         "pause": "Pause",
         "reboot": "Reboot charger",

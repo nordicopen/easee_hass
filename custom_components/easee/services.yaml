@@ -24,7 +24,11 @@ action_command:
             - update_firmware
             - override_schedule
             - delete_basic_charge_plan
+            - enable_basic_charge_plan
+            - disable_basic_charge_plan
             - delete_weekly_charge_plan
+            - enable_weekly_charge_plan
+            - disable_weekly_charge_plan
 
 set_basic_charge_plan:
   fields:
