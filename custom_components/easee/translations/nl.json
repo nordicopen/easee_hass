@@ -294,7 +294,8 @@
       "title": "Verouderde service gebruikt: {deprecation}"
     },
     "numeric_deprecation": {
-      "description": "Het gebruik van numerieke waarden voor {argument} is verouderd en zal in de toekomst worden verwijderd. Pas je automatiseringen en scripts z.s.m. aan om gebruik te maken van strings {recommendation}"
+      "description": "Het gebruik van numerieke waarden voor {argument} is verouderd en zal in de toekomst worden verwijderd. Pas je automatiseringen en scripts z.s.m. aan om gebruik te maken van strings {recommendation}",
+      "title": "Gebruik van getal voor {} in service call\n"
     }
   },
   "options": {
@@ -390,6 +391,7 @@
       "description": "Selecteer wie er mag laden",
       "fields": {
         "access_level": {
+          "description": "Selecteer toegang tot laden",
           "name": "Toegang"
         },
         "device_id": {
@@ -423,7 +425,8 @@
           "description": "Selecteer een van de laders in het circuit die moet worden aangestuurd.",
           "name": "Doelapparaat"
         }
-      }
+      },
+      "name": "Selecteer maximum output voor de lader"
     },
     "set_charging_cost": {
       "description": "Stel de laadkosten in per kWh voor de opladerlocatie",
@@ -437,6 +440,7 @@
           "name": "Munteenheid"
         },
         "device_id": {
+          "description": "Selecteer welke lader gebruikt dient te worden.",
           "name": "Doelapparaat"
         },
         "vat": {
@@ -463,6 +467,9 @@
         "device_id": {
           "description": "Selecteer een van de laders in het circuit die moet worden aangestuurd.",
           "name": "Doelapparaat"
+        },
+        "time_to_live": {
+          "name": "Selecteer tijd tot standby"
         }
       },
       "name": "Stel de dynamische limiet van het circuit in"
