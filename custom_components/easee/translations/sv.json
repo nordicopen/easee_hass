@@ -108,14 +108,14 @@
       "online": {
         "name": "Online"
       },
+      "surplus": {
+        "name": "Överskottsladdning"
+      },
       "update_available": {
         "name": "Uppdatering tillgänglig"
       },
       "weekly_schedule": {
         "name": "Veckoschema"
-      },
-      "surplus": {
-         "name": "Överskottsladdning"
       }
     },
     "sensor": {
@@ -138,7 +138,7 @@
         "name": "Ström"
       },
       "dynamic_charger_limit": {
-        "name": "Dynamisk laddarbegränsning"
+        "name": "Dynamisk laddboxbegränsning"
       },
       "dynamic_circuit_limit": {
         "name": "Dynamisk kretsbegränsning"
@@ -248,7 +248,7 @@
         "name": "Livstidsförbrukning"
       },
       "max_charger_limit": {
-        "name": "Max laddarbegränsning"
+        "name": "Max laddboxbegränsning"
       },
       "max_circuit_limit": {
         "name": "Max kretsbegränsning"
@@ -289,7 +289,7 @@
   },
   "issues": {
     "currentpx_deprecation": {
-      "description": "Användningen av {argument} som fasström är utfasad och kommer inte att accepteras i framtida versioner. Konvertera dina automatiseringar och skript till att använda {recommendation} istället",
+      "description": "Användningen av {argument} som fasström är utfasad och kommer inte att accepteras i framtida versioner. Konvertera dina automatiseringar och skript till att använda {recommendation} istället.",
       "title": "Användning av {argument} i tjänstanrop"
     },
     "deprecated_service": {
@@ -297,7 +297,7 @@
       "title": "Användning av utfasad tjänst: {deprecation}"
     },
     "numeric_deprecation": {
-      "description": "Användningen av numeriskt värde för {argument} är utfasad och kommer inte att accepteras i framtida versioner. Konvertera dina automatiseringar och skript till att använda strängar {recommendation} istället",
+      "description": "Användningen av numeriskt värde för {argument} är utfasad och kommer inte att accepteras i framtida versioner. Konvertera dina automatiseringar och skript till att använda strängar {recommendation} istället.",
       "title": "Användning av numeriskt värde för {argument} i tjänstanrop"
     }
   },
@@ -330,11 +330,11 @@
     "action_command": {
       "options": {
         "delete_basic_charge_plan": "Ta bort grundläggande schema för laddning",
-        "enable_basic_charge_plan": "Slå på grundläggande schema för laddning",
-        "disable_basic_charge_plan": "Stäng av grundläggande schema för laddning",
         "delete_weekly_charge_plan": "Ta bort veckoschema för laddning",
-        "enable_weekly_charge_plan": "Slå på veckoschema för laddning",
-        "disable_weekly_charge_plan": "Stäng av veckoschema för laddning",
+        "disable_basic_charge_plan": "Stäng av schema",
+        "disable_weekly_charge_plan": "Stäng av veckoschema",
+        "enable_basic_charge_plan": "Aktivera schema",
+        "enable_weekly_charge_plan": "Aktivera veckoschema",
         "override_schedule": "Åsidosätt schema",
         "pause": "Pausa",
         "reboot": "Starta om laddboxen",
@@ -343,6 +343,13 @@
         "stop": "Stoppa",
         "toggle": "Växla",
         "update_firmware": "Uppdatera firmware"
+      }
+    },
+    "phase_mode": {
+      "options": {
+        "1_phase": "1-fas-läge",
+        "3_phase": "3-fas-läge",
+        "auto_phase": "Automatiskt fasläge"
       }
     },
     "weekday": {
@@ -354,13 +361,6 @@
         "thursday": "Torsdag",
         "tuesday": "Tisdag",
         "wednesday": "Onsdag"
-      }
-    },
-    "phase_mode": {
-      "options": {
-        "1_phase": "1-fas-läge",
-        "auto_phase": "Auto-fas-läge",
-        "3_phase": "3-fas-läge"
       }
     }
   },
@@ -382,6 +382,10 @@
     "set_basic_charge_plan": {
       "description": "Ställ in grundläggande schema för laddning",
       "fields": {
+        "current": {
+          "description": "Maximal ström i schema",
+          "name": "Maximal ström"
+        },
         "device_id": {
           "description": "Välj enhet som ska styras",
           "name": "Målenhet"
@@ -423,7 +427,7 @@
           "name": "Ström"
         },
         "device_id": {
-          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "description": "Välj en av laddboxarna i kretsen som ska styras.",
           "name": "Målenhet"
         }
       },
@@ -437,11 +441,25 @@
           "name": "Ström"
         },
         "device_id": {
-          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "description": "Välj en av laddboxarna i kretsen som ska styras.",
           "name": "Målenhet"
         }
       },
       "name": "Ställ in laddboxens maxgräns"
+    },
+    "set_charger_phase_mode": {
+      "description": "Ställ in laddboxens fasläge",
+      "fields": {
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        },
+        "phase_mode": {
+          "description": "Laddboxens fasläge",
+          "name": "Fasläge"
+        }
+      },
+      "name": "Ställ in laddboxens fasläge"
     },
     "set_charging_cost": {
       "description": "Ställ in laddningskostnad per kWh för laddplats",
@@ -455,7 +473,7 @@
           "name": "Valuta"
         },
         "device_id": {
-          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "description": "Välj en av laddboxarna i kretsen som ska styras.",
           "name": "Målenhet"
         },
         "vat": {
@@ -466,7 +484,7 @@
       "name": "Ställ in laddningskostnad"
     },
     "set_circuit_dynamic_limit": {
-      "description": "Ställ in kretsens dynamiska gräns (delad mellan laddboxar på den kretsen). Denna tjänst kan användas i automatiseringar.",
+      "description": "Ställ in kretsens dynamiska gräns (delad mellan laddboxarna på den kretsen). Denna tjänst kan användas i automatiseringar.",
       "fields": {
         "current_p1": {
           "description": "Max laddningsström",
@@ -481,7 +499,7 @@
           "name": "Ström fas 3"
         },
         "device_id": {
-          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "description": "Välj en av laddboxarna i kretsen som ska styras.",
           "name": "Målenhet"
         },
         "time_to_live": {
@@ -507,7 +525,7 @@
           "name": "Ström fas 3"
         },
         "device_id": {
-          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "description": "Välj en av laddboxarna i kretsen som ska styras.",
           "name": "Målenhet"
         }
       },
@@ -529,15 +547,37 @@
           "name": "Ström fas 3"
         },
         "device_id": {
-          "description": "Välj en av laddarna i kretsen som ska styras.",
+          "description": "Välj en av laddboxarna i kretsen som ska styras.",
           "name": "Målenhet"
         }
       },
       "name": "Ange offlinegräns för krets"
     },
+    "set_load_balancing": {
+      "description": "Ställ in lastbalansering för Equalizer",
+      "fields": {
+        "current": {
+          "description": "Maximal ström från elnätet",
+          "name": "Ström"
+        },
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        },
+        "enable": {
+          "description": "Aktivera lastbalansering",
+          "name": "Aktivera"
+        }
+      },
+      "name": "Ställ in lastbalansering"
+    },
     "set_weekly_charge_plan": {
       "description": "Ställ in veckoschema för laddning",
       "fields": {
+        "current": {
+          "description": "Maximal ström i schema",
+          "name": "Maximal ström"
+        },
         "day": {
           "description": "Veckodag för detta schema",
           "name": "Veckodag"
@@ -570,38 +610,6 @@
         }
       },
       "name": "Smart laddning"
-    },
-    "set_charger_phase_mode": {
-      "description": "Ställ in fas-läge",
-      "fields": {
-        "device_id": {
-          "description": "Välj enhet som ska styras",
-          "name": "Målenhet"
-        },
-        "phase_mode": {
-          "description": "Laddboxens fas-läge ",
-          "name": "Fas-läge"
-        }
-      },
-      "name": "Ställ in laddboxens fas-läge"
-    },
-    "set_load_balancing": {
-      "description": "Ställ in equalizer lastbalansering",
-      "fields": {
-        "device_id": {
-          "description": "Välj enhet som ska styras",
-          "name": "Målenhet"
-        },
-        "enable": {
-          "description": "Aktivera lastbalansering",
-          "name": "Aktivera"
-        },
-        "current": {
-          "description": "Maximal ström från elnätet",
-          "name": "Ström"
-        }
-      },
-      "name": "Ställ in lastbalansering"
     }
   },
   "system_health": {

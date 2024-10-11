@@ -2,7 +2,7 @@
   "config": {
     "abort": {
       "already_setup": "Du kan kun koble til en Easee konto.",
-      "reauth_successful": "Autentisering vellykket"
+      "reauth_successful": "Autentisering vellykket."
     },
     "error": {
       "auth_failure": "Kan ikke koble til Easee. Sjekk brukernavn og passord.",
@@ -16,7 +16,7 @@
         "data": {
           "password": "Passord"
         },
-        "description": "Easee-integrasjonen må autentisere på nytt med kontoen for {username}",
+        "description": "Easee-integrasjonen må autentisere på nytt med kontoen {username}",
         "title": "Autentiser på nytt med Easee"
       },
       "sites": {
@@ -39,23 +39,55 @@
   "device_automation": {
     "action_type": {
       "override_schedule": "Overstyr tidsplan",
-      "pause": "Sett ladingen på pause",
+      "pause": "Pause lading",
       "reboot": "Start laderen på nytt",
       "resume": "Gjenoppta lading",
       "start": "Start lading",
-      "stop": "Stopp ladingen"
+      "stop": "Stopp ladingen",
+      "toggle": "Veksle lading"
     },
     "condition_type": {
-      "authenticating": "{entity_name} autoriserer",
-      "awaiting_authentication": "{entity_name} venter på godkjenning",
+      "authenticating": "{entity_name} autentiserer",
+      "awaiting_authentication": "{entity_name} venter på autentisering",
       "awaiting_authorization": "{entity_name} venter på autorisasjon",
-      "awaiting_load_balancing": "{entity_name} venter på lastbalansering"
+      "awaiting_load_balancing": "{entity_name} venter på lastbalansering",
+      "awaiting_scheduled_start": "{entity_name} venter på planlagt start",
+      "awaiting_smart_start": "{entity_name} venter på smart start",
+      "awaiting_start": "{entity_name} avventer start",
+      "charging": "{entity_name} lader",
+      "completed": "{entity_name} er fullført",
+      "de_authorizing": "{entity_name} stenger autoriseringen",
+      "disconnected": "{entity_name} bilen er frakoblet",
+      "erratic_ev": "{entity_name} viser feil i bilen",
+      "error": "{entity_name} viser feil",
+      "error_dead_powerboard": "{entity_name} viser feil på kretskort",
+      "error_overcurrent": "{entity_name} viser feil Overstrøm",
+      "error_pen_fault": "{entity_name}viser feil Jordfeil",
+      "error_temperature_too_high": "{entity_name} viser feil Temperatur for høy",
+      "offline": "{entity_name} er offline",
+      "paused_due_to_equalizer": "{entity_name} er på pause grunnet Equalizer",
+      "ready_to_charge": "{entity_name} er klar til lading",
+      "searching_for_master": "{entity_name} søker etter master",
+      "start_charging": "{entity_name} er i Starte lading",
+      "stop_charging": "{entity_name} er i Stopp lading"
     },
     "trigger_type": {
+      "authenticating": "{entity_name} Autentiserer",
+      "awaiting_authentication": "{entity_name} Venter på autentisering",
+      "awaiting_authorization": "{entity_name} Venter på autorisasjon",
       "awaiting_load_balancing": "{entity_name} Satt på pause grunnet lastbalansering",
+      "awaiting_scheduled_start": "{entity_name} Venter på planlagt lading",
+      "awaiting_smart_start": "{entity_name} Venter på smart start",
+      "awaiting_start": "{entity_name} Venter på start",
       "charging": "{entity_name} Lader",
+      "completed": "{entity_name} Fullført",
+      "de_authorizing": "{entity_name} Stenger autorisering",
       "disconnected": "{entity_name} Bil frakoblet",
+      "erratic_ev": "{entity_name} Feil i bilen",
       "error": "{entity_name} Feil",
+      "error_dead_powerboard": "{entity_name} Feil Kretskort",
+      "error_overcurrent": "{entity_name} Feil Overstrøm",
+      "error_pen_fault": "{entity_name} Feil Jordfeil",
       "error_temperature_too_high": "{entity_name} Feil: Temperaturen er for høy",
       "offline": "{entity_name} frakoblet",
       "paused_due_to_equalizer": "{entity_name} satt på pause på grunn av Equalizer",
@@ -75,6 +107,9 @@
       },
       "online": {
         "name": "Online"
+      },
+      "surplus": {
+        "name": "Overskuddslading"
       },
       "update_available": {
         "name": "Oppdatering tilgjengelig"
@@ -244,15 +279,26 @@
       "is_enabled": {
         "name": "Lader aktivert"
       },
+      "smart_button": {
+        "name": "Touch-knapp tilgjengelig"
+      },
       "smart_charging": {
         "name": "Smartlading"
       }
     }
   },
   "issues": {
+    "currentpx_deprecation": {
+      "description": "Bruken av {argument} som fasestrøm er utfaset og vil ikke bli akseptert i framtidige versjoner. Konverter dine automasjoner og script til å benytte {recommendation} isteden.",
+      "title": "Bruken av {argument} i serviceanrop"
+    },
     "deprecated_service": {
       "description": "Tjenesten **{deprecation}** er utdatert is deprecated og vil bli fjernet i framtiden.\n\nKonverter dine automasjoner og skript til å bruke **{recommend}** snarest mulig",
       "title": "Utdatert tjeneste: {deprecation}"
+    },
+    "numeric_deprecation": {
+      "description": "Bruken av numerisk verdi for {argument} er utfaset og vil ikke bli akseptert i framtidige versjoner. Konverter dine automasjoner og script til å bentte strings {recommendation} isteden.",
+      "title": "Bruken av numerisk verdi for {argument} i serviceanrop"
     }
   },
   "options": {
@@ -271,6 +317,299 @@
         "description": "Velg innstillinger",
         "title": "Easee elbillader"
       }
+    }
+  },
+  "selector": {
+    "access_level": {
+      "options": {
+        "open_for_all": "Åpen for alle",
+        "require_easee_account": "Krev Easee-konto",
+        "whitelist": "Hvitliste"
+      }
+    },
+    "action_command": {
+      "options": {
+        "delete_basic_charge_plan": "Slette grunnleggende ladeplan",
+        "delete_weekly_charge_plan": "Slette ukentlig ladeplan",
+        "disable_basic_charge_plan": "Deaktiver grunnleggende ladeplan",
+        "disable_weekly_charge_plan": "Deaktiver ukentlig ladeplan",
+        "enable_basic_charge_plan": "Aktivere grunnleggende ladeplan",
+        "enable_weekly_charge_plan": "Aktivere ukentlig ladeplan",
+        "override_schedule": "Overstyre ladeplan",
+        "pause": "Pause",
+        "reboot": "Reboot laderen",
+        "resume": "Gjenoppta",
+        "start": "Start",
+        "stop": "Stopp",
+        "toggle": "Veksle",
+        "update_firmware": "Oppdater firmware"
+      }
+    },
+    "phase_mode": {
+      "options": {
+        "1_phase": "1-fas modus",
+        "3_phase": "3-fas modus",
+        "auto_phase": "Automatisk fasemodus"
+      }
+    },
+    "weekday": {
+      "options": {
+        "friday": "Fredag",
+        "monday": "Mandag",
+        "saturday": "Lørdag",
+        "sunday": "Søndag",
+        "thursday": "Torsdag",
+        "tuesday": "Tirsdag",
+        "wednesday": "Onsdag"
+      }
+    }
+  },
+  "services": {
+    "action_command": {
+      "description": "Send kommando til lader",
+      "fields": {
+        "action_command": {
+          "description": "Velg kommandoen som skal utføres",
+          "name": "Kommando"
+        },
+        "device_id": {
+          "description": "Velg enheten som skal styres",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Handlingskommando"
+    },
+    "set_basic_charge_plan": {
+      "description": "Sett grunnleggende ladeplan",
+      "fields": {
+        "current": {
+          "description": "Maks strøm for grunnleggende ladeplan",
+          "name": "Maks strøm"
+        },
+        "device_id": {
+          "description": "Velg enheten som skal styres",
+          "name": "Målenhet"
+        },
+        "repeat": {
+          "description": "Gjenta ladeplan",
+          "name": "Gjenta ladeplan"
+        },
+        "start_datetime": {
+          "description": "Starttid for ladeplan",
+          "name": "Starttidspunkt"
+        },
+        "stop_datetime": {
+          "description": "Stopptid for ladeplan",
+          "name": "Stopptidspunkt"
+        }
+      },
+      "name": "Sett grunnleggende ladeplan"
+    },
+    "set_charger_access": {
+      "description": "Velg hvem som skal kunne lade",
+      "fields": {
+        "access_level": {
+          "description": "Sett tilgang til lading",
+          "name": "Tilgang"
+        },
+        "device_id": {
+          "description": "Velg enheten som skal styres",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Sett tilgang til lader"
+    },
+    "set_charger_dynamic_limit": {
+      "description": "Sett laderens dynamiske grense",
+      "fields": {
+        "current": {
+          "description": "Maks ladestrøm",
+          "name": "Strøm"
+        },
+        "device_id": {
+          "description": "Velg en av laderne på kursen som skal styres.",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Sett laderens dynamiske grense"
+    },
+    "set_charger_max_limit": {
+      "description": "Sett laderens maksgrense. Forsiktig! Bør ikke brukes av automasjoner (kan slite ut flashminnet dersom verdien endres for ofte).",
+      "fields": {
+        "current": {
+          "description": "Maks ladestrøm",
+          "name": "Strøm"
+        },
+        "device_id": {
+          "description": "Velg en av laderne på kursen som skal styres",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Sett laderens maksgrense"
+    },
+    "set_charger_phase_mode": {
+      "description": "Sett laderens fasemodus",
+      "fields": {
+        "device_id": {
+          "description": "Velg enheten som skal styres",
+          "name": "Målenhet"
+        },
+        "phase_mode": {
+          "description": "Laderens fasemodus",
+          "name": "Fasemodus"
+        }
+      },
+      "name": "Sett laderens fasemodus"
+    },
+    "set_charging_cost": {
+      "description": "Sett ladekostnad per kWh for ladestedet (site)",
+      "fields": {
+        "cost_per_kwh": {
+          "description": "Kostnad per kWh",
+          "name": "Kostnad per kWh"
+        },
+        "currency_id": {
+          "description": "Valutakode",
+          "name": "Valuta"
+        },
+        "device_id": {
+          "description": "Velg en av laderne på kursen som skal styres.",
+          "name": "Målenhet"
+        },
+        "vat": {
+          "description": "Merverdiavgift",
+          "name": "MVA"
+        }
+      },
+      "name": "Sett ladekostnad"
+    },
+    "set_circuit_dynamic_limit": {
+      "description": "Sett ladekursens dynamiske grense (delt mellom laderne på samme kurs). Denne tjeneste kan benyttes i automasjoner.",
+      "fields": {
+        "current_p1": {
+          "description": "Maks ladestrøm",
+          "name": "Strøm fase 1"
+        },
+        "current_p2": {
+          "description": "Maks ladestrøm. Hvis deaktivert vil verdien for fase 1 benyttes.",
+          "name": "Strøm fase 2"
+        },
+        "current_p3": {
+          "description": "Maks ladestrøm. Hvis deaktivert vil verdien for fase 1 benyttes.",
+          "name": "Strøm fase 3"
+        },
+        "device_id": {
+          "description": "Velg en av laderne på krusen som skal styres.",
+          "name": "Målenhet"
+        },
+        "time_to_live": {
+          "description": "Sett tiden i minutter før kommandoen skal aktiveres. Verdien 0 = på ubestemt tid.",
+          "name": "Tid til aktivering"
+        }
+      },
+      "name": "Sett ladekursens dynamiske grense"
+    },
+    "set_circuit_max_limit": {
+      "description": "Sett ladekursens maks grense. Forsiktig! Bør ikke benyttes av automasjoner (kan slite ut flashminnet dersom den benyttes for ofte).",
+      "fields": {
+        "current_p1": {
+          "description": "Maks strøm ladekurs",
+          "name": "Strøm fase 1"
+        },
+        "current_p2": {
+          "description": "Maks strøm ladekurs. Dersom deaktivert vil verdien for fase 1 benyttes.",
+          "name": "Strøm fase 2"
+        },
+        "current_p3": {
+          "description": "Max strøm ladekurs. Dersom deaktivert vil verdien for fase 1 benyttes.",
+          "name": "Strøm fase 3"
+        },
+        "device_id": {
+          "description": "Velg en av laderne på kursen som skal styres.",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Sett ladekursens maksgrense"
+    },
+    "set_circuit_offline_limit": {
+      "description": "Sett kursens offlinegrense som benyttes når laderen er offline (fallback). Forsiktig! Bør ikke benyttes av automasjoner (kan slite ut flashminnet dersom den benyttes for ofte).",
+      "fields": {
+        "current_p1": {
+          "description": "Max ladestrøm",
+          "name": "Strøm fase 1"
+        },
+        "current_p2": {
+          "description": "Maks ladestrøm. Dersom deaktivert vil verdien for fase 1 benyttes.",
+          "name": "Strøm fase 2"
+        },
+        "current_p3": {
+          "description": "Maks ladestrøm. Hvis deakivert vil verdien for fase 1 benyttes.",
+          "name": "Strøm fase 3"
+        },
+        "device_id": {
+          "description": "Velg en av laderne på kursen som skal styres.",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Sett ladekursens offlinegrense"
+    },
+    "set_load_balancing": {
+      "description": "Sett lastbalansering for Equalizer",
+      "fields": {
+        "current": {
+          "description": "Maks strøm fra elnettet",
+          "name": "Strøm"
+        },
+        "device_id": {
+          "description": "Velg enhet som skal styres",
+          "name": "Målenhet"
+        },
+        "enable": {
+          "description": "Aktivere lastbalansering",
+          "name": "Aktivere"
+        }
+      },
+      "name": "Sett lastbalansering"
+    },
+    "set_weekly_charge_plan": {
+      "description": "Sett ukentlig ladeplan",
+      "fields": {
+        "current": {
+          "description": "Maks strøm for ladeplan",
+          "name": "Maks strøm"
+        },
+        "day": {
+          "description": "Ukedag for denne planen",
+          "name": "Ukedag"
+        },
+        "device_id": {
+          "description": "Velg enheten som skal styres",
+          "name": "Målenhet"
+        },
+        "start_time": {
+          "description": "Starttid for ladeplan",
+          "name": "Starttid"
+        },
+        "stop_time": {
+          "description": "Stopptid for ladeplan",
+          "name": "Stopptid"
+        }
+      },
+      "name": "Sett ukentlig ladeplan"
+    },
+    "smart_charging": {
+      "description": "Aktivere/deaktivere smartlading",
+      "fields": {
+        "device_id": {
+          "description": "Velg enhet som skal styres",
+          "name": "Målenhet"
+        },
+        "enable": {
+          "description": "Aktivere smartlading",
+          "name": "Aktiver"
+        }
+      },
+      "name": "Smartlading"
     }
   },
   "system_health": {
