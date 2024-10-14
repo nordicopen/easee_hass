@@ -1,5 +1,6 @@
-"""easee services."""
+"""Easee services."""
 
+# pylint: disable=too-many-lines
 from datetime import timedelta
 import logging
 
@@ -622,12 +623,7 @@ async def async_setup_services(hass):  # noqa: C901
             day = start_dt.weekday()
 
             try:
-                return await function_call(
-                    day,
-                    start_t,
-                    stop_t,
-                    limit=current
-                )
+                return await function_call(day, start_t, stop_t, limit=current)
             except BadRequestException as ex:
                 _LOGGER.error(
                     "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
@@ -908,7 +904,10 @@ async def async_setup_services(hass):  # noqa: C901
         raise HomeAssistantError("Could not find charger")
 
     async def equalizer_execute_set_load_balancing(call):
-        """Execute a service to set load balancing for a site (equalizer is the actual target for API)."""
+        """Execute a service to set load balancing for a site.
+
+        Equalizer is the actual target for API.
+        """
         equalizer = await async_get_equalizer(call)
         enabled = call.data.get(ATTR_ENABLE)
         current = call.data.get(ATTR_SET_CURRENT)
