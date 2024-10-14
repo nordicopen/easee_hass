@@ -1,4 +1,5 @@
 """Provides device actions for easee_hass."""
+
 from __future__ import annotations
 
 import voluptuous as vol
@@ -15,6 +16,12 @@ from homeassistant.helpers import config_validation as cv, entity_registry as er
 from . import DOMAIN
 
 ACTION_TYPES = {
+    "delete_basic_charge_plan",
+    "delete_weekly_charge_plan",
+    "disable_basic_charge_plan",
+    "disable_weekly_charge_plan",
+    "enable_basic_charge_plan",
+    "enable_weekly_charge_plan",
     "override_schedule",
     "pause",
     "reboot",
@@ -22,6 +29,7 @@ ACTION_TYPES = {
     "start",
     "stop",
     "toggle",
+    "update_firmware",
 }
 
 ACTION_SCHEMA = cv.DEVICE_ACTION_BASE_SCHEMA.extend(
