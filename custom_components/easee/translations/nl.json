@@ -338,6 +338,12 @@
         "update_firmware": "Firmware updaten"
       }
     },
+    "phase_mode": {
+      "options": {
+        "1_phase": "1 fase modus",
+        "3_phase": "3 fase modus"
+      }
+    },
     "weekday": {
       "options": {
         "friday": "Vrijdag",
@@ -368,6 +374,9 @@
     "set_basic_charge_plan": {
       "description": "Standaard laadschema instellen",
       "fields": {
+        "current": {
+          "name": "Maximale stroom"
+        },
         "device_id": {
           "description": "Selecteer apparaat om te gebruiken",
           "name": "Doelapparaat"
@@ -518,9 +527,23 @@
       },
       "name": "Offline limiet stroomcircuit instellen"
     },
+    "set_load_balancing": {
+      "fields": {
+        "current": {
+          "name": "Stroom"
+        },
+        "enable": {
+          "description": "Load balancing inschakelen",
+          "name": "Inschakelen"
+        }
+      }
+    },
     "set_weekly_charge_plan": {
       "description": "Wekelijks laadschema instellen",
       "fields": {
+        "current": {
+          "name": "Maximale stroom"
+        },
         "day": {
           "description": "Weekdag voor dit schema",
           "name": "Weekdag"
