@@ -38,13 +38,20 @@
   },
   "device_automation": {
     "action_type": {
+      "delete_basic_charge_plan": "Slette grunnleggende ladeplan",
+      "delete_weekly_charge_plan": "Slette ukentlig ladeplan",
+      "disable_basic_charge_plan": "Deaktiver grunnleggende ladeplan",
+      "disable_weekly_charge_plan": "Deaktiver ukentlig ladeplan",
+      "enable_basic_charge_plan": "Aktivere grunnleggende ladeplan",
+      "enable_weekly_charge_plan": "Aktivere ukentlig ladeplan",
       "override_schedule": "Overstyr tidsplan",
       "pause": "Pause lading",
       "reboot": "Start laderen på nytt",
       "resume": "Gjenoppta lading",
       "start": "Start lading",
       "stop": "Stopp ladingen",
-      "toggle": "Veksle lading"
+      "toggle": "Veksle lading",
+      "update_firmware": "Oppdater firmware"
     },
     "condition_type": {
       "authenticating": "{entity_name} autentiserer",
