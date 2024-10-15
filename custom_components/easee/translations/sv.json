@@ -38,13 +38,20 @@
   },
   "device_automation": {
     "action_type": {
+      "delete_basic_charge_plan": "Ta bort grundläggande schema för laddning",
+      "delete_weekly_charge_plan": "Ta bort veckoschema för laddning",
+      "disable_basic_charge_plan": "Stäng av schema",
+      "disable_weekly_charge_plan": "Stäng av veckoschema",
+      "enable_basic_charge_plan": "Aktivera schema",
+      "enable_weekly_charge_plan": "Aktivera veckoschema",
       "override_schedule": "Åsidosätt schema",
       "pause": "Pausa laddningen",
       "reboot": "Starta om laddboxen",
       "resume": "Återuppta laddningen",
       "start": "Starta laddning",
       "stop": "Stoppa laddning",
-      "toggle": "Växla laddning"
+      "toggle": "Växla laddning",
+      "update_firmware": "Uppdatera firmware"
     },
     "condition_type": {
       "authenticating": "{entity_name} autentiserar",
