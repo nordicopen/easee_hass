@@ -438,6 +438,13 @@
       },
       "name": "Selecteer maximum output voor de lader"
     },
+    "set_charger_phase_mode": {
+      "fields": {
+        "device_id": {
+          "name": "Doelapparaat"
+        }
+      }
+    },
     "set_charging_cost": {
       "description": "Stel de laadkosten in per kWh voor de opladerlocatie",
       "fields": {
@@ -537,7 +544,8 @@
           "description": "Load balancing inschakelen",
           "name": "Inschakelen"
         }
-      }
+      },
+      "name": "Load balancing instellen"
     },
     "set_weekly_charge_plan": {
       "description": "Wekelijks laadschema instellen",
