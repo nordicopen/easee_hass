@@ -24,7 +24,7 @@
           "monitored_sites": "Standorte"
         },
         "description": "Wählen Sie zu überwachende Standorte aus",
-        "title": "Easee EV Charger"
+        "title": "Easee Wallbox"
       },
       "user": {
         "data": {
@@ -38,13 +38,20 @@
   },
   "device_automation": {
     "action_type": {
+      "delete_basic_charge_plan": "Einfachen Ladeplan löschen",
+      "delete_weekly_charge_plan": "Wöchentlichen Ladeplan löschen",
+      "disable_basic_charge_plan": "Einfachen Ladeplan deaktivieren",
+      "disable_weekly_charge_plan": "Wöchentlichen Ladeplan deaktivieren",
+      "enable_basic_charge_plan": "Einfachen Ladeplan aktivieren",
+      "enable_weekly_charge_plan": "Wöchentlichen Ladeplan aktivieren",
       "override_schedule": "Zeitplan überschreiben",
       "pause": "Ladevorgang pausieren",
       "reboot": "Ladegerät neu starten",
       "resume": "Ladevorgang fortsetzen",
       "start": "Ladevorgang starten",
       "stop": "Ladevorgang stoppen",
-      "toggle": "Ladevorgang umschalten"
+      "toggle": "Ladevorgang umschalten",
+      "update_firmware": "Firmware updaten"
     },
     "condition_type": {
       "authenticating": "{entity_name} authentifiziert",
@@ -60,9 +67,9 @@
       "disconnected": "{entity_name}, Fahrzeug getrennt",
       "erratic_ev": "{entity_name} erkennt fehlerhaftes Elektroauto",
       "error": "{entity_name} Fehler",
-      "error_dead_powerboard": "{entity_name} Fehler, Leiterplatte defekt",
+      "error_dead_powerboard": "{entity_name} Fehler, Platine für Leistungsregelung defekt",
       "error_overcurrent": "{entity_name} Fehler, Überstrom",
-      "error_pen_fault": "{entity_name} PEN-Fehler aufgetreten",
+      "error_pen_fault": "{entity_name} Fehler im Schutz- und Neutralleiter (PEN)",
       "error_temperature_too_high": "{entity_name} Fehler, Temperatur zu hoch",
       "offline": "{entity_name} ist offline",
       "paused_due_to_equalizer": "{entity_name} von Equalizer pausiert",
@@ -107,6 +114,9 @@
       },
       "online": {
         "name": "Online"
+      },
+      "surplus": {
+        "name": "Überschussladen"
       },
       "update_available": {
         "name": "Aktualisierung verfügbar"
@@ -285,9 +295,17 @@
     }
   },
   "issues": {
+    "currentpx_deprecation": {
+      "description": "Die Nutzung von {argument} als Ladestromstärke ist veraltet und wird in zukünftigen Versionen nicht unterstützt. Bitte ändern Sie Ihre Automatisierungen und Skripte und nutzen {recommendation} stattdessen.",
+      "title": "Benutzung von {argument} im Befehl"
+    },
     "deprecated_service": {
       "description": "Der verwendete Dienst **{deprecation}** ist veraltet und wird in Zukunft entfernt werden.\n\nBitte passen Sie Ihre Automatisierungen und Skripte zur Verwendung von **{recommend}** so bald wie möglich an.",
       "title": "Verwendung eines veralteten Dienstes: {deprecation}"
+    },
+    "numeric_deprecation": {
+      "description": "Die Nutzung numerischer Werte für {argument} ist veraltet und wird in zukünftigen Versionen nicht mehr unterstützt. Bitte ändern Sie Ihre Skripte und Automatisierungen und nutzen stattdessen Strings {recommendation}.",
+      "title": "Nutzung eines numerischen Werts für {argument} in einem Service Call"
     }
   },
   "options": {
@@ -304,8 +322,301 @@
           "monitored_sites": "Standorte"
         },
         "description": "Optionen wählen",
-        "title": "Easee EV Charger"
+        "title": "Easee Wallbox"
       }
+    }
+  },
+  "selector": {
+    "access_level": {
+      "options": {
+        "open_for_all": "Offen für alle",
+        "require_easee_account": "Benötigt einen Easee Account",
+        "whitelist": "Whitelist"
+      }
+    },
+    "action_command": {
+      "options": {
+        "delete_basic_charge_plan": "Einfachen Ladeplan löschen",
+        "delete_weekly_charge_plan": "Wöchentlichen Ladeplan löschen",
+        "disable_basic_charge_plan": "Einfachen Ladeplan deaktivieren",
+        "disable_weekly_charge_plan": "Wöchentlichen Ladeplan deaktivieren",
+        "enable_basic_charge_plan": "Einfachen Ladeplan aktivieren",
+        "enable_weekly_charge_plan": "Wöchentlichen Ladeplan aktivieren",
+        "override_schedule": "Plan überschreiben",
+        "pause": "Pause",
+        "reboot": "Ladegerät neu starten",
+        "resume": "Wieder aufnehmen",
+        "start": "Start",
+        "stop": "Stopp",
+        "toggle": "Umschalten",
+        "update_firmware": "Firmware updaten"
+      }
+    },
+    "phase_mode": {
+      "options": {
+        "1_phase": "einphasiges Laden",
+        "3_phase": "dreiphasiges Laden",
+        "auto_phase": "Automatische Phasenumschaltung"
+      }
+    },
+    "weekday": {
+      "options": {
+        "friday": "Freitag",
+        "monday": "Montag",
+        "saturday": "Samstag",
+        "sunday": "Sonntag",
+        "thursday": "Donnerstag",
+        "tuesday": "Dienstag",
+        "wednesday": "Mittwoch"
+      }
+    }
+  },
+  "services": {
+    "action_command": {
+      "description": "Kommando an Ladegerät senden",
+      "fields": {
+        "action_command": {
+          "description": "Auszuführendes Kommando auswählen",
+          "name": "Kommando"
+        },
+        "device_id": {
+          "description": "Zu kontrollierendes Gerät auswählen",
+          "name": "Zielgerät"
+        }
+      },
+      "name": "Auszuführendes Kommando"
+    },
+    "set_basic_charge_plan": {
+      "description": "Einfachen Ladeplan festlegen",
+      "fields": {
+        "current": {
+          "description": "Maximale Stromstärke während des Plans",
+          "name": "Maximale Stromstärke"
+        },
+        "device_id": {
+          "description": "Zu kontrollierendes Gerät auswählen",
+          "name": "Zielgerät"
+        },
+        "repeat": {
+          "description": "Ladeplan wiederholen",
+          "name": "Ladeplan wiederholen"
+        },
+        "start_datetime": {
+          "description": "Startzeit für Plan",
+          "name": "Startdatum und -zeit"
+        },
+        "stop_datetime": {
+          "description": "Endzeit für Plan",
+          "name": "Enddatum und -zeit"
+        }
+      },
+      "name": "Einfachen Ladeplan festlegen"
+    },
+    "set_charger_access": {
+      "description": "Auswählen, wer laden darf",
+      "fields": {
+        "access_level": {
+          "description": "Zugangskontrolle festlegen",
+          "name": "Zugang"
+        },
+        "device_id": {
+          "description": "Zu kontrollierendes Gerät auswählen",
+          "name": "Zielgerät"
+        }
+      },
+      "name": "Zugang zum Ladegerät festlegen"
+    },
+    "set_charger_dynamic_limit": {
+      "description": "Dynamisches Limit des Ladegeräts festlegen",
+      "fields": {
+        "current": {
+          "description": "Maximale Ladestromstärke",
+          "name": "Stromstärke"
+        },
+        "device_id": {
+          "description": "Zu kontrollierendes Ladegerät im Stromkreis auswählen.",
+          "name": "Zielgerät"
+        }
+      },
+      "name": "Dynamisches Limit des Ladegeräts festlegen"
+    },
+    "set_charger_max_limit": {
+      "description": "Maximale Stromstärke des Ladegeräts festlegen. Vorsicht! Sollte nicht von einer Automatisierung verwendet werden (kann den Flash-Speicher abnutzen, wenn der Wert zu häufig geändert wird).",
+      "fields": {
+        "current": {
+          "description": "Maximale Ladestromstärke",
+          "name": "Stromstärke"
+        },
+        "device_id": {
+          "description": "Zu kontrollierendes Ladegerät im Stromkreis auswählen",
+          "name": "Zielgerät"
+        }
+      },
+      "name": "Maximale Stromstärke des Ladegeräts festlegen"
+    },
+    "set_charger_phase_mode": {
+      "description": "Phasenmodus des Ladegeräts auswählen",
+      "fields": {
+        "device_id": {
+          "description": "Zu kontrollierendes Gerät auswählen",
+          "name": "Zielgerät"
+        },
+        "phase_mode": {
+          "description": "Phasenmodus des Ladegeräts",
+          "name": "Phasenmodus"
+        }
+      },
+      "name": "Phasenmodus des Ladegeräts einstellen"
+    },
+    "set_charging_cost": {
+      "description": "Ladekosten pro kWh für den Standort angeben",
+      "fields": {
+        "cost_per_kwh": {
+          "description": "Kosten pro kWh",
+          "name": "Kosten pro kWh"
+        },
+        "currency_id": {
+          "description": "Währungscode",
+          "name": "Währung"
+        },
+        "device_id": {
+          "description": "Wähle das zu kontrollierende Ladegerät in dem Stromkreis",
+          "name": "Zielgerät"
+        },
+        "vat": {
+          "description": "Mehrwertsteuer",
+          "name": "MwSt."
+        }
+      },
+      "name": "Ladekosten angeben"
+    },
+    "set_circuit_dynamic_limit": {
+      "description": "Dynamisches Limit des Stromkreises festlegen (wird von den Ladegeräten in diesem Stromkreis gemeinsam genutzt). Kann in Automatisierungen verwendet werden.",
+      "fields": {
+        "current_p1": {
+          "description": "Maximale Ladestromstärke",
+          "name": "Stromstärke erste Phase"
+        },
+        "current_p2": {
+          "description": "Maximaler Ladestrom. Wenn deaktiviert, wird der Wert der ersten Phase verwendet.",
+          "name": "Stromstärke zweite Phase"
+        },
+        "current_p3": {
+          "description": "Maximaler Ladestrom. Wenn deaktiviert, wird der Wert der ersten Phase verwendet.",
+          "name": "Stromstärke dritte Phase"
+        },
+        "device_id": {
+          "description": "Zu kontrollierendes Ladegerät im Stromkreis auswählen.",
+          "name": "Zielgerät"
+        },
+        "time_to_live": {
+          "description": "Legen Sie die Zeit in Minuten fest, die der Befehl gültig bleiben soll. 0 = unbegrenzt.",
+          "name": "Time to live / Gültigkeitsdauer"
+        }
+      },
+      "name": "Dynamisches Limit des Stromkreises festlegen"
+    },
+    "set_circuit_max_limit": {
+      "description": "Maximalwert des Stromkreises festlegen. Vorsicht! Sollte nicht von einer Automatisierung verwendet werden (kann den Flash-Speicher abnutzen, wenn der Wert zu häufig geändert wird).",
+      "fields": {
+        "current_p1": {
+          "description": "Maximaler Ladestrom",
+          "name": "Stromstärke erste Phase"
+        },
+        "current_p2": {
+          "description": "Maximaler Ladestrom. Wenn deaktiviert, wird der Wert von Phase 1 verwendet.",
+          "name": "Stromstärke zweite Phase"
+        },
+        "current_p3": {
+          "description": "Maximaler Ladestrom. Wenn deaktiviert, wird der Wert von Phase 1 verwendet.",
+          "name": "Stromstärke dritte Phase"
+        },
+        "device_id": {
+          "description": "Zu kontrollierendes Ladegerät im Stromkreis auswählen.",
+          "name": "Zielgerät"
+        }
+      },
+      "name": "Maximale Stromstärke des Stromkreises"
+    },
+    "set_circuit_offline_limit": {
+      "description": "Fallback Limit des Stromkreises festlegen, wenn das Ladegerät offline ist. Vorsicht!  Sollte nicht von einer Automatisierung verwendet werden (kann den Flash-Speicher abnutzen, wenn der Wert zu häufig geändert wird).",
+      "fields": {
+        "current_p1": {
+          "description": "Maximale Ladestromstärke",
+          "name": "Stromstärke erste Phase"
+        },
+        "current_p2": {
+          "description": "Maximaler Ladestrom. Wenn deaktiviert wird der Wert der ersten Phase verwendet.",
+          "name": "Stromstärke zweite Phase"
+        },
+        "current_p3": {
+          "description": "Maximaler Ladestrom. Wenn deaktiviert wird der Wert der ersten Phase verwendet.",
+          "name": "Stromstärke dritte Phase"
+        },
+        "device_id": {
+          "description": "Zu kontrollierendes Ladegerät im Stromkreis auswählen.",
+          "name": "Zielgerät"
+        }
+      },
+      "name": "Offline Maximalwert festlegen"
+    },
+    "set_load_balancing": {
+      "description": "Lastmanagement durch Equalizer aktivieren",
+      "fields": {
+        "current": {
+          "description": "Maximale Stromstärke aus dem Netz",
+          "name": "Stromstärke"
+        },
+        "device_id": {
+          "description": "Zu kontrollierendes Gerät auswählen",
+          "name": "Zielgerät"
+        },
+        "enable": {
+          "description": "Lastmanagement aktivieren",
+          "name": "Aktivieren"
+        }
+      },
+      "name": "Lastmanagement einschalten"
+    },
+    "set_weekly_charge_plan": {
+      "description": "Wöchentlichen Ladeplan festlegen",
+      "fields": {
+        "current": {
+          "description": "Maximale Stromstärke während des Plans",
+          "name": "Maximale Stromstärke"
+        },
+        "day": {
+          "description": "Wochentag für diesen Plan",
+          "name": "Wochentag"
+        },
+        "device_id": {
+          "description": "Zu kontrollierendes Gerät auswählen",
+          "name": "Zielgerät"
+        },
+        "start_time": {
+          "description": "Startzeit für Ladeplan",
+          "name": "Startzeit"
+        },
+        "stop_time": {
+          "description": "Endzeit für Ladeplan",
+          "name": "Endzeit"
+        }
+      },
+      "name": "Wöchentlichen Ladeplan festlegen"
+    },
+    "smart_charging": {
+      "description": "Smart Charging aktivieren/deaktivieren",
+      "fields": {
+        "device_id": {
+          "description": "Zu kontrollierendes Gerät auswählen",
+          "name": "Zielgerät"
+        },
+        "enable": {
+          "description": "Smart Charging aktivieren",
+          "name": "Aktivieren"
+        }
+      },
+      "name": "Smart Charging / Intelligentes Laden"
     }
   },
   "system_health": {
@@ -315,5 +626,5 @@
       "reach_easee_cloud": "Easee Cloud erreichbar"
     }
   },
-  "title": "Easee EV Charger"
+  "title": "Easee Wallbox"
 }
