@@ -11,6 +11,11 @@
                 "default": "mdi:clock-check"
             }
         },
+        "button": {
+            "override_schedule": {
+                "default": "mdi:clock-start"
+            }
+        },
         "sensor": {
             "easee_status": {
                 "default": "mdi:ev-station"

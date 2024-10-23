@@ -125,6 +125,11 @@
         "name": "Weekly schedule"
       }
     },
+    "button": {
+      "override_schedule": {
+        "name": "Override schedule"
+      }
+    },
     "sensor": {
       "circuit_current": {
         "name": "Circuit current"

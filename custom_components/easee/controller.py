@@ -40,6 +40,7 @@ from homeassistant.helpers.event import (
 from homeassistant.util import dt as dt_util
 
 from .binary_sensor import ChargerBinarySensor, EqualizerBinarySensor
+from .button import ChargerButton
 from .const import (
     CONF_MONITORED_SITES,
     DOMAIN,
@@ -63,6 +64,7 @@ from .switch import ChargerSwitch
 ENTITY_TYPES = {
     "sensor": ChargerSensor,
     "binary_sensor": ChargerBinarySensor,
+    "button": ChargerButton,
     "switch": ChargerSwitch,
     "eq_sensor": EqualizerSensor,
     "eq_binary_sensor": EqualizerBinarySensor,
@@ -442,6 +444,7 @@ class Controller:
         self.equalizers: list[Equalizer] = []
         self.equalizers_data: list[ProductData] = []
         self.binary_sensor_entities = []
+        self.button_entities = []
         self.switch_entities = []
         self.sensor_entities = []
         self.equalizer_sensor_entities = []
@@ -857,6 +860,10 @@ class Controller:
         """Get binary sensor entities."""
         return self.binary_sensor_entities + self.equalizer_binary_sensor_entities
 
+    def get_button_entities(self):
+        """Get button entities."""
+        return self.button_entities
+
     def get_sensor_entities(self):
         """Get sensor entities."""
         return self.sensor_entities + self.equalizer_sensor_entities
@@ -908,6 +915,9 @@ class Controller:
         elif object_type == "binary_sensor":
             self.binary_sensor_entities.append(entity)
 
+        elif object_type == "button":
+            self.button_entities.append(entity)
+
         elif object_type == "eq_sensor":
             self.equalizer_sensor_entities.append(entity)
 
@@ -920,6 +930,7 @@ class Controller:
         self.sensor_entities = []
         self.switch_entities = []
         self.binary_sensor_entities = []
+        self.button_entities = []
         self.equalizer_sensor_entities = []
         self.equalizer_binary_sensor_entities = []
 
