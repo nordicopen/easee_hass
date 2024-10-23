@@ -2,7 +2,7 @@ colorlog==6.8.2
 homeassistant
 pip>=21.0,<24.1
 ruff==0.6.5
-pre-commit==3.8.0
+pre-commit==4.0.1
 bump2version==1.0.1
 
 pyeasee
