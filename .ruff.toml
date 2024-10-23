@@ -60,7 +60,7 @@ lint.select = [
     "T20",    # flake8-print
     "TID251", # Banned imports
     "TRY004", # Prefer TypeError exception for invalid type
-    "TRY302", # Remove exception handler; error is immediately re-raised
+    "TRY203", # Remove exception handler; error is immediately re-raised
     "UP",     # pyupgrade
     "W",      # pycodestyle
 ]
