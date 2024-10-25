@@ -1,5 +1,7 @@
 [![easee_hass](https://img.shields.io/github/release/nordicopen/easee_hass.svg?1)](https://github.com/nordicopen/easee_hass) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration) ![Validate with hassfest](https://github.com/nordicopen/easee_hass/workflows/Validate%20with%20hassfest/badge.svg) ![Maintenance](https://img.shields.io/maintenance/yes/2024.svg) [![Easee_downloads](https://img.shields.io/github/downloads/nordicopen/easee_hass/total)](https://github.com/nordicopen/easee_hass) [![easee_hass_downloads](https://img.shields.io/github/downloads/nordicopen/easee_hass/latest/total)](https://github.com/nordicopen/easee_hass)
 
+## IMPORTANT!
+Please upgrade to v0.9.64 or later version as soon as possible if you are running a version between v0.9.58 and v0.9.62! All versions of this integration between v0.9.58 and v0.9.62 has had an issue with the signalr reconnect error handling that causes lots of failed accesses to Easee signalr servers. Installing a newer version will help improve the stability of the Easee servers and free up resources for more quick response. You might not have experienced any problems in your installation but under the hood there has been lots of issues. See more details in the release note of v0.9.64.
 
 # Easee EV charger component for Home Assistant
 
