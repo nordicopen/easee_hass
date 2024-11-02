@@ -5,8 +5,9 @@ import logging
 from pyeasee.exceptions import ForbiddenServiceException
 
 from homeassistant.components.switch import SwitchEntity
+from homeassistant.helpers.entity import DeviceInfo
 
-from .const import DOMAIN
+from .const import DOMAIN, MANUFACTURER, MODEL_EQUALIZER
 from .entity import ChargerEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -60,3 +61,18 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         """Return true if the switch is on."""
         _LOGGER.debug("Getting state of %s", self._entity_name)
         return self._state
+
+class EqualizerSwitch(ChargerSwitch):
+    """Easee equalizer switch class."""
+
+    @property
+    def device_info(self):
+        """Return the device information."""
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.data.product.id)},
+            serial_number=self.data.product.id,
+            name=self.data.product.name,
+            manufacturer=MANUFACTURER,
+            model=MODEL_EQUALIZER,
+            configuration_url=f"https://easee.cloud/mypage/products/{self.data.product.id}",
+        )

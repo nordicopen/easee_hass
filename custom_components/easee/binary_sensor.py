@@ -30,7 +30,7 @@ class ChargerBinarySensor(ChargerEntity, BinarySensorEntity):
 
 
 class EqualizerBinarySensor(ChargerEntity, BinarySensorEntity):
-    """Easee charger binary sensor class."""
+    """Easee equalizer binary sensor class."""
 
     @property
     def is_on(self):
