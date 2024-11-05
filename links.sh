@@ -1,4 +1,5 @@
 ln -s custom_components/easee/__init__.py .
+ln -s custom_components/easee/button.py .
 ln -s custom_components/easee/binary_sensor.py .
 ln -s custom_components/easee/config_flow.py .
 ln -s custom_components/easee/const.py .
