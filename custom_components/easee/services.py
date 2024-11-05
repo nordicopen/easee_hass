@@ -247,16 +247,16 @@ SERVICE_SET_PHASE_MODE = vol.All(
     exclusive_schema2.extend(ext_phase_mode),
 )
 
-ext_load_balancing = {
+ext_surplus_charging = {
     vol.Required(ATTR_ENABLE): cv.boolean,
     vol.Required(ATTR_SET_CURRENT, default=MIN_CURRENT): vol.All(
         cv.positive_int, vol.Range(min=MIN_CURRENT, max=MAX_CURRENT)
     ),
 }
 
-SERVICE_SET_LOAD_BALANCING = vol.All(
+SERVICE_SET_SURPLUS_CHARGING = vol.All(
     target_eq_schema2,
-    exclusive_eq_schema2.extend(ext_load_balancing),
+    exclusive_eq_schema2.extend(ext_surplus_charging),
 )
 
 SERVICE_MAP = {
@@ -344,10 +344,10 @@ SERVICE_MAP = {
         "function_call": "phaseMode",
         "schema": SERVICE_SET_PHASE_MODE,
     },
-    "set_load_balancing": {
-        "handler": "equalizer_execute_set_load_balancing",
+    "set_surplus_charging": {
+        "handler": "equalizer_execute_set_surplus_charging",
         "function_call": "set_load_balancing",
-        "schema": SERVICE_SET_LOAD_BALANCING,
+        "schema": SERVICE_SET_SURPLUS_CHARGING,
     },
 }
 
@@ -903,7 +903,7 @@ async def async_setup_services(hass):  # noqa: C901
 
         raise HomeAssistantError("Could not find charger")
 
-    async def equalizer_execute_set_load_balancing(call):
+    async def equalizer_execute_set_surplus_charging(call):
         """Execute a service to set load balancing for a site.
 
         Equalizer is the actual target for API.

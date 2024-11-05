@@ -393,7 +393,7 @@ set_charger_phase_mode:
             - auto_phase
             - 3_phase
 
-set_load_balancing:
+set_surplus_charging:
   fields:
     device_id:
       required: true

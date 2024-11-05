@@ -645,7 +645,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "basic_schedule": {
-        "type": "binary_sensor",
+        "type": "switch",
         "key": "schedule.isEnabled",
         "attrs": [
             "schedule.isEnabled",
@@ -659,11 +659,12 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": None,
         "translation_key": "basic_schedule",
         "state_func": lambda schedule: bool(schedule.isEnabled) or False,
+        "switch_func": "enable_basic_charge_plan",
         "enabled_default": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "weekly_schedule": {
-        "type": "binary_sensor",
+        "type": "switch",
         "key": "weekly_schedule.isEnabled",
         "attrs": [
             "weekly_schedule.isEnabled",
@@ -694,6 +695,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "translation_key": "weekly_schedule",
         "device_class": None,
         "state_func": lambda weekly_schedule: bool(weekly_schedule.isEnabled) or False,
+        "switch_func": "enable_weekly_charge_plan",
         "enabled_default": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
@@ -916,9 +918,10 @@ EASEE_EQ_ENTITIES = {
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "surplus": {
-        "type": "eq_binary_sensor",
+        "type": "eq_switch",
         "key": "config.surplusChargingMode",
         "state_func": lambda config: bool(config["surplusChargingMode"] == 1),
+        "switch_func": "set_load_balancing",
         "attrs": [
             "config.surplusChargingCurrent",
         ],

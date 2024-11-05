@@ -208,7 +208,7 @@ class ChargerEntity(Entity):
                 self.data.schedule[second] = value
         elif first == "weekly_schedule":
             if self.data.weekly_schedule is not None:
-                self.data.weelly_schedule[second] = value
+                self.data.weekly_schedule[second] = value
         else:
             _LOGGER.error("Unknown first part of key: %s", key)
             raise IndexError("Unknown first part of key")

@@ -59,7 +59,7 @@ from .const import (
 )
 from .entity import convert_units_funcs
 from .sensor import ChargerSensor, EqualizerSensor
-from .switch import ChargerSwitch
+from .switch import ChargerSwitch, EqualizerSwitch
 
 ENTITY_TYPES = {
     "sensor": ChargerSensor,
@@ -68,6 +68,7 @@ ENTITY_TYPES = {
     "switch": ChargerSwitch,
     "eq_sensor": EqualizerSensor,
     "eq_binary_sensor": EqualizerBinarySensor,
+    "eq_switch": EqualizerSwitch,
 }
 _LOGGER = logging.getLogger(__name__)
 
@@ -449,6 +450,7 @@ class Controller:
         self.sensor_entities = []
         self.equalizer_sensor_entities = []
         self.equalizer_binary_sensor_entities = []
+        self.equalizer_switch_entities = []
         self.diagnostics = {}
         self.trackers = []
         self.monitored_sites = None
@@ -600,6 +602,7 @@ class Controller:
             + self.binary_sensor_entities
             + self.equalizer_sensor_entities
             + self.equalizer_binary_sensor_entities
+            + self.equalizer_switch_entities
         )
 
         for entity in all_entities:
@@ -870,7 +873,7 @@ class Controller:
 
     def get_switch_entities(self):
         """Return switch_entities."""
-        return self.switch_entities
+        return self.switch_entities + self.equalizer_switch_entities
 
     def _create_entity(
         self,
@@ -924,6 +927,9 @@ class Controller:
         elif object_type == "eq_binary_sensor":
             self.equalizer_binary_sensor_entities.append(entity)
 
+        elif object_type == "eq_switch":
+            self.equalizer_switch_entities.append(entity)
+
         return entity
 
     def _create_entitites(self):
@@ -933,6 +939,7 @@ class Controller:
         self.button_entities = []
         self.equalizer_sensor_entities = []
         self.equalizer_binary_sensor_entities = []
+        self.equalizer_switch_entities = []
 
         all_easee_entities = {**MANDATORY_EASEE_ENTITIES, **OPTIONAL_EASEE_ENTITIES}
 
