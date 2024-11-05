@@ -17,13 +17,13 @@ from homeassistant.helpers.entity import EntityCategory
 
 DOMAIN = "easee"
 TIMEOUT = 30
-VERSION = "0.9.64"
+VERSION = "0.9.64ake"
 MIN_HA_VERSION = "2024.8.0"
 CONF_MONITORED_SITES = "monitored_sites"
 MANUFACTURER = "Easee"
 MODEL_EQUALIZER = "Equalizer"
 MODEL_CHARGING_ROBOT = "Charging Robot"
-PLATFORMS = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.SWITCH]
+PLATFORMS = [Platform.BUTTON, Platform.BINARY_SENSOR, Platform.SENSOR, Platform.SWITCH]
 LISTENER_FN_CLOSE = "update_listener_close_fn"
 EASEE_PRODUCT_CODES = {
     1: "Easee Home",
@@ -724,6 +724,16 @@ OPTIONAL_EASEE_ENTITIES = {
         "state_class": SensorStateClass.MEASUREMENT,
         "enabled_default": True,
         "entity_category": EntityCategory.DIAGNOSTIC,
+    },
+    "override_schedule": {
+        "type": "button",
+        "key": "",
+        "attrs": [],
+        "units": None,
+        "convert_units_func": None,
+        "device_class": None,
+        "switch_func": "override_schedule",
+        "translation_key": "override_schedule",
     },
 }
 
