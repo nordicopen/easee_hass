@@ -8,7 +8,6 @@ import logging
 from random import random
 from sys import getrefcount
 
-from async_timeout import timeout
 from pyeasee import (
     Charger,
     ChargerSchedule,
@@ -483,7 +482,7 @@ class Controller:
         )
 
         try:
-            with timeout(TIMEOUT):
+            async with asyncio.timeout(TIMEOUT):
                 await self.easee.connect()
         except TimeoutError as err:
             _LOGGER.debug("Connection to easee login timed out")
