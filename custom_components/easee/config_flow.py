@@ -6,8 +6,10 @@ import logging
 from typing import Any, Optional
 
 from aiohttp import ClientConnectionError
-from pyeasee import AuthorizationFailedException, BadRequestException, Easee, Site
+from pyeasee import __version__ as pyeasee_version
+from pysignalr import __version__ as pysignalr_version
 import voluptuous as vol
+from websockets import __version__ as websockets_version
 
 from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
@@ -16,7 +18,12 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import aiohttp_client, config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
-from .const import CONF_MONITORED_SITES, DOMAIN, VERSION
+try:
+    from pyeasee import AuthorizationFailedException, BadRequestException, Easee, Site
+
+    from .const import CONF_MONITORED_SITES, DOMAIN, VERSION
+except Exception as e:
+    raise ImportError(f"easee_hass with pyeasee {pyeasee_version}, pysignalr {pysignalr_version}, websockets {websockets_version}") from e
 
 _LOGGER = logging.getLogger(__name__)
 

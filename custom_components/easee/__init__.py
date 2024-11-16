@@ -2,15 +2,27 @@
 import logging
 
 from awesomeversion import AwesomeVersion
+from pyeasee import __version__ as pyeasee_version
+from pysignalr import __version__ as pysignalr_version
+from websockets import __version__ as websockets_version
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
-from .const import DOMAIN, LISTENER_FN_CLOSE, MIN_HA_VERSION, PLATFORMS, VERSION
-from .controller import Controller
-from .services import async_setup_services
+try:
+    from .const import (
+        DOMAIN,
+        LISTENER_FN_CLOSE,
+        MIN_HA_VERSION,
+        PLATFORMS,
+        VERSION,
+    )
+    from .controller import Controller
+    from .services import async_setup_services
+except Exception as e:
+    raise ImportError(f"easee_hass with pyeasee {pyeasee_version}, pysignalr {pysignalr_version}, websockets {websockets_version}") from e
 
 _LOGGER = logging.getLogger(__name__)
 
