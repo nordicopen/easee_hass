@@ -106,23 +106,19 @@
   },
   "entity": {
     "binary_sensor": {
-      "basic_schedule": {
-        "name": "Zeitplan"
-      },
       "cable_locked": {
         "name": "Kabel verriegelt"
       },
       "online": {
         "name": "Online"
       },
-      "surplus": {
-        "name": "Überschussladen"
-      },
       "update_available": {
         "name": "Aktualisierung verfügbar"
-      },
-      "weekly_schedule": {
-        "name": "Wöchentlicher Zeitplan"
+      }
+    },
+    "button": {
+      "override_schedule": {
+        "name": "Zeitplan überschreiben"
       }
     },
     "sensor": {
@@ -277,6 +273,9 @@
       }
     },
     "switch": {
+      "basic_schedule": {
+        "name": "einfacher Zeitplan"
+      },
       "cable_locked_permanently": {
         "name": "Kabel dauerhaft verriegelt"
       },
@@ -291,6 +290,12 @@
       },
       "smart_charging": {
         "name": "Smart Charging"
+      },
+      "surplus": {
+        "name": "Überschussladen"
+      },
+      "weekly_schedule": {
+        "name": "wöchentlicher Zeitplan"
       }
     }
   },
@@ -560,23 +565,23 @@
       },
       "name": "Offline Maximalwert festlegen"
     },
-    "set_load_balancing": {
-      "description": "Lastmanagement durch Equalizer aktivieren",
+    "set_surplus_charging": {
+      "description": "Überschussladen durch Equalizer aktivieren",
       "fields": {
         "current": {
-          "description": "Maximale Stromstärke aus dem Netz",
+          "description": "Maximale zusätzliche Stromstärke aus dem Netz",
           "name": "Stromstärke"
         },
         "device_id": {
-          "description": "Zu kontrollierendes Gerät auswählen",
+          "description": "zu kontrollierendes Gerät wählen",
           "name": "Zielgerät"
         },
         "enable": {
-          "description": "Lastmanagement aktivieren",
-          "name": "Aktivieren"
+          "description": "Überschussladen aktivieren",
+          "name": "aktivieren"
         }
       },
-      "name": "Lastmanagement einschalten"
+      "name": "Überschussladen festlegen"
     },
     "set_weekly_charge_plan": {
       "description": "Wöchentlichen Ladeplan festlegen",
