@@ -2,7 +2,10 @@
 import logging
 
 from awesomeversion import AwesomeVersion
-from pyeasee import __version__ as pyeasee_version
+try:
+    from pyeasee import __version__ as pyeasee_version
+except Exception:
+    pyeasee_version = "unknown"
 from pysignalr import __version__ as pysignalr_version
 from websockets import __version__ as websockets_version
 
