@@ -6,10 +6,7 @@ import logging
 from typing import Any, Optional
 
 from aiohttp import ClientConnectionError
-try:
-    from pyeasee import __version__ as pyeasee_version
-except Exception:
-    pyeasee_version = "unknown"
+from pyeasee.easee import __VERSION__ as pyeasee_version
 from pysignalr import __version__ as pysignalr_version
 import voluptuous as vol
 from websockets import __version__ as websockets_version
