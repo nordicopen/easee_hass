@@ -282,6 +282,9 @@
       },
       "smart_charging": {
         "name": "Slim laden"
+      },
+      "weekly_schedule": {
+        "name": "Wekelijks schema"
       }
     }
   },
@@ -296,7 +299,7 @@
     },
     "numeric_deprecation": {
       "description": "Het gebruik van numerieke waarden voor {argument} is verouderd en zal in de toekomst worden verwijderd. Pas je automatiseringen en scripts z.s.m. aan om gebruik te maken van strings {recommendation}",
-      "title": "Gebruik van getal voor {} in service call\n"
+      "title": "Gebruik van getal voor {argument} in serviceaanroep"
     }
   },
   "options": {

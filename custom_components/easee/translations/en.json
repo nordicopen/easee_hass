@@ -106,14 +106,23 @@
   },
   "entity": {
     "binary_sensor": {
+      "basic_schedule": {
+        "name": "Basic schedule"
+      },
       "cable_locked": {
         "name": "Cable lock"
       },
       "online": {
         "name": "Online"
       },
+      "surplus": {
+        "name": "Surplus charging"
+      },
       "update_available": {
         "name": "Update available"
+      },
+      "weekly_schedule": {
+        "name": "Weekly schedule"
       }
     },
     "button": {
@@ -273,6 +282,9 @@
       }
     },
     "switch": {
+      "basic_schedule": {
+        "name": "Basic schedule"
+      },
       "cable_locked_permanently": {
         "name": "Cable locked permanently"
       },
@@ -288,14 +300,11 @@
       "smart_charging": {
         "name": "Smart charging"
       },
-      "weekly_schedule": {
-        "name": "Weekly schedule"
-      },
-      "basic_schedule": {
-        "name": "Basic schedule"
-      },
       "surplus": {
         "name": "Surplus charging"
+      },
+      "weekly_schedule": {
+        "name": "Weekly schedule"
       }
     }
   },
@@ -564,6 +573,24 @@
         }
       },
       "name": "Set circuit offline limit"
+    },
+    "set_load_balancing": {
+      "description": "Set equalizer load balancing",
+      "fields": {
+        "current": {
+          "description": "Max additional current from grid",
+          "name": "Current"
+        },
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        },
+        "enable": {
+          "description": "Enable load balancing",
+          "name": "Enable"
+        }
+      },
+      "name": "Set load balancing"
     },
     "set_surplus_charging": {
       "description": "Set equalizer surplus charging",
