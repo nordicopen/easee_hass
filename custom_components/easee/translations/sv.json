@@ -125,6 +125,11 @@
         "name": "Veckoschema"
       }
     },
+    "button": {
+      "override_schedule": {
+        "name": "Åsidosätt schema"
+      }
+    },
     "sensor": {
       "circuit_current": {
         "name": "Kretsström"
@@ -277,6 +282,9 @@
       }
     },
     "switch": {
+      "basic_schedule": {
+        "name": "Grundschema"
+      },
       "cable_locked_permanently": {
         "name": "Permanent kabellås"
       },
@@ -291,6 +299,12 @@
       },
       "smart_charging": {
         "name": "Smart laddning"
+      },
+      "surplus": {
+        "name": "Överskottsladdning"
+      },
+      "weekly_schedule": {
+        "name": "Veckoschema"
       }
     }
   },
@@ -577,6 +591,24 @@
         }
       },
       "name": "Ställ in lastbalansering"
+    },
+    "set_surplus_charging": {
+      "description": "Ställ in equalizer överskottsladdning",
+      "fields": {
+        "current": {
+          "description": "Max ström från elnätet",
+          "name": "Ström"
+        },
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        },
+        "enable": {
+          "description": "Aktivera överskottsladdning",
+          "name": "Aktivera"
+        }
+      },
+      "name": "Ställ in överskottsladdning"
     },
     "set_weekly_charge_plan": {
       "description": "Ställ in veckoschema för laddning",
