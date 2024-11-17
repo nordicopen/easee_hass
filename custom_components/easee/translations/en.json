@@ -574,24 +574,6 @@
       },
       "name": "Set circuit offline limit"
     },
-    "set_load_balancing": {
-      "description": "Set equalizer load balancing",
-      "fields": {
-        "current": {
-          "description": "Max additional current from grid",
-          "name": "Current"
-        },
-        "device_id": {
-          "description": "Select device to be controlled",
-          "name": "Target device"
-        },
-        "enable": {
-          "description": "Enable load balancing",
-          "name": "Enable"
-        }
-      },
-      "name": "Set load balancing"
-    },
     "set_surplus_charging": {
       "description": "Set equalizer surplus charging",
       "fields": {
