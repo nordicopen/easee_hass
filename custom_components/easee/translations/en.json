@@ -106,23 +106,14 @@
   },
   "entity": {
     "binary_sensor": {
-      "basic_schedule": {
-        "name": "Basic schedule"
-      },
       "cable_locked": {
         "name": "Cable lock"
       },
       "online": {
         "name": "Online"
       },
-      "surplus": {
-        "name": "Surplus charging"
-      },
       "update_available": {
         "name": "Update available"
-      },
-      "weekly_schedule": {
-        "name": "Weekly schedule"
       }
     },
     "button": {
