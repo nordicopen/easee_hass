@@ -116,6 +116,11 @@
         "name": "Oppdatering tilgjengelig"
       }
     },
+    "button": {
+      "override_schedule": {
+        "name": "Overstyre ladeplan"
+      }
+    },
     "sensor": {
       "circuit_current": {
         "name": "Kursstrøm"
