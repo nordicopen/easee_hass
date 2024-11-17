@@ -121,11 +121,6 @@
         "name": "Åsidosätt schema"
       }
     },
-    "button": {
-      "override_schedule": {
-        "name": "Åsidosätt schema"
-      }
-    },
     "sensor": {
       "circuit_current": {
         "name": "Kretsström"
@@ -569,24 +564,6 @@
         }
       },
       "name": "Ange offlinegräns för krets"
-    },
-    "set_surplus_charging": {
-      "description": "Ställ in equalizer överskottsladdning",
-      "fields": {
-        "current": {
-          "description": "Max ström från elnätet",
-          "name": "Ström"
-        },
-        "device_id": {
-          "description": "Välj enhet som ska styras",
-          "name": "Målenhet"
-        },
-        "enable": {
-          "description": "Aktivera överskottsladdning",
-          "name": "Aktivera"
-        }
-      },
-      "name": "Ställ in överskottsladdning"
     },
     "set_surplus_charging": {
       "description": "Ställ in equalizer överskottsladdning",
