@@ -100,9 +100,6 @@
   },
   "entity": {
     "binary_sensor": {
-      "basic_schedule": {
-        "name": "Basisschema"
-      },
       "cable_locked": {
         "name": "Kabelvergrendeling"
       },
@@ -111,9 +108,6 @@
       },
       "update_available": {
         "name": "Update beschikbaar"
-      },
-      "weekly_schedule": {
-        "name": "Weekschema"
       }
     },
     "sensor": {
@@ -537,18 +531,6 @@
         }
       },
       "name": "Offline limiet stroomcircuit instellen"
-    },
-    "set_load_balancing": {
-      "fields": {
-        "current": {
-          "name": "Stroom"
-        },
-        "enable": {
-          "description": "Load balancing inschakelen",
-          "name": "Inschakelen"
-        }
-      },
-      "name": "Load balancing instellen"
     },
     "set_weekly_charge_plan": {
       "description": "Wekelijks laadschema instellen",
