@@ -48,7 +48,7 @@
       "pause": "Pause charging",
       "reboot": "Reboot charger",
       "resume": "Resume charging",
-      "start": "Start charging",
+      "start": "Start/Authenticate charging(wait for any charge schedules)",
       "stop": "Stop charging",
       "toggle": "Toggle charging",
       "update_firmware": "Update firmware"
@@ -351,7 +351,7 @@
         "pause": "Pause",
         "reboot": "Reboot charger",
         "resume": "Resume",
-        "start": "Start",
+        "start": "Start/Authenticate charging(wait for any charge schedules)",
         "stop": "Stop",
         "toggle": "Toggle",
         "update_firmware": "Update firmware"
