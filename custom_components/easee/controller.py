@@ -37,6 +37,7 @@ from homeassistant.helpers.event import (
     async_track_time_interval,
 )
 from homeassistant.util import dt as dt_util
+from homeassistant.util.ssl import get_default_context
 
 from .binary_sensor import ChargerBinarySensor, EqualizerBinarySensor
 from .button import ChargerButton
@@ -477,8 +478,9 @@ class Controller:
     async def initialize(self):
         """Initialize the session and get initial data."""
         client_session = aiohttp_client.async_get_clientsession(self.hass)
+        ssl = get_default_context()
         self.easee = Easee(
-            self.username, self.password, client_session, f"easee_hass_{VERSION}"
+            self.username, self.password, client_session, f"easee_hass_{VERSION}", ssl
         )
 
         try:
