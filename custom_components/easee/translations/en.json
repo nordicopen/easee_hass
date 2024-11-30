@@ -48,8 +48,8 @@
       "pause": "Pause charging",
       "reboot": "Reboot charger",
       "resume": "Resume charging",
-      "start": "Start charging",
-      "stop": "Stop charging",
+      "start": "Authorize (start) charging",
+      "stop": "Deauthorize (stop) charging",
       "toggle": "Toggle charging",
       "update_firmware": "Update firmware"
     },
@@ -351,8 +351,8 @@
         "pause": "Pause",
         "reboot": "Reboot charger",
         "resume": "Resume",
-        "start": "Start",
-        "stop": "Stop",
+        "start": "Authorize (start)",
+        "stop": "Deauthorize (stop)",
         "toggle": "Toggle",
         "update_firmware": "Update firmware"
       }
