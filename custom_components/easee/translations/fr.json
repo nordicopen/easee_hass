@@ -116,6 +116,11 @@
         "name": "Mise à jour disponible"
       }
     },
+    "button": {
+      "override_schedule": {
+        "name": "Ignorer la Programmation"
+      }
+    },
     "sensor": {
       "circuit_current": {
         "name": "Courant du circuit"
@@ -268,6 +273,9 @@
       }
     },
     "switch": {
+      "basic_schedule": {
+        "name": "Programmation de Base"
+      },
       "cable_locked_permanently": {
         "name": "Câble verrouillé en permanence"
       },
@@ -282,6 +290,9 @@
       },
       "smart_charging": {
         "name": "Recharge intelligente"
+      },
+      "weekly_schedule": {
+        "name": "Programmation Hebdomadaire"
       }
     }
   },
@@ -550,6 +561,19 @@
         }
       },
       "name": "Définissez la limite hors ligne du circuit"
+    },
+    "set_surplus_charging": {
+      "fields": {
+        "current": {
+          "name": "Courant"
+        },
+        "device_id": {
+          "description": "Sélectionner l'équipement à contrôler"
+        },
+        "enable": {
+          "name": "Activer"
+        }
+      }
     },
     "set_weekly_charge_plan": {
       "description": "Définissez un plan de charge hebdomadaire",
