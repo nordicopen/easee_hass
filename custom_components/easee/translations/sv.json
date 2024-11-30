@@ -48,8 +48,8 @@
       "pause": "Pausa laddningen",
       "reboot": "Starta om laddboxen",
       "resume": "Återuppta laddningen",
-      "start": "Starta laddning",
-      "stop": "Stoppa laddning",
+      "start": "Auktorisera (starta) laddning",
+      "stop": "Avauktorisera (stoppa) laddning",
       "toggle": "Växla laddning",
       "update_firmware": "Uppdatera firmware"
     },
@@ -351,8 +351,8 @@
         "pause": "Pausa",
         "reboot": "Starta om laddboxen",
         "resume": "Återuppta",
-        "start": "Starta",
-        "stop": "Stoppa",
+        "start": "Auktorisera (starta)",
+        "stop": "Avauktorisera (stoppa)",
         "toggle": "Växla",
         "update_firmware": "Uppdatera firmware"
       }
