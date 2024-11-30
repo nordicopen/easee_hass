@@ -106,23 +106,19 @@
   },
   "entity": {
     "binary_sensor": {
-      "basic_schedule": {
-        "name": "Enkel ladeplan"
-      },
       "cable_locked": {
         "name": "Kabellås"
       },
       "online": {
         "name": "Online"
       },
-      "surplus": {
-        "name": "Overskuddslading"
-      },
       "update_available": {
         "name": "Oppdatering tilgjengelig"
-      },
-      "weekly_schedule": {
-        "name": "Ukentlig ladeplan"
+      }
+    },
+    "button": {
+      "override_schedule": {
+        "name": "Overstyre ladeplan"
       }
     },
     "sensor": {
@@ -277,6 +273,9 @@
       }
     },
     "switch": {
+      "basic_schedule": {
+        "name": "Enkel ladeplan"
+      },
       "cable_locked_permanently": {
         "name": "Kabel låst permanent"
       },
@@ -291,6 +290,12 @@
       },
       "smart_charging": {
         "name": "Smartlading"
+      },
+      "surplus": {
+        "name": "Overskuddslading"
+      },
+      "weekly_schedule": {
+        "name": "Ukentlig ladeplan"
       }
     }
   },
@@ -560,8 +565,7 @@
       },
       "name": "Sett ladekursens offlinegrense"
     },
-    "set_load_balancing": {
-      "description": "Sett lastbalansering for Equalizer",
+    "set_surplus_charging": {
       "fields": {
         "current": {
           "description": "Maks strøm fra elnettet",
@@ -572,11 +576,9 @@
           "name": "Målenhet"
         },
         "enable": {
-          "description": "Aktivere lastbalansering",
           "name": "Aktivere"
         }
-      },
-      "name": "Sett lastbalansering"
+      }
     },
     "set_weekly_charge_plan": {
       "description": "Sett ukentlig ladeplan",

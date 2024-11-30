@@ -106,23 +106,19 @@
   },
   "entity": {
     "binary_sensor": {
-      "basic_schedule": {
-        "name": "Grundschema"
-      },
       "cable_locked": {
         "name": "Kabellås"
       },
       "online": {
         "name": "Online"
       },
-      "surplus": {
-        "name": "Överskottsladdning"
-      },
       "update_available": {
         "name": "Uppdatering tillgänglig"
-      },
-      "weekly_schedule": {
-        "name": "Veckoschema"
+      }
+    },
+    "button": {
+      "override_schedule": {
+        "name": "Åsidosätt schema"
       }
     },
     "sensor": {
@@ -277,6 +273,9 @@
       }
     },
     "switch": {
+      "basic_schedule": {
+        "name": "Grundschema"
+      },
       "cable_locked_permanently": {
         "name": "Permanent kabellås"
       },
@@ -291,6 +290,12 @@
       },
       "smart_charging": {
         "name": "Smart laddning"
+      },
+      "surplus": {
+        "name": "Överskottsladdning"
+      },
+      "weekly_schedule": {
+        "name": "Veckoschema"
       }
     }
   },
@@ -560,11 +565,11 @@
       },
       "name": "Ange offlinegräns för krets"
     },
-    "set_load_balancing": {
-      "description": "Ställ in lastbalansering för Equalizer",
+    "set_surplus_charging": {
+      "description": "Ställ in equalizer överskottsladdning",
       "fields": {
         "current": {
-          "description": "Maximal ström från elnätet",
+          "description": "Max ström från elnätet",
           "name": "Ström"
         },
         "device_id": {
@@ -572,11 +577,11 @@
           "name": "Målenhet"
         },
         "enable": {
-          "description": "Aktivera lastbalansering",
+          "description": "Aktivera överskottsladdning",
           "name": "Aktivera"
         }
       },
-      "name": "Ställ in lastbalansering"
+      "name": "Ställ in överskottsladdning"
     },
     "set_weekly_charge_plan": {
       "description": "Ställ in veckoschema för laddning",

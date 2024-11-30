@@ -106,23 +106,14 @@
   },
   "entity": {
     "binary_sensor": {
-      "basic_schedule": {
-        "name": "Planification basique"
-      },
       "cable_locked": {
         "name": "Câble verrouillé"
       },
       "online": {
         "name": "En ligne"
       },
-      "surplus": {
-        "name": "Charge excédentaire"
-      },
       "update_available": {
         "name": "Mise à jour disponible"
-      },
-      "weekly_schedule": {
-        "name": "Planification hebdomadaire"
       }
     },
     "sensor": {
@@ -559,24 +550,6 @@
         }
       },
       "name": "Définissez la limite hors ligne du circuit"
-    },
-    "set_load_balancing": {
-      "description": "Définir l'équilibrage de charge de l'Equalizer",
-      "fields": {
-        "current": {
-          "description": "Courant supplémentaire maximal provenant du réseau",
-          "name": "Courant"
-        },
-        "device_id": {
-          "description": "Sélectionnez l'appareil à contrôler",
-          "name": "Cible"
-        },
-        "enable": {
-          "description": "Activer l'équilibrage de la charge",
-          "name": "Activer"
-        }
-      },
-      "name": "Définir l'équilibrage de la charge"
     },
     "set_weekly_charge_plan": {
       "description": "Définissez un plan de charge hebdomadaire",

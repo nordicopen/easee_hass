@@ -273,6 +273,9 @@
       }
     },
     "switch": {
+      "basic_schedule": {
+        "name": "Basic schedule"
+      },
       "cable_locked_permanently": {
         "name": "Cable locked permanently"
       },
@@ -288,14 +291,11 @@
       "smart_charging": {
         "name": "Smart charging"
       },
-      "weekly_schedule": {
-        "name": "Weekly schedule"
-      },
-      "basic_schedule": {
-        "name": "Basic schedule"
-      },
       "surplus": {
         "name": "Surplus charging"
+      },
+      "weekly_schedule": {
+        "name": "Weekly schedule"
       }
     }
   },

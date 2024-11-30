@@ -30,9 +30,6 @@
   },
   "entity": {
     "binary_sensor": {
-      "basic_schedule": {
-        "name": "Program de baza"
-      },
       "cable_locked": {
         "name": "Blocare cablu"
       },
@@ -41,9 +38,6 @@
       },
       "update_available": {
         "name": "Actualizare disponibila"
-      },
-      "weekly_schedule": {
-        "name": "Program saptamanal"
       }
     },
     "sensor": {

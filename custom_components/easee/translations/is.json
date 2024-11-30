@@ -30,9 +30,6 @@
   },
   "entity": {
     "binary_sensor": {
-      "basic_schedule": {
-        "name": "Áætlun"
-      },
       "cable_locked": {
         "name": "Kapallinn er læstur"
       },
@@ -41,9 +38,6 @@
       },
       "update_available": {
         "name": "Uppfærslan er til staðar"
-      },
-      "weekly_schedule": {
-        "name": "Vikuleg áætlun"
       }
     },
     "sensor": {
