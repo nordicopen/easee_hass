@@ -13,9 +13,11 @@ categories:
       - "bugfix"
       - "bug"
   - title: "Translation"
+    collapse-after: 2
     labels:
       - "translation"
   - title: "Dependencies"
+    collapse-after: 2
     labels:
       - "dependency"
   - title: "Code quality and maintenance"
@@ -31,7 +33,13 @@ change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add
 template: |
   [![Downloads for this release](https://img.shields.io/github/downloads/nordicopen/easee_hass/v$RESOLVED_VERSION/total.svg)](https://github.com/nordicopen/easee_hass/releases/v$RESOLVED_VERSION)
 
-  ### Don't forget to run `make lint` and `make bump` before releasing new version
+  <!--
+  ### Checklist for release
+  - Download translations PR from Lokalise
+  - Run ruff linter
+  - Run make bump - select proper variant in Makefile
+  - Review the draft below and update if needed
+  -->
 
   ## Changes
 
@@ -45,17 +53,23 @@ autolabeler:
   - label: "dev tools"
     files:
       - ".github/*"
-      - ".devcontainer/*"
+      - ".devcontainer.json"
       - "links.sh"
       - "Makefile"
       - "setup.cfg"
       - "requirements*.txt"
       - ".gitignore"
+      - ".pre-commit-config.yaml"
+      - ".ruff.toml"
+      - ".pylintrc"
   - label: "bugfix"
     title:
       - "/fix/i"
+  - label: "code quality"
+    title:
+      - "lint"
   - label: "translation"
     title:
       - "Lokalise:"
     files:
-      - "*/translations/*.json"
+      - "**/translations/*.json"
