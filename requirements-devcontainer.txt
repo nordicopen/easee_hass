@@ -1,5 +1,5 @@
 colorlog==6.9.0
-ruff==0.7.0
+ruff==0.8.1
 bump2version
 wheel
 
