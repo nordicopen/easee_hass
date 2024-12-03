@@ -1,4 +1,5 @@
 """Easee charger component."""
+
 import logging
 
 from awesomeversion import AwesomeVersion
@@ -8,7 +9,7 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, __version__ as HA_
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
-from .const import DOMAIN, LISTENER_FN_CLOSE, MIN_HA_VERSION, PLATFORMS, VERSION
+from .const import DOMAIN, MIN_HA_VERSION, PLATFORMS, VERSION
 from .controller import Controller
 from .services import async_setup_services
 
@@ -26,7 +27,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         return False
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
-    hass.data[DOMAIN]["entities"] = []
     hass.data[DOMAIN]["sites_to_remove"] = []
     _LOGGER.debug("Setting up Easee component version %s", VERSION)
     username = entry.data.get(CONF_USERNAME)
@@ -44,11 +44,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     await async_setup_services(hass)
 
-    undo_listener = entry.add_update_listener(config_entry_update_listener)
-
-    hass.data[DOMAIN][entry.entry_id] = {
-        LISTENER_FN_CLOSE: undo_listener,
-    }
+    entry.async_on_unload(entry.add_update_listener(config_entry_update_listener))
 
     return True
 
@@ -59,8 +55,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     if hass.data[DOMAIN]["controller"] is not None:
         await hass.data[DOMAIN]["controller"].cleanup()
+
+    _LOGGER.debug("---- %s", hass.data[DOMAIN])
+
     if unload_ok:
-        hass.data[DOMAIN][entry.entry_id][LISTENER_FN_CLOSE]()
         hass.data[DOMAIN] = {}
 
     return unload_ok

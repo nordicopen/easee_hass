@@ -128,11 +128,6 @@ class ChargerEntity(Entity):
             ),
         )
 
-    async def async_added_to_hass(self) -> None:
-        """Entity created."""
-
-        self.hass.data[DOMAIN]["entities"].append({self._entity_name: self.entity_id})
-
     async def async_will_remove_from_hass(self) -> None:
         """Disconnect object when removed."""
         if self in self.controller.sensor_entities:

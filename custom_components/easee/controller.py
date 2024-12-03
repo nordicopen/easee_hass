@@ -2,7 +2,8 @@
 
 import asyncio
 from datetime import timedelta
-from gc import collect
+
+# from gc import collect
 import json
 import logging
 from random import random
@@ -430,13 +431,17 @@ class Controller:
     """Controller class orchestrating the data fetching and entitities."""
 
     def __init__(
-        self, username: str, password: str, hass: HomeAssistant, entry: ConfigEntry
+        self,
+        username: str,
+        password: str,
+        hass: HomeAssistant,
+        config_entry: ConfigEntry,
     ):
         """Init the Controller class."""
         self.username = username
         self.password = password
         self.hass = hass
-        self.config = entry
+        self.entry = config_entry
         self.easee: Easee | None = None
         self.sites: list[Site] = []
         self.circuits: list[Circuit] = []
@@ -452,7 +457,6 @@ class Controller:
         self.equalizer_binary_sensor_entities = []
         self.equalizer_switch_entities = []
         self.diagnostics = {}
-        self.trackers = []
         self.monitored_sites = None
         self._init_count = 0
 
@@ -462,17 +466,21 @@ class Controller:
 
     async def cleanup(self):
         """Cleanup controller."""
+        if self.hass.data[DOMAIN]["diagnostics"]:
+            self.hass.data[DOMAIN].pop("diagnostics")
+
+        if self.hass.data[DOMAIN]["sites_to_remove"]:
+            self.hass.data[DOMAIN].pop("sites_to_remove")
+
         if self.easee is not None:
             for equalizer in self.equalizers:
                 await self.easee.sr_unsubscribe(equalizer)
             for charger in self.chargers:
                 await self.easee.sr_unsubscribe(charger)
             await self.easee.close()
-        for tracker in self.trackers:
-            tracker()
-        self.trackers = []
-        collect()
+        # collect()
 
+        # What does refcount value mean?
         _LOGGER.debug("Controller refcount after cleanup %d", getrefcount(self))
 
     async def initialize(self):
@@ -512,7 +520,7 @@ class Controller:
             self.sites: list[Site] = await self.easee.get_account_products()
             self.diagnostics["sites"] = self.sites
 
-            self.monitored_sites = self.config.options.get(
+            self.monitored_sites = self.entry.options.get(
                 CONF_MONITORED_SITES, [site.name for site in self.sites]
             )
 
@@ -568,7 +576,6 @@ class Controller:
 
             self.hass.data[DOMAIN]["diagnostics"] = self.diagnostics
             self._init_count = 0
-            self.trackers = []
 
             self._create_entitites()
 
@@ -629,7 +636,7 @@ class Controller:
         )
 
         # Add interval refresh for site state interval
-        self.trackers.append(
+        self.entry.async_on_unload(
             async_track_time_interval(
                 self.hass,
                 self.refresh_sites_state,
@@ -638,7 +645,7 @@ class Controller:
         )
 
         # Add interval refresh for equalizer state interval
-        self.trackers.append(
+        self.entry.async_on_unload(
             async_track_time_interval(
                 self.hass,
                 self.refresh_equalizers_state,
@@ -647,7 +654,7 @@ class Controller:
         )
 
         # Add interval refresh for schedules
-        self.trackers.append(
+        self.entry.async_on_unload(
             async_track_time_interval(
                 self.hass,
                 self.refresh_schedules,
@@ -656,7 +663,7 @@ class Controller:
         )
 
         # Add time pattern refresh some random time after midnight
-        self.trackers.append(
+        self.entry.async_on_unload(
             async_track_time_change(
                 self.hass,
                 self.refresh_midnight,
@@ -667,7 +674,7 @@ class Controller:
         )
 
         # Add time pattern refresh some random time after each hour mark
-        self.trackers.append(
+        self.entry.async_on_unload(
             async_track_time_change(
                 self.hass,
                 self.refresh_hour,
@@ -677,7 +684,8 @@ class Controller:
         )
 
         # Let other tasks run
-        await asyncio.sleep(0)
+        # Why sleep(0)?
+        # await asyncio.sleep(0)
 
         for equalizer in self.equalizers:
             await self.easee.sr_subscribe(equalizer, self.stream_callback)
