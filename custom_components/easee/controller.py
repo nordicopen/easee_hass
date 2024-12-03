@@ -2,8 +2,7 @@
 
 import asyncio
 from datetime import timedelta
-
-# from gc import collect
+from gc import collect
 import json
 import logging
 from random import random
@@ -466,10 +465,10 @@ class Controller:
 
     async def cleanup(self):
         """Cleanup controller."""
-        if self.hass.data[DOMAIN]["diagnostics"]:
+        if "diagnostics" in self.hass.data[DOMAIN]:
             self.hass.data[DOMAIN].pop("diagnostics")
 
-        if self.hass.data[DOMAIN]["sites_to_remove"]:
+        if "sites_to_remove" in self.hass.data[DOMAIN]:
             self.hass.data[DOMAIN].pop("sites_to_remove")
 
         if self.easee is not None:
@@ -478,7 +477,9 @@ class Controller:
             for charger in self.chargers:
                 await self.easee.sr_unsubscribe(charger)
             await self.easee.close()
-        # collect()
+        _LOGGER.debug("Controller refcount before cleanup %d", getrefcount(self))
+
+        collect()
 
         # What does refcount value mean?
         _LOGGER.debug("Controller refcount after cleanup %d", getrefcount(self))
