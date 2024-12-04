@@ -499,6 +499,7 @@ class Controller:
         _LOGGER.debug("Controller refcount before collect %d", getrefcount(self))
         _LOGGER.debug("# of referrers: %s", len(get_referrers(self)))
 
+        self.hass.data[DOMAIN].pop("controller")
         collect()
 
         _LOGGER.debug("Controller refcount after collect %d", getrefcount(self))
