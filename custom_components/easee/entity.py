@@ -71,7 +71,6 @@ class ChargerEntity(Entity):
 
     def __init__(
         self,
-        controller,
         data,
         name: str,
         state_key: str,
@@ -88,7 +87,6 @@ class ChargerEntity(Entity):
         suggested_display_precision=None,
     ):
         """Initialize the entity."""
-        self.controller = controller
         self.data = data
         self._entity_name = name
         self._state_key = state_key
@@ -131,16 +129,16 @@ class ChargerEntity(Entity):
     async def async_will_remove_from_hass(self) -> None:
         """Disconnect object when removed."""
         _LOGGER.debug("Preparing to remove: %s", self._entity_name)
-        if self in self.controller.sensor_entities:
+        controller = self.hass.data[DOMAIN]["controller"]
+        if self in controller.sensor_entities:
             _LOGGER.debug("Ping")
-            self.controller.sensor_entities.remove(self)
-        if self in self.controller.binary_sensor_entities:
-            self.controller.binary_sensor_entities.remove(self)
-        if self in self.controller.switch_entities:
-            self.controller.switch_entities.remove(self)
-        if self in self.controller.equalizer_sensor_entities:
-            self.controller.equalizer_sensor_entities.remove(self)
-        self.controller = None
+            controller.sensor_entities.remove(self)
+        if self in controller.binary_sensor_entities:
+            controller.binary_sensor_entities.remove(self)
+        if self in controller.switch_entities:
+            controller.switch_entities.remove(self)
+        if self in controller.equalizer_sensor_entities:
+            controller.equalizer_sensor_entities.remove(self)
         ent_reg = er.async_get(self.hass)
         entity_entry = ent_reg.async_get(self.entity_id)
 

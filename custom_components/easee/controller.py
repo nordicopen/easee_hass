@@ -496,13 +496,8 @@ class Controller:
                 await self.easee.sr_unsubscribe(charger)
             await self.easee.close()
 
-        await asyncio.sleep(3)
         _LOGGER.debug("Controller refcount before collect %d", getrefcount(self))
         _LOGGER.debug("# of referrers: %s", len(get_referrers(self)))
-
-        # for each in get_referrers(self):
-        #     print(each)
-        # _LOGGER.debug("Controller referrers before collect %s", get_referrers(self))
 
         collect()
 
@@ -711,10 +706,6 @@ class Controller:
             )
         )
 
-        # Let other tasks run
-        # Why sleep(0)?
-        # await asyncio.sleep(0)
-
         for equalizer in self.equalizers:
             await self.easee.sr_subscribe(equalizer, self.stream_callback)
         for charger in self.chargers:
@@ -915,7 +906,6 @@ class Controller:
     def _create_entity(
         self,
         object_type,
-        controller,
         product_data,
         name,
         data,
@@ -923,7 +913,6 @@ class Controller:
         entity_type_name = ENTITY_TYPES[object_type]
 
         entity = entity_type_name(
-            controller=controller,
             data=product_data,
             name=name,
             state_key=data["key"],
@@ -989,7 +978,6 @@ class Controller:
                     continue
                 self._create_entity(
                     entity_type,
-                    controller=self,
                     product_data=charger_data,
                     name=key,
                     data=data,
@@ -1001,7 +989,6 @@ class Controller:
 
                 self._create_entity(
                     entity_type,
-                    controller=self,
                     product_data=equalizer_data,
                     name=key,
                     data=data,
