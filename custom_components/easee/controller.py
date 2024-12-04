@@ -2,7 +2,7 @@
 
 import asyncio
 from datetime import timedelta
-from gc import collect
+from gc import collect, get_referrers
 import json
 import logging
 from random import random
@@ -29,7 +29,7 @@ from pyeasee.exceptions import (
 )
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.event import (
@@ -429,6 +429,8 @@ class ProductData:
 class Controller:
     """Controller class orchestrating the data fetching and entitities."""
 
+    _on_remove: list[CALLBACK_TYPE] | None = None
+
     def __init__(
         self,
         username: str,
@@ -463,7 +465,21 @@ class Controller:
         """Log deletion."""
         _LOGGER.debug("Controller deleted")
 
-    async def cleanup(self):
+    @callback
+    def async_on_remove(self, func: CALLBACK_TYPE) -> None:
+        """Add a function to call when entity is removed or not added."""
+        if self._on_remove is None:
+            self._on_remove = []
+        self._on_remove.append(func)
+
+    def _call_on_remove_callbacks(self) -> None:
+        """Call callbacks registered by async_on_remove."""
+        if self._on_remove is None:
+            return
+        while self._on_remove:
+            self._on_remove.pop()()
+
+    async def async_cleanup(self):
         """Cleanup controller."""
         if "diagnostics" in self.hass.data[DOMAIN]:
             self.hass.data[DOMAIN].pop("diagnostics")
@@ -471,20 +487,31 @@ class Controller:
         if "sites_to_remove" in self.hass.data[DOMAIN]:
             self.hass.data[DOMAIN].pop("sites_to_remove")
 
+        self._call_on_remove_callbacks()
+
         if self.easee is not None:
             for equalizer in self.equalizers:
                 await self.easee.sr_unsubscribe(equalizer)
             for charger in self.chargers:
                 await self.easee.sr_unsubscribe(charger)
             await self.easee.close()
-        _LOGGER.debug("Controller refcount before cleanup %d", getrefcount(self))
+
+        await asyncio.sleep(3)
+        _LOGGER.debug("Controller refcount before collect %d", getrefcount(self))
+        _LOGGER.debug("# of referrers: %s", len(get_referrers(self)))
+
+        # for each in get_referrers(self):
+        #     print(each)
+        # _LOGGER.debug("Controller referrers before collect %s", get_referrers(self))
 
         collect()
 
-        # What does refcount value mean?
-        _LOGGER.debug("Controller refcount after cleanup %d", getrefcount(self))
+        _LOGGER.debug("Controller refcount after collect %d", getrefcount(self))
+        _LOGGER.debug("# of referrers: %s", len(get_referrers(self)))
+        for each in get_referrers(self):
+            _LOGGER.debug("Referrer: %s", each)
 
-    async def initialize(self):
+    async def async_initialize(self):
         """Initialize the session and get initial data."""
         client_session = aiohttp_client.async_get_clientsession(self.hass)
         ssl = get_default_context()
@@ -637,7 +664,7 @@ class Controller:
         )
 
         # Add interval refresh for site state interval
-        self.entry.async_on_unload(
+        self.async_on_remove(
             async_track_time_interval(
                 self.hass,
                 self.refresh_sites_state,
@@ -646,7 +673,7 @@ class Controller:
         )
 
         # Add interval refresh for equalizer state interval
-        self.entry.async_on_unload(
+        self.async_on_remove(
             async_track_time_interval(
                 self.hass,
                 self.refresh_equalizers_state,
@@ -655,7 +682,7 @@ class Controller:
         )
 
         # Add interval refresh for schedules
-        self.entry.async_on_unload(
+        self.async_on_remove(
             async_track_time_interval(
                 self.hass,
                 self.refresh_schedules,
@@ -664,7 +691,7 @@ class Controller:
         )
 
         # Add time pattern refresh some random time after midnight
-        self.entry.async_on_unload(
+        self.async_on_remove(
             async_track_time_change(
                 self.hass,
                 self.refresh_midnight,
@@ -675,7 +702,7 @@ class Controller:
         )
 
         # Add time pattern refresh some random time after each hour mark
-        self.entry.async_on_unload(
+        self.async_on_remove(
             async_track_time_change(
                 self.hass,
                 self.refresh_hour,

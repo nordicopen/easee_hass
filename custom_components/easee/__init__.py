@@ -34,7 +34,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     try:
         controller = Controller(username, password, hass, entry)
-        await controller.initialize()
+        await controller.async_initialize()
     except ConfigEntryAuthFailed as err:
         raise ConfigEntryAuthFailed from err
 
@@ -54,9 +54,11 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
     if hass.data[DOMAIN]["controller"] is not None:
-        await hass.data[DOMAIN]["controller"].cleanup()
+        await hass.data[DOMAIN]["controller"].async_cleanup()
 
-    _LOGGER.debug("---- %s", hass.data[DOMAIN])
+    _LOGGER.debug(
+        "hass.data.[DOMAIN] at end of async_unload_entry():  %s", hass.data[DOMAIN]
+    )
 
     if unload_ok:
         hass.data[DOMAIN] = {}

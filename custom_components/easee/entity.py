@@ -130,7 +130,9 @@ class ChargerEntity(Entity):
 
     async def async_will_remove_from_hass(self) -> None:
         """Disconnect object when removed."""
+        _LOGGER.debug("Preparing to remove: %s", self._entity_name)
         if self in self.controller.sensor_entities:
+            _LOGGER.debug("Ping")
             self.controller.sensor_entities.remove(self)
         if self in self.controller.binary_sensor_entities:
             self.controller.binary_sensor_entities.remove(self)
