@@ -128,10 +128,8 @@ class ChargerEntity(Entity):
 
     async def async_will_remove_from_hass(self) -> None:
         """Disconnect object when removed."""
-        _LOGGER.debug("Preparing to remove: %s", self._entity_name)
         controller = self.hass.data[DOMAIN]["controller"]
         if self in controller.sensor_entities:
-            _LOGGER.debug("Ping")
             controller.sensor_entities.remove(self)
         if self in controller.binary_sensor_entities:
             controller.binary_sensor_entities.remove(self)
