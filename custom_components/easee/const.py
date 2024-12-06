@@ -24,7 +24,6 @@ MANUFACTURER = "Easee"
 MODEL_EQUALIZER = "Equalizer"
 MODEL_CHARGING_ROBOT = "Charging Robot"
 PLATFORMS = [Platform.BUTTON, Platform.BINARY_SENSOR, Platform.SENSOR, Platform.SWITCH]
-LISTENER_FN_CLOSE = "update_listener_close_fn"
 EASEE_PRODUCT_CODES = {
     1: "Easee Home",
     100: "Easee Charge",

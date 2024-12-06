@@ -6,7 +6,6 @@ from gc import collect
 import json
 import logging
 from random import random
-from sys import getrefcount
 
 from pyeasee import (
     Charger,
@@ -29,7 +28,7 @@ from pyeasee.exceptions import (
 )
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.event import (
@@ -429,14 +428,20 @@ class ProductData:
 class Controller:
     """Controller class orchestrating the data fetching and entitities."""
 
+    _on_remove: list[CALLBACK_TYPE] | None = None
+
     def __init__(
-        self, username: str, password: str, hass: HomeAssistant, entry: ConfigEntry
+        self,
+        username: str,
+        password: str,
+        hass: HomeAssistant,
+        config_entry: ConfigEntry,
     ):
         """Init the Controller class."""
         self.username = username
         self.password = password
         self.hass = hass
-        self.config = entry
+        self.entry = config_entry
         self.easee: Easee | None = None
         self.sites: list[Site] = []
         self.circuits: list[Circuit] = []
@@ -452,7 +457,6 @@ class Controller:
         self.equalizer_binary_sensor_entities = []
         self.equalizer_switch_entities = []
         self.diagnostics = {}
-        self.trackers = []
         self.monitored_sites = None
         self._init_count = 0
 
@@ -460,22 +464,41 @@ class Controller:
         """Log deletion."""
         _LOGGER.debug("Controller deleted")
 
-    async def cleanup(self):
+    @callback
+    def async_on_remove(self, func: CALLBACK_TYPE) -> None:
+        """Add a function to call when entity is removed or not added."""
+        if self._on_remove is None:
+            self._on_remove = []
+        self._on_remove.append(func)
+
+    def _call_on_remove_callbacks(self) -> None:
+        """Call callbacks registered by async_on_remove."""
+        if self._on_remove is None:
+            return
+        while self._on_remove:
+            self._on_remove.pop()()
+
+    async def async_cleanup(self):
         """Cleanup controller."""
+        if "diagnostics" in self.hass.data[DOMAIN]:
+            self.hass.data[DOMAIN].pop("diagnostics")
+
+        if "sites_to_remove" in self.hass.data[DOMAIN]:
+            self.hass.data[DOMAIN].pop("sites_to_remove")
+
+        self._call_on_remove_callbacks()
+
         if self.easee is not None:
             for equalizer in self.equalizers:
                 await self.easee.sr_unsubscribe(equalizer)
             for charger in self.chargers:
                 await self.easee.sr_unsubscribe(charger)
             await self.easee.close()
-        for tracker in self.trackers:
-            tracker()
-        self.trackers = []
+
+        self.hass.data[DOMAIN].pop("controller")
         collect()
 
-        _LOGGER.debug("Controller refcount after cleanup %d", getrefcount(self))
-
-    async def initialize(self):
+    async def async_initialize(self):
         """Initialize the session and get initial data."""
         client_session = aiohttp_client.async_get_clientsession(self.hass)
         ssl = get_default_context()
@@ -512,7 +535,7 @@ class Controller:
             self.sites: list[Site] = await self.easee.get_account_products()
             self.diagnostics["sites"] = self.sites
 
-            self.monitored_sites = self.config.options.get(
+            self.monitored_sites = self.entry.options.get(
                 CONF_MONITORED_SITES, [site.name for site in self.sites]
             )
 
@@ -568,7 +591,6 @@ class Controller:
 
             self.hass.data[DOMAIN]["diagnostics"] = self.diagnostics
             self._init_count = 0
-            self.trackers = []
 
             self._create_entitites()
 
@@ -629,7 +651,7 @@ class Controller:
         )
 
         # Add interval refresh for site state interval
-        self.trackers.append(
+        self.async_on_remove(
             async_track_time_interval(
                 self.hass,
                 self.refresh_sites_state,
@@ -638,7 +660,7 @@ class Controller:
         )
 
         # Add interval refresh for equalizer state interval
-        self.trackers.append(
+        self.async_on_remove(
             async_track_time_interval(
                 self.hass,
                 self.refresh_equalizers_state,
@@ -647,7 +669,7 @@ class Controller:
         )
 
         # Add interval refresh for schedules
-        self.trackers.append(
+        self.async_on_remove(
             async_track_time_interval(
                 self.hass,
                 self.refresh_schedules,
@@ -656,7 +678,7 @@ class Controller:
         )
 
         # Add time pattern refresh some random time after midnight
-        self.trackers.append(
+        self.async_on_remove(
             async_track_time_change(
                 self.hass,
                 self.refresh_midnight,
@@ -667,7 +689,7 @@ class Controller:
         )
 
         # Add time pattern refresh some random time after each hour mark
-        self.trackers.append(
+        self.async_on_remove(
             async_track_time_change(
                 self.hass,
                 self.refresh_hour,
@@ -675,9 +697,6 @@ class Controller:
                 second=int(random() * 59),
             )
         )
-
-        # Let other tasks run
-        await asyncio.sleep(0)
 
         for equalizer in self.equalizers:
             await self.easee.sr_subscribe(equalizer, self.stream_callback)
@@ -879,7 +898,6 @@ class Controller:
     def _create_entity(
         self,
         object_type,
-        controller,
         product_data,
         name,
         data,
@@ -887,7 +905,6 @@ class Controller:
         entity_type_name = ENTITY_TYPES[object_type]
 
         entity = entity_type_name(
-            controller=controller,
             data=product_data,
             name=name,
             state_key=data["key"],
@@ -953,7 +970,6 @@ class Controller:
                     continue
                 self._create_entity(
                     entity_type,
-                    controller=self,
                     product_data=charger_data,
                     name=key,
                     data=data,
@@ -965,7 +981,6 @@ class Controller:
 
                 self._create_entity(
                     entity_type,
-                    controller=self,
                     product_data=equalizer_data,
                     name=key,
                     data=data,

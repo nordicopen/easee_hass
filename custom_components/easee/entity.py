@@ -71,7 +71,6 @@ class ChargerEntity(Entity):
 
     def __init__(
         self,
-        controller,
         data,
         name: str,
         state_key: str,
@@ -88,7 +87,6 @@ class ChargerEntity(Entity):
         suggested_display_precision=None,
     ):
         """Initialize the entity."""
-        self.controller = controller
         self.data = data
         self._entity_name = name
         self._state_key = state_key
@@ -128,22 +126,23 @@ class ChargerEntity(Entity):
             ),
         )
 
-    async def async_added_to_hass(self) -> None:
-        """Entity created."""
-
-        self.hass.data[DOMAIN]["entities"].append({self._entity_name: self.entity_id})
-
     async def async_will_remove_from_hass(self) -> None:
         """Disconnect object when removed."""
-        if self in self.controller.sensor_entities:
-            self.controller.sensor_entities.remove(self)
-        if self in self.controller.binary_sensor_entities:
-            self.controller.binary_sensor_entities.remove(self)
-        if self in self.controller.switch_entities:
-            self.controller.switch_entities.remove(self)
-        if self in self.controller.equalizer_sensor_entities:
-            self.controller.equalizer_sensor_entities.remove(self)
-        self.controller = None
+        controller = self.hass.data[DOMAIN]["controller"]
+        if self in controller.sensor_entities:
+            controller.sensor_entities.remove(self)
+        if self in controller.binary_sensor_entities:
+            controller.binary_sensor_entities.remove(self)
+        if self in controller.switch_entities:
+            controller.switch_entities.remove(self)
+        if self in controller.button_entities:
+            controller.button_entities.remove(self)
+        if self in controller.equalizer_sensor_entities:
+            controller.equalizer_sensor_entities.remove(self)
+        if self in controller.equalizer_binary_sensor_entities:
+            controller.equalizer_binary_sensor_entities.remove(self)
+        if self in controller.equalizer_switch_entities:
+            controller.equalizer_switch_entities.remove(self)
         ent_reg = er.async_get(self.hass)
         entity_entry = ent_reg.async_get(self.entity_id)
 
