@@ -20,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 """ TODO Quick fix to handle rounding: Cleanup and collapse later """
 
 
-def round_to_dec(value, decimals=None, unit=None):
+def round_to_dec(value, decimals=None, unit=None) -> float | int:
     """Round to selected no of decimals."""
     if unit in (UnitOfPower.WATT, UnitOfEnergy.WATT_HOUR):
         value = value * 1000
@@ -52,7 +52,7 @@ def map_charger_status(value, unit=None):
     return EASEE_STATUS.get(value, f"unknown {value}")
 
 
-def map_reason_no_current(value, unit=None):
+def map_reason_no_current(value, unit=None) -> str:
     """Map reason for no current."""
     return REASON_NO_CURRENT.get(value, f"unknown {value}")
 
@@ -158,12 +158,12 @@ class ChargerEntity(Entity):
             ent_reg.async_remove(self.entity_id)
 
     @property
-    def available(self):
+    def available(self) -> bool:
         """Return True if entity is available."""
         return True
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict:
         """Return the extra state attributes."""
         try:
             attrs = {
@@ -250,7 +250,7 @@ class ChargerEntity(Entity):
 
         return value
 
-    async def async_update(self):
+    async def async_update(self) -> None:
         """Get the latest data and update the state."""
         _LOGGER.debug(
             "Entity async_update : %s %s",
@@ -274,11 +274,7 @@ class ChargerEntity(Entity):
             if self._convert_units_func is not None:
                 self._state = self._convert_units_func(self._state, self._units)
 
-        except KeyError:
-            pass
         except IndexError as exc:
             raise IndexError(f"Wrong key for entity: {self._state_key}") from exc
-        except TypeError:
-            pass
-        except AttributeError:
+        except (AttributeError, KeyError, TypeError):
             pass
