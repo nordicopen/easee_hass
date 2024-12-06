@@ -2,11 +2,10 @@
 
 import asyncio
 from datetime import timedelta
-from gc import collect, get_referrers
+from gc import collect
 import json
 import logging
 from random import random
-from sys import getrefcount
 
 from pyeasee import (
     Charger,
@@ -496,16 +495,8 @@ class Controller:
                 await self.easee.sr_unsubscribe(charger)
             await self.easee.close()
 
-        _LOGGER.debug("Controller refcount before collect %d", getrefcount(self))
-        _LOGGER.debug("# of referrers: %s", len(get_referrers(self)))
-
         self.hass.data[DOMAIN].pop("controller")
         collect()
-
-        _LOGGER.debug("Controller refcount after collect %d", getrefcount(self))
-        _LOGGER.debug("# of referrers: %s", len(get_referrers(self)))
-        for each in get_referrers(self):
-            _LOGGER.debug("Referrer: %s", each)
 
     async def async_initialize(self):
         """Initialize the session and get initial data."""
