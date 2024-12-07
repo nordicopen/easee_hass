@@ -660,7 +660,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "state_func": lambda schedule: bool(schedule.isEnabled) or False,
         "switch_func": "enable_basic_charge_plan",
         "enabled_default": False,
-        "entity_category": EntityCategory.DIAGNOSTIC,
+        "entity_category": EntityCategory.CONFIG,
     },
     "weekly_schedule": {
         "type": "switch",
@@ -696,7 +696,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "state_func": lambda weekly_schedule: bool(weekly_schedule.isEnabled) or False,
         "switch_func": "enable_weekly_charge_plan",
         "enabled_default": False,
-        "entity_category": EntityCategory.DIAGNOSTIC,
+        "entity_category": EntityCategory.CONFIG,
     },
     "cost_per_kwh": {
         "key": "site.costPerKWh",
