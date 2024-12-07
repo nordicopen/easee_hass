@@ -212,14 +212,14 @@ class ProductData:
             if "_" in name:
                 first, second = name.split("_")
 
-            if first == "state":
-                self.state[second] = value
-            elif first == "config":
-                self.config[second] = value
-            elif first == "schedule":
-                if value == "":
-                    value = "{}"
-                self.schedules_interpret(json.loads(value))
+                if first == "state":
+                    self.state[second] = value
+                elif first == "config":
+                    self.config[second] = value
+                elif first == "schedule":
+                    if value == "":
+                        value = "{}"
+                    self.schedules_interpret(json.loads(value))
 
     async def async_schedules_refresh(self):
         """Poll schedule data."""
