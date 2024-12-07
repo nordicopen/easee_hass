@@ -3,7 +3,10 @@
 import logging
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, MANUFACTURER, MODEL_EQUALIZER
 from .entity import ChargerEntity
@@ -11,19 +14,21 @@ from .entity import ChargerEntity
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
     """Set up binary sensor platform."""
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_binary_sensor_entities()
     async_add_entities(entities)
-    await controller.setup_done("binary_sensor")
+    await controller.async_setup_done("binary_sensor")
 
 
 class ChargerBinarySensor(ChargerEntity, BinarySensorEntity):
     """Easee charger binary sensor class."""
 
     @property
-    def is_on(self):
+    def is_on(self) -> bool:
         """Return true if the binary sensor is on."""
         _LOGGER.debug("Getting state of %s", self._entity_name)
         return self._state
@@ -33,13 +38,13 @@ class EqualizerBinarySensor(ChargerEntity, BinarySensorEntity):
     """Easee equalizer binary sensor class."""
 
     @property
-    def is_on(self):
+    def is_on(self) -> bool:
         """Return true if the binary sensor is on."""
         _LOGGER.debug("Getting state of %s", self._entity_name)
         return self._state
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
         return DeviceInfo(
             identifiers={(DOMAIN, self.data.product.id)},

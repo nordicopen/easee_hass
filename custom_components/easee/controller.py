@@ -146,7 +146,7 @@ class ProductData:
         """Mark as dirty."""
         self.dirty = True
 
-    async def firmware_async_refresh(self):
+    async def async_firmware_refresh(self):
         """Poll latest firmware version."""
         if self.state is None:
             return False
@@ -212,16 +212,16 @@ class ProductData:
             if "_" in name:
                 first, second = name.split("_")
 
-            if first == "state":
-                self.state[second] = value
-            elif first == "config":
-                self.config[second] = value
-            elif first == "schedule":
-                if value == "":
-                    value = "{}"
-                self.schedules_interpret(json.loads(value))
+                if first == "state":
+                    self.state[second] = value
+                elif first == "config":
+                    self.config[second] = value
+                elif first == "schedule":
+                    if value == "":
+                        value = "{}"
+                    self.schedules_interpret(json.loads(value))
 
-    async def schedules_async_refresh(self):
+    async def async_schedules_refresh(self):
         """Poll schedule data."""
         self.schedule_polled = True
 
@@ -287,7 +287,7 @@ class ProductData:
                 else:
                     self.schedule["chargeStopTime"] = time.strftime("%H:%M")
 
-    async def cost_async_refresh(self):
+    async def async_cost_refresh(self):
         """Poll cost data."""
         dt_end = dt_util.now().replace(microsecond=0)
         dt_start = dt_util.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -356,7 +356,7 @@ class ProductData:
 
         self.state["signalRConnected"] = state
 
-    async def update_stream_data(self, data_type, data_id, value):
+    async def async_update_stream_data(self, data_type, data_id, value):
         """Update data with received data from SignalR stream."""
         if self.state is None:
             return False
@@ -395,7 +395,7 @@ class ProductData:
                     return True
                 self.state[second] = value
                 if second == "lifetimeEnergy" and oldvalue != value:
-                    await self.cost_async_refresh()
+                    await self.async_cost_refresh()
                 if self.check_value(data_type, oldvalue, value):
                     return True
             elif first == "config":
@@ -598,24 +598,24 @@ class Controller:
             _LOGGER.debug("Easee server failure %s", err)
             raise ConfigEntryNotReady from err
 
-    async def stream_callback(self, idx, data_type, data_id, value):
+    async def async_stream_callback(self, idx, data_type, data_id, value):
         """Handle the he stream callback."""
         all_data = self.chargers_data + self.equalizers_data
 
         for data in all_data:
             if data.product.id == idx:
-                if await data.update_stream_data(data_type, data_id, value):
+                if await data.async_update_stream_data(data_type, data_id, value):
                     _LOGGER.debug("Scheduling update")
                     self.update_ha_state()
                     return
 
-    async def setup_done(self, name):
+    async def async_setup_done(self, name):
         """Entities setup is done."""
         _LOGGER.debug("Entities %s setup done", name)
         self._init_count = self._init_count + 1
 
         if self._init_count >= len(PLATFORMS):
-            await self.add_schedulers()
+            await self.async_add_schedulers()
 
     def update_ha_state(self):
         """Schedule an update for all other included entities."""
@@ -635,26 +635,26 @@ class Controller:
         for entity in all_entities:
             entity.data.mark_clean()
 
-    async def add_schedulers(self):
+    async def async_add_schedulers(self):
         """Add schedules to update data."""
         # first update
-        await self.refresh_sites_state()
-        await self.refresh_equalizers_state()
+        await self.async_refresh_sites_state()
+        await self.async_refresh_equalizers_state()
         await asyncio.gather(
-            *[charger.cost_async_refresh() for charger in self.chargers_data]
+            *[charger.async_cost_refresh() for charger in self.chargers_data]
         )
         await asyncio.gather(
-            *[charger.firmware_async_refresh() for charger in self.chargers_data]
+            *[charger.async_firmware_refresh() for charger in self.chargers_data]
         )
         await asyncio.gather(
-            *[equalizer.firmware_async_refresh() for equalizer in self.equalizers_data]
+            *[equalizer.async_firmware_refresh() for equalizer in self.equalizers_data]
         )
 
         # Add interval refresh for site state interval
         self.async_on_remove(
             async_track_time_interval(
                 self.hass,
-                self.refresh_sites_state,
+                self.async_refresh_sites_state,
                 timedelta(seconds=SCAN_INTERVAL_STATE_SECONDS),
             )
         )
@@ -663,7 +663,7 @@ class Controller:
         self.async_on_remove(
             async_track_time_interval(
                 self.hass,
-                self.refresh_equalizers_state,
+                self.async_refresh_equalizers_state,
                 timedelta(seconds=SCAN_INTERVAL_EQUALIZERS_SECONDS),
             )
         )
@@ -672,7 +672,7 @@ class Controller:
         self.async_on_remove(
             async_track_time_interval(
                 self.hass,
-                self.refresh_schedules,
+                self.async_refresh_schedules,
                 timedelta(seconds=SCAN_INTERVAL_SCHEDULES_SECONDS),
             )
         )
@@ -681,7 +681,7 @@ class Controller:
         self.async_on_remove(
             async_track_time_change(
                 self.hass,
-                self.refresh_midnight,
+                self.async_refresh_midnight,
                 hour=0,
                 minute=int(random() * 9),
                 second=int(random() * 59),
@@ -692,30 +692,30 @@ class Controller:
         self.async_on_remove(
             async_track_time_change(
                 self.hass,
-                self.refresh_hour,
+                self.async_refresh_hour,
                 minute=2,
                 second=int(random() * 59),
             )
         )
 
         for equalizer in self.equalizers:
-            await self.easee.sr_subscribe(equalizer, self.stream_callback)
+            await self.easee.sr_subscribe(equalizer, self.async_stream_callback)
         for charger in self.chargers:
-            await self.easee.sr_subscribe(charger, self.stream_callback)
+            await self.easee.sr_subscribe(charger, self.async_stream_callback)
 
-    async def refresh_midnight(self, now=None):
+    async def async_refresh_midnight(self, now=None):
         """Refresh the cost data."""
         _LOGGER.debug("Midnight refresh started")
         for charger in self.chargers_data:
-            await charger.cost_async_refresh()
-            await charger.firmware_async_refresh()
+            await charger.async_cost_refresh()
+            await charger.async_firmware_refresh()
 
         for equalizer in self.equalizers_data:
-            await equalizer.firmware_async_refresh()
+            await equalizer.async_firmware_refresh()
 
         self.update_ha_state()
 
-    async def refresh_hour(self, now=None):
+    async def async_refresh_hour(self, now=None):
         """Refresh the energy data, if needed."""
         _LOGGER.debug("Hour refresh started")
 
@@ -724,16 +724,16 @@ class Controller:
 
         self.update_ha_state()
 
-    async def refresh_schedules(self, now=None):
+    async def async_refresh_schedules(self, now=None):
         """Refresh the charging schedules data."""
         for charger in self.chargers_data:
             if charger.is_schedule_polled() and self.easee.sr_is_connected():
                 continue
-            await charger.schedules_async_refresh()
+            await charger.async_schedules_refresh()
 
         self.update_ha_state()
 
-    async def refresh_sites_state(self, now=None):
+    async def async_refresh_sites_state(self, now=None):
         """Get site state for all sites and updates the chargers state and config."""
 
         for charger_data in self.chargers_data:
@@ -748,7 +748,7 @@ class Controller:
 
         self.update_ha_state()
 
-    async def refresh_equalizers_state(self, now=None):
+    async def async_refresh_equalizers_state(self, now=None):
         """Get equalizer state for all equalizers."""
 
         for equalizer_data in self.equalizers_data:

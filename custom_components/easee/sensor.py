@@ -7,7 +7,11 @@ from datetime import timedelta
 import logging
 
 from homeassistant.components.sensor import SensorEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import StateType
 
 from .const import DOMAIN, MANUFACTURER, MODEL_EQUALIZER
 from .entity import ChargerEntity
@@ -17,24 +21,26 @@ _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL = timedelta(minutes=15)
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
     """Set up sensor platform."""
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_sensor_entities()
     async_add_entities(entities)
-    await controller.setup_done("sensor")
+    await controller.async_setup_done("sensor")
 
 
 class ChargerSensor(ChargerEntity, SensorEntity):
     """Implementation of Easee charger sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> StateType:
         """Return native value of sensor."""
         return self._state
 
     @property
-    def native_unit_of_measurement(self):
+    def native_unit_of_measurement(self) -> str | None:
         """Return native unit of measurement for sensor."""
         if self._state_key == "site.costPerKWh":
             return self.data.site.get("currencyId", "")
@@ -58,12 +64,12 @@ class EqualizerSensor(ChargerEntity, SensorEntity):
     """Implementation of Easee equalizer sensor."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> StateType:
         """Return native value of sensor."""
         return self._state
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
         return DeviceInfo(
             identifiers={(DOMAIN, self.data.product.id)},
