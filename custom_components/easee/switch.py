@@ -29,7 +29,7 @@ async def async_setup_entry(
 class ChargerSwitch(ChargerEntity, SwitchEntity):
     """Easee switch class."""
 
-    async def async_turn_on(self, **kwargs) -> None:  # pylint: disable=unused-argument
+    async def async_turn_on(self, **kwargs) -> None:
         """Turn on the switch."""
         _LOGGER.debug("%s Switch turn on", self._entity_name)
         function_call = getattr(self.data.product, self._switch_func)
@@ -45,7 +45,7 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         self._state = True
         self.async_write_ha_state()
 
-    async def async_turn_off(self, **kwargs) -> None:  # pylint: disable=unused-argument
+    async def async_turn_off(self, **kwargs) -> None:
         """Turn off the switch."""
         _LOGGER.debug("%s Switch turn off", self._entity_name)
         function_call = getattr(self.data.product, self._switch_func)
