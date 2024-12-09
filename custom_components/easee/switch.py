@@ -5,7 +5,10 @@ import logging
 from pyeasee.exceptions import ForbiddenServiceException
 
 from homeassistant.components.switch import SwitchEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, MANUFACTURER, MODEL_EQUALIZER
 from .entity import ChargerEntity
@@ -13,18 +16,20 @@ from .entity import ChargerEntity
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
     """Set up switch platform."""
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_switch_entities()
     async_add_entities(entities)
-    await controller.setup_done("switch")
+    await controller.async_setup_done("switch")
 
 
 class ChargerSwitch(ChargerEntity, SwitchEntity):
     """Easee switch class."""
 
-    async def async_turn_on(self, **kwargs):  # pylint: disable=unused-argument
+    async def async_turn_on(self, **kwargs) -> None:
         """Turn on the switch."""
         _LOGGER.debug("%s Switch turn on", self._entity_name)
         function_call = getattr(self.data.product, self._switch_func)
@@ -40,7 +45,7 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         self._state = True
         self.async_write_ha_state()
 
-    async def async_turn_off(self, **kwargs):  # pylint: disable=unused-argument
+    async def async_turn_off(self, **kwargs) -> None:
         """Turn off the switch."""
         _LOGGER.debug("%s Switch turn off", self._entity_name)
         function_call = getattr(self.data.product, self._switch_func)
@@ -57,16 +62,17 @@ class ChargerSwitch(ChargerEntity, SwitchEntity):
         self.async_write_ha_state()
 
     @property
-    def is_on(self):
+    def is_on(self) -> bool:
         """Return true if the switch is on."""
         _LOGGER.debug("Getting state of %s", self._entity_name)
         return self._state
+
 
 class EqualizerSwitch(ChargerSwitch):
     """Easee equalizer switch class."""
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return the device information."""
         return DeviceInfo(
             identifiers={(DOMAIN, self.data.product.id)},
