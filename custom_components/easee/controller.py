@@ -22,7 +22,6 @@ from pyeasee import (
 from pyeasee.exceptions import (
     AuthorizationFailedException,
     BadRequestException,
-    NotFoundException,
     ServerFailureException,
     TooManyRequestsException,
 )
@@ -50,7 +49,6 @@ from .const import (
     TIMEOUT,
     VERSION,
     chargerObservations,
-    equalizerEnergyObservations,
     equalizerObservations,
     weeklyScheduleLimit,
     weeklyScheduleStartDays,
@@ -100,15 +98,49 @@ class ProductData:
         self.config = None
         self.schedule = None
         self.weekly_schedule = None
+        self.state_observers = {}
+        self.config_observers = {}
+        self.schedule_observers = {}
+        self.weekly_schedule_observers = {}
+        self.cost_observers = {}
+        self.site_observers = {}
+        self.circuit_observers = {}
         self.cost_day = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
         self.cost_month = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
         self.cost_year = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
-        self.schedule_polled = False
         self.streamdata = streamdata
-        self.dirty = False
         self.poll_observations = poll_observations
         self.master = master
         self.firmware_auth_failure = None
+
+    def register_for_update(self, name, entity):
+        """Register a entity to watch changes."""
+        _LOGGER.debug("Register for updates on %s with %s", name, entity)
+
+        if "." in name:
+            first, second = name.split(".")
+
+            if first == "state":
+                observers = self.state_observers
+            elif first == "config":
+                observers = self.config_observers
+            elif first == "schedule":
+                observers = self.schedule_observers
+            elif first == "weekly_schedule":
+                observers = self.weekly_schedule_observers
+            elif first == "site":
+                observers = self.site_observers
+            elif first == "circuit":
+                observers = self.circuit_observers
+            elif first.startswith("cost"):
+                observers = self.cost_observers
+            else:
+                _LOGGER.debug("No such data to watch %s", name)
+                return
+
+            if second not in observers:
+                observers[second] = []
+            observers[second].append(entity)
 
     def is_state_polled(self):
         """Check if state is polled."""
@@ -118,33 +150,9 @@ class ProductData:
         """Check if config is polled."""
         return self.config is not None
 
-    def is_schedule_polled(self):
-        """Check if schedule is polled."""
-        return self.schedule_polled
-
-    def is_dirty(self):
-        """Check if there are changes that needs to be sent to HA."""
-        if self.state is None:
-            return False
-        if self.config is None:
-            return False
-
-        if "latestFirmware" not in self.state:
-            return False
-
-        return self.dirty
-
     def is_master(self):
         """Check if master."""
         return self.master
-
-    def mark_clean(self):
-        """Mark as clean."""
-        self.dirty = False
-
-    def mark_dirty(self):
-        """Mark as dirty."""
-        self.dirty = True
 
     async def async_firmware_refresh(self):
         """Poll latest firmware version."""
@@ -159,10 +167,10 @@ class ProductData:
                     "Authorization failure when fetching firmware info: %s", ex
                 )
                 self.firmware_auth_failure = True
-            self.state["latestFirmware"] = None
+            self.set_state("latestFirmware", None)
             return
 
-        self.state["latestFirmware"] = firmware["latestFirmware"]
+        self.set_state("latestFirmware", firmware["latestFirmware"])
         _LOGGER.debug(
             "Latest Firmware for %s: %s", self.product.id, firmware["latestFirmware"]
         )
@@ -192,61 +200,12 @@ class ProductData:
         for observation in observations["observations"]:
             data_id = observation["id"]
             value = observation["value"]
-            try:
-                name = self.streamdata(data_id).name
-            except ValueError:
-                # Unsupported data
-                _LOGGER.debug(
-                    "Unsupported data id %s %s %s", self.product.id, data_id, value
-                )
-                return False
+            data_type = observation["dataType"]
 
-            _LOGGER.debug(
-                "Observation %s %s type %s %s",
-                name,
-                value,
-                observation["dataType"],
-                type(value),
-            )
+            await self.async_update_observation(data_type, data_id, value)
 
-            if "_" in name:
-                first, second = name.split("_")
-
-                if first == "state":
-                    self.state[second] = value
-                elif first == "config":
-                    self.config[second] = value
-                elif first == "schedule":
-                    if value == "":
-                        value = "{}"
-                    self.schedules_interpret(json.loads(value))
-
-    async def async_schedules_refresh(self):
-        """Poll schedule data."""
-        self.schedule_polled = True
-
-        try:
-            self.schedule = await self.product.get_basic_charge_plan()
-        except (TooManyRequestsException, ServerFailureException):
-            _LOGGER.error("Got server error while fetching schedule")
-            self.schedule_polled = False
-        except NotFoundException:
-            self.schedule = None
-
-        try:
-            self.weekly_schedule = await self.product.get_weekly_charge_plan()
-        except (TooManyRequestsException, ServerFailureException):
-            _LOGGER.error("Got server error while fetching weekly schedule")
-            self.schedule_polled = False
-        except NotFoundException:
-            self.weekly_schedule = None
-
-        _LOGGER.debug("Schedule: %s %s", self.schedule, self.weekly_schedule)
-
-    def schedules_interpret(self, data):
+    async def async_schedules_interpret(self, data):
         """Interpret schedule data."""
-        self.schedule_polled = True
-
         start_epoch = data.get("StartSchedule", 0)
         kind = data.get("ProfileKind")
         recurrency = data.get("RecurrencyKind")
@@ -257,7 +216,7 @@ class ProductData:
 
         # Weekly schedule
         if kind == "Recurring" and recurrency == "Weekly":
-            self.weekly_schedule["isEnabled"] = True
+            self.set_weekly_schedule("isEnabled", True, False)
             for period in periods:
                 time = dt_util.as_local(
                     dt_util.utc_from_timestamp(start_epoch + period[0])
@@ -265,27 +224,28 @@ class ProductData:
                 day = time.weekday()
                 if period[1] != 0:  # Start
                     saved_day = day
-                    self.weekly_schedule[weeklyScheduleStartDays[saved_day]] = (
-                        time.strftime("%H:%M")
-                    )
-                    self.weekly_schedule[weeklyScheduleLimit[saved_day]] = period[1]
+                    self.set_weekly_schedule(weeklyScheduleStartDays[saved_day], time.strftime("%H:%M"), False)
+                    self.set_weekly_schedule(weeklyScheduleLimit[saved_day], period[1], False)
                 else:
-                    self.weekly_schedule[weeklyScheduleStopDays[saved_day]] = (
-                        time.strftime("%H:%M")
-                    )
+                    self.set_weekly_schedule(weeklyScheduleStopDays[saved_day], time.strftime("%H:%M"), False)
+
         # Delayed or Daily schedule
         elif (kind == "Recurring" and recurrency == "Daily") or kind == "Absolute":
-            self.schedule["isEnabled"] = True
-            self.schedule["repeat"] = kind == "Recurring"
+            self.set_schedule("isEnabled", True, False)
+            self.set_schedule("repeat", kind == "Recurring", False)
             for period in periods:
                 time = dt_util.as_local(
                     dt_util.utc_from_timestamp(start_epoch + period[0])
                 )
                 if period[1] != 0:  # Start
-                    self.schedule["chargeStartTime"] = time.strftime("%H:%M")
-                    self.schedule["chargeLimit"] = period[1]
+                    self.set_schedule("chargeStartTime", time.strftime("%H:%M"), False)
+                    self.set_schedule("chargeLimit", period[1], False)
                 else:
-                    self.schedule["chargeStopTime"] = time.strftime("%H:%M")
+                    self.set_schedule("chargeStopTime", time.strftime("%H:%M"), False)
+
+        # Make sure the entities update
+        self.notify("isEnabled", self.weekly_schedule_observers)
+        self.notify("isEnabled", self.schedule_observers)
 
     async def async_cost_refresh(self):
         """Poll cost data."""
@@ -316,21 +276,8 @@ class ProductData:
                 if cost["chargerId"] == self.product.id:
                     self.cost_year = cost
 
-    def check_value(self, data_type, reference, value):
-        """Check if recieved data is a change."""
-        if data_type not in (
-            DatatypesStreamData.Double.value,
-            DatatypesStreamData.Integer.value,
-        ):
-            return True
-
-        try:
-            if abs(reference - value) > abs(reference * MINIMUM_UPDATE):
-                return True
-        except Exception:  # pylint: disable=broad-except
-            return True
-
-        return False
+        # Update entities
+        self.notify("totalCost", self.cost_observers)
 
     def check_latest_pulse(self):
         """Check if product has timed out."""
@@ -345,8 +292,7 @@ class ProductData:
 
         if elapsed.total_seconds() > OFFLINE_DELAY:
             if self.state["isOnline"] is True:
-                self.dirty = True
-                self.state["isOnline"] = False
+                self.set_state("isOnline", False)
                 _LOGGER.debug("Product %s marked offline", self.product.id)
 
     def set_signalr_state(self, state):
@@ -354,18 +300,23 @@ class ProductData:
         if self.state is None:
             return
 
-        self.state["signalRConnected"] = state
+        self.set_state("signalRConnected", state)
 
     async def async_update_stream_data(self, data_type, data_id, value):
         """Update data with received data from SignalR stream."""
         if self.state is None:
             return False
 
-        self.state["signalRConnected"] = True
-        self.dirty = True
         now = dt_util.utcnow().replace(microsecond=0)
-        self.state["latestPulse"] = now
-        self.state["isOnline"] = True
+        self.set_state("signalRConnected", True, False)
+        self.set_state("latestPulse", now, False)
+        self.set_state("isOnline", True)
+
+        return await self.async_update_observation(data_type, data_id, value)
+
+    async def async_update_observation(self, data_type, data_id, value):
+        """Update observation."""
+
         try:
             name = self.streamdata(data_id).name
         except ValueError:
@@ -376,9 +327,8 @@ class ProductData:
             return False
 
         _LOGGER.debug(
-            "Callback %s %s %s %s %s", self.product.id, data_id, name, value, data_type
+            "Observation update %s %s %s %s %s", self.product.id, data_id, name, value, data_type
         )
-
         if "_" in name:
             try:
                 first, second = name.split("_")
@@ -387,43 +337,69 @@ class ProductData:
                 return False
 
             if first == "state":
-                try:
-                    oldvalue = self.state[second]
-                except KeyError:
-                    _LOGGER.debug("No old value for %s %s", self.product.id, name)
-                    self.state[second] = value
-                    return True
-                self.state[second] = value
-                if second == "lifetimeEnergy" and oldvalue != value:
+                if self.state is None:
+                    return False
+                self.set_state(second, value)
+                if second == "lifetimeEnergy":
                     await self.async_cost_refresh()
-                if self.check_value(data_type, oldvalue, value):
-                    return True
+                return True
             elif first == "config":
                 if self.config is None:
                     return False
-                try:
-                    oldvalue = self.config[second]
-                except KeyError:
-                    _LOGGER.debug("No old value for %s %s", self.product.id, name)
-                    self.config[second] = value
-                    return True
+                self.set_config(second, value)
                 if second == "surplusCharging":
                     jsondata = json.loads(value)
-                    self.config["surplusChargingMode"] = jsondata["mode"]
-                    self.config["surplusChargingCurrent"] = jsondata["standbycurrent"]
-                if oldvalue != value:
-                    self.config[second] = value
-                    return True
+                    self.set_config("surplusChargingMode", jsondata["mode"])
+                    self.set_config("surplusChargingCurrent", jsondata["standbycurrent"])
+                return True
             elif first == "schedule":
                 _LOGGER.debug("Schedule update")
                 if value == "":
                     value = "{}"
-                self.schedules_interpret(json.loads(value))
+                await self.async_schedules_interpret(json.loads(value))
+                return True
             else:
                 _LOGGER.debug("Unknown update type: %s", first)
 
         return False
 
+    def set_state(self, index, value, notify=True):
+        """Update state and notify."""
+        self.state[index] = value
+        if notify:
+            self.notify(index, self.state_observers)
+
+    def set_config(self, index, value, notify=True):
+        """Update config and notify."""
+        self.config[index] = value
+        if notify:
+            self.notify(index, self.config_observers)
+
+    def set_schedule(self, index, value, notify=True):
+        """Update schedule and notify."""
+        self.schedule[index] = value
+        if notify:
+            self.notify(index, self.schedule_observers)
+
+    def set_weekly_schedule(self, index, value, notify=True):
+        """Update weekly_schedule data and notify."""
+        self.weekly_schedule[index] = value
+        if notify:
+            self.notify(index, self.weekly_schedule_observers)
+
+    def notify(self, index, observers):
+        """Notify any listeners that data has changed."""
+        if index in observers:
+            for observer in observers[index]:
+                if observer.enabled:
+                    observer.async_schedule_update_ha_state(True)
+
+    def site_notify(self):
+        """Notify any site listeners that data has changed."""
+        for index in self.site_observers:
+            for observer in self.site_observers[index]:
+                if observer.enabled:
+                    observer.async_schedule_update_ha_state(True)
 
 class Controller:
     """Controller class orchestrating the data fetching and entitities."""
@@ -604,10 +580,7 @@ class Controller:
 
         for data in all_data:
             if data.product.id == idx:
-                if await data.async_update_stream_data(data_type, data_id, value):
-                    _LOGGER.debug("Scheduling update")
-                    self.update_ha_state()
-                    return
+                await data.async_update_stream_data(data_type, data_id, value)
 
     async def async_setup_done(self, name):
         """Entities setup is done."""
@@ -616,24 +589,6 @@ class Controller:
 
         if self._init_count >= len(PLATFORMS):
             await self.async_add_schedulers()
-
-    def update_ha_state(self):
-        """Schedule an update for all other included entities."""
-        all_entities = (
-            self.switch_entities
-            + self.sensor_entities
-            + self.binary_sensor_entities
-            + self.equalizer_sensor_entities
-            + self.equalizer_binary_sensor_entities
-            + self.equalizer_switch_entities
-        )
-
-        for entity in all_entities:
-            if entity.enabled and entity.data.is_dirty():
-                entity.async_schedule_update_ha_state(True)
-
-        for entity in all_entities:
-            entity.data.mark_clean()
 
     async def async_add_schedulers(self):
         """Add schedules to update data."""
@@ -649,6 +604,8 @@ class Controller:
         await asyncio.gather(
             *[equalizer.async_firmware_refresh() for equalizer in self.equalizers_data]
         )
+        for charger in self.chargers_data:
+            charger.site_notify()
 
         # Add interval refresh for site state interval
         self.async_on_remove(
@@ -668,15 +625,6 @@ class Controller:
             )
         )
 
-        # Add interval refresh for schedules
-        self.async_on_remove(
-            async_track_time_interval(
-                self.hass,
-                self.async_refresh_schedules,
-                timedelta(seconds=SCAN_INTERVAL_SCHEDULES_SECONDS),
-            )
-        )
-
         # Add time pattern refresh some random time after midnight
         self.async_on_remove(
             async_track_time_change(
@@ -688,16 +636,7 @@ class Controller:
             )
         )
 
-        # Add time pattern refresh some random time after each hour mark
-        self.async_on_remove(
-            async_track_time_change(
-                self.hass,
-                self.async_refresh_hour,
-                minute=2,
-                second=int(random() * 59),
-            )
-        )
-
+        # Subscribe to updates from signalr stream
         for equalizer in self.equalizers:
             await self.easee.sr_subscribe(equalizer, self.async_stream_callback)
         for charger in self.chargers:
@@ -713,29 +652,8 @@ class Controller:
         for equalizer in self.equalizers_data:
             await equalizer.async_firmware_refresh()
 
-        self.update_ha_state()
-
-    async def async_refresh_hour(self, now=None):
-        """Refresh the energy data, if needed."""
-        _LOGGER.debug("Hour refresh started")
-
-        for equalizer in self.equalizers_data:
-            await equalizer.async_refresh(poll_observations=equalizerEnergyObservations)
-
-        self.update_ha_state()
-
-    async def async_refresh_schedules(self, now=None):
-        """Refresh the charging schedules data."""
-        for charger in self.chargers_data:
-            if charger.is_schedule_polled() and self.easee.sr_is_connected():
-                continue
-            await charger.async_schedules_refresh()
-
-        self.update_ha_state()
-
     async def async_refresh_sites_state(self, now=None):
         """Get site state for all sites and updates the chargers state and config."""
-
         for charger_data in self.chargers_data:
             charger_data.set_signalr_state(self.easee.sr_is_connected())
             charger_data.check_latest_pulse()
@@ -744,13 +662,9 @@ class Controller:
 
             await charger_data.async_refresh()
             charger_data.set_signalr_state(self.easee.sr_is_connected())
-            charger_data.mark_dirty()
-
-        self.update_ha_state()
 
     async def async_refresh_equalizers_state(self, now=None):
         """Get equalizer state for all equalizers."""
-
         for equalizer_data in self.equalizers_data:
             equalizer_data.set_signalr_state(self.easee.sr_is_connected())
             equalizer_data.check_latest_pulse()
@@ -759,9 +673,12 @@ class Controller:
 
             await equalizer_data.async_refresh()
             equalizer_data.set_signalr_state(self.easee.sr_is_connected())
-            equalizer_data.mark_dirty()
 
-        self.update_ha_state()
+    async def async_force_site_notify(self, product_id):
+        """Send an update request to all entities watching site data."""
+        for charger_data in self.chargers_data:
+            if charger_data.product.id == product_id:
+                charger_data.site_notify()
 
     def get_sites(self):
         """Get sites."""

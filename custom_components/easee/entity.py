@@ -126,6 +126,11 @@ class ChargerEntity(Entity):
             ),
         )
 
+        if self._state_key not in self._attrs_keys:
+            self.data.register_for_update(self._state_key, self)
+        for attr in self._attrs_keys:
+            self.data.register_for_update(attr, self)
+
     async def async_will_remove_from_hass(self) -> None:
         """Disconnect object when removed."""
         controller = self.hass.data[DOMAIN]["controller"]
