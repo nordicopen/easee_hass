@@ -206,8 +206,6 @@ class ProductData:
 
     async def async_schedules_interpret(self, data):
         """Interpret schedule data."""
-        _LOGGER.debug("Schedule interpret")
-
         start_epoch = data.get("StartSchedule", 0)
         kind = data.get("ProfileKind")
         recurrency = data.get("RecurrencyKind")
