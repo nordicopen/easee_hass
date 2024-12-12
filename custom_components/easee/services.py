@@ -878,7 +878,9 @@ async def async_setup_services(hass):  # noqa: C901
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger.site, function_name["function_call"])
             try:
-                return await function_call(cost_per_kwh, vat, currency)
+                retval = await function_call(cost_per_kwh, vat, currency)
+                await controller.async_force_site_notify(charger.id)
+                return retval
             except BadRequestException as ex:
                 _LOGGER.error(
                     "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
