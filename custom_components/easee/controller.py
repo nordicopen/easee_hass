@@ -13,7 +13,6 @@ from pyeasee import (
     ChargerStreamData,
     ChargerWeeklySchedule,
     Circuit,
-    DatatypesStreamData,
     Easee,
     Equalizer,
     EqualizerStreamData,

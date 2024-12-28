@@ -217,6 +217,9 @@
       "energy_per_hour": {
         "name": "Energy per hour"
       },
+      "energy_last_hour": {
+        "name": "Energy last hour"
+      },
       "equalizer_limit": {
         "name": "Equalizer limit"
       },
