@@ -1,5 +1,6 @@
 """Easee Connector class."""
 
+
 import asyncio
 from datetime import timedelta
 from gc import collect
