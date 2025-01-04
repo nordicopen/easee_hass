@@ -300,14 +300,15 @@ OPTIONAL_EASEE_ENTITIES = {
         "state_class": SensorStateClass.TOTAL_INCREASING,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
-    "energy_per_hour": {
+    "energy_last_hour": {
         "key": "state.energyPerHour",
         "attrs": [],
         "units": UnitOfEnergy.KILO_WATT_HOUR,
         "convert_units_func": None,
         "suggested_display_precision": 1,
-        "translation_key": "energy_per_hour",
+        "translation_key": "energy_last_hour",
         "device_class": SensorDeviceClass.ENERGY,
+        "enabled_default": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "cost_day": {
@@ -363,7 +364,10 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.latestPulse",
             "config.wiFiSSID",
             "state.wiFiAPEnabled",
+            "config.wiFiAddress",
+            "config.wiFiMACAddress",
             "state.wiFiRSSI",
+            "config.cellAddress",
             "state.cellRSSI",
             "state.localRSSI",
         ],
