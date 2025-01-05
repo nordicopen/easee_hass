@@ -444,6 +444,10 @@
         "device_id": {
           "description": "Select one of the chargers in the circuit that should be controlled.",
           "name": "Target device"
+        },
+        "time_to_live": {
+          "description": "Set time in minutes for the command to live. 0 = indefinitely.",
+          "name": "Time to live"
         }
       },
       "name": "Set charger dynamic limit"

@@ -220,6 +220,11 @@ SERVICE_SET_CHARGER_CURRENT_SCHEMA = vol.All(
     exclusive_schema2.extend(ext_current),
 )
 
+SERVICE_SET_CHARGER_CURRENT_SCHEMA_TTL = vol.All(
+    target_schema2,
+    exclusive_schema2.extend(ext_current).extend(ext_ttl),
+)
+
 ext_cost = {
     vol.Required(ATTR_COST_PER_KWH): vol.All(vol.Coerce(float)),
     vol.Optional(ATTR_COST_CURRENCY): cv.string,
@@ -317,7 +322,7 @@ SERVICE_MAP = {
             "P2": "dynamicChargerCurrent",
             "P3": "dynamicChargerCurrent",
         },
-        "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA,
+        "schema": SERVICE_SET_CHARGER_CURRENT_SCHEMA_TTL,
     },
     "set_charger_max_limit": {
         "handler": "charger_execute_set_current",
@@ -739,6 +744,7 @@ async def async_setup_services(hass):  # noqa: C901
         _LOGGER.debug("Call set_current service on charger_id: %s", charger_id)
 
         current = call.data.get(ATTR_SET_CURRENT)
+        time_to_live = call.data.get(ATTR_TTL)
 
         _LOGGER.debug("Execute_service: %s %s", str(call.service), str(call.data))
 
@@ -756,7 +762,10 @@ async def async_setup_services(hass):  # noqa: C901
         if charger:
             function_call = getattr(charger, function_name["function_call"])
             try:
-                return await function_call(current)
+                if time_to_live is not None:
+                    return await function_call(current, time_to_live)
+                else:
+                    return await function_call(current)
             except BadRequestException as ex:
                 _LOGGER.error(
                     "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
