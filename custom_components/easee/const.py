@@ -23,7 +23,13 @@ CONF_MONITORED_SITES = "monitored_sites"
 MANUFACTURER = "Easee"
 MODEL_EQUALIZER = "Equalizer"
 MODEL_CHARGING_ROBOT = "Charging Robot"
-PLATFORMS = [Platform.BUTTON, Platform.BINARY_SENSOR, Platform.SENSOR, Platform.SWITCH]
+PLATFORMS = [
+    Platform.BUTTON,
+    Platform.BINARY_SENSOR,
+    Platform.LIGHT,
+    Platform.SENSOR,
+    Platform.SWITCH,
+]
 EASEE_PRODUCT_CODES = {
     1: "Easee Home",
     100: "Easee Charge",
@@ -206,7 +212,6 @@ MANDATORY_EASEE_ENTITIES = {
             "config.authorizationRequired",
             "config.localNodeType",
             "config.localAuthorizationRequired",
-            "config.ledStripBrightness",
             "site.id",
             "site.name",
             "site.siteKey",
@@ -739,6 +744,18 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": None,
         "switch_func": "override_schedule",
         "translation_key": "override_schedule",
+    },
+    "led_strip": {
+        "type": "light",
+        "key": "config.ledStripBrightness",
+        "attrs": [],
+        "units": None,
+        "convert_units_func": None,
+        "translation_key": "led_strip",
+        "device_class": None,
+        "switch_func": "set_led_strip_brightness",
+        "enabled_default": True,
+        "entity_category": EntityCategory.CONFIG,
     },
 }
 
