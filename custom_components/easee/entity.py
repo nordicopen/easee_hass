@@ -142,6 +142,8 @@ class ChargerEntity(Entity):
             controller.switch_entities.remove(self)
         if self in controller.button_entities:
             controller.button_entities.remove(self)
+        if self in controller.light_entities:
+            controller.light_entities.remove(self)
         if self in controller.equalizer_sensor_entities:
             controller.equalizer_sensor_entities.remove(self)
         if self in controller.equalizer_binary_sensor_entities:

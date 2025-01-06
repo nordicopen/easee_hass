@@ -121,6 +121,11 @@
         "name": "Override schedule"
       }
     },
+    "light": {
+      "led_strip": {
+        "name": "LED strip"
+      }
+    },
     "sensor": {
       "circuit_current": {
         "name": "Circuit current"

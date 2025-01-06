@@ -6,6 +6,7 @@ ln -s custom_components/easee/const.py .
 ln -s custom_components/easee/controller.py .
 ln -s custom_components/easee/diagnostics.py .
 ln -s custom_components/easee/entity.py .
+ln -s custom_components/easee/light.py .
 ln -s custom_components/easee/manifest.json .
 ln -s custom_components/easee/sensor.py .
 ln -s custom_components/easee/services.py .

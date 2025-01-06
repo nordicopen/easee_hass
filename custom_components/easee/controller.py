@@ -54,6 +54,7 @@ from .const import (
     weeklyScheduleStopDays,
 )
 from .entity import convert_units_funcs
+from .light import ChargerLight
 from .sensor import ChargerSensor, EqualizerSensor
 from .switch import ChargerSwitch, EqualizerSwitch
 
@@ -61,6 +62,7 @@ ENTITY_TYPES = {
     "sensor": ChargerSensor,
     "binary_sensor": ChargerBinarySensor,
     "button": ChargerButton,
+    "light": ChargerLight,
     "switch": ChargerSwitch,
     "eq_sensor": EqualizerSensor,
     "eq_binary_sensor": EqualizerBinarySensor,
@@ -223,10 +225,18 @@ class ProductData:
                 day = time.weekday()
                 if period[1] != 0:  # Start
                     saved_day = day
-                    self.set_weekly_schedule(weeklyScheduleStartDays[saved_day], time.strftime("%H:%M"), False)
-                    self.set_weekly_schedule(weeklyScheduleLimit[saved_day], period[1], False)
+                    self.set_weekly_schedule(
+                        weeklyScheduleStartDays[saved_day],
+                        time.strftime("%H:%M"),
+                        False,
+                    )
+                    self.set_weekly_schedule(
+                        weeklyScheduleLimit[saved_day], period[1], False
+                    )
                 else:
-                    self.set_weekly_schedule(weeklyScheduleStopDays[saved_day], time.strftime("%H:%M"), False)
+                    self.set_weekly_schedule(
+                        weeklyScheduleStopDays[saved_day], time.strftime("%H:%M"), False
+                    )
 
         # Delayed or Daily schedule
         elif (kind == "Recurring" and recurrency == "Daily") or kind == "Absolute":
@@ -326,7 +336,12 @@ class ProductData:
             return False
 
         _LOGGER.debug(
-            "Observation update %s %s %s %s %s", self.product.id, data_id, name, value, data_type
+            "Observation update %s %s %s %s %s",
+            self.product.id,
+            data_id,
+            name,
+            value,
+            data_type,
         )
         if "_" in name:
             try:
@@ -349,7 +364,9 @@ class ProductData:
                 if second == "surplusCharging":
                     jsondata = json.loads(value)
                     self.set_config("surplusChargingMode", jsondata["mode"])
-                    self.set_config("surplusChargingCurrent", jsondata["standbycurrent"])
+                    self.set_config(
+                        "surplusChargingCurrent", jsondata["standbycurrent"]
+                    )
                 return True
             elif first == "schedule":
                 _LOGGER.debug("Schedule update")
@@ -400,6 +417,7 @@ class ProductData:
                 if observer.enabled:
                     observer.async_schedule_update_ha_state(True)
 
+
 class Controller:
     """Controller class orchestrating the data fetching and entitities."""
 
@@ -426,6 +444,7 @@ class Controller:
         self.equalizers_data: list[ProductData] = []
         self.binary_sensor_entities = []
         self.button_entities = []
+        self.light_entities = []
         self.switch_entities = []
         self.sensor_entities = []
         self.equalizer_sensor_entities = []
@@ -803,6 +822,10 @@ class Controller:
         """Get button entities."""
         return self.button_entities
 
+    def get_light_entities(self):
+        """Get light entities."""
+        return self.light_entities
+
     def get_sensor_entities(self):
         """Get sensor entities."""
         return self.sensor_entities + self.equalizer_sensor_entities
@@ -854,6 +877,9 @@ class Controller:
 
         elif object_type == "button":
             self.button_entities.append(entity)
+
+        elif object_type == "light":
+            self.light_entities.append(entity)
 
         elif object_type == "eq_sensor":
             self.equalizer_sensor_entities.append(entity)
