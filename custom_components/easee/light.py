@@ -36,7 +36,7 @@ class ChargerLight(ChargerEntity, LightEntity):
         """Return brightness value 1..255."""
         brightness = self.get_value_from_key("config.ledStripBrightness")
         _LOGGER.debug("Brightness: %s", int(brightness * 255 / 100))
-        return int(brightness * 255 / 100)
+        return round(brightness * 255 / 100)
 
     @property
     def is_on(self) -> bool | None:
@@ -45,7 +45,7 @@ class ChargerLight(ChargerEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs) -> None:
         """Turn on the light."""
-        brightness = int(kwargs.get("brightness", 255) * 100 / 255)
+        brightness = round(kwargs.get("brightness", 255) * 100 / 255)
         _LOGGER.debug(
             "Turn_on on light %s, brightness=%s",
             self._entity_name,
