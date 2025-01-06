@@ -235,10 +235,21 @@ set_charger_dynamic_limit:
       selector:
         number:
           min: 0
-          max: 40
+          max: 32
           step: 1
           unit_of_measurement: "A"
           mode: slider
+    time_to_live:
+      required: false
+      example: 0
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 1080
+          step: 1
+          unit_of_measurement: "min"
+          mode: box
 
 set_circuit_dynamic_limit:
   fields:
