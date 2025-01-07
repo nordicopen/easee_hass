@@ -121,6 +121,11 @@
         "name": "Åsidosätt schema"
       }
     },
+    "light": {
+      "led_strip": {
+        "name": "LED ljusstyrka"
+      }
+    },
     "sensor": {
       "circuit_current": {
         "name": "Kretsström"
@@ -213,6 +218,9 @@
           "start_charging": "Starta laddning",
           "stop_charging": "Stoppa laddning"
         }
+      },
+      "energy_last_hour": {
+        "name": "Energi senaste timme"
       },
       "energy_per_hour": {
         "name": "Energi senaste timme"
@@ -441,6 +449,10 @@
         "device_id": {
           "description": "Välj en av laddboxarna i kretsen som ska styras.",
           "name": "Målenhet"
+        },
+        "time_to_live": {
+          "description": "Ange tid i minuter som kommandot ska vara aktivt. 0 = på obegränsad tid.",
+          "name": "Tid att leva"
         }
       },
       "name": "Ställ in laddboxens dynamiska gräns"
@@ -515,7 +527,7 @@
           "name": "Målenhet"
         },
         "time_to_live": {
-          "description": "Ange tid i minuter för att kommandot ska vara aktivt. 0 = på obegränsad tid.",
+          "description": "Ange tid i minuter som kommandot ska vara aktivt. 0 = på obegränsad tid.",
           "name": "Tid att leva"
         }
       },
