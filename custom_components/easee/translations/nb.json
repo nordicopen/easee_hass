@@ -441,6 +441,10 @@
         "device_id": {
           "description": "Velg en av laderne på kursen som skal styres.",
           "name": "Målenhet"
+        },
+        "time_to_live": {
+          "description": "Sett tiden i minutter før kommandoen skal aktiveres. Verdien 0 = på ubestemt tid.",
+          "name": "Tid til aktivering"
         }
       },
       "name": "Sett laderens dynamiske grense"
