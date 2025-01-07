@@ -105,7 +105,6 @@ lint.ignore = [
     "PLE0605",
 
     # temporarily disabled
-    "PT004",
     "PT007",
     "PT011",
     "PT018",
