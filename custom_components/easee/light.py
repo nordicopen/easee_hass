@@ -34,9 +34,12 @@ class ChargerLight(ChargerEntity, LightEntity):
     @property
     def brightness(self) -> int | None:
         """Return brightness value 1..255."""
-        brightness = self.get_value_from_key("config.ledStripBrightness")
-        _LOGGER.debug("Brightness: %s", int(brightness * 255 / 100))
-        return round(brightness * 255 / 100)
+        try:
+            brightness = self.get_value_from_key("config.ledStripBrightness")
+            _LOGGER.debug("Brightness: %s", int(brightness * 255 / 100))
+            return round(brightness * 255 / 100)
+        except TypeError:
+            return None
 
     @property
     def is_on(self) -> bool | None:
