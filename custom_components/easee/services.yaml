@@ -357,7 +357,7 @@ set_charging_cost:
           mode: box
     currency_id:
       example: "EUR"
-      required: false
+      required: true
       selector:
         text:
           type: text
