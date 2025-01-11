@@ -614,9 +614,6 @@ class Controller:
         await self.async_refresh_sites_state()
         await self.async_refresh_equalizers_state()
         await asyncio.gather(
-            *[charger.async_cost_refresh() for charger in self.chargers_data]
-        )
-        await asyncio.gather(
             *[charger.async_firmware_refresh() for charger in self.chargers_data]
         )
         await asyncio.gather(
