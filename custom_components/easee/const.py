@@ -100,7 +100,6 @@ chargerObservations = {
     ChargerStreamData.state_circuitTotalPhaseConductorCurrentL2.value,
     ChargerStreamData.state_circuitTotalPhaseConductorCurrentL3.value,
     ChargerStreamData.state_wiFiAPEnabled.value,
-    ChargerStreamData.state_lifetimeEnergy.value,
     ChargerStreamData.state_offlineMaxCircuitCurrentP1.value,
     ChargerStreamData.state_offlineMaxCircuitCurrentP2.value,
     ChargerStreamData.state_offlineMaxCircuitCurrentP3.value,
