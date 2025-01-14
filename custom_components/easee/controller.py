@@ -7,7 +7,6 @@ from gc import collect
 import json
 import logging
 from random import random
-import time
 
 from pyeasee import (
     Charger,
@@ -93,32 +92,26 @@ class CostData:
         self.period = period
         self.request_logs = deque()
         self.observers = {}
-        self.task = asyncio.create_task(self.request_handler(), name="easee_hass cost update handler")
-
-    def __del__(self):
-        """Clean up task."""
-        self.task.cancel()
 
     def register_for_update(self, product_id, callback):
         """Register callback for data update."""
         self.observers[product_id] = callback
         _LOGGER.debug("Cost refresh callback registered.")
 
-    def request_update(self):
+    def request_update(self, product_id):
         """Add a request to queue."""
-        now = time.monotonic()
-        self.request_logs.append(now)
+        self.request_logs.append(product_id)
+        self.task = asyncio.create_task(self.request_handler(), name="easee_hass cost update task")
         _LOGGER.debug("Cost refresh requested.")
 
     async def request_handler(self):
         """Update cost data task."""
-        while True:
-            await asyncio.sleep(1)
-            now = time.monotonic()
-            if self.request_logs:
-                if now - self.request_logs[0] > self.period:
-                    self.request_logs.clear()
-                    await self.update_cost()
+        await asyncio.sleep(self.period)
+        if self.request_logs:
+            _LOGGER.debug("Refreshing cost for %s.", self.request_logs)
+            self.request_logs.clear()
+            await self.update_cost()
+        _LOGGER.debug("End of cost update task.")
 
     async def update_cost(self):
         """Poll cost data and notify observers."""
@@ -138,21 +131,17 @@ class CostData:
             dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
         )
         _LOGGER.debug("Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
-        if costs_day is not None:
-            for cost in costs_day:
+        self.notify_observers(costs_day, "day")
+        self.notify_observers(costs_month, "month")
+        self.notify_observers(costs_year, "year")
+
+    def notify_observers(self, costs, name):
+        """Send notification to observers."""
+        if costs is not None:
+            for cost in costs:
                 charger_id = cost["chargerId"]
                 if charger_id in self.observers:
-                    self.observers[charger_id]("day", cost)
-        if costs_month is not None:
-            for cost in costs_month:
-                charger_id = cost["chargerId"]
-                if charger_id in self.observers:
-                    self.observers[charger_id]("month", cost)
-        if costs_year is not None:
-            for cost in costs_year:
-                charger_id = cost["chargerId"]
-                if charger_id in self.observers:
-                    self.observers[charger_id]("year", cost)
+                    self.observers[charger_id](name, cost)
 
 
 class ProductData:
@@ -350,7 +339,7 @@ class ProductData:
     async def async_cost_refresh(self):
         """Ask for cost data update."""
         if self.cost_data is not None:
-            self.cost_data.request_update()
+            self.cost_data.request_update(self.product.id)
 
     def check_latest_pulse(self):
         """Check if product has timed out."""
