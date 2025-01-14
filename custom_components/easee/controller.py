@@ -108,7 +108,7 @@ class CostData:
         """Add a request to queue."""
         now = time.monotonic()
         self.request_logs.append(now)
-        _LOGGER.debug("Cost refresh requested %f.", now)
+        _LOGGER.debug("Cost refresh requested.")
 
     async def request_handler(self):
         """Update cost data task."""
@@ -116,7 +116,6 @@ class CostData:
             await asyncio.sleep(1)
             now = time.monotonic()
             if self.request_logs:
-                _LOGGER.debug("Cost refresh check %f %f", now, self.request_logs[0])
                 if now - self.request_logs[0] > self.period:
                     self.request_logs.clear()
                     await self.update_cost()
