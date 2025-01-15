@@ -85,7 +85,7 @@ class CostData:
     def __init__(
         self,
         site: Site,
-        period,
+        period: int,
     ):
         """Initialize the cost data."""
         self.site: Site = site
