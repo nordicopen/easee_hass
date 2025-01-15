@@ -592,7 +592,7 @@ class Controller:
                     _LOGGER.debug("Found site (unmonitored): %s %s", site.id, site.name)
                 else:
                     _LOGGER.debug("Found site (monitored): %s %s", site.id, site.name)
-                    cost_data = CostData(site, 60)
+                    cost_data = CostData(site, period=60)
                     self.costs_data.append(cost_data)
                     equalizers = site.get_equalizers()
                     for equalizer in equalizers:
