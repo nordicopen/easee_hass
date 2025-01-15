@@ -155,7 +155,7 @@ class ProductData:
         poll_observations,
         circuit: Circuit = None,
         master=False,
-        cost_data=None,
+        cost_data: CostData | None = None,
     ):
         """Initialize the product data."""
         self.product = product
