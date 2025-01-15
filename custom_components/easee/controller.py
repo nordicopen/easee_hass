@@ -89,7 +89,7 @@ class CostData:
     ):
         """Initialize the cost data."""
         self.site: Site = site
-        self.period = period
+        self.period: int = period
         self.request_logs = deque()
         self.observers = {}
 
