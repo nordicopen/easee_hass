@@ -18,14 +18,14 @@ bump_minor:
 bump_major:
 	bumpver update major --no-fetch
 
-bump_beta:
-	bumpver update --no-fetch --patch --tag=beta --tag-num
-
-bump_pre_next:
-	bumpver update --no-fetch --tag-num
-
 bump_dev:
 	bumpver update --no-fetch --patch --tag=dev --tag-num
 
-bump_remove_pre_tag:
+bump_beta:
+	bumpver update --no-fetch --patch --tag=beta --tag-num
+
+bump_next_pre:
+	bumpver update --no-fetch --tag-num
+
+bump_final:
 	bumpver update --no-fetch --tag=final
