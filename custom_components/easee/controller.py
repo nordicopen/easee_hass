@@ -1,6 +1,7 @@
 """Easee Connector class."""
 
 import asyncio
+from collections import deque
 from datetime import timedelta
 from gc import collect
 import json
@@ -78,6 +79,70 @@ MINIMUM_UPDATE = 0.05
 
 OFFLINE_DELAY = 17 * 60
 
+class CostData:
+    """Representation of Cost data."""
+
+    def __init__(
+        self,
+        site: Site,
+        period: int,
+    ):
+        """Initialize the cost data."""
+        self.site: Site = site
+        self.period: int = period
+        self.request_logs = deque()
+        self.observers = {}
+
+    def register_for_update(self, product_id, callback):
+        """Register callback for data update."""
+        self.observers[product_id] = callback
+        _LOGGER.debug("Cost refresh callback registered.")
+
+    def request_update(self, product_id):
+        """Add a request to queue."""
+        self.request_logs.append(product_id)
+        self.task = asyncio.create_task(self.request_handler(), name="easee_hass cost update task")
+        _LOGGER.debug("Cost refresh requested.")
+
+    async def request_handler(self):
+        """Update cost data task."""
+        await asyncio.sleep(self.period)
+        if self.request_logs:
+            _LOGGER.debug("Refreshing cost for %s.", self.request_logs)
+            self.request_logs.clear()
+            await self.update_cost()
+        _LOGGER.debug("End of cost update task.")
+
+    async def update_cost(self):
+        """Poll cost data and notify observers."""
+        dt_end = dt_util.now().replace(microsecond=0)
+        dt_start = dt_util.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        costs_day = await self.site.get_cost_between_dates(
+            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
+        )
+        await asyncio.sleep(1)
+        dt_start = dt_start.replace(day=1)
+        costs_month = await self.site.get_cost_between_dates(
+            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
+        )
+        await asyncio.sleep(1)
+        dt_start = dt_start.replace(month=1)
+        costs_year = await self.site.get_cost_between_dates(
+            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
+        )
+        _LOGGER.debug("Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
+        self.notify_observers(costs_day, "day")
+        self.notify_observers(costs_month, "month")
+        self.notify_observers(costs_year, "year")
+
+    def notify_observers(self, costs, name):
+        """Send notification to observers."""
+        if costs is not None:
+            for cost in costs:
+                charger_id = cost["chargerId"]
+                if charger_id in self.observers:
+                    self.observers[charger_id](name, cost)
+
 
 class ProductData:
     """Representation product data."""
@@ -90,6 +155,7 @@ class ProductData:
         poll_observations,
         circuit: Circuit = None,
         master=False,
+        cost_data: CostData | None = None,
     ):
         """Initialize the product data."""
         self.product = product
@@ -106,6 +172,9 @@ class ProductData:
         self.cost_observers = {}
         self.site_observers = {}
         self.circuit_observers = {}
+        self.cost_data: CostData = cost_data
+        if self.cost_data is not None:
+            self.cost_data.register_for_update(self.product.id, self.cost_update)
         self.cost_day = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
         self.cost_month = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
         self.cost_year = {"totalEnergyUsage": 0, "totalCost": 0, "currencyId": ""}
@@ -256,37 +325,21 @@ class ProductData:
         self.notify("isEnabled", self.weekly_schedule_observers)
         self.notify("isEnabled", self.schedule_observers)
 
-    async def async_cost_refresh(self):
-        """Poll cost data."""
-        dt_end = dt_util.now().replace(microsecond=0)
-        dt_start = dt_util.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        costs_day = await self.site.get_cost_between_dates(
-            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
-        )
-        dt_start = dt_start.replace(day=1)
-        costs_month = await self.site.get_cost_between_dates(
-            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
-        )
-        dt_start = dt_start.replace(month=1)
-        costs_year = await self.site.get_cost_between_dates(
-            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
-        )
-        _LOGGER.debug("Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
-        if costs_day is not None:
-            for cost in costs_day:
-                if cost["chargerId"] == self.product.id:
-                    self.cost_day = cost
-        if costs_month is not None:
-            for cost in costs_month:
-                if cost["chargerId"] == self.product.id:
-                    self.cost_month = cost
-        if costs_year is not None:
-            for cost in costs_year:
-                if cost["chargerId"] == self.product.id:
-                    self.cost_year = cost
+    def cost_update(self, cost_type, cost_data):
+        """Update callback for cost data."""
+        if "day" in cost_type:
+            self.cost_day = cost_data
+        if "month" in cost_type:
+            self.cost_month = cost_data
+        if "year" in cost_type:
+            self.cost_year = cost_data
 
-        # Update entities
         self.notify("totalCost", self.cost_observers)
+
+    async def async_cost_refresh(self):
+        """Ask for cost data update."""
+        if self.cost_data is not None:
+            self.cost_data.request_update(self.product.id)
 
     def check_latest_pulse(self):
         """Check if product has timed out."""
@@ -437,6 +490,7 @@ class Controller:
         self.entry = config_entry
         self.easee: Easee | None = None
         self.sites: list[Site] = []
+        self.costs_data: list[CostData] = []
         self.circuits: list[Circuit] = []
         self.chargers: list[Charger] = []
         self.chargers_data: list[ProductData] = []
@@ -538,6 +592,8 @@ class Controller:
                     _LOGGER.debug("Found site (unmonitored): %s %s", site.id, site.name)
                 else:
                     _LOGGER.debug("Found site (monitored): %s %s", site.id, site.name)
+                    cost_data = CostData(site, period=60)
+                    self.costs_data.append(cost_data)
                     equalizers = site.get_equalizers()
                     for equalizer in equalizers:
                         _LOGGER.debug(
@@ -580,6 +636,7 @@ class Controller:
                                     chargerObservations,
                                     circuit,
                                     master=master,
+                                    cost_data=cost_data,
                                 )
                                 self.chargers_data.append(charger_data)
 
