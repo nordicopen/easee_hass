@@ -1,5 +1,5 @@
 [tool.bumpver]
-current_version = "0.9.67"
+current_version = "0.9.68b0"
 version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
 commit_message = "Bump version from {old_version} to {new_version}"
 commit = false
@@ -7,6 +7,6 @@ commit = false
 [tool.bumpver.file_patterns]
 "pyproject.toml" = ['current_version = "{version}"']
 
-"**/const.py" = ['VERSION = "{version}"']
+"**/const.py" = ['^VERSION = "{version}"']
 
 "**/manifest.json" = ['"version": "{version}"']
