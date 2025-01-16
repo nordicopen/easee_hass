@@ -1,6 +1,7 @@
 colorlog==6.9.0
 ruff==0.8.6
-bump2version
+bump2version==1.0.1
+bumpver==2024.1130
 wheel
 
 pyeasee

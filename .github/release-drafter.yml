@@ -62,6 +62,7 @@ autolabeler:
       - ".pre-commit-config.yaml"
       - ".ruff.toml"
       - ".pylintrc"
+      - "pyproject.toml"
   - label: "bugfix"
     title:
       - "/fix/i"
