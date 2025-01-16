@@ -1,37 +1,37 @@
-name-template: "Example title - v$NEXT_PATCH_VERSION"
-tag-template: "v$NEXT_PATCH_VERSION"
+name-template: 'Example title - v$NEXT_PATCH_VERSION'
+tag-template: 'v$NEXT_PATCH_VERSION'
 exclude-labels:
-  - "skip-changelog"
+  - 'skip-changelog'
 categories:
-  - title: "New Features"
+  - title: 'New Features'
     labels:
-      - "feature"
-      - "enhancement"
-  - title: "Bug Fixes"
+      - 'feature'
+      - 'enhancement'
+  - title: 'Bug Fixes'
     labels:
-      - "fix"
-      - "bugfix"
-      - "bug"
-  - title: "Translation"
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+  - title: 'Translation'
     collapse-after: 2
     labels:
-      - "translation"
-  - title: "Dependencies"
+      - 'translation'
+  - title: 'Dependencies'
     collapse-after: 2
     labels:
-      - "dependency"
-  - title: "Code quality and maintenance"
+      - 'dependency'
+  - title: 'Code quality and maintenance'
     labels:
-      - "maintenance"
-      - "code quality"
+      - 'maintenance'
+      - 'code quality'
 
-  - title: "Development environment and tools"
-    label: "dev tools"
-change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
+  - title: 'Development environment and tools'
+    label: 'dev tools'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 
 template: |
-  [![Downloads for this release](https://img.shields.io/github/downloads/nordicopen/easee_hass/v$RESOLVED_VERSION/total.svg)](https://github.com/nordicopen/easee_hass/releases/v$RESOLVED_VERSION)
+  [![Downloads for this release](https://img.shields.io/github/downloads/$OWNER/$REPOSITORY/v$RESOLVED_VERSION/total.svg)](https://github.com/$OWNER/$REPOSITORY/releases/v$RESOLVED_VERSION)
 
   <!--
   ### Checklist for release
@@ -39,38 +39,43 @@ template: |
   - Run ruff linter
   - Run make bump - select proper variant in Makefile
   - Review the draft below and update if needed
+  - If you are making a pre-release, update suggested tag version and badge versions, and check the pre-release box below
   -->
+
+  ## Notable changes
+
+  <!-- Write-up of most important news -->
 
   ## Changes
 
   $CHANGES
 
 autolabeler:
-  - label: "maintenance"
+  - label: 'maintenance'
     files:
-      - "*.md"
+      - '*.md'
 
-  - label: "dev tools"
+  - label: 'dev tools'
     files:
-      - ".github/*"
-      - ".devcontainer.json"
-      - "links.sh"
-      - "Makefile"
-      - "setup.cfg"
-      - "requirements*.txt"
-      - ".gitignore"
-      - ".pre-commit-config.yaml"
-      - ".ruff.toml"
-      - ".pylintrc"
-      - "pyproject.toml"
-  - label: "bugfix"
+      - '.github/*'
+      - '.devcontainer.json'
+      - 'links.sh'
+      - 'Makefile'
+      - 'setup.cfg'
+      - 'requirements*.txt'
+      - '.gitignore'
+      - '.pre-commit-config.yaml'
+      - '.ruff.toml'
+      - '.pylintrc'
+      - 'pyproject.toml'
+  - label: 'bugfix'
     title:
-      - "/fix/i"
-  - label: "code quality"
+      - '/fix/i'
+  - label: 'code quality'
     title:
-      - "lint"
-  - label: "translation"
+      - 'lint'
+  - label: 'translation'
     title:
-      - "Lokalise:"
+      - 'Lokalise:'
     files:
-      - "**/translations/*.json"
+      - '**/translations/*.json'
