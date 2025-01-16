@@ -79,6 +79,7 @@ MINIMUM_UPDATE = 0.05
 
 OFFLINE_DELAY = 17 * 60
 
+
 class CostData:
     """Representation of Cost data."""
 
@@ -92,16 +93,19 @@ class CostData:
         self.period: int = period
         self.request_logs = deque()
         self.observers = {}
+        self.task = None
 
-    def register_for_update(self, product_id, callback):
+    def register_for_update(self, product_id, cost_callback):
         """Register callback for data update."""
-        self.observers[product_id] = callback
+        self.observers[product_id] = cost_callback
         _LOGGER.debug("Cost refresh callback registered.")
 
     def request_update(self, product_id):
         """Add a request to queue."""
         self.request_logs.append(product_id)
-        self.task = asyncio.create_task(self.request_handler(), name="easee_hass cost update task")
+        self.task = asyncio.create_task(
+            self.request_handler(), name="easee_hass cost update task"
+        )
         _LOGGER.debug("Cost refresh requested.")
 
     async def request_handler(self):
