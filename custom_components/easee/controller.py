@@ -187,6 +187,8 @@ class ProductData:
 
         if "." in name:
             first, second = name.split(".")
+            if first.startswith("cost"):
+                first = "cost"
 
             if first not in self.observers:
                 self.observers[first] = {}
