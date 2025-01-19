@@ -1,5 +1,5 @@
-name-template: 'Example title - v$NEXT_PATCH_VERSION'
-tag-template: 'v$NEXT_PATCH_VERSION'
+name-template: 'Example title - v0.9.68b0'
+tag-template: 'v0.9.68b0'
 exclude-labels:
   - 'skip-changelog'
 categories:
@@ -31,7 +31,7 @@ change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 
 template: |
-  [![Downloads for this release](https://img.shields.io/github/downloads/$OWNER/$REPOSITORY/v$RESOLVED_VERSION/total.svg)](https://github.com/$OWNER/$REPOSITORY/releases/v$RESOLVED_VERSION)
+  [![Downloads for this release](https://img.shields.io/github/downloads/$OWNER/$REPOSITORY/v0.9.68b0/total.svg)](https://github.com/$OWNER/$REPOSITORY/releases/v0.9.68b0)
 
   <!--
   ### Checklist for release
@@ -39,7 +39,7 @@ template: |
   - Run ruff linter
   - Run make bump - select proper variant in Makefile
   - Review the draft below and update if needed
-  - If you are making a pre-release, update suggested tag version and badge versions, and check the pre-release box below
+  - If you are making a pre-release then check the pre-release box below
   -->
 
   ## Notable changes
@@ -65,9 +65,8 @@ autolabeler:
       - 'requirements*.txt'
       - '.gitignore'
       - '.pre-commit-config.yaml'
-      - '.ruff.toml'
       - '.pylintrc'
-      - 'pyproject.toml'
+      - '*.toml'
   - label: 'bugfix'
     title:
       - '/fix/i'
