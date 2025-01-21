@@ -128,25 +128,29 @@ class CostData:
 
     async def update_cost(self):
         """Poll cost data and notify observers."""
-        dt_end = dt_util.now().replace(microsecond=0)
-        dt_start = dt_util.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        costs_day = await self.site.get_cost_between_dates(
-            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
-        )
-        await asyncio.sleep(1)
-        dt_start = dt_start.replace(day=1)
-        costs_month = await self.site.get_cost_between_dates(
-            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
-        )
-        await asyncio.sleep(1)
-        dt_start = dt_start.replace(month=1)
-        costs_year = await self.site.get_cost_between_dates(
-            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
-        )
-        _LOGGER.debug("Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
-        self.notify_observers(costs_day, "day")
-        self.notify_observers(costs_month, "month")
-        self.notify_observers(costs_year, "year")
+        try:
+            dt_end = dt_util.now().replace(microsecond=0)
+            dt_start = dt_util.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            costs_day = await self.site.get_cost_between_dates(
+                dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
+            )
+            await asyncio.sleep(1)
+            dt_start = dt_start.replace(day=1)
+            costs_month = await self.site.get_cost_between_dates(
+                dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
+            )
+            await asyncio.sleep(1)
+            dt_start = dt_start.replace(month=1)
+            costs_year = await self.site.get_cost_between_dates(
+                dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
+            )
+        except Exception as ex:
+            _LOGGER.error("Cost refresh failed with exception %s", ex)
+        else:
+            _LOGGER.debug("Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
+            self.notify_observers(costs_day, "day")
+            self.notify_observers(costs_month, "month")
+            self.notify_observers(costs_year, "year")
 
     def notify_observers(self, costs, name):
         """Send notification to observers."""
