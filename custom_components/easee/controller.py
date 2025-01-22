@@ -323,7 +323,8 @@ class ProductData:
     async def async_cost_refresh(self):
         """Ask for cost data update."""
         if self.cost_data is not None:
-            self.cost_data.request_update(self.product.id)
+            if self.check_enabled("totalCost", self.observers["cost"]):
+                self.cost_data.request_update(self.product.id)
 
     def check_latest_pulse(self):
         """Check if product has timed out."""
@@ -446,6 +447,14 @@ class ProductData:
             for observer in observers[index]:
                 if observer.enabled:
                     observer.async_schedule_update_ha_state(True)
+
+    def check_enabled(self, index, observers):
+        """Check if there are any enabled entities for a specific data."""
+        if index in observers:
+            for observer in observers[index]:
+                if observer.enabled:
+                    return True
+        return False
 
     def site_notify(self):
         """Notify any site listeners that data has changed."""
