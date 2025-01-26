@@ -888,7 +888,7 @@ async def async_setup_services(hass):  # noqa: C901
             function_call = getattr(charger.site, function_name["function_call"])
             try:
                 retval = await function_call(cost_per_kwh, vat, currency)
-                await controller.async_force_site_notify(charger.id)
+                await controller.async_force_site_notify(charger.site.id)
                 return retval
             except BadRequestException as ex:
                 _LOGGER.error(

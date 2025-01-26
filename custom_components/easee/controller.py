@@ -755,10 +755,10 @@ class Controller:
             await equalizer_data.async_refresh()
             equalizer_data.set_signalr_state(self.easee.sr_is_connected())
 
-    async def async_force_site_notify(self, product_id):
+    async def async_force_site_notify(self, site_id):
         """Send an update request to all entities watching site data."""
         for charger_data in self.chargers_data:
-            if charger_data.product.id == product_id:
+            if charger_data.site.id == site_id:
                 charger_data.site_notify()
 
     def get_sites(self):
