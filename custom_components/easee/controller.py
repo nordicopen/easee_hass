@@ -182,13 +182,7 @@ class ProductData:
         self.config = None
         self.schedule = None
         self.weekly_schedule = None
-        self.state_observers = {}
-        self.config_observers = {}
-        self.schedule_observers = {}
-        self.weekly_schedule_observers = {}
-        self.cost_observers = {}
-        self.site_observers = {}
-        self.circuit_observers = {}
+        self.observers = {}
         self.cost_data: CostData = cost_data
         if self.cost_data is not None:
             self.cost_data.register_for_update(self.product.id, self.cost_update)
@@ -206,28 +200,14 @@ class ProductData:
 
         if "." in name:
             first, second = name.split(".")
+            if first.startswith("cost"):
+                first = "cost"
 
-            if first == "state":
-                observers = self.state_observers
-            elif first == "config":
-                observers = self.config_observers
-            elif first == "schedule":
-                observers = self.schedule_observers
-            elif first == "weekly_schedule":
-                observers = self.weekly_schedule_observers
-            elif first == "site":
-                observers = self.site_observers
-            elif first == "circuit":
-                observers = self.circuit_observers
-            elif first.startswith("cost"):
-                observers = self.cost_observers
-            else:
-                _LOGGER.debug("No such data to watch %s", name)
-                return
-
-            if second not in observers:
-                observers[second] = []
-            observers[second].append(entity)
+            if first not in self.observers:
+                self.observers[first] = {}
+            if second not in self.observers[first]:
+                self.observers[first][second] = []
+            self.observers[first][second].append(entity)
 
     def is_state_polled(self):
         """Check if state is polled."""
@@ -339,8 +319,8 @@ class ProductData:
                     self.set_schedule("chargeStopTime", time.strftime("%H:%M"), False)
 
         # Make sure the entities update
-        self.notify("isEnabled", self.weekly_schedule_observers)
-        self.notify("isEnabled", self.schedule_observers)
+        self.notify("isEnabled", self.observers["weekly_schedule"])
+        self.notify("isEnabled", self.observers["schedule"])
 
     def cost_update(self, cost_type, cost_data):
         """Update callback for cost data."""
@@ -351,12 +331,13 @@ class ProductData:
         if "year" in cost_type:
             self.cost_year = cost_data
 
-        self.notify("totalCost", self.cost_observers)
+        self.notify("totalCost", self.observers["cost"])
 
     async def async_cost_refresh(self):
         """Ask for cost data update."""
         if self.cost_data is not None:
-            self.cost_data.request_update(self.product.id)
+            if self.check_enabled("totalCost", self.observers["cost"]):
+                self.cost_data.request_update(self.product.id)
 
     def check_latest_pulse(self):
         """Check if product has timed out."""
@@ -453,25 +434,25 @@ class ProductData:
         """Update state and notify."""
         self.state[index] = value
         if notify:
-            self.notify(index, self.state_observers)
+            self.notify(index, self.observers["state"])
 
     def set_config(self, index, value, notify=True):
         """Update config and notify."""
         self.config[index] = value
         if notify:
-            self.notify(index, self.config_observers)
+            self.notify(index, self.observers["config"])
 
     def set_schedule(self, index, value, notify=True):
         """Update schedule and notify."""
         self.schedule[index] = value
         if notify:
-            self.notify(index, self.schedule_observers)
+            self.notify(index, self.observers["schedule"])
 
     def set_weekly_schedule(self, index, value, notify=True):
         """Update weekly_schedule data and notify."""
         self.weekly_schedule[index] = value
         if notify:
-            self.notify(index, self.weekly_schedule_observers)
+            self.notify(index, self.observers["weekly_schedule"])
 
     def notify(self, index, observers):
         """Notify any listeners that data has changed."""
@@ -480,10 +461,18 @@ class ProductData:
                 if observer.enabled:
                     observer.async_schedule_update_ha_state(True)
 
+    def check_enabled(self, index, observers):
+        """Check if there are any enabled entities for a specific data."""
+        if index in observers:
+            for observer in observers[index]:
+                if observer.enabled:
+                    return True
+        return False
+
     def site_notify(self):
         """Notify any site listeners that data has changed."""
-        for index in self.site_observers:
-            for observer in self.site_observers[index]:
+        for index in self.observers["site"]:
+            for observer in self.observers["site"][index]:
                 if observer.enabled:
                     observer.async_schedule_update_ha_state(True)
 
