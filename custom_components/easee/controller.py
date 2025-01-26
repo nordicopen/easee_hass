@@ -1,7 +1,6 @@
 """Easee Connector class."""
 
 import asyncio
-from collections import deque
 from datetime import timedelta
 from gc import collect
 import json
@@ -91,53 +90,67 @@ class CostData:
         """Initialize the cost data."""
         self.site: Site = site
         self.period: int = period
-        self.request_logs = deque()
+        self.request_queue = asyncio.Queue()
         self.observers = {}
-        self.task = None
+        self.task = asyncio.create_task(
+            self.request_handler(), name="easee_hass cost update task"
+        )
+
+    def __del__(self):
+        """Cancel our consumer task."""
+        self.task.cancel()
 
     def register_for_update(self, product_id, cost_callback):
         """Register callback for data update."""
         self.observers[product_id] = cost_callback
-        _LOGGER.debug("Cost refresh callback registered.")
+        _LOGGER.debug("Cost refresh callback registered for %s.", product_id)
 
     def request_update(self, product_id):
         """Add a request to queue."""
-        self.request_logs.append(product_id)
-        self.task = asyncio.create_task(
-            self.request_handler(), name="easee_hass cost update task"
-        )
-        _LOGGER.debug("Cost refresh requested.")
+        self.request_queue.put_nowait(product_id)
+        _LOGGER.debug("Cost refresh requested for %s.", product_id)
 
     async def request_handler(self):
         """Update cost data task."""
-        await asyncio.sleep(self.period)
-        if self.request_logs:
-            _LOGGER.debug("Refreshing cost for %s.", self.request_logs)
-            self.request_logs.clear()
+        while True:
+            product_id = await self.request_queue.get()
+            await asyncio.sleep(self.period)
+            _LOGGER.debug("Cost refresh for %s", product_id)
+            self.request_queue.task_done()
+            while not self.request_queue.empty():
+                product_id = await self.request_queue.get()
+                _LOGGER.debug("Cost refresh for %s", product_id)
+                self.request_queue.task_done()
+
             await self.update_cost()
-        _LOGGER.debug("End of cost update task.")
+            """Wait to comply with rate limit (max 10 calls/hour)"""
+            await asyncio.sleep(1200-self.period)
 
     async def update_cost(self):
         """Poll cost data and notify observers."""
-        dt_end = dt_util.now().replace(microsecond=0)
-        dt_start = dt_util.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        costs_day = await self.site.get_cost_between_dates(
-            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
-        )
-        await asyncio.sleep(1)
-        dt_start = dt_start.replace(day=1)
-        costs_month = await self.site.get_cost_between_dates(
-            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
-        )
-        await asyncio.sleep(1)
-        dt_start = dt_start.replace(month=1)
-        costs_year = await self.site.get_cost_between_dates(
-            dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
-        )
-        _LOGGER.debug("Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
-        self.notify_observers(costs_day, "day")
-        self.notify_observers(costs_month, "month")
-        self.notify_observers(costs_year, "year")
+        try:
+            dt_end = dt_util.now().replace(microsecond=0)
+            dt_start = dt_util.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            costs_day = await self.site.get_cost_between_dates(
+                dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
+            )
+            await asyncio.sleep(1)
+            dt_start = dt_start.replace(day=1)
+            costs_month = await self.site.get_cost_between_dates(
+                dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
+            )
+            await asyncio.sleep(1)
+            dt_start = dt_start.replace(month=1)
+            costs_year = await self.site.get_cost_between_dates(
+                dt_util.as_utc(dt_start), dt_util.as_utc(dt_end)
+            )
+        except Exception as ex:
+            _LOGGER.error("Cost refresh failed with exception %s", ex)
+        else:
+            _LOGGER.debug("Cost refreshed %s %s %s", costs_day, costs_month, costs_year)
+            self.notify_observers(costs_day, "day")
+            self.notify_observers(costs_month, "month")
+            self.notify_observers(costs_year, "year")
 
     def notify_observers(self, costs, name):
         """Send notification to observers."""
@@ -189,7 +202,7 @@ class ProductData:
 
     def register_for_update(self, name, entity):
         """Register a entity to watch changes."""
-        _LOGGER.debug("Register for updates on %s with %s", name, entity)
+        _LOGGER.debug("Register for updates on %s", name)
 
         if "." in name:
             first, second = name.split(".")
