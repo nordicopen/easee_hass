@@ -121,6 +121,11 @@
         "name": "Zeitplan überschreiben"
       }
     },
+    "light": {
+      "led_strip": {
+        "name": "Lichtleiste"
+      }
+    },
     "sensor": {
       "circuit_current": {
         "name": "Strom Schaltkreis"
@@ -213,6 +218,9 @@
           "start_charging": "Startet Ladung",
           "stop_charging": "Stoppt Ladung"
         }
+      },
+      "energy_last_hour": {
+        "name": "Energiemenge letzte Stunde"
       },
       "energy_per_hour": {
         "name": "Energie pro Stunde"
@@ -441,6 +449,10 @@
         "device_id": {
           "description": "Zu kontrollierendes Ladegerät im Stromkreis auswählen.",
           "name": "Zielgerät"
+        },
+        "time_to_live": {
+          "description": "Setze Gültigkeitsdauer des Kommandos. 0 = unbegrenzt",
+          "name": "Time-To-Live (TTL, Gültigkeitsdauer)"
         }
       },
       "name": "Dynamisches Limit des Ladegeräts festlegen"

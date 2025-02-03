@@ -38,6 +38,12 @@
   },
   "device_automation": {
     "action_type": {
+      "delete_basic_charge_plan": "Laadschema verwijderen",
+      "delete_weekly_charge_plan": "Wekelijks laadschema verwijderen",
+      "disable_basic_charge_plan": "Laadschema deactiveren",
+      "disable_weekly_charge_plan": "Wekelijks laadschema deactiveren",
+      "enable_basic_charge_plan": "Laadschema activeren",
+      "enable_weekly_charge_plan": "Wekelijks laadschema activeren",
       "override_schedule": "Laadschema negeren",
       "pause": "Laden onderbreken",
       "reboot": "Lader herstarten",
@@ -45,7 +51,7 @@
       "start": "Start laden",
       "stop": "Stop laden",
       "toggle": "Laden omschakelen",
-      "update_firmware": "Firmware updaten"
+      "update_firmware": "Update firmware"
     },
     "condition_type": {
       "authenticating": "{entity_name} is bezig met authenticeren",
@@ -108,6 +114,16 @@
       },
       "update_available": {
         "name": "Update beschikbaar"
+      }
+    },
+    "button": {
+      "override_schedule": {
+        "name": "Laadschema negeren"
+      }
+    },
+    "light": {
+      "led_strip": {
+        "name": "LED-strip"
       }
     },
     "sensor": {
@@ -203,6 +219,9 @@
           "stop_charging": "Stop laden"
         }
       },
+      "energy_last_hour": {
+        "name": "Energie afgelopen uur"
+      },
       "energy_per_hour": {
         "name": "Energie per uur"
       },
@@ -262,6 +281,9 @@
       }
     },
     "switch": {
+      "basic_schedule": {
+        "name": "Laadschema"
+      },
       "cable_locked_permanently": {
         "name": "Kabel permanent vergrendeld"
       },
@@ -275,6 +297,9 @@
         "name": "Touch-knop ingeschakeld"
       },
       "smart_charging": {
+        "name": "Slim laden"
+      },
+      "surplus": {
         "name": "Slim laden"
       },
       "weekly_schedule": {
@@ -326,6 +351,10 @@
       "options": {
         "delete_basic_charge_plan": "Standaard laadschema verwijderen",
         "delete_weekly_charge_plan": "Wekelijks laadschema verwijderen",
+        "disable_basic_charge_plan": "Laadschema deactiveren",
+        "disable_weekly_charge_plan": "Wekelijks laadschema deactiveren",
+        "enable_basic_charge_plan": "Laadschema activeren",
+        "enable_weekly_charge_plan": "Wekelijks laadschema activeren",
         "override_schedule": "Laadschema negeren",
         "pause": "Pauze",
         "reboot": "Herstarten",
@@ -373,6 +402,7 @@
       "description": "Standaard laadschema instellen",
       "fields": {
         "current": {
+          "description": "Maximale stroomsterkte bij laadschema",
           "name": "Maximale stroom"
         },
         "device_id": {
@@ -418,6 +448,9 @@
         "device_id": {
           "description": "Selecteer een van de laders in het circuit die moet worden aangestuurd.",
           "name": "Doelapparaat"
+        },
+        "time_to_live": {
+          "name": "Time to live"
         }
       },
       "name": "Stel de dynamische limiet van de oplader in"
@@ -532,10 +565,23 @@
       },
       "name": "Offline limiet stroomcircuit instellen"
     },
+    "set_surplus_charging": {
+      "fields": {
+        "current": {
+          "name": "Stroom"
+        },
+        "enable": {
+          "description": "Slim laden activeren",
+          "name": "Activeren"
+        }
+      },
+      "name": "Slim laden instellen"
+    },
     "set_weekly_charge_plan": {
       "description": "Wekelijks laadschema instellen",
       "fields": {
         "current": {
+          "description": "Maximale stroomsterkte bij laadschema",
           "name": "Maximale stroom"
         },
         "day": {
