@@ -1,0 +1,647 @@
+{
+  "config": {
+    "abort": {
+      "already_setup": "Du kan kun konfigurere en enkelt Easee-forbindelse.",
+      "reauth_successful": "Gengodkendelse lykkedes."
+    },
+    "error": {
+      "auth_failure": "Kan ikke oprette forbindelse til Easee. Tjek dit brugernavn og din adgangskode.",
+      "connection_failure": "Kan ikke oprette forbindelse til Easee. Test igen senere.",
+      "no_sites": "Ingen overvågede steder er valgt",
+      "no_sites_in_account": "Ingen steder fundet på denne konto.",
+      "refused_failure": "Forbindelse nægtet til Easee. Prøv igen senere."
+    },
+    "step": {
+      "reauth_confirm": {
+        "data": {
+          "password": "Adgangskode"
+        },
+        "description": "Easee-integrationen skal gengodkende kontoen {username}.",
+        "title": "Godkend igen med Easee-konto"
+      },
+      "sites": {
+        "data": {
+          "monitored_sites": "Steder"
+        },
+        "description": "Vælg steder, der skal overvåges",
+        "title": "Easee ladeboks"
+      },
+      "user": {
+        "data": {
+          "password": "Adgangskode",
+          "username": "Brugernavn"
+        },
+        "description": "Indtast venligst brugernavn og adgangskode til din Easee-konto",
+        "title": "Forbind til Easee"
+      }
+    }
+  },
+  "device_automation": {
+    "action_type": {
+      "delete_basic_charge_plan": "Slet udsat start af opladning",
+      "delete_weekly_charge_plan": "Slet ugeplan for opladning",
+      "disable_basic_charge_plan": "Deaktiver udsat start af opladning",
+      "disable_weekly_charge_plan": "Deaktiver ugeplan for opladning",
+      "enable_basic_charge_plan": "Aktiver udsat start af opladning",
+      "enable_weekly_charge_plan": "Aktiver ugeplan for opladning",
+      "override_schedule": "Tilsidesæt planlagt opladning",
+      "pause": "Sæt opladning på pause",
+      "reboot": "Genstart ladeboksen",
+      "resume": "Genoptag opladningen",
+      "start": "Godkend (start) af opladning",
+      "stop": "Fjern godkendelse (stop) af opladning",
+      "toggle": "Skift opladning",
+      "update_firmware": "Opdater firmware"
+    },
+    "condition_type": {
+      "authenticating": "{entity_name} er ved at godkende",
+      "awaiting_authentication": "{entity_name} venter på godkendelse",
+      "awaiting_authorization": "{entity_name} venter på godkendelse",
+      "awaiting_load_balancing": "{entity_name} venter på belastningsbalancering",
+      "awaiting_scheduled_start": "{entity_name} venter på planlagt start",
+      "awaiting_smart_start": "{entity_name} venter på start af smart opladning",
+      "awaiting_start": "{entity_name} afventer start",
+      "charging": "{entity_name} oplader",
+      "completed": "{entity_name} er fuldført",
+      "de_authorizing": "{entity_name} lukker godkendelse",
+      "disconnected": "{entity_name} Bilen er koblet fra",
+      "erratic_ev": "{entity_name} returnerer fejl: Uregelmæssig opladning af bilen",
+      "error": "{entity_name} returnerer fejl",
+      "error_dead_powerboard": "{entity_name} returnerer fejl: Ødelagt strømtilførsel",
+      "error_overcurrent": "{entity_name} returnerer fejl: Overstrøm",
+      "error_pen_fault": "{entity_name} returnerer fejl i jordbeskyttelsen",
+      "error_temperature_too_high": "{entity_name} returnerer fejl: Temperaturen er for høj",
+      "offline": "{entity_name} er offline",
+      "paused_due_to_equalizer": "{entity_name} er sat på pause af Equalizer",
+      "ready_to_charge": "{entity_name} er klar til opladning",
+      "searching_for_master": "{entity_name} søger efter master",
+      "start_charging": "{entity_name} begynder at oplade",
+      "stop_charging": "{entity_name} er stoppet med at oplade"
+    },
+    "trigger_type": {
+      "authenticating": "{entity_name} Godkender",
+      "awaiting_authentication": "{entity_name} Venter på godkendelse",
+      "awaiting_authorization": "{entity_name} Venter på godkendelse",
+      "awaiting_load_balancing": "{entity_name} Venter på belastningsbalancering",
+      "awaiting_scheduled_start": "{entity_name} Venter på planlagt start",
+      "awaiting_smart_start": "{entity_name} Venter på start af smart opladning",
+      "awaiting_start": "{entity_name} Afventer start",
+      "charging": "{entity_name} Oplader",
+      "completed": "{entity_name} Fuldført",
+      "de_authorizing": "{entity_name} Afslutter godkendelse",
+      "disconnected": "{entity_name} Bilen er koblet fra",
+      "erratic_ev": "{entity_name} Uregelmæssig opladning af bilen",
+      "error": "{entity_name} Fejl",
+      "error_dead_powerboard": "{entity_name} Fejl. Ødelagt strømtilførsel",
+      "error_overcurrent": "{entity_name} Fejl. Overstrøm",
+      "error_pen_fault": "{entity_name} Fejl i jordbeskyttelsen",
+      "error_temperature_too_high": "{entity_name} Fejl. Temperaturen er for høj",
+      "offline": "{entity_name} Offline",
+      "paused_due_to_equalizer": "{entity_name} Sat på pause af Equalizer",
+      "ready_to_charge": "{entity_name} Klar til opladning",
+      "searching_for_master": "{entity_name} Søger efter master",
+      "start_charging": "{entity_name} Start opladningen",
+      "stop_charging": "{entity_name} Stop opladningen"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "cable_locked": {
+        "name": "Kabellås"
+      },
+      "online": {
+        "name": "Online"
+      },
+      "update_available": {
+        "name": "Opdatering er tilgængelig"
+      }
+    },
+    "button": {
+      "override_schedule": {
+        "name": "Tilsidesæt planlagt opladning"
+      }
+    },
+    "light": {
+      "led_strip": {
+        "name": "LED lys"
+      }
+    },
+    "sensor": {
+      "circuit_current": {
+        "name": "Kredsløbets strømstyrke"
+      },
+      "cost_day": {
+        "name": "Omkostning pr. dag"
+      },
+      "cost_month": {
+        "name": "Omkostning for måned"
+      },
+      "cost_per_kwh": {
+        "name": "Omkostning pr. kWh"
+      },
+      "cost_year": {
+        "name": "Omkostning for år"
+      },
+      "current": {
+        "name": "Strømstyrke"
+      },
+      "dynamic_charger_limit": {
+        "name": "Dynamisk grænse for ladeboksen"
+      },
+      "dynamic_circuit_limit": {
+        "name": "Dynamisk kredsløbsgrænse"
+      },
+      "easee_reason_no_current": {
+        "name": "Årsag til manglende strøm",
+        "state": {
+          "car_not_charging": "Bilen lader ikke op",
+          "charger_disabled": "Ladeboksen er deaktiveret",
+          "charger_in_error_state": "Ladeboksen returnerer en fejl",
+          "circuit_fuse_too_low": "Hovedsikringen er for lav",
+          "eq_too_low_current": "Strømstyrken på Equalizer er for lav",
+          "ev_behaving_erratic": "Uregelmæssig opladning af bilen",
+          "illegal_grid_type": "Fejl på elnettet",
+          "limited_by_cable_rating": "Begrænset af ladekablets klassificering",
+          "limited_by_car": "Opladning begrænset af bilen",
+          "limited_by_charger_dynamic_limit": "Begrænset af ladeboksens dynamiske grænse",
+          "limited_by_charger_max_limit": "Begrænset af ladeboksens maksimale grænse",
+          "limited_by_circuit_dynamic_limit": "Begrænset af kredsløbets dynamiske grænse",
+          "limited_by_circuit_fuse": "Begrænset af hovedsikringen",
+          "limited_by_circuit_max_limit": "Begrænset af kredsløbets maksimale grænse",
+          "limited_by_equalizer": "Begrænset af equalizer",
+          "limited_by_load_balancing": "Begrænset af belastningsbalancering",
+          "limited_by_local_adjustment": "Begrænset af lokal justering",
+          "limited_by_offline_setting": "Begrænset af offline-indstilling",
+          "limited_by_schedule": "Begrænset af ladeplan",
+          "max_charger_current_too_low": "Opladerens maksimumgrænse er for lav",
+          "max_circuit_current_too_low": "Kredsløbets maksimumgrænse er for lav",
+          "max_dynamic_charger_current_too_low": "Opladerens dynamiske grænse er for lav",
+          "max_dynamic_circuit_current_too_low": "Kredsløbets maksimumgrænse er for lav",
+          "max_dynamic_offline_fallback_circuit_current_too_low": "Opladerens dynamiske grænse for offline-brug er for lav",
+          "no_current_request": "Ingen anmodning om strøm",
+          "none": "Ingen",
+          "not_connected_to_master": "Ikke forbundet til master",
+          "not_requesting_current": "Anmoder ikke om strøm",
+          "ok": "OK",
+          "pending_authorization": "Afventer godkendelse",
+          "pending_schedule": "Afventer tidsplan",
+          "phase_not_connected": "Fase er ikke tilsluttet",
+          "undefined": "Udefineret",
+          "waiting_in_fully": "Venter fuldt ud",
+          "waiting_in_queue": "Venter i kø"
+        }
+      },
+      "easee_status": {
+        "name": "Status",
+        "state": {
+          "authenticating": "Godkender",
+          "awaiting_authentication": "Venter på godkendelse",
+          "awaiting_authorization": "Venter på godkendelse",
+          "awaiting_load_balancing": "Venter på belastningsbalancering",
+          "awaiting_scheduled_start": "Venter på planlagt start",
+          "awaiting_smart_start": "Venter på start af smart opladning",
+          "awaiting_start": "Afventer start",
+          "charging": "Oplader",
+          "completed": "Fuldført",
+          "de_authorizing": "Afslutter godkendelse",
+          "disconnected": "Bilen er koblet fra",
+          "erratic_ev": "Uregelmæssig opladning af bilen",
+          "error": "Fejl",
+          "error_dead_powerboard": "Fejl. Ødelagt strømtilførsel",
+          "error_overcurrent": "Fejl. Overstrøm",
+          "error_pen_fault": "Fejl i jordbeskyttelsen",
+          "error_temperature_too_high": "Fejl. Temperaturen er for høj",
+          "offline": "Offline",
+          "paused_due_to_equalizer": "Sat på pause af Equalizer",
+          "ready_to_charge": "Klar til opladning",
+          "searching_for_master": "Søger efter master",
+          "start_charging": "Start opladning",
+          "stop_charging": "Stop opladningen"
+        }
+      },
+      "energy_last_hour": {
+        "name": "Energi seneste time"
+      },
+      "energy_per_hour": {
+        "name": "Energi pr. time"
+      },
+      "equalizer_limit": {
+        "name": "Equalizer-grænse"
+      },
+      "export_energy": {
+        "name": "Eksporter energi"
+      },
+      "export_power": {
+        "name": "Eksporter strøm"
+      },
+      "export_reactive_energy": {
+        "name": "Eksporter reaktiv strøm"
+      },
+      "export_reactive_power": {
+        "name": "Eksporter reaktiv strøm"
+      },
+      "import_energy": {
+        "name": "Importer strøm"
+      },
+      "import_power": {
+        "name": "Importer strøm"
+      },
+      "import_reactive_energy": {
+        "name": "Importer reaktiv energi"
+      },
+      "import_reactive_power": {
+        "name": "Importer reaktiv effekt"
+      },
+      "internal_temperature": {
+        "name": "Indvendig temperatur"
+      },
+      "lifetime_energy": {
+        "name": "Samlet energiforbrug i ladeboksens levetid"
+      },
+      "max_charger_limit": {
+        "name": "Opladerens maksimumgrænse"
+      },
+      "max_circuit_limit": {
+        "name": "Maksimal kredsløbsgrænse"
+      },
+      "offline_circuit_limit": {
+        "name": "Kredsløbets maksimumgrænse ved offline brug"
+      },
+      "output_limit": {
+        "name": "Output-grænse"
+      },
+      "power": {
+        "name": "Strøm"
+      },
+      "session_energy": {
+        "name": "Energi leveret i ladesessionen"
+      },
+      "voltage": {
+        "name": "Spænding"
+      }
+    },
+    "switch": {
+      "basic_schedule": {
+        "name": "Udsat start"
+      },
+      "cable_locked_permanently": {
+        "name": "Kabel låst permanent"
+      },
+      "idle_current": {
+        "name": "Strømstyrke i tomgang"
+      },
+      "is_enabled": {
+        "name": "Ladeboksen er aktiveret"
+      },
+      "smart_button": {
+        "name": "Touch-knap aktiveret"
+      },
+      "smart_charging": {
+        "name": "Smart opladning"
+      },
+      "surplus": {
+        "name": "Opladning med overskydende energi"
+      },
+      "weekly_schedule": {
+        "name": "Ugeplan"
+      }
+    }
+  },
+  "issues": {
+    "currentpx_deprecation": {
+      "description": "Anvendelsen af {argument} som fasens strømstyrke understøttes ikke længere og vil blive fjernet i fremtidige versioner. Ret venligst dine automatiseringer og scripts til at bruge {recommendation} i stedet.",
+      "title": "Brug af {argument} i servicekald"
+    },
+    "deprecated_service": {
+      "description": "Brugen af tjenesten **{deprecation}** er forældet, og tjenesten vil blive fjernet i fremtiden.\n\nRet venligst dine automatiseringer og scripts til at bruge **{recommend}** så hurtigt som muligt",
+      "title": "Brug af forældet tjeneste: {deprecation}"
+    },
+    "numeric_deprecation": {
+      "description": "Anvendelsen af numerisk værdi i {argument} understøttes ikke længere og vil blive fjernet i fremtidige versioner. Ret venligst dine automatiseringer og scripts til at bruge {recommendation} i stedet.",
+      "title": "Brug af numerisk værdi for {argument} i servicekald"
+    }
+  },
+  "options": {
+    "error": {
+      "no_sites": "Ingen overvågede steder er valgt"
+    },
+    "step": {
+      "init": {
+        "data": {
+          "custom_units": "Brugerdefinerede enheder",
+          "measured_consumption_days": "Dage til overvågning af forbrug",
+          "monitored_conditions": "Sensorer i ladebokse, der overvåges",
+          "monitored_eq_conditions": "Equalizer sensorer, der overvåges",
+          "monitored_sites": "Overvågede steder"
+        },
+        "description": "Vælg indstillinger",
+        "title": "Easee ladeboks"
+      }
+    }
+  },
+  "selector": {
+    "access_level": {
+      "options": {
+        "open_for_all": "Åben for alle",
+        "require_easee_account": "Kræv brug af Easee-konto",
+        "whitelist": "Godkendte brugere"
+      }
+    },
+    "action_command": {
+      "options": {
+        "delete_basic_charge_plan": "Slet udsat start af opladning",
+        "delete_weekly_charge_plan": "Slet ugeplan for opladning",
+        "disable_basic_charge_plan": "Deaktiver udsat start af opladning",
+        "disable_weekly_charge_plan": "Deaktiver ugeplan for opladning",
+        "enable_basic_charge_plan": "Aktiver udsat start af opladning",
+        "enable_weekly_charge_plan": "Aktiver ugeplan for opladning",
+        "override_schedule": "Tilsidesæt planlagt opladning",
+        "pause": "Sæt opladning på pause",
+        "reboot": "Genstart ladeboksen",
+        "resume": "Genoptag opladning",
+        "start": "Godkend (start)",
+        "stop": "Fjern godkendelse (stop)",
+        "toggle": "Skift",
+        "update_firmware": "Opdater firmware"
+      }
+    },
+    "phase_mode": {
+      "options": {
+        "1_phase": "1-fase",
+        "3_phase": "3-faser",
+        "auto_phase": "Automatisk fasetilstand"
+      }
+    },
+    "weekday": {
+      "options": {
+        "friday": "Fredag",
+        "monday": "Mandag",
+        "saturday": "Lørdag",
+        "sunday": "Søndag",
+        "thursday": "Torsdag",
+        "tuesday": "Tirsdag",
+        "wednesday": "Onsdag"
+      }
+    }
+  },
+  "services": {
+    "action_command": {
+      "description": "Send kommando til oplader",
+      "fields": {
+        "action_command": {
+          "description": "Vælg den kommando, der skal udføres",
+          "name": "Kommando"
+        },
+        "device_id": {
+          "description": "Vælg den enhed, der skal styres",
+          "name": "Målenhed"
+        }
+      },
+      "name": "Kommando"
+    },
+    "set_basic_charge_plan": {
+      "description": "Indstil udsat start af opladning",
+      "fields": {
+        "current": {
+          "description": "Maksimal strømstyrke i ladeplanen",
+          "name": "Maksimal strømstyrke"
+        },
+        "device_id": {
+          "description": "Vælg den enhed, der skal styres",
+          "name": "Målenhed"
+        },
+        "repeat": {
+          "description": "Gentag plan",
+          "name": "Gentag plan"
+        },
+        "start_datetime": {
+          "description": "Planlagt starttidspunkt for opladning",
+          "name": "Starttidspunkt"
+        },
+        "stop_datetime": {
+          "description": "Planlagt sluttidspunkt for opladning",
+          "name": "Sluttidspunkt"
+        }
+      },
+      "name": "Indstil udsat start af opladning"
+    },
+    "set_charger_access": {
+      "description": "Vælg, hvem der skal kunne oplade",
+      "fields": {
+        "access_level": {
+          "description": "Indstil adgang til opladning",
+          "name": "Adgang"
+        },
+        "device_id": {
+          "description": "Vælg den enhed, der skal styres",
+          "name": "Målenhed"
+        }
+      },
+      "name": "Indstil adgang til oplader"
+    },
+    "set_charger_dynamic_limit": {
+      "description": "Indstil ladeboksens dynamiske grænse",
+      "fields": {
+        "current": {
+          "description": "Maksimal strømstyrke",
+          "name": "Strømstyrke"
+        },
+        "device_id": {
+          "description": "Vælg en af opladerne i kredsløbet, som skal styres.",
+          "name": "Målenhed"
+        },
+        "time_to_live": {
+          "description": "Indstil levetid i antal minutter, som kommandoen skal gælde for. 0 = ubestemt tid.",
+          "name": "Levetid"
+        }
+      },
+      "name": "Indstil ladeboksens dynamiske grænse"
+    },
+    "set_charger_max_limit": {
+      "description": "Indstil opladerens maksimumgrænse. OBS! Bør ikke indstilles af automatiseringer, da det kan ødelægge ladeboksens flashhukommelse, hvis den grænsen ændres for ofte.",
+      "fields": {
+        "current": {
+          "description": "Maksimal strømstyrke",
+          "name": "Strømstyrke"
+        },
+        "device_id": {
+          "description": "Vælg en af opladerne i kredsløbet, som skal styres.",
+          "name": "Målenhed"
+        }
+      },
+      "name": "Indstil opladerens maksimumgrænse"
+    },
+    "set_charger_phase_mode": {
+      "description": "Indstil fasetilstand",
+      "fields": {
+        "device_id": {
+          "description": "Vælg den enhed, der skal styres",
+          "name": "Målenhed"
+        },
+        "phase_mode": {
+          "description": "Fasetilstand",
+          "name": "Fasetilstand"
+        }
+      },
+      "name": "Indstil fasetilstand"
+    },
+    "set_charging_cost": {
+      "description": "Indstil pris pr. kWh for opladerstedet",
+      "fields": {
+        "cost_per_kwh": {
+          "description": "Pris pr. kWh",
+          "name": "Pris pr. kWh"
+        },
+        "currency_id": {
+          "description": "Valutakode",
+          "name": "Valuta"
+        },
+        "device_id": {
+          "description": "Vælg en af opladerne i kredsløbet, som skal styres.",
+          "name": "Målenhed"
+        },
+        "vat": {
+          "description": "Moms",
+          "name": "Moms"
+        }
+      },
+      "name": "Indstil opladningsomkostninger"
+    },
+    "set_circuit_dynamic_limit": {
+      "description": "Indstil den dynamiske grænse (deles mellem opladere på samme kredsløb). Denne grænse må anvendes til automatisk indstilling.",
+      "fields": {
+        "current_p1": {
+          "description": "Maksimal opladningsstrøm",
+          "name": "Strømstyrke på fase 1"
+        },
+        "current_p2": {
+          "description": "Maksimal ladestrøm. Hvis den er deaktiveret, vil strømstyrken for fase 1 blive brugt.",
+          "name": "Strømstyrke på fase 2"
+        },
+        "current_p3": {
+          "description": "Maksimal ladestrøm. Hvis den er deaktiveret, vil strømstyrken for fase 1 blive brugt.",
+          "name": "Strømstyrke på fase 3"
+        },
+        "device_id": {
+          "description": "Vælg en af opladerne i kredsløbet, som skal styres.",
+          "name": "Målenhed"
+        },
+        "time_to_live": {
+          "description": "Indstil levetid i antal minutter, som kommandoen skal gælde for. 0 = ubestemt tid.",
+          "name": "Levetid"
+        }
+      },
+      "name": "Indstil kredsløbets dynamiske grænse"
+    },
+    "set_circuit_max_limit": {
+      "description": "Indstil kredsløbets maksimumgrænse. OBS! Bør ikke indstilles af automatiseringer, da det kan ødelægge ladeboksens flashhukommelse, hvis den grænsen ændres for ofte.",
+      "fields": {
+        "current_p1": {
+          "description": "Maksimal strømstyrke",
+          "name": "Strømstyrke på fase 1"
+        },
+        "current_p2": {
+          "description": "Maksimal ladestrøm. Hvis den er deaktiveret, vil strømstyrken for fase 1 blive brugt.",
+          "name": "Strømstyrke på fase 2"
+        },
+        "current_p3": {
+          "description": "Maksimal ladestrøm. Hvis den er deaktiveret, vil strømstyrken for fase 1 blive brugt.",
+          "name": "Strømstyrke på fase 3"
+        },
+        "device_id": {
+          "description": "Vælg en af opladerne i kredsløbet, som skal styres.",
+          "name": "Målenhed"
+        }
+      },
+      "name": "Indstil kredsløbets maksimumgrænse"
+    },
+    "set_circuit_offline_limit": {
+      "description": "Indstil kredsløbets offline grænse, der bruges, hvis opladeren er offline (nødplan). OBS! Bør ikke indstilles af automatiseringer, da det kan ødelægge ladeboksens flashhukommelse, hvis den grænsen ændres for ofte.",
+      "fields": {
+        "current_p1": {
+          "description": "Maksimal strømstyrke",
+          "name": "Strømstyrke på fase 1"
+        },
+        "current_p2": {
+          "description": "Maksimal ladestrøm. Hvis den er deaktiveret, vil strømstyrken for fase 1 blive brugt.",
+          "name": "Strømstyrke på fase 2"
+        },
+        "current_p3": {
+          "description": "Maksimal ladestrøm. Hvis den er deaktiveret, vil strømstyrken for fase 1 blive brugt.",
+          "name": "Strømstyrke på fase 3"
+        },
+        "device_id": {
+          "description": "Vælg en af opladerne i kredsløbet, som skal styres.",
+          "name": "Målenhed"
+        }
+      },
+      "name": "Indstil opladerens maksimumgrænse ved offline brug"
+    },
+    "set_surplus_charging": {
+      "description": "Indstil opladning med overskydende energi",
+      "fields": {
+        "current": {
+          "description": "Maksimal ekstra strøm fra nettet",
+          "name": "Strømstyrke"
+        },
+        "device_id": {
+          "description": "Vælg den enhed, der skal styres",
+          "name": "Målenhed"
+        },
+        "enable": {
+          "description": "Aktiver opladning med overskydende energi",
+          "name": "Aktiver"
+        }
+      },
+      "name": "Indstil opladning med overskydende energi"
+    },
+    "set_weekly_charge_plan": {
+      "description": "Indstil ugentlig opladningsplan",
+      "fields": {
+        "current": {
+          "description": "Maksimal strømstyrke i ladeplanen",
+          "name": "Maksimal strømstyrke"
+        },
+        "day": {
+          "description": "Ugedag for denne tidsplan",
+          "name": "Ugedag"
+        },
+        "device_id": {
+          "description": "Vælg den enhed, der skal styres",
+          "name": "Målenhed"
+        },
+        "start_time": {
+          "description": "Planlagt starttidspunkt for opladning",
+          "name": "Starttidspunkt"
+        },
+        "stop_time": {
+          "description": "Planlagt sluttidspunkt for opladning",
+          "name": "Sluttidspunkt"
+        }
+      },
+      "name": "Indstil ugentlig opladningsplan"
+    },
+    "smart_charging": {
+      "description": "Aktiver/deaktiver smart opladning",
+      "fields": {
+        "device_id": {
+          "description": "Vælg den enhed, der skal styres",
+          "name": "Målenhed"
+        },
+        "enable": {
+          "description": "Aktiver smart opladning",
+          "name": "Aktiver"
+        }
+      },
+      "name": "Smart opladning"
+    }
+  },
+  "system_health": {
+    "info": {
+      "component_version": "Version",
+      "connected2stream": "Forbundet til signalr",
+      "reach_easee_cloud": "Adgang til Easee Cloud"
+    }
+  },
+  "title": "Easee ladeboks"
+}
