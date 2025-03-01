@@ -398,7 +398,7 @@ class ProductData:
             try:
                 first, second = name.split("_")
             except Exception as ex:  # pylint: disable=broad-except
-                _LOGGER.print("Exception %s when splitting %s", ex, name)
+                _LOGGER.debug("Exception %s when splitting %s", ex, name)
                 return False
 
             if first == "state":
