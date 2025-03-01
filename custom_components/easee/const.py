@@ -1,6 +1,5 @@
 """Easee Charger constants."""
 
-# pylint: disable=too-many-lines
 from pyeasee import ChargerStreamData, EqualizerStreamData
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
