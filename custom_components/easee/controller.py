@@ -123,8 +123,8 @@ class CostData:
                 self.request_queue.task_done()
 
             await self.update_cost()
-            """Wait to comply with rate limit (max 10 calls/hour)"""
-            await asyncio.sleep(1200-self.period)
+            # Wait to comply with rate limit (max 10 calls/hour)
+            await asyncio.sleep(1200 - self.period)
 
     async def update_cost(self):
         """Poll cost data and notify observers."""
