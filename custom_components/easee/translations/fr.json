@@ -121,6 +121,11 @@
         "name": "Ignorer la Programmation"
       }
     },
+    "light": {
+      "led_strip": {
+        "name": "Bande LED"
+      }
+    },
     "sensor": {
       "circuit_current": {
         "name": "Courant du circuit"
@@ -213,6 +218,9 @@
           "start_charging": "Début de la charge",
           "stop_charging": "Arrêt de la charge"
         }
+      },
+      "energy_last_hour": {
+        "name": "Énergie durant la dernière heure"
       },
       "energy_per_hour": {
         "name": "Énergie par heure"
@@ -438,6 +446,10 @@
         "device_id": {
           "description": "Sélectionnez l’un des chargeurs du circuit qui doit être contrôlé.",
           "name": "Cible"
+        },
+        "time_to_live": {
+          "description": "Régler le temps en minutes pour que l'ordre vive. 0 = indéfiniment.",
+          "name": "Durée de vie"
         }
       },
       "name": "Définissez la limite dynamique du chargeur"
@@ -573,7 +585,8 @@
         "enable": {
           "name": "Activer"
         }
-      }
+      },
+      "name": "Définir les excédents de charge"
     },
     "set_weekly_charge_plan": {
       "description": "Définissez un plan de charge hebdomadaire",
