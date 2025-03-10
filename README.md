@@ -50,6 +50,8 @@ Configuration is done through in Configuration > Integrations where you first co
 ## Use
 The basic use of the integrations from the UI should be self-explanatory. The integration defines a number of services that can be used from automations and scripts to control the charger and the charging process. The available services can be found in Home Assistant at Developer tools->Services.
 
+A wiki has been created which tries to answer some of the more frequently asked questions about the integration: https://github.com/nordicopen/easee_hass/wiki
+
 The easiest way to set up services and their parameters is to use the automation editor or the developer tools. However, you can also write the code in plain yaml. The UI will use device_id as target for the services. This is a random string generated internally by HA and is not very user friendly. To simplify for hard-core coders and to be backward compatible with previous versions of this integration you can also use charger_id or circuit_id as targets.
 Three examples that will do the same thing:
 ```yaml
