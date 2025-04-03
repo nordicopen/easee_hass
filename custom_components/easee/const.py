@@ -382,6 +382,16 @@ OPTIONAL_EASEE_ENTITIES = {
         "device_class": BinarySensorDeviceClass.CONNECTIVITY,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
+    "phase_mode": {
+        "key": "config.phaseMode",
+        "attrs": [],
+        "units": None,
+        "convert_units_func": "map_phase_mode",
+        "translation_key": "phase_mode",
+        "device_class": None,
+        "enabled_default": False,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+    },
     "output_limit": {
         "key": "state.outputCurrent",
         "attrs": [],
@@ -989,14 +999,14 @@ NODE_TYPE_STATUS = {
     2: NT_EXTENDER,
 }
 
-PM_LOCKED_SINGLE = "locked_single"
+PM_SINGLE = "single"
 PM_AUTO = "auto"
-PM_LOCKED_THREE = "locked_three"
+PM_THREE = "three"
 
 PHASE_MODE_STATUS = {
-    1: PM_LOCKED_SINGLE,
+    1: PM_SINGLE,
     2: PM_AUTO,
-    3: PM_LOCKED_THREE,
+    3: PM_THREE,
 }
 
 RNC_NONE = "none"
