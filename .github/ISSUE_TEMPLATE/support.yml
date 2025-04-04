@@ -8,6 +8,7 @@ body:
         This form is for support and other questions!
         Make sure that yo have updated the integration to the latest version.
         Check if there are similar requests already. If so, please add your request as a comment to that issue.
+        Check if your question is already answered by the information in the wiki or readme.
   - type: textarea
     validations:
       required: true
