@@ -219,6 +219,14 @@
           "stop_charging": "Stop charging"
         }
       },
+      "phase_mode" : {
+        "name": "Phase mode",
+        "state": {
+          "single": "Single",
+          "auto": "Auto",
+          "three": "Three"
+        }
+      },
       "energy_last_hour": {
         "name": "Energy last hour"
       },

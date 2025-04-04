@@ -13,7 +13,13 @@ from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.util import dt as dt_util
 
-from .const import DOMAIN, EASEE_PRODUCT_CODES, EASEE_STATUS, REASON_NO_CURRENT
+from .const import (
+    DOMAIN,
+    EASEE_PRODUCT_CODES,
+    EASEE_STATUS,
+    PHASE_MODE_STATUS,
+    REASON_NO_CURRENT,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -57,12 +63,18 @@ def map_reason_no_current(value, unit=None) -> str:
     return REASON_NO_CURRENT.get(value, f"unknown {value}")
 
 
+def map_phase_mode(value, unit=None) -> str:
+    """Map phase mode."""
+    return PHASE_MODE_STATUS.get(value, f"unknown {value}")
+
+
 convert_units_funcs = {
     "round_0_dec": round_0_dec,
     "round_1_dec": round_1_dec,
     "round_2_dec": round_2_dec,
     "map_charger_status": map_charger_status,
     "map_reason_no_current": map_reason_no_current,
+    "map_phase_mode": map_phase_mode,
 }
 
 
