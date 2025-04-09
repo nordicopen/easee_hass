@@ -96,9 +96,14 @@ class CostData:
             self.request_handler(), name="easee_hass cost update task"
         )
 
-    def __del__(self):
+    async def async_cleanup(self) -> None:
         """Cancel our consumer task."""
         self.task.cancel()
+        try:
+            await self.task
+        except asyncio.CancelledError:
+            _LOGGER.debug("Cost update task cancelled")
+        self.task = None
 
     def register_for_update(self, product_id, cost_callback):
         """Register callback for data update."""
@@ -547,6 +552,8 @@ class Controller:
                 await self.easee.sr_unsubscribe(equalizer)
             for charger in self.chargers:
                 await self.easee.sr_unsubscribe(charger)
+            for cost_data in self.costs_data:
+                await cost_data.async_cleanup()
             await self.easee.close()
 
         self.hass.data[DOMAIN].pop("controller")
