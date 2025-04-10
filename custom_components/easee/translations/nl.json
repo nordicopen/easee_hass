@@ -176,7 +176,7 @@
           "max_charger_current_too_low": "Maximale limiet lader te laag",
           "max_circuit_current_too_low": "Maximale limiet stroomcircuit te laag",
           "max_dynamic_charger_current_too_low": "Maximaal dynamisch stroom lader te laag",
-          "max_dynamic_circuit_current_too_low": "Maximaal dynamisch stroom stroomcircuit te laag",
+          "max_dynamic_circuit_current_too_low": "Maximaal  stroom stroomcircuit te laag",
           "max_dynamic_offline_fallback_circuit_current_too_low": "Maximaal dynamisch stroom offline terugvalcircuit te laag",
           "no_current_request": "Geen stroomvraag",
           "none": "Geen",
@@ -300,7 +300,7 @@
         "name": "Slim laden"
       },
       "surplus": {
-        "name": "Slim laden"
+        "name": "Overschot laden"
       },
       "weekly_schedule": {
         "name": "Wekelijks schema"
@@ -368,7 +368,8 @@
     "phase_mode": {
       "options": {
         "1_phase": "1 fase modus",
-        "3_phase": "3 fase modus"
+        "3_phase": "3 fase modus",
+        "auto_phase": "Auto fasemodus"
       }
     },
     "weekday": {
@@ -450,12 +451,14 @@
           "name": "Doelapparaat"
         },
         "time_to_live": {
-          "name": "Time to live"
+          "description": "Tijd in minuten om voor het commando om actief te blijven. 0 = oneindig",
+          "name": "Tijd om actief te blijven"
         }
       },
       "name": "Stel de dynamische limiet van de oplader in"
     },
     "set_charger_max_limit": {
+      "description": "Stel de maximale limiet van de lader in. Opgepast! Niet gebruiken voor een automatisering (dit kan extra slijtage in flash geheugen veroorzaken als het te vaak gebeurd).",
       "fields": {
         "current": {
           "description": "Max laadstroom",
@@ -469,11 +472,18 @@
       "name": "Selecteer maximum output voor de lader"
     },
     "set_charger_phase_mode": {
+      "description": "Stel de fasemodus van de lader in",
       "fields": {
         "device_id": {
+          "description": "Selecteer het apparaat om aan te sturen",
           "name": "Doelapparaat"
+        },
+        "phase_mode": {
+          "description": "Lader fase mode",
+          "name": "Fase mode"
         }
-      }
+      },
+      "name": "Stel de fasemodus in"
     },
     "set_charging_cost": {
       "description": "Stel de laadkosten in per kWh voor de opladerlocatie",
@@ -498,6 +508,7 @@
       "name": "Laadtarief instellen"
     },
     "set_circuit_dynamic_limit": {
+      "description": "\nStel dynamische limiet van het circuit in (gedeeld tussen laders op dat circuit). Deze service kan worden gebruikt in automatiseringen.",
       "fields": {
         "current_p1": {
           "description": "Max laadstroom instellen",
@@ -516,6 +527,7 @@
           "name": "Doelapparaat"
         },
         "time_to_live": {
+          "description": "Stel de tijd in minuten in voor het commando om actief te blijven. 0 = oneindig",
           "name": "Selecteer tijd tot standby"
         }
       },
@@ -566,9 +578,15 @@
       "name": "Offline limiet stroomcircuit instellen"
     },
     "set_surplus_charging": {
+      "description": "Stel overschot laden in",
       "fields": {
         "current": {
+          "description": "Maximale extra stroom van het net",
           "name": "Stroom"
+        },
+        "device_id": {
+          "description": "Selecteer het te bedienen apparaat",
+          "name": "Doel apparaat"
         },
         "enable": {
           "description": "Slim laden activeren",

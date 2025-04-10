@@ -270,6 +270,14 @@
       "output_limit": {
         "name": "Total begränsning"
       },
+      "phase_mode": {
+        "name": "Fasläge",
+        "state": {
+          "auto": "Auto",
+          "single": "Enfas",
+          "three": "Trefas"
+        }
+      },
       "power": {
         "name": "Effekt"
       },
