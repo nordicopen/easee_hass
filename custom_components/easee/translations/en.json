@@ -176,7 +176,7 @@
           "max_charger_current_too_low": "Max charger limit too low",
           "max_circuit_current_too_low": "Max circuit current too low",
           "max_dynamic_charger_current_too_low": "Max dynamic charger limit too low",
-          "max_dynamic_circuit_current_too_low": "Max circuit current too low",
+          "max_dynamic_circuit_current_too_low": "Max dynamic circuit current too low",
           "max_dynamic_offline_fallback_circuit_current_too_low": "Max dynamic offline fallback circuit current too low",
           "no_current_request": "No current request",
           "none": "None",
