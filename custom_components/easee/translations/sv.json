@@ -177,7 +177,7 @@
           "max_circuit_current_too_low": "Max kretsström för låg",
           "max_dynamic_charger_current_too_low": "Laddboxens dynamiska maxström för låg",
           "max_dynamic_circuit_current_too_low": "Max dynamisk kretsström för låg",
-          "max_dynamic_offline_fallback_circuit_current_too_low": "Max dynamic offline fallback circuit current too low",
+          "max_dynamic_offline_fallback_circuit_current_too_low": "Max dynamisk reserv-kretsström för låg",
           "no_current_request": "Ingen begäran om ström från sekundär enhet",
           "none": "Ingen",
           "not_connected_to_master": "Inte ansluten till master",
