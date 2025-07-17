@@ -642,6 +642,24 @@
         }
       },
       "name": "Smart charging"
+    },
+    "set_charger_ocpp": {
+      "description": "Configure local OCPP enable/disable and URL",
+      "fields": {
+        "device_id": {
+          "description": "Select a device to be controlled",
+          "name": "Target device"
+        },
+        "enable": {
+          "description": "Enable local OCPP mode",
+          "name": "Enable"
+        },
+        "ocpp_url": {
+          "description": "Local OCPP server address",
+          "name": "OCPP URL"
+        }
+      },
+      "name": "Set charger local OCPP mode"
     }
   },
   "system_health": {

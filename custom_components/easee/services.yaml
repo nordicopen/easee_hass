@@ -429,3 +429,25 @@ set_surplus_charging:
           step: 1
           unit_of_measurement: "A"
           mode: slider
+
+set_charger_ocpp:
+  fields:
+    device_id:
+      required: true
+      example: "b40f1f45d28b0891fe8d"
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    enable:
+      required: True
+      example: True
+      selector:
+        boolean:
+    ocpp_url:
+      required: False
+      example: "ws://192.168.1.1:9000"
+      selector:
+        text:
+          type: url
