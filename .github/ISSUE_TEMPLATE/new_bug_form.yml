@@ -17,7 +17,7 @@ body:
       label: Before creating an issue...
       description: Please tick applicable boxes.
       options:
-        - label: There is no open issue describing the same problem
+        - label: There is no open or recently closed issue describing the same problem
         - label: I am running latest versions of the integration and of Home Assistant
         - label: I have checked the operational status of the Easee API
   - type: textarea
