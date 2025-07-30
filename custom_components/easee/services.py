@@ -368,6 +368,7 @@ SERVICE_MAP = {
     "set_charger_ocpp": {
         "handler": "charger_execute_set_ocpp",
         "function_call": "set_ocpp_config",
+        "function_call_2": "apply_ocpp_config",
         "schema": SERVICE_SET_OCPP,
     },
 }
@@ -1029,7 +1030,7 @@ async def async_setup_services(hass):  # noqa: C901
         )
 
     async def charger_execute_set_ocpp(call):
-        """Execute a service with an action command to Easee charging station."""
+        """Set the local OCPP configuration of a charger."""
 
         charger = await async_get_charger(call)
         enable = call.data.get(ATTR_ENABLE)
@@ -1046,8 +1047,10 @@ async def async_setup_services(hass):  # noqa: C901
         if charger:
             function_name = SERVICE_MAP[call.service]
             function_call = getattr(charger, function_name["function_call"])
+            function_call_2 = getattr(charger, function_name["function_call_2"])
             try:
-                return await function_call(enable, url)
+                version = await function_call(enable, url)
+                return await function_call_2(version)
             except BadRequestException as ex:
                 # msg = ex.args[0].get("title", "")
                 _LOGGER.error(
