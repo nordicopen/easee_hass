@@ -681,19 +681,37 @@ class Controller:
     async def async_add_schedulers(self):
         """Add schedules to update data."""
         # first update
-        await self.async_refresh_sites_state()
-        await self.async_refresh_equalizers_state()
-        await asyncio.gather(
-            *[charger.async_cost_refresh() for charger in self.chargers_data]
-        )
-        await asyncio.gather(
-            *[charger.async_firmware_refresh() for charger in self.chargers_data]
-        )
-        await asyncio.gather(
-            *[equalizer.async_firmware_refresh() for equalizer in self.equalizers_data]
-        )
-        for charger in self.chargers_data:
-            charger.site_notify()
+        try:
+            await self.async_refresh_sites_state()
+        except Exception as err:
+            _LOGGER.error("Failed during call to async_refresh_sites_state: %s", err)
+        try:
+            await self.async_refresh_equalizers_state()
+        except Exception as err:
+            _LOGGER.error("Failed during call to async_refresh_equalizers_state: %s", err)
+        try:
+            await asyncio.gather(
+                *[charger.async_cost_refresh() for charger in self.chargers_data]
+            )
+        except Exception as err:
+            _LOGGER.error("Failed during call to async_cost_refresh: %s", err)
+        try:
+            await asyncio.gather(
+                *[charger.async_firmware_refresh() for charger in self.chargers_data]
+            )
+        except Exception as err:
+            _LOGGER.error("Failed during call to charger async_firmware_refresh: %s", err)
+        try:
+            await asyncio.gather(
+                *[equalizer.async_firmware_refresh() for equalizer in self.equalizers_data]
+            )
+        except Exception as err:
+            _LOGGER.error("Failed during call to equalizer async_firmware_refresh: %s", err)
+        try:
+            for charger in self.chargers_data:
+                charger.site_notify()
+        except Exception as err:
+            _LOGGER.error("Failed during call to charger site_notify: %s", err)
 
         # Add interval refresh for site state interval
         self.async_on_remove(
