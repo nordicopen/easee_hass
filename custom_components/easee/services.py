@@ -60,6 +60,7 @@ ATTR_PHASE_MODES = {
     ATTR_AUTOPHASE: 2,
     ATTR_3PHASE: 3,
 }
+ATTR_OCPP_URL = "ocpp_url"
 ACTION_COMMAND = "action_command"
 ACTION_START = "start"
 ACTION_STOP = "stop"
@@ -264,6 +265,16 @@ SERVICE_SET_SURPLUS_CHARGING = vol.All(
     exclusive_eq_schema2.extend(ext_surplus_charging),
 )
 
+ext_ocpp_mode = {
+    vol.Required(ATTR_ENABLE): cv.boolean,
+    vol.Optional(ATTR_OCPP_URL): cv.string,
+}
+
+SERVICE_SET_OCPP = vol.All(
+    target_schema2,
+    exclusive_schema2.extend(ext_ocpp_mode),
+)
+
 SERVICE_MAP = {
     "action_command": {
         "handler": "charger_execute_action_command",
@@ -353,6 +364,12 @@ SERVICE_MAP = {
         "handler": "equalizer_execute_set_surplus_charging",
         "function_call": "set_load_balancing",
         "schema": SERVICE_SET_SURPLUS_CHARGING,
+    },
+    "set_charger_ocpp": {
+        "handler": "charger_execute_set_ocpp",
+        "function_call": "set_ocpp_config",
+        "function_call_2": "apply_ocpp_config",
+        "schema": SERVICE_SET_OCPP,
     },
 }
 
@@ -1011,6 +1028,52 @@ async def async_setup_services(hass):  # noqa: C901
         raise HomeAssistantError(
             f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
         )
+
+    async def charger_execute_set_ocpp(call):
+        """Set the local OCPP configuration of a charger."""
+
+        charger = await async_get_charger(call)
+        enable = call.data.get(ATTR_ENABLE)
+        url = call.data.get(ATTR_OCPP_URL)
+
+        if url is None:
+            url = "ws://127.0.0.1:9000"
+
+        _LOGGER.debug("Call set ocpp enable %d on charger_id: %s with url %s",
+            enable,
+            charger.id,
+            url
+        )
+        if charger:
+            function_name = SERVICE_MAP[call.service]
+            function_call = getattr(charger, function_name["function_call"])
+            function_call_2 = getattr(charger, function_name["function_call_2"])
+            try:
+                version = await function_call(enable, url)
+                return await function_call_2(version)
+            except BadRequestException as ex:
+                # msg = ex.args[0].get("title", "")
+                _LOGGER.error(
+                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                    str(call.service),
+                    ex.message.get("title", ""),
+                )
+                return
+            except ForbiddenServiceException:
+                _LOGGER.error(
+                    "Forbidden service: %s - Check your access privileges",
+                    str(call.service),
+                )
+                return
+            except Exception:
+                _LOGGER.error(
+                    "Failed to execute service: %s with data %s",
+                    str(call.service),
+                    str(call.data),
+                )
+                return
+        raise HomeAssistantError(f"Could not find charger: {charger.id}")
+
 
     for service, data in SERVICE_MAP.items():
         handler = locals()[data["handler"]]
