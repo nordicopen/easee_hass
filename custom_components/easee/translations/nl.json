@@ -270,6 +270,14 @@
       "output_limit": {
         "name": "Limiet uitgangsvermogen"
       },
+      "phase_mode": {
+        "name": "Fase mode",
+        "state": {
+          "auto": "Auto",
+          "single": "Enkel",
+          "three": "Drie"
+        }
+      },
       "power": {
         "name": "Vermogen"
       },
