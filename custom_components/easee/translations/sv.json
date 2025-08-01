@@ -479,6 +479,24 @@
       },
       "name": "Ställ in laddboxens maxgräns"
     },
+    "set_charger_ocpp": {
+      "description": "Konfigurera lokal OCPP aktivering och URL",
+      "fields": {
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        },
+        "enable": {
+          "description": "Aktivera lokalt OCPP läge",
+          "name": "Aktivera"
+        },
+        "ocpp_url": {
+          "description": "OCPP Server adress",
+          "name": "OCPP URL"
+        }
+      },
+      "name": "Ställl in lokalt OCPP läge"
+    },
     "set_charger_phase_mode": {
       "description": "Ställ in laddboxens fasläge",
       "fields": {
