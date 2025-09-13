@@ -33,7 +33,10 @@ EASEE_PRODUCT_CODES = {
     1: "Easee Home",
     100: "Easee Charge",
     2: "Charge Lite",
+    3: "Charge Max",
+    4: "Charge Up",
     102: "Charge Core",
+    103: "Charge Pro",
     400: "Charge One",
 }
 
