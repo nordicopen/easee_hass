@@ -1,5 +1,5 @@
 [tool.bumpver]
-current_version = "0.9.71"
+current_version = "0.9.72"
 version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
 commit_message = "Bump version from {old_version} to {new_version}"
 commit = false
