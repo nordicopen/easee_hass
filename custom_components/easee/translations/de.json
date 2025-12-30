@@ -270,6 +270,14 @@
       "output_limit": {
         "name": "Ausgabelimit"
       },
+      "phase_mode": {
+        "name": "Phasenmodus",
+        "state": {
+          "auto": "Auto",
+          "single": "einzel",
+          "three": "drei"
+        }
+      },
       "power": {
         "name": "Leistung"
       },
@@ -470,6 +478,20 @@
         }
       },
       "name": "Maximale Stromstärke des Ladegeräts festlegen"
+    },
+    "set_charger_ocpp": {
+      "fields": {
+        "device_id": {
+          "description": "Wähle zu kontrollierendes Gerät",
+          "name": "Endgerät"
+        },
+        "enable": {
+          "name": "Aktiviere"
+        },
+        "ocpp_url": {
+          "name": "Open Charge Point Protocol - URL"
+        }
+      }
     },
     "set_charger_phase_mode": {
       "description": "Phasenmodus des Ladegeräts auswählen",

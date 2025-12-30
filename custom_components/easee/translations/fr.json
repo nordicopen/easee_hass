@@ -270,6 +270,13 @@
       "output_limit": {
         "name": "Limite de sortie"
       },
+      "phase_mode": {
+        "state": {
+          "auto": "Automatique",
+          "single": "Simple",
+          "three": "Trois"
+        }
+      },
       "power": {
         "name": "Puissance"
       },
@@ -310,7 +317,7 @@
       "title": "Utilisation de {argument} dans l’appel de service"
     },
     "deprecated_service": {
-      "description": "L’utilisation du service **{deprecation}** est obsolète et le service sera supprimé à l’avenir.\n\nVeuillez convertir vos automatisations et scripts pour utiliser **{recommander}** dès que possible",
+      "description": "L’utilisation du service **{deprecation}** est obsolète et le service sera supprimé à l’avenir.\n\nVeuillez convertir vos automatisations et scripts pour utiliser **{recommend}** dès que possible",
       "title": "Utilisation d'un service obsolète : {deprecation}"
     },
     "numeric_deprecation": {
