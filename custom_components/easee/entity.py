@@ -263,7 +263,13 @@ class ChargerEntity(Entity):
                 raise IndexError("Unknown first part of key")
 
             if isinstance(value, datetime):
+                if value.tzinfo is None:
+                    value = value.replace(tzinfo=dt_util.UTC)
+                # Convert to configured local time zone
                 value = dt_util.as_local(value)
+
+
+
         except KeyError:
             value = ""
 
