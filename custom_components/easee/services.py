@@ -385,6 +385,8 @@ async def async_setup_services(hass):  # noqa: C901
         product_id = None
         device_reg = dr.async_get(hass)
         device_entry = device_reg.async_get(call.data[CONF_DEVICE_ID])
+        if device_entry is None:
+            raise HomeAssistantError(f"Could not find device_id {call.data[CONF_DEVICE_ID]}")
         for ident in device_entry.identifiers:
             for val in ident:
                 if val != DOMAIN:
