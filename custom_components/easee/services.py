@@ -8,7 +8,7 @@ from pyeasee.exceptions import BadRequestException, ForbiddenServiceException
 import voluptuous as vol
 
 from homeassistant.const import CONF_DEVICE_ID
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import (
     config_validation as cv,
     device_registry as dr,
@@ -399,6 +399,8 @@ async def async_setup_services(hass):  # noqa: C901
         else:
             charger_id = call.data[CHARGER_ID]
         charger = next((c for c in chargers if c.id == charger_id), None)
+        if charger is None:
+            raise ServiceValidationError(f"Could not find charger_id {charger_id}")
         return charger
 
     async def async_get_circuit_id(call):
@@ -413,6 +415,8 @@ async def async_setup_services(hass):  # noqa: C901
         else:
             equalizer_id = call.data[EQUALIZER_ID]
         equalizer = next((e for e in equalizers if e.id == equalizer_id), None)
+        if equalizer is None:
+            raise ServiceValidationError(f"Could not find equalizer_id {equalizer_id}")
         return equalizer
 
     async def charger_execute_service(call):
