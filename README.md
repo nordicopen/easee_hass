@@ -25,9 +25,10 @@ There are 2 different methods of installing the custom component
 
 ### HACS installation
 
-1. Add this repository from HACS->Integrations.
-2. Restart Home Assistant.
-3. Install the component from Settings->Integrations. You may have to clear the browser cache to make the Easee integration appear in the list.
+1. Make sure you have HACS installed. See https://www.hacs.xyz/docs/use/
+2. Add this repository from HACS->Integrations.
+3. Restart Home Assistant.
+4. Install the component from Settings->Integrations. You may have to clear the browser cache to make the Easee integration appear in the list.
 
 ### Git installation
 
