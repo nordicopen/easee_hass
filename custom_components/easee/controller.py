@@ -608,18 +608,21 @@ class Controller:
                     cost_data = CostData(site, period=60)
                     self.costs_data.append(cost_data)
                     equalizers = site.get_equalizers()
-                    for equalizer in equalizers:
-                        _LOGGER.debug(
-                            "Found equalizer: %s %s", equalizer.id, equalizer.name
-                        )
-                        self.equalizers.append(equalizer)
-                        equalizer_data = ProductData(
-                            equalizer,
-                            site,
-                            EqualizerStreamData,
-                            equalizerObservations,
-                        )
-                        self.equalizers_data.append(equalizer_data)
+                    if equalizers is None:
+                        _LOGGER.info("Site has %s %s has no equalizers", site.id, site.name)
+                    else:
+                        for equalizer in equalizers:
+                            _LOGGER.debug(
+                                "Found equalizer: %s %s", equalizer.id, equalizer.name
+                            )
+                            self.equalizers.append(equalizer)
+                            equalizer_data = ProductData(
+                                equalizer,
+                                site,
+                                EqualizerStreamData,
+                                equalizerObservations,
+                            )
+                            self.equalizers_data.append(equalizer_data)
                     circuits = site.get_circuits()
                     for circuit in circuits:
                         _LOGGER.debug(
@@ -631,7 +634,7 @@ class Controller:
                         self.circuits.append(circuit)
                         chargers = circuit.get_chargers()
                         if chargers is None:
-                            _LOGGER.error("No chargers found in site %s, circuit %s, make sure to add in Easee app first",
+                            _LOGGER.error("Site %s circuit %s has no chargers, make sure to add in Easee app",
                                           site.id, circuit.id)
                         else:
                             for charger in chargers:
