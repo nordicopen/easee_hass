@@ -608,18 +608,21 @@ class Controller:
                     cost_data = CostData(site, period=60)
                     self.costs_data.append(cost_data)
                     equalizers = site.get_equalizers()
-                    for equalizer in equalizers:
-                        _LOGGER.debug(
-                            "Found equalizer: %s %s", equalizer.id, equalizer.name
-                        )
-                        self.equalizers.append(equalizer)
-                        equalizer_data = ProductData(
-                            equalizer,
-                            site,
-                            EqualizerStreamData,
-                            equalizerObservations,
-                        )
-                        self.equalizers_data.append(equalizer_data)
+                    if equalizers is None:
+                        _LOGGER.info("Site %s %s has no equalizers", site.id, site.name)
+                    else:
+                        for equalizer in equalizers:
+                            _LOGGER.debug(
+                                "Found equalizer: %s %s", equalizer.id, equalizer.name
+                            )
+                            self.equalizers.append(equalizer)
+                            equalizer_data = ProductData(
+                                equalizer,
+                                site,
+                                EqualizerStreamData,
+                                equalizerObservations,
+                            )
+                            self.equalizers_data.append(equalizer_data)
                     circuits = site.get_circuits()
                     for circuit in circuits:
                         _LOGGER.debug(
@@ -629,29 +632,34 @@ class Controller:
                             circuit.get_data(),
                         )
                         self.circuits.append(circuit)
-                        for charger in circuit.get_chargers():
-                            if charger.id is not None:
-                                _LOGGER.debug(
-                                    "Found charger: %s %s %s",
-                                    charger.id,
-                                    charger.name,
-                                    charger.get_data(),
-                                )
-                                master = False
-                                back_plate = charger["backPlate"]
-                                if back_plate["id"] == back_plate["masterBackPlateId"]:
-                                    master = True
-                                self.chargers.append(charger)
-                                charger_data = ProductData(
-                                    charger,
-                                    site,
-                                    ChargerStreamData,
-                                    chargerObservations,
-                                    circuit,
-                                    master=master,
-                                    cost_data=cost_data,
-                                )
-                                self.chargers_data.append(charger_data)
+                        chargers = circuit.get_chargers()
+                        if chargers is None:
+                            _LOGGER.error("Site %s circuit %s has no chargers, make sure to add in Easee app",
+                                          site.id, circuit.id)
+                        else:
+                            for charger in chargers:
+                                if charger.id is not None:
+                                    _LOGGER.debug(
+                                        "Found charger: %s %s %s",
+                                        charger.id,
+                                        charger.name,
+                                        charger.get_data(),
+                                    )
+                                    master = False
+                                    back_plate = charger["backPlate"]
+                                    if back_plate["id"] == back_plate["masterBackPlateId"]:
+                                        master = True
+                                    self.chargers.append(charger)
+                                    charger_data = ProductData(
+                                        charger,
+                                        site,
+                                        ChargerStreamData,
+                                        chargerObservations,
+                                        circuit,
+                                        master=master,
+                                        cost_data=cost_data,
+                                    )
+                                    self.chargers_data.append(charger_data)
 
             self.hass.data[DOMAIN]["diagnostics"] = self.diagnostics
             self._init_count = 0
