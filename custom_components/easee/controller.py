@@ -609,7 +609,7 @@ class Controller:
                     self.costs_data.append(cost_data)
                     equalizers = site.get_equalizers()
                     if equalizers is None:
-                        _LOGGER.info("Site has %s %s has no equalizers", site.id, site.name)
+                        _LOGGER.info("Site %s %s has no equalizers", site.id, site.name)
                     else:
                         for equalizer in equalizers:
                             _LOGGER.debug(
