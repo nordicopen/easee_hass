@@ -479,6 +479,24 @@
       },
       "name": "Selecteer maximum output voor de lader"
     },
+    "set_charger_ocpp": {
+      "description": "Configureer lokale OCPP in-/uitschakeling en URL",
+      "fields": {
+        "device_id": {
+          "description": "Selecteer het te bedienen apparaat",
+          "name": "Doel apparaat"
+        },
+        "enable": {
+          "description": "Schakel lokale OCPP-modus in",
+          "name": "Inschakelen"
+        },
+        "ocpp_url": {
+          "description": "Lokaal OCPP-serveradres",
+          "name": "OCPP URL"
+        }
+      },
+      "name": "Stel lader lokale OCPP-modus in"
+    },
     "set_charger_phase_mode": {
       "description": "Stel de fasemodus van de lader in",
       "fields": {
