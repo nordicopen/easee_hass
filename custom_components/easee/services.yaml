@@ -18,9 +18,10 @@ action_command:
           options:
             - start
             - stop
-            - toggle
             - pause
             - resume
+            - toggle
+            - reboot
             - update_firmware
             - override_schedule
             - delete_basic_charge_plan
