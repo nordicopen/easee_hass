@@ -480,18 +480,22 @@
       "name": "Maximale Stromstärke des Ladegeräts festlegen"
     },
     "set_charger_ocpp": {
+      "description": "Konfiguration der lokalen OCPP-Aktivierung/Deaktivierung und der URL",
       "fields": {
         "device_id": {
           "description": "Wähle zu kontrollierendes Gerät",
           "name": "Endgerät"
         },
         "enable": {
+          "description": "Aktivieren des lokalen OCPP-Modus",
           "name": "Aktiviere"
         },
         "ocpp_url": {
+          "description": "lokale OCPP Server-Adresse",
           "name": "Open Charge Point Protocol - URL"
         }
-      }
+      },
+      "name": "Lokalen OCPP-Modus des Ladegeräts festlegen"
     },
     "set_charger_phase_mode": {
       "description": "Phasenmodus des Ladegeräts auswählen",

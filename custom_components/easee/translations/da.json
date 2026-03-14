@@ -270,6 +270,14 @@
       "output_limit": {
         "name": "Output-grænse"
       },
+      "phase_mode": {
+        "name": "Fasetilstand",
+        "state": {
+          "auto": "Auto ",
+          "single": "Enkelt",
+          "three": "Tre"
+        }
+      },
       "power": {
         "name": "Strøm"
       },
@@ -470,6 +478,24 @@
         }
       },
       "name": "Indstil opladerens maksimumgrænse"
+    },
+    "set_charger_ocpp": {
+      "description": "Konfigurer lokal OCPP-aktivering/deaktivering og URL",
+      "fields": {
+        "device_id": {
+          "description": "Vælg en enhed, der skal styres",
+          "name": "Målenhed"
+        },
+        "enable": {
+          "description": "Aktivér lokal OCPP-tilstand",
+          "name": "Aktiver"
+        },
+        "ocpp_url": {
+          "description": "Lokal OCPP-serveradresse",
+          "name": "OCPP-URL"
+        }
+      },
+      "name": "Indstil opladerens lokale OCPP-tilstand"
     },
     "set_charger_phase_mode": {
       "description": "Indstil fasetilstand",
