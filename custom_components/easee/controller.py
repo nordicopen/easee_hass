@@ -342,6 +342,7 @@ class ProductData:
         """Ask for cost data update."""
         if self.cost_data is not None:
             if self.check_enabled("totalCost", self.observers["cost"]):
+                self.notify("totalCost", self.observers["cost"])
                 self.cost_data.request_update(self.product.id)
 
     def check_latest_pulse(self):
