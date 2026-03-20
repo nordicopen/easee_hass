@@ -16,7 +16,7 @@ from homeassistant.helpers.entity import EntityCategory
 
 DOMAIN = "easee"
 TIMEOUT = 30
-VERSION = "0.9.72"
+VERSION = "0.9.73"
 MIN_HA_VERSION = "2025.7.0"
 CONF_MONITORED_SITES = "monitored_sites"
 MANUFACTURER = "Easee"
