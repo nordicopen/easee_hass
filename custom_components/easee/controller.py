@@ -827,7 +827,6 @@ class Controller:
         for charger in self.chargers_data:
             await charger.async_cost_refresh()
             await charger.async_firmware_refresh()
-            await charger.async_operator_refresh()
 
         for equalizer in self.equalizers_data:
             await equalizer.async_firmware_refresh()
