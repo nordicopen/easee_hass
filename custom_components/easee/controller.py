@@ -247,6 +247,28 @@ class ProductData:
             "Latest Firmware for %s: %s", self.product.id, firmware["latestFirmware"]
         )
 
+    async def async_operator_refresh(self):
+        """Poll latest firmware version."""
+        if self.state is None:
+            return False
+
+        try:
+            operator = await self.product.get_operator()
+        except AuthorizationFailedException as ex:
+            if self.operator_auth_failure is None:
+                _LOGGER.error(
+                    "Authorization failure when fetching operator info: %s", ex
+                )
+                self.operator_auth_failure = True
+            self.set_state("latestFirmware", None)
+            return
+
+        self.set_state("operatorID", operator["id"])
+        self.set_state("operatorName", operator["name"])
+        _LOGGER.debug(
+            "Operator for %s: %s", self.product.id, operator["name"]
+        )
+
     async def async_refresh(self, poll_observations=None):
         """Poll observations."""
 
@@ -717,6 +739,12 @@ class Controller:
         except Exception as err:
             _LOGGER.error("Failed during call to equalizer async_firmware_refresh: %s", err)
         try:
+            await asyncio.gather(
+                *[charger.async_operator_refresh() for charger in self.chargers_data]
+            )
+        except Exception as err:
+            _LOGGER.error("Failed during call to charger async_firmware_refresh: %s", err)
+        try:
             for charger in self.chargers_data:
                 charger.site_notify()
         except Exception as err:
@@ -763,6 +791,7 @@ class Controller:
         for charger in self.chargers_data:
             await charger.async_cost_refresh()
             await charger.async_firmware_refresh()
+            await charger.async_operator_refresh()
 
         for equalizer in self.equalizers_data:
             await equalizer.async_firmware_refresh()
