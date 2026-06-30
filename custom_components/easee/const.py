@@ -789,7 +789,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": None,
         "device_class": None,
         "translation_key": "operator",
-    }
+    },
 }
 
 EASEE_EQ_ENTITIES = {

@@ -6,6 +6,7 @@ from gc import collect
 import json
 import logging
 from random import random
+from urllib.parse import urlsplit
 
 from pyeasee import (
     Charger,
@@ -34,6 +35,7 @@ from homeassistant.helpers.event import (
     async_track_time_change,
     async_track_time_interval,
 )
+from homeassistant.helpers.network import get_url
 from homeassistant.util import dt as dt_util
 from homeassistant.util.ssl import get_default_context
 
@@ -56,6 +58,7 @@ from .const import (
 )
 from .entity import convert_units_funcs
 from .light import ChargerLight
+from .ocpp import OCPPServer
 from .sensor import ChargerSensor, EqualizerSensor
 from .switch import ChargerSwitch, EqualizerSwitch
 
@@ -544,6 +547,20 @@ class Controller:
         self.diagnostics = {}
         self.monitored_sites = None
         self._init_count = 0
+        self.ocpp_server = None
+
+        self.internal_address = get_url(hass,
+                                        require_ssl = False,
+                                        require_cloud = False,
+                                        allow_internal = True,
+                                        allow_external = False,
+                                        allow_cloud = False,
+                                        allow_ip = True,
+                                        prefer_external = False,
+                                        prefer_cloud = False)
+        self.internal_address = urlsplit(self.internal_address).hostname
+
+        _LOGGER.info("Internal address: %s", self.internal_address)
 
     def __del__(self):
         """Log deletion."""
@@ -695,6 +712,13 @@ class Controller:
         except Exception as err:
             _LOGGER.debug("Easee server failure %s", err)
             raise ConfigEntryNotReady from err
+
+        try:
+            _LOGGER.debug("Creating OCPP server")
+            self.ocpp_server = OCPPServer()
+            await self.ocpp_server.start(self.hass, self.internal_address)
+        except Exception as err:
+            _LOGGER.debug("Easee OCHPP server failure %s", err)
 
     async def async_stream_callback(self, idx, data_type, data_id, value):
         """Handle the he stream callback."""
