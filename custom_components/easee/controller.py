@@ -743,7 +743,7 @@ class Controller:
                 *[charger.async_operator_refresh() for charger in self.chargers_data]
             )
         except Exception as err:
-            _LOGGER.error("Failed during call to charger async_firmware_refresh: %s", err)
+            _LOGGER.error("Failed during call to charger async_operator_refresh: %s", err)
         try:
             for charger in self.chargers_data:
                 charger.site_notify()
