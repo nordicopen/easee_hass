@@ -286,6 +286,9 @@
       },
       "voltage": {
         "name": "Voltage"
+      },
+      "operator": {
+	"name": "Operator"
       }
     },
     "switch": {
