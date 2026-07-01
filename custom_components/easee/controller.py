@@ -30,6 +30,7 @@ from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.event import (
+    async_call_later,
     async_track_time_change,
     async_track_time_interval,
 )
@@ -784,6 +785,15 @@ class Controller:
             await self.easee.sr_subscribe(equalizer, self.async_stream_callback)
         for charger in self.chargers:
             await self.easee.sr_subscribe(charger, self.async_stream_callback)
+
+    async def async_delayed_refresh_operator(self, now=None):
+        """Refresh operator for chargers."""
+        for charger_data in self.chargers_data:
+            await charger_data.async_operator_refresh()
+
+    async def async_refresh_operator(self):
+        """Schedule Refresh operator for chargers."""
+        async_call_later(self.hass, 10, self.async_delayed_refresh_operator)
 
     async def async_refresh_midnight(self, now=None):
         """Refresh the cost data."""

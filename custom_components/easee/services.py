@@ -61,6 +61,7 @@ ATTR_PHASE_MODES = {
     ATTR_3PHASE: 3,
 }
 ATTR_OCPP_URL = "ocpp_url"
+ATTR_OPERATOR = "operator_id"
 ACTION_COMMAND = "action_command"
 ACTION_START = "start"
 ACTION_STOP = "stop"
@@ -270,9 +271,18 @@ ext_ocpp_mode = {
     vol.Optional(ATTR_OCPP_URL): cv.string,
 }
 
+ext_operator_mode = {
+    vol.Required(ATTR_OPERATOR): cv.positive_int,
+}
+
 SERVICE_SET_OCPP = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_ocpp_mode),
+)
+
+SERVICE_SET_OPERATOR = vol.All(
+    target_schema2,
+    exclusive_schema2.extend(ext_operator_mode),
 )
 
 SERVICE_MAP = {
@@ -370,6 +380,11 @@ SERVICE_MAP = {
         "function_call": "set_ocpp_config",
         "function_call_2": "apply_ocpp_config",
         "schema": SERVICE_SET_OCPP,
+    },
+    "set_operator": {
+        "handler": "charger_execute_set_operator",
+        "function_call": "set_operator",
+        "schema": SERVICE_SET_OPERATOR,
     },
 }
 
@@ -1080,6 +1095,43 @@ async def async_setup_services(hass):  # noqa: C901
                 return
         raise HomeAssistantError(f"Could not find charger: {charger.id}")
 
+    async def charger_execute_set_operator(call):
+        """Set the operator of a charger."""
+
+        charger = await async_get_charger(call)
+        operator_id = call.data.get(ATTR_OPERATOR)
+
+        _LOGGER.debug("Call set operator %d on charger_id: %s",
+            operator_id,
+            charger.id,
+        )
+        if charger:
+            function_name = SERVICE_MAP[call.service]
+            function_call = getattr(charger, function_name["function_call"])
+            try:
+                await function_call(operator_id)
+                await controller.async_refresh_operator()
+                return
+            except BadRequestException:
+                # In this case this probably means the operator is already set to the same value
+                return
+            except ForbiddenServiceException:
+                _LOGGER.error(
+                    "Forbidden service: %s - Check your access privileges",
+                    str(call.service),
+                )
+                return
+            except Exception as ex:
+                _LOGGER.error(
+                    "Failed to execute service: %s with data %s %s",
+                    str(call.service),
+                    str(call.data),
+                    ex,
+                )
+                return
+            # Update the operator sensor
+
+        raise HomeAssistantError(f"Could not find charger: {charger.id}")
 
     for service, data in SERVICE_MAP.items():
         handler = locals()[data["handler"]]
