@@ -794,7 +794,7 @@ class Controller:
 
     async def async_refresh_operator(self):
         """Schedule Refresh operator for chargers."""
-        async_call_later(self.hass, 10, self.async_delayed_refresh_operator)
+        async_call_later(self.hass, 15, self.async_delayed_refresh_operator)
 
     async def async_refresh_midnight(self, now=None):
         """Refresh the cost data."""
