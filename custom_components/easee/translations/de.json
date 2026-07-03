@@ -286,6 +286,9 @@
       },
       "voltage": {
         "name": "Spannung"
+      },
+      "pilot_mode": {
+        "name": "Pilot-Modus"
       }
     },
     "switch": {
