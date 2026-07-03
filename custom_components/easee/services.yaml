@@ -464,8 +464,8 @@ set_operator:
           entity:
             domain: "switch"
     operator_id:
-      required: True
+      required: true
       example: 20
       selector:
         number:
-          min: 0
+          min: 1
