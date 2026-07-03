@@ -199,6 +199,7 @@ class ProductData:
         self.poll_observations = poll_observations
         self.master = master
         self.firmware_auth_failure = None
+        self.operator_auth_failure = None
 
     def register_for_update(self, name, entity):
         """Register a entity to watch changes."""
