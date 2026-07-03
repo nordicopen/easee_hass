@@ -119,6 +119,9 @@ chargerObservations = {
     ChargerStreamData.state_fatalErrorCode.value,
     ChargerStreamData.state_connectedToCloud.value,
     ChargerStreamData.state_cloudDisconnectReason.value,
+    ChargerStreamData.state_pilotMode.value,
+    ChargerStreamData.state_pilotHigh.value,
+    ChargerStreamData.state_pilotLow.value,
     ChargerStreamData.schedule_chargingSchedule.value,
 }
 
@@ -768,6 +771,19 @@ OPTIONAL_EASEE_ENTITIES = {
         "switch_func": "set_led_strip_brightness",
         "enabled_default": True,
         "entity_category": EntityCategory.CONFIG,
+    },
+    "pilot_mode": {
+        "key": "state.pilotMode",
+        "attrs": [
+            "state.pilotHigh",
+            "state.pilotLow",
+        ],
+        "units": None,
+        "convert_units_func": None,
+        "translation_key": "pilot_mode",
+        "device_class": None,
+        "enabled_default": True,
+        "entity_category": EntityCategory.DIAGNOSTIC,
     },
 }
 
