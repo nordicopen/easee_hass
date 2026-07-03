@@ -249,7 +249,7 @@ class ProductData:
         )
 
     async def async_operator_refresh(self):
-        """Poll latest firmware version."""
+        """Poll operator information."""
         if self.state is None:
             return False
 
