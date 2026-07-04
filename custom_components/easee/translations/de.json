@@ -288,7 +288,14 @@
         "name": "Spannung"
       },
       "pilot_mode": {
-        "name": "Pilot-Modus"
+        "name": "Pilot-Modus",
+        "state": {
+          "A": "Kein Fahrzeug",
+          "B": "Fahrzeug verbunden",
+          "C": "Fahrzeug lädt",
+          "D": "Fahrzeug benötigt Belüftung",
+          "F": "Fehler erkannt"
+        }
       }
     },
     "switch": {
