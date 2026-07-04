@@ -288,7 +288,14 @@
         "name": "Voltage"
       },
       "pilot_mode": {
-        "name": "Pilot Mode"
+        "name": "Pilot Mode",
+        "state": {
+          "A": "Car disconnected",
+          "B": "Car connected",
+          "C": "Car charging",
+          "D": "Car needs ventilation",
+          "F": "Fault detected"
+        }
       }
     },
     "switch": {
