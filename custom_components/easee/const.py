@@ -120,8 +120,6 @@ chargerObservations = {
     ChargerStreamData.state_connectedToCloud.value,
     ChargerStreamData.state_cloudDisconnectReason.value,
     ChargerStreamData.state_pilotMode.value,
-    ChargerStreamData.state_pilotHigh.value,
-    ChargerStreamData.state_pilotLow.value,
     ChargerStreamData.schedule_chargingSchedule.value,
 }
 
@@ -774,10 +772,7 @@ OPTIONAL_EASEE_ENTITIES = {
     },
     "pilot_mode": {
         "key": "state.pilotMode",
-        "attrs": [
-            "state.pilotHigh",
-            "state.pilotLow",
-        ],
+        "attrs": [],
         "units": None,
         "convert_units_func": None,
         "translation_key": "pilot_mode",
