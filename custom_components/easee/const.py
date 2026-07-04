@@ -782,7 +782,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": None,
         "translation_key": "pilot_mode",
         "device_class": None,
-        "enabled_default": True,
+        "enabled_default": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
 }
