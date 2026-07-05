@@ -68,6 +68,13 @@ def map_phase_mode(value, unit=None) -> str:
     return PHASE_MODE_STATUS.get(value, f"unknown {value}")
 
 
+def map_pilot_mode(value, unit=None) -> str:
+    """Map pilot mode (CP signal A-F) to lowercase for HA translation keys."""
+    if isinstance(value, str):
+        return value.lower()
+    return value
+
+
 convert_units_funcs = {
     "round_0_dec": round_0_dec,
     "round_1_dec": round_1_dec,
@@ -75,6 +82,7 @@ convert_units_funcs = {
     "map_charger_status": map_charger_status,
     "map_reason_no_current": map_reason_no_current,
     "map_phase_mode": map_phase_mode,
+    "map_pilot_mode": map_pilot_mode,
 }
 
 

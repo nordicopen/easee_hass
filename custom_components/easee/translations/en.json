@@ -290,11 +290,11 @@
       "pilot_mode": {
         "name": "Pilot Mode",
         "state": {
-          "A": "Car disconnected",
-          "B": "Car connected",
-          "C": "Car charging",
-          "D": "Car needs ventilation",
-          "F": "Fault detected"
+          "a": "Car disconnected",
+          "b": "Car connected",
+          "c": "Car charging",
+          "d": "Car needs ventilation",
+          "f": "Fault detected"
         }
       }
     },

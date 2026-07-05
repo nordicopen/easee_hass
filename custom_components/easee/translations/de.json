@@ -290,11 +290,11 @@
       "pilot_mode": {
         "name": "Pilot-Modus",
         "state": {
-          "A": "Kein Fahrzeug",
-          "B": "Fahrzeug verbunden",
-          "C": "Fahrzeug lädt",
-          "D": "Fahrzeug benötigt Belüftung",
-          "F": "Fehler erkannt"
+          "a": "Kein Fahrzeug",
+          "b": "Fahrzeug verbunden",
+          "c": "Fahrzeug lädt",
+          "d": "Fahrzeug benötigt Belüftung",
+          "f": "Fehler erkannt"
         }
       }
     },

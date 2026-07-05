@@ -774,7 +774,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "key": "state.pilotMode",
         "attrs": [],
         "units": None,
-        "convert_units_func": None,
+        "convert_units_func": "map_pilot_mode",
         "translation_key": "pilot_mode",
         "device_class": None,
         "enabled_default": False,
