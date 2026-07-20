@@ -8,6 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.device_registry import DeviceEntry
 
 from .const import DOMAIN, MIN_HA_VERSION, PLATFORMS, VERSION
 from .controller import Controller
@@ -97,3 +98,31 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
     _LOGGER.info("Migration to version %s successful", config_entry.version)
 
     return True
+
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, entry: ConfigEntry, device_entry: DeviceEntry
+) -> bool:
+    """Remove a config entry from a device."""
+
+    _LOGGER.debug("Request to remove device: %s", device_entry.identifiers)
+
+    if hass.data[DOMAIN]["controller"] is not None:
+        controller = hass.data[DOMAIN]["controller"]
+        chargers = controller.get_chargers()
+        equalizers = controller.get_equalizers()
+
+        for identifier in device_entry.identifiers:
+            if identifier[0] == DOMAIN:
+                for product in chargers:
+                    if product.id == identifier[1]:
+                        _LOGGER.debug("Device %s is still present, to delete a device it must first be reomved from site or site must be removed.", identifier[1])
+                        return False
+                for product in equalizers:
+                    if product.id == identifier[1]:
+                        _LOGGER.debug("Device %s is still present, to delete a device it must first be reomved from site or site must be removed.", identifier[1])
+                        return False
+
+                # The device was not found, allow delete
+                return True
+
+    return False
