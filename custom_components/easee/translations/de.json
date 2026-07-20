@@ -278,15 +278,6 @@
           "three": "drei"
         }
       },
-      "power": {
-        "name": "Leistung"
-      },
-      "session_energy": {
-        "name": "Sitzungsenergie"
-      },
-      "voltage": {
-        "name": "Spannung"
-      },
       "pilot_mode": {
         "name": "Pilot-Modus",
         "state": {
@@ -296,6 +287,15 @@
           "d": "Fahrzeug benötigt Belüftung",
           "f": "Fehler erkannt"
         }
+      },
+      "power": {
+        "name": "Leistung"
+      },
+      "session_energy": {
+        "name": "Sitzungsenergie"
+      },
+      "voltage": {
+        "name": "Spannung"
       }
     },
     "switch": {
