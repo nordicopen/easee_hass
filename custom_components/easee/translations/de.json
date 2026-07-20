@@ -286,6 +286,16 @@
       },
       "voltage": {
         "name": "Spannung"
+      },
+      "pilot_mode": {
+        "name": "Pilot-Modus",
+        "state": {
+          "a": "Kein Fahrzeug",
+          "b": "Fahrzeug verbunden",
+          "c": "Fahrzeug lädt",
+          "d": "Fahrzeug benötigt Belüftung",
+          "f": "Fehler erkannt"
+        }
       }
     },
     "switch": {
