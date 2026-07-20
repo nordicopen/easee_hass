@@ -267,6 +267,9 @@
       "offline_circuit_limit": {
         "name": "Offline kretsbegränsning"
       },
+      "operator": {
+        "name": "Operatör"
+      },
       "output_limit": {
         "name": "Total begränsning"
       },
@@ -276,6 +279,16 @@
           "auto": "Auto",
           "single": "Enfas",
           "three": "Trefas"
+        }
+      },
+      "pilot_mode": {
+        "name": "Pilotläge",
+        "state": {
+          "a": "Inget fordon anslutet",
+          "b": "Fordon anslutet",
+          "c": "Fordonet laddar",
+          "d": "Fordonet behöver ventilation",
+          "f": "Fel upptäckt"
         }
       },
       "power": {
@@ -602,6 +615,20 @@
         }
       },
       "name": "Ange offlinegräns för krets"
+    },
+    "set_operator": {
+      "description": "Konfigurera operatör för laddaren",
+      "fields": {
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        },
+        "operator_id": {
+          "description": "Vald operatörs ID",
+          "name": "Operatör ID"
+        }
+      },
+      "name": "Ställ in operatör"
     },
     "set_surplus_charging": {
       "description": "Ställ in equalizer överskottsladdning",

@@ -267,6 +267,9 @@
       "offline_circuit_limit": {
         "name": "Offline circuit limit"
       },
+      "operator": {
+        "name": "Operator"
+      },
       "output_limit": {
         "name": "Output limit"
       },
@@ -278,15 +281,6 @@
           "three": "Three"
         }
       },
-      "power": {
-        "name": "Power"
-      },
-      "session_energy": {
-        "name": "Session Energy"
-      },
-      "voltage": {
-        "name": "Voltage"
-      },
       "pilot_mode": {
         "name": "Pilot Mode",
         "state": {
@@ -297,8 +291,14 @@
           "f": "Fault detected"
         }
       },
-      "operator": {
-        "name": "Operator"
+      "power": {
+        "name": "Power"
+      },
+      "session_energy": {
+        "name": "Session Energy"
+      },
+      "voltage": {
+        "name": "Voltage"
       }
     },
     "switch": {
@@ -510,20 +510,6 @@
       },
       "name": "Set charger local OCPP mode"
     },
-    "set_operator": {
-      "description": "Configure operator for charger",
-      "fields": {
-        "device_id": {
-          "description": "Select a device to be controlled",
-          "name": "Target device"
-        },
-        "operator_id": {
-          "description": "ID of the selected operator",
-          "name": "Operator ID"
-        }
-      },
-      "name": "Set operator"
-    },
     "set_charger_phase_mode": {
       "description": "Set charger phase mode",
       "fields": {
@@ -629,6 +615,20 @@
         }
       },
       "name": "Set circuit offline limit"
+    },
+    "set_operator": {
+      "description": "Configure operator for charger",
+      "fields": {
+        "device_id": {
+          "description": "Select a device to be controlled",
+          "name": "Target device"
+        },
+        "operator_id": {
+          "description": "ID of the selected operator",
+          "name": "Operator ID"
+        }
+      },
+      "name": "Set operator"
     },
     "set_surplus_charging": {
       "description": "Set equalizer surplus charging",
