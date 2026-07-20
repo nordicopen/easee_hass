@@ -271,7 +271,7 @@ ext_ocpp_mode = {
     vol.Optional(ATTR_OCPP_URL): cv.string,
 }
 
-ext_operator_mode = {
+ext_operator = {
     vol.Required(ATTR_OPERATOR): cv.positive_int,
 }
 
@@ -282,7 +282,7 @@ SERVICE_SET_OCPP = vol.All(
 
 SERVICE_SET_OPERATOR = vol.All(
     target_schema2,
-    exclusive_schema2.extend(ext_operator_mode),
+    exclusive_schema2.extend(ext_operator),
 )
 
 SERVICE_MAP = {

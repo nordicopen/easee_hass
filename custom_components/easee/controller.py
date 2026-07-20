@@ -262,7 +262,8 @@ class ProductData:
                     "Authorization failure when fetching operator info: %s", ex
                 )
                 self.operator_auth_failure = True
-            self.set_state("latestFirmware", None)
+            self.set_state("operatorID", None)
+            self.set_state("operatorName", None)
             return
 
         self.set_state("operatorID", operator["id"])
