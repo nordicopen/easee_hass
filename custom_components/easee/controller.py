@@ -30,6 +30,7 @@ from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.event import (
+    async_call_later,
     async_track_time_change,
     async_track_time_interval,
 )
@@ -198,6 +199,7 @@ class ProductData:
         self.poll_observations = poll_observations
         self.master = master
         self.firmware_auth_failure = None
+        self.operator_auth_failure = None
 
     def register_for_update(self, name, entity):
         """Register a entity to watch changes."""
@@ -245,6 +247,29 @@ class ProductData:
         self.set_state("latestFirmware", firmware["latestFirmware"])
         _LOGGER.debug(
             "Latest Firmware for %s: %s", self.product.id, firmware["latestFirmware"]
+        )
+
+    async def async_operator_refresh(self):
+        """Poll operator information."""
+        if self.state is None:
+            return False
+
+        try:
+            operator = await self.product.get_operator()
+        except AuthorizationFailedException as ex:
+            if self.operator_auth_failure is None:
+                _LOGGER.error(
+                    "Authorization failure when fetching operator info: %s", ex
+                )
+                self.operator_auth_failure = True
+            self.set_state("operatorID", None)
+            self.set_state("operatorName", None)
+            return
+
+        self.set_state("operatorID", operator["id"])
+        self.set_state("operatorName", operator["name"])
+        _LOGGER.debug(
+            "Operator for %s: %s", self.product.id, operator["name"]
         )
 
     async def async_refresh(self, poll_observations=None):
@@ -717,6 +742,12 @@ class Controller:
         except Exception as err:
             _LOGGER.error("Failed during call to equalizer async_firmware_refresh: %s", err)
         try:
+            await asyncio.gather(
+                *[charger.async_operator_refresh() for charger in self.chargers_data]
+            )
+        except Exception as err:
+            _LOGGER.error("Failed during call to charger async_operator_refresh: %s", err)
+        try:
             for charger in self.chargers_data:
                 charger.site_notify()
         except Exception as err:
@@ -757,12 +788,22 @@ class Controller:
         for charger in self.chargers:
             await self.easee.sr_subscribe(charger, self.async_stream_callback)
 
+    async def async_delayed_refresh_operator(self, now=None):
+        """Refresh operator for chargers."""
+        for charger_data in self.chargers_data:
+            await charger_data.async_operator_refresh()
+
+    async def async_refresh_operator(self):
+        """Schedule Refresh operator for chargers."""
+        async_call_later(self.hass, 15, self.async_delayed_refresh_operator)
+
     async def async_refresh_midnight(self, now=None):
         """Refresh the cost data."""
         _LOGGER.debug("Midnight refresh started")
         for charger in self.chargers_data:
             await charger.async_cost_refresh()
             await charger.async_firmware_refresh()
+            await charger.async_operator_refresh()
 
         for equalizer in self.equalizers_data:
             await equalizer.async_firmware_refresh()
