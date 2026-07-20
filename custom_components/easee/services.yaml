@@ -452,3 +452,20 @@ set_charger_ocpp:
       selector:
         text:
           type: url
+
+set_operator:
+  fields:
+    device_id:
+      required: true
+      example: "b40f1f45d28b0891fe8d"
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    operator_id:
+      required: true
+      example: 20
+      selector:
+        number:
+          min: 1

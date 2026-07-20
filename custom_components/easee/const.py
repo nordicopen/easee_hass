@@ -769,6 +769,16 @@ OPTIONAL_EASEE_ENTITIES = {
         "enabled_default": True,
         "entity_category": EntityCategory.CONFIG,
     },
+    "operator": {
+        "key": "state.operatorName",
+        "attrs": [
+            "state.operatorID",
+        ],
+        "units": None,
+        "convert_units_func": None,
+        "device_class": None,
+        "translation_key": "operator",
+    }
 }
 
 EASEE_EQ_ENTITIES = {

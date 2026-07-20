@@ -286,6 +286,9 @@
       },
       "voltage": {
         "name": "Voltage"
+      },
+      "operator": {
+        "name": "Operator"
       }
     },
     "switch": {
@@ -496,6 +499,20 @@
         }
       },
       "name": "Set charger local OCPP mode"
+    },
+    "set_operator": {
+      "description": "Configure operator for charger",
+      "fields": {
+        "device_id": {
+          "description": "Select a device to be controlled",
+          "name": "Target device"
+        },
+        "operator_id": {
+          "description": "ID of the selected operator",
+          "name": "Operator ID"
+        }
+      },
+      "name": "Set operator"
     },
     "set_charger_phase_mode": {
       "description": "Set charger phase mode",
