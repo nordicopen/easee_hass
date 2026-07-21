@@ -463,6 +463,16 @@
       },
       "name": "Sett laderens maksgrense"
     },
+    "set_charger_ocpp": {
+      "fields": {
+        "device_id": {
+          "name": "Målenhet"
+        },
+        "enable": {
+          "name": "Aktivere"
+        }
+      }
+    },
     "set_charger_phase_mode": {
       "description": "Sett laderens fasemodus",
       "fields": {
@@ -568,6 +578,13 @@
         }
       },
       "name": "Sett ladekursens offlinegrense"
+    },
+    "set_operator": {
+      "fields": {
+        "device_id": {
+          "name": "Målenhet"
+        }
+      }
     },
     "set_surplus_charging": {
       "fields": {

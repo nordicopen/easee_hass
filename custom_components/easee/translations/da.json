@@ -603,6 +603,13 @@
       },
       "name": "Indstil opladerens maksimumgrænse ved offline brug"
     },
+    "set_operator": {
+      "fields": {
+        "device_id": {
+          "name": "Målenhed"
+        }
+      }
+    },
     "set_surplus_charging": {
       "description": "Indstil opladning med overskydende energi",
       "fields": {

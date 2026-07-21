@@ -475,6 +475,16 @@
       },
       "name": "Définissez la limite maximale du chargeur"
     },
+    "set_charger_ocpp": {
+      "fields": {
+        "device_id": {
+          "name": "Cible"
+        },
+        "enable": {
+          "name": "Activer"
+        }
+      }
+    },
     "set_charger_phase_mode": {
       "description": "Définissez le mode de phase du chargeur",
       "fields": {
@@ -581,13 +591,21 @@
       },
       "name": "Définissez la limite hors ligne du circuit"
     },
+    "set_operator": {
+      "fields": {
+        "device_id": {
+          "name": "Cible"
+        }
+      }
+    },
     "set_surplus_charging": {
       "fields": {
         "current": {
           "name": "Courant"
         },
         "device_id": {
-          "description": "Sélectionner l'équipement à contrôler"
+          "description": "Sélectionner l'équipement à contrôler",
+          "name": "Cible"
         },
         "enable": {
           "name": "Activer"
