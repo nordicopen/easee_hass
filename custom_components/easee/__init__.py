@@ -110,16 +110,13 @@ async def async_remove_config_entry_device(
         controller = hass.data[DOMAIN]["controller"]
         chargers = controller.get_chargers()
         equalizers = controller.get_equalizers()
+        products = chargers + equalizers
 
         for identifier in device_entry.identifiers:
             if identifier[0] == DOMAIN:
-                for product in chargers:
+                for product in products:
                     if product.id == identifier[1]:
-                        _LOGGER.debug("Device %s is still present, to delete a device it must first be reomved from site or site must be removed.", identifier[1])
-                        return False
-                for product in equalizers:
-                    if product.id == identifier[1]:
-                        _LOGGER.debug("Device %s is still present, to delete a device it must first be reomved from site or site must be removed.", identifier[1])
+                        _LOGGER.error("Device %s is still present, to delete a device it must first be reomved from site or site must be removed or unmonitored.", identifier[1])
                         return False
 
                 # The device was not found, allow delete
