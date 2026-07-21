@@ -494,7 +494,7 @@
       "fields": {
         "device_id": {
           "description": "Wähle zu kontrollierendes Gerät",
-          "name": "Endgerät"
+          "name": "Zielgerät"
         },
         "enable": {
           "description": "Aktivieren des lokalen OCPP-Modus",
@@ -612,6 +612,14 @@
         }
       },
       "name": "Offline Maximalwert festlegen"
+    },
+    "set_operator": {
+      "fields": {
+        "device_id": {
+          "description": "Wähle zu kontrollierendes Gerät",
+          "name": "Zielgerät"
+        }
+      }
     },
     "set_surplus_charging": {
       "description": "Überschussladen durch Equalizer aktivieren",
