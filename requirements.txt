@@ -1,6 +1,6 @@
 colorlog==6.9.0
 homeassistant
-pip>=21.0,<24.1
+pip>=21.0,<25.2
 ruff==0.9.7
 pre-commit==4.1.0
 bump2version==1.0.1
