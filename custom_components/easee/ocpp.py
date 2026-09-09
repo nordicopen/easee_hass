@@ -13,7 +13,7 @@ from ocpp.v16 import (
     call_result,
     call_result as call_resultv16,
 )
-from ocpp.v16.enums import Action, RegistrationStatus
+from ocpp.v16.enums import Action, DataTransferStatus, RegistrationStatus
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,18 +44,23 @@ class OCPPCharger(cp):
 
         _LOGGER.debug("Boot notification from %s %s %s", charge_point_vendor, charge_point_model, kwargs)
         if "Easee" not in charge_point_vendor:
-            _LOGGER.warning("A charger manufactured by %s connected to Easee OCPP server, this is probably not correct?", charge_point_vendor)
+            _LOGGER.warning("A charger manufactured by %s connected to Easee OCPP server, this is probably not as intended?", charge_point_vendor)
+        else:
+            self.serial   = kwargs.get("chargePointSerialNumber")
+            self.model    = kwargs.get("chargePointModel")
+            self.firmware = kwargs.get("firmwareVersion")
 
         return call_result.BootNotification(
-            current_time=datetime.now(UTC).isoformat(),
-            interval=10,
-            status=RegistrationStatus.accepted,
+            current_time=datetime.now(tz=UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            interval=60,
+            status=RegistrationStatus.accepted.value,
         )
 
     @on(Action.heartbeat)
     def on_heartbeat(self, **kwargs):
         """Handle a Heartbeat."""
         now = datetime.now(tz=UTC)
+        _LOGGER.debug("%s Heartbeat", self.id)
         return call_result.Heartbeat(current_time=now.strftime("%Y-%m-%dT%H:%M:%SZ"))
 
     @on(Action.status_notification)
@@ -65,6 +70,50 @@ class OCPPCharger(cp):
         _LOGGER.debug("Status notification  %s %s %s", connector_id, error_code, status)
 
         return call_result.StatusNotification()
+
+    @on(Action.firmware_status_notification)
+    def on_firmware_status(self, status, **kwargs):
+        """Handle firmware status notification."""
+        _LOGGER.debug("Firmware status notification  %s", status)
+        return call_result.FirmwareStatusNotification()
+
+    @on(Action.diagnostics_status_notification)
+    def on_diagnostics_status(self, status, **kwargs):
+        """Handle diagnostics status notification."""
+        _LOGGER.info("Diagnostics upload status: %s", status)
+        return call_result.DiagnosticsStatusNotification()
+
+    @on(Action.security_event_notification)
+    def on_security_event(self, type, timestamp, **kwargs):
+        """Handle security event notification."""
+        _LOGGER.info(
+            "Security event notification received: %s at %s [techinfo: ]",
+            type,
+            timestamp,
+        )
+        return call_result.SecurityEventNotification()
+
+    @on(Action.authorize)
+    def on_authorize(self, id_tag, **kwargs):
+        """Handle an Authorization request."""
+        _LOGGER.debug("Authorize notification  %s", id_tag)
+        return call_result.Authorize()
+
+    @on(Action.start_transaction)
+    def on_start_transaction(self, connector_id, id_tag, meter_start, **kwargs):
+        """Handle a Start Transaction request."""
+        _LOGGER.debug("Start transaction notification  %s", id_tag)
+
+    @on(Action.stop_transaction)
+    def on_stop_transaction(self, meter_stop, timestamp, transaction_id, **kwargs):
+        """Stop the current transaction (multi-connector)."""
+        _LOGGER.debug("Stop transaction notification  %s", meter_stop)
+
+    @on(Action.data_transfer)
+    def on_data_transfer(self, vendor_id, **kwargs):
+        """Handle a Data transfer request."""
+        _LOGGER.debug("Data transfer received from %s: %s", self.id, kwargs)
+        return call_result.DataTransfer(status=DataTransferStatus.accepted.value)
 
 
 class OCPPServer:
@@ -92,6 +141,7 @@ class OCPPServer:
             return await websocket.close()
 
         charger_id = websocket.request.path.strip("/")
+        _LOGGER.debug("Connection from %s", charger_id)
         cp = OCPPCharger(charger_id, websocket, self.hass)
 
         try:
@@ -115,6 +165,6 @@ class OCPPServer:
             ssl=self.ssl_context,
         )
         self.server = server
-        _LOGGER.debug("Easee OCPP server started. URL ws://%s:%s", self.host, self.port)
+        _LOGGER.info("Easee OCPP server started. URL ws://%s:%s", self.host, self.port)
 
         return self
