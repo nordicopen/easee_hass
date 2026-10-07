@@ -381,6 +381,8 @@ class ProductData:
         except KeyError:
             return
 
+        _LOGGER.debug("%d seconds since last communication from %s", elapsed.total_seconds(), self.product.id)
+
         if elapsed.total_seconds() > OFFLINE_DELAY:
             if self.state["isOnline"] is True:
                 self.set_state("isOnline", False)
@@ -813,6 +815,7 @@ class Controller:
         for charger_data in self.chargers_data:
             charger_data.set_signalr_state(self.easee.sr_is_connected())
             charger_data.check_latest_pulse()
+            _LOGGER.debug("Check poll for %s polled %s SR %s", charger_data.product.id, charger_data.is_state_polled(), self.easee.sr_is_connected())
             if charger_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
 
@@ -824,6 +827,7 @@ class Controller:
         for equalizer_data in self.equalizers_data:
             equalizer_data.set_signalr_state(self.easee.sr_is_connected())
             equalizer_data.check_latest_pulse()
+            _LOGGER.debug("Check poll for %s polled %s SR %s", equalizer_data.product.id, equalizer_data.is_state_polled(), self.easee.sr_is_connected())
             if equalizer_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
 
