@@ -3,11 +3,14 @@
 # pylint: disable=too-many-lines
 from datetime import timedelta
 import logging
+import os
 
+from pyeasee import ReportCategory
 from pyeasee.exceptions import BadRequestException, ForbiddenServiceException
 import voluptuous as vol
 
 from homeassistant.const import CONF_DEVICE_ID
+from homeassistant.core import SupportsResponse
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import (
     config_validation as cv,
@@ -62,6 +65,11 @@ ATTR_PHASE_MODES = {
 }
 ATTR_OCPP_URL = "ocpp_url"
 ATTR_OPERATOR = "operator_id"
+ATTR_CATEGORY = "category"
+ATTR_FROM = "from"
+ATTR_TO = "to"
+ATTR_FILE_PATH = "file_path"
+DEFAULT_REPORT_CATEGORY = ReportCategory.CHARGER_DETAILED.value
 ACTION_COMMAND = "action_command"
 ACTION_START = "start"
 ACTION_STOP = "stop"
@@ -285,7 +293,26 @@ SERVICE_SET_OPERATOR = vol.All(
     exclusive_schema2.extend(ext_operator),
 )
 
+ext_report = {
+    vol.Optional(ATTR_CATEGORY, default=DEFAULT_REPORT_CATEGORY): vol.All(
+        vol.Coerce(int), vol.In([c.value for c in ReportCategory])
+    ),
+    vol.Optional(ATTR_FROM): cv.string,
+    vol.Optional(ATTR_TO): cv.string,
+    vol.Optional(ATTR_FILE_PATH): cv.string,
+}
+
+SERVICE_DOWNLOAD_REPORT_SCHEMA = vol.All(
+    target_schema2,
+    exclusive_schema2.extend(ext_report),
+)
+
 SERVICE_MAP = {
+    "download_report": {
+        "handler": "charger_execute_download_report",
+        "schema": SERVICE_DOWNLOAD_REPORT_SCHEMA,
+        "supports_response": SupportsResponse.OPTIONAL,
+    },
     "action_command": {
         "handler": "charger_execute_action_command",
         "schema": SERVICE_CHARGER_ACTIONS_COMMAND_SCHEMA,
@@ -1133,6 +1160,130 @@ async def async_setup_services(hass):  # noqa: C901
 
         raise HomeAssistantError(f"Could not find charger: {charger.id}")
 
+    async def charger_execute_download_report(call):
+        """Execute downloading a report (PDF) from Easee Cloud."""
+        charger = await async_get_charger(call)
+        if not charger:
+            raise HomeAssistantError(
+                f"Could not find charger: {call.data.get(CHARGER_ID, call.data.get(CONF_DEVICE_ID, 'Unknown'))}"
+            )
+
+        site_id = charger.site.id
+
+        # 1. Determine date range
+        raw_from = call.data.get(ATTR_FROM)
+        raw_to = call.data.get(ATTR_TO)
+
+        if raw_from and raw_to:
+            dt_from = dt_util.parse_datetime(str(raw_from))
+            dt_to = dt_util.parse_datetime(str(raw_to))
+            if dt_from is not None:
+                from_str = dt_util.as_utc(dt_from).strftime("%Y-%m-%dT%H:%M:%SZ")
+            else:
+                from_str = str(raw_from)
+            if dt_to is not None:
+                to_str = dt_util.as_utc(dt_to).strftime("%Y-%m-%dT%H:%M:%SZ")
+            else:
+                to_str = str(raw_to)
+            month_tag = from_str[:10].replace("-", "")
+        else:
+            # Default: Previous calendar month in UTC
+            now = dt_util.utcnow()
+            first_this_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            last_prev_month = first_this_month - timedelta(seconds=1)
+            first_prev_month = last_prev_month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            dt_from = first_prev_month
+            dt_to = last_prev_month
+            from_str = first_prev_month.strftime("%Y-%m-%dT%H:%M:%SZ")
+            to_str = last_prev_month.strftime("%Y-%m-%dT%H:%M:%SZ")
+            month_tag = first_prev_month.strftime("%Y-%m")
+
+        category = int(call.data.get(ATTR_CATEGORY, DEFAULT_REPORT_CATEGORY))
+
+        # 2. Determine target file path
+        target_path = call.data.get(ATTR_FILE_PATH)
+        if not target_path:
+            default_filename = f"easee_report_{charger.id}_{month_tag}.pdf"
+            if category != DEFAULT_REPORT_CATEGORY:
+                default_filename = f"easee_report_{charger.id}_{month_tag}_cat{category}.pdf"
+            if hass.config.is_allowed_path("/media"):
+                target_path = os.path.join("/media", "easee_reports", default_filename)
+            else:
+                target_path = hass.config.path("www", "easee_reports", default_filename)
+        elif not os.path.isabs(target_path):
+            target_path = hass.config.path(target_path)
+
+        if not hass.config.is_allowed_path(target_path):
+            raise HomeAssistantError(
+                f"Cannot write to '{target_path}', path is not permitted in Home Assistant configuration"
+            )
+
+        _LOGGER.info(
+            "Downloading Easee report: site_id=%s, charger=%s, category=%s, from=%s, to=%s, target=%s",
+            site_id,
+            charger.id,
+            category,
+            from_str,
+            to_str,
+            target_path,
+        )
+
+        # 3. Request PDF from Easee API
+        try:
+            content = await charger.site.get_report(
+                from_date=dt_from if dt_from is not None else from_str,
+                to_date=dt_to if dt_to is not None else to_str,
+                category=category,
+            )
+
+        except Exception as ex:
+            if isinstance(ex, HomeAssistantError):
+                raise
+            _LOGGER.error("Failed to download Easee report: %s", ex)
+            raise HomeAssistantError(f"Failed to download Easee report: {ex}") from ex
+
+        if not content:
+            raise HomeAssistantError("Received empty report from Easee API")
+
+        # 4. Save file via executor
+        def _write_file():
+            os.makedirs(os.path.dirname(target_path), exist_ok=True)
+            with open(target_path, "wb") as f:
+                f.write(content)
+
+        await hass.async_add_executor_job(_write_file)
+
+        # 5. Build relative web URL or media content ID
+        www_path = hass.config.path("www")
+        url = None
+        media_content_id = None
+        abs_target = os.path.abspath(target_path)
+
+        if abs_target.startswith(os.path.abspath(www_path)):
+            rel_path = os.path.relpath(target_path, www_path).replace("\\", "/")
+            url = f"/local/{rel_path}"
+        elif abs_target.startswith("/media") or abs_target.startswith("\\media"):
+            rel_path = os.path.relpath(target_path, "/media").replace("\\", "/")
+            media_content_id = f"media-source://media_source/local/{rel_path}"
+            url = f"/media-browser"
+
+        _LOGGER.info("Easee report successfully saved to %s (%d bytes)", target_path, len(content))
+
+        return {
+            "file_path": target_path,
+            "url": url,
+            "media_content_id": media_content_id,
+            "bytes": len(content),
+            "site_id": site_id,
+            "charger_id": charger.id,
+            "category": category,
+            "from": from_str,
+            "to": to_str,
+        }
+
     for service, data in SERVICE_MAP.items():
         handler = locals()[data["handler"]]
-        hass.services.async_register(DOMAIN, service, handler, schema=data["schema"])
+        supports_response = data.get("supports_response", SupportsResponse.NONE)
+        hass.services.async_register(
+            DOMAIN, service, handler, schema=data["schema"], supports_response=supports_response
+        )
