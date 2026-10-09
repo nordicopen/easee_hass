@@ -469,3 +469,46 @@ set_operator:
       selector:
         number:
           min: 1
+
+download_report:
+  fields:
+    device_id:
+      required: true
+      example: "b40f1f45d28b0891fe8d"
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    category:
+      required: false
+      default: 11
+      example: 11
+      selector:
+        select:
+          options:
+            - label: "Charger Detailed"
+              value: "11"
+            - label: "Charger Summary"
+              value: "10"
+            - label: "Easee Key Summary"
+              value: "12"
+            - label: "Easee Key Detailed"
+              value: "13"
+            - label: "Energy Summary"
+              value: "19"
+    from:
+      required: false
+      example: "2026-09-01T00:00:00Z"
+      selector:
+        datetime:
+    to:
+      required: false
+      example: "2026-09-30T23:59:59Z"
+      selector:
+        datetime:
+    file_path:
+      required: false
+      example: "/media/easee_reports/report_previous_month.pdf"
+      selector:
+        text:
