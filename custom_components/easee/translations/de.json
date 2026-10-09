@@ -678,6 +678,32 @@
         }
       },
       "name": "Smart Charging / Intelligentes Laden"
+    },
+    "download_report": {
+      "description": "Ladebericht / Verbrauchsbericht (PDF) von der Easee Cloud herunterladen",
+      "fields": {
+        "category": {
+          "description": "Berichtskategorie (Standard: Charger Detailed mit Einzelsitzungen)",
+          "name": "Berichtstyp"
+        },
+        "device_id": {
+          "description": "Die Easee Wallbox, für die der Bericht heruntergeladen werden soll",
+          "name": "Wallbox"
+        },
+        "file_path": {
+          "description": "Lokaler Speicherpfad für das PDF (Standard: /media/easee_reports/...)",
+          "name": "Dateipfad"
+        },
+        "from": {
+          "description": "Beginn des Zeitraums (UTC). Standard: 1. Tag des Vormonats.",
+          "name": "Von"
+        },
+        "to": {
+          "description": "Ende des Zeitraums (UTC). Standard: Letzter Tag des Vormonats.",
+          "name": "Bis"
+        }
+      },
+      "name": "Bericht herunterladen"
     }
   },
   "system_health": {
