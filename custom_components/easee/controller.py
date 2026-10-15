@@ -287,6 +287,7 @@ class ProductData:
             self.state["voltageL1L3"] = None
             self.state["voltageL2L3"] = None
             self.state["internalTemperature"] = None
+            self.state["isOnline"] = False
         if self.config is None:
             self.config = await self.product.empty_config(raw=True)
 
@@ -403,9 +404,17 @@ class ProductData:
         now = dt_util.utcnow().replace(microsecond=0)
         self.set_state("signalRConnected", True, False)
         self.set_state("latestPulse", now, False)
-        self.set_state("isOnline", True)
+        # We do not notify here, value might change inside async_update_observation
+        online_before = self.state["isOnline"]
+        self.set_state("isOnline", True,  False)
 
-        return await self.async_update_observation(data_type, data_id, value)
+        retval = await self.async_update_observation(data_type, data_id, value)
+
+        # Now we are ready to notify any observers
+        if online_before != self.state["isOnline"]:
+            self.notify("isOnline", self.observers["state"])
+
+        return retval
 
     async def async_update_observation(self, data_type, data_id, value):
         """Update observation."""
@@ -440,6 +449,8 @@ class ProductData:
                 self.set_state(second, value)
                 if second == "lifetimeEnergy":
                     await self.async_cost_refresh()
+                if second == "connectedToCloud" and not value:
+                    self.set_state("isOnline", False, False)
                 return True
             elif first == "config":
                 if self.config is None:

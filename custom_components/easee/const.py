@@ -369,6 +369,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "key": "state.isOnline",
         "attrs": [
             "state.signalRConnected",
+            "state.connectedToCloud",
             "state.latestPulse",
             "config.wiFiSSID",
             "state.wiFiAPEnabled",
