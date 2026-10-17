@@ -100,7 +100,15 @@ DEFAULT_CURRENT = 16
 
 GRP1 = "group_1"
 
-
+wd_name = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+]
 def has_at_least_one(keys):
     """Ensure that at least one key is present."""
 
@@ -661,12 +669,15 @@ async def async_setup_services(hass):  # noqa: C901
                     microsecond=0,
                 )
             )
+            if stop_dt < start_dt:
+                stop_dt = stop_dt + timedelta(days=1)
             start_t = start_dt.strftime("%H:%M")
             stop_t = stop_dt.strftime("%H:%M")
-            day = start_dt.weekday()
+            start_day = wd_name[start_dt.weekday()]
+            stop_day = wd_name[stop_dt.weekday()]
 
             try:
-                return await function_call(day, start_t, stop_t, limit=current)
+                return await function_call(start_day, stop_day, start_t, stop_t, limit=current)
             except BadRequestException as ex:
                 _LOGGER.error(
                     "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
