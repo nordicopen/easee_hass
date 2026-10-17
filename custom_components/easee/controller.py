@@ -118,19 +118,22 @@ class CostData:
 
     async def request_handler(self):
         """Update cost data task."""
-        while True:
-            product_id = await self.request_queue.get()
-            await asyncio.sleep(self.period)
-            _LOGGER.debug("Cost refresh for %s", product_id)
-            self.request_queue.task_done()
-            while not self.request_queue.empty():
+        try:
+            while True:
                 product_id = await self.request_queue.get()
+                await asyncio.sleep(self.period)
                 _LOGGER.debug("Cost refresh for %s", product_id)
                 self.request_queue.task_done()
+                while not self.request_queue.empty():
+                    product_id = await self.request_queue.get()
+                    _LOGGER.debug("Cost refresh for %s", product_id)
+                    self.request_queue.task_done()
 
-            await self.update_cost()
-            # Wait to comply with rate limit (max 10 calls/hour)
-            await asyncio.sleep(1200 - self.period)
+                await self.update_cost()
+                # Wait to comply with rate limit (max 10 calls/hour)
+                await asyncio.sleep(1200 - self.period)
+        except asyncio.CancelledError:
+            _LOGGER.debug("Cost update task ending")
 
     async def update_cost(self):
         """Poll cost data and notify observers."""
