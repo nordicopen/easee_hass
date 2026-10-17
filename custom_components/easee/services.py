@@ -749,6 +749,7 @@ async def async_setup_services(hass):  # noqa: C901
             compare["P1"],
             compare["P2"],
             compare["P3"],
+            time_to_live,
         )
         if circuit:
             function_call = getattr(circuit, function_name["function_call"])
@@ -807,6 +808,7 @@ async def async_setup_services(hass):  # noqa: C901
             compare["P1"],
             compare["P2"],
             compare["P3"],
+            time_to_live,
         )
         if charger:
             function_call = getattr(charger, function_name["function_call"])

@@ -860,6 +860,7 @@ class Controller:
         compare_str_p1,
         compare_str_p2,
         compare_str_p3,
+        time_to_live,
     ):
         """Check circuit current."""
         if current_p2 is None:
@@ -892,9 +893,11 @@ class Controller:
                         compare_p3 = compare_p1
 
                 if (
-                    compare_p1 != current_p1
-                    or compare_p2 != current_p2
-                    or compare_p3 != current_p3
+                    (
+                        compare_p1 != current_p1
+                        or compare_p2 != current_p2
+                        or compare_p3 != current_p3
+                    ) or time_to_live is not None
                 ):
                     return charger_data.circuit
 
@@ -910,6 +913,7 @@ class Controller:
         compare_str_p1,
         compare_str_p2,
         compare_str_p3,
+        time_to_live,
     ):
         """Check charger current."""
         if current_p2 is None:
@@ -942,9 +946,11 @@ class Controller:
                         compare_p3 = compare_p1
 
                 if (
-                    compare_p1 != current_p1
-                    or compare_p2 != current_p2
-                    or compare_p3 != current_p3
+                    (
+                        compare_p1 != current_p1
+                        or compare_p2 != current_p2
+                        or compare_p3 != current_p3
+                    ) or time_to_live is not None
                 ):
                     return charger_data.product
 
