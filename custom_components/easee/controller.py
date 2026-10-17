@@ -405,14 +405,12 @@ class ProductData:
         self.set_state("signalRConnected", True, False)
         self.set_state("latestPulse", now, False)
         # We do not notify here, value might change inside async_update_observation
-        online_before = self.state["isOnline"]
         self.set_state("isOnline", True,  False)
 
         retval = await self.async_update_observation(data_type, data_id, value)
 
         # Now we are ready to notify any observers
-        if online_before != self.state["isOnline"]:
-            self.notify("isOnline", self.observers["state"])
+        self.notify("isOnline", self.observers["state"])
 
         return retval
 
