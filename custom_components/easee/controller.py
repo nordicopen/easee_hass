@@ -290,6 +290,7 @@ class ProductData:
             self.state["voltageL1L3"] = None
             self.state["voltageL2L3"] = None
             self.state["internalTemperature"] = None
+            self.state["isOnline"] = False
         if self.config is None:
             self.config = await self.product.empty_config(raw=True)
 
@@ -384,6 +385,8 @@ class ProductData:
         except KeyError:
             return
 
+        _LOGGER.debug("%d seconds since last communication from %s", elapsed.total_seconds(), self.product.id)
+
         if elapsed.total_seconds() > OFFLINE_DELAY:
             if self.state["isOnline"] is True:
                 self.set_state("isOnline", False)
@@ -404,9 +407,15 @@ class ProductData:
         now = dt_util.utcnow().replace(microsecond=0)
         self.set_state("signalRConnected", True, False)
         self.set_state("latestPulse", now, False)
-        self.set_state("isOnline", True)
+        # We do not notify here, value might change inside async_update_observation
+        self.set_state("isOnline", True,  False)
 
-        return await self.async_update_observation(data_type, data_id, value)
+        retval = await self.async_update_observation(data_type, data_id, value)
+
+        # Now we are ready to notify any observers
+        self.notify("isOnline", self.observers["state"])
+
+        return retval
 
     async def async_update_observation(self, data_type, data_id, value):
         """Update observation."""
@@ -441,6 +450,8 @@ class ProductData:
                 self.set_state(second, value)
                 if second == "lifetimeEnergy":
                     await self.async_cost_refresh()
+                if second == "connectedToCloud" and not value:
+                    self.set_state("isOnline", False, False)
                 if second == "chargingSession":
                     jsondata = json.loads(value)
                     self.set_state("sessionId", jsondata["Id"])
@@ -823,6 +834,7 @@ class Controller:
         for charger_data in self.chargers_data:
             charger_data.set_signalr_state(self.easee.sr_is_connected())
             charger_data.check_latest_pulse()
+            _LOGGER.debug("Check poll for %s polled %s SR %s", charger_data.product.id, charger_data.is_state_polled(), self.easee.sr_is_connected())
             if charger_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
 
@@ -834,6 +846,7 @@ class Controller:
         for equalizer_data in self.equalizers_data:
             equalizer_data.set_signalr_state(self.easee.sr_is_connected())
             equalizer_data.check_latest_pulse()
+            _LOGGER.debug("Check poll for %s polled %s SR %s", equalizer_data.product.id, equalizer_data.is_state_polled(), self.easee.sr_is_connected())
             if equalizer_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
 
