@@ -441,6 +441,13 @@ class ProductData:
                 self.set_state(second, value)
                 if second == "lifetimeEnergy":
                     await self.async_cost_refresh()
+                if second == "chargingSession":
+                    jsondata = json.loads(value)
+                    self.set_state("sessionId", jsondata["Id"])
+                    self.set_state("sessionAuth", jsondata["Auth"])
+                    self.set_state("sessionTotalEnergy", jsondata["EnergyKwh"])
+                    self.set_state("sessionStart", jsondata["Start"])
+                    self.set_state("sessionStop", jsondata["Stop"])
                 return True
             elif first == "config":
                 if self.config is None:
