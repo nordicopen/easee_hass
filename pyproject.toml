@@ -304,19 +304,19 @@ select = [
     "RUF005", # Consider iterable unpacking instead of concatenation
     "RUF006", # Store a reference to the return value of asyncio.create_task
     # "RUF100", # Unused `noqa` directive; temporarily every now and then to clean them up
-    "S102",   # Use of exec detected
-    "S103",   # bad-file-permissions
-    "S108",   # hardcoded-temp-file
-    "S306",   # suspicious-mktemp-usage
-    "S307",   # suspicious-eval-usage
-    "S313",   # suspicious-xmlc-element-tree-usage
-    "S314",   # suspicious-xml-element-tree-usage
-    "S315",   # suspicious-xml-expat-reader-usage
-    "S316",   # suspicious-xml-expat-builder-usage
-    "S317",   # suspicious-xml-sax-usage
-    "S318",   # suspicious-xml-mini-dom-usage
-    "S319",   # suspicious-xml-pull-dom-usage
-    "S320",   # suspicious-xmle-tree-usage
+    "S102", # Use of exec detected
+    "S103", # bad-file-permissions
+    "S108", # hardcoded-temp-file
+    "S306", # suspicious-mktemp-usage
+    "S307", # suspicious-eval-usage
+    "S313", # suspicious-xmlc-element-tree-usage
+    "S314", # suspicious-xml-element-tree-usage
+    "S315", # suspicious-xml-expat-reader-usage
+    "S316", # suspicious-xml-expat-builder-usage
+    "S317", # suspicious-xml-sax-usage
+    "S318", # suspicious-xml-mini-dom-usage
+    "S319", # suspicious-xml-pull-dom-usage
+    # "S320",   # suspicious-xmle-tree-usage
     "S601",   # paramiko-call
     "S602",   # subprocess-popen-with-shell-equals-true
     "S604",   # call-with-shell-equals-true
