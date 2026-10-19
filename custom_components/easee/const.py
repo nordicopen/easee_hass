@@ -5,6 +5,7 @@ from pyeasee import ChargerStreamData, EqualizerStreamData
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
+    EntityCategory,
     Platform,
     UnitOfElectricCurrent,
     UnitOfElectricPotential,
@@ -12,7 +13,6 @@ from homeassistant.const import (
     UnitOfPower,
     UnitOfTemperature,
 )
-from homeassistant.helpers.entity import EntityCategory
 
 DOMAIN = "easee"
 TIMEOUT = 30
@@ -676,10 +676,10 @@ OPTIONAL_EASEE_ENTITIES = {
         "translation_key": "update_available",
         "device_class": None,
         "state_func": lambda state: (
-            int(state["chargerFirmware"]) < int(state["latestFirmware"])
-        )
-        if state["latestFirmware"] is not None
-        else None,
+            (int(state["chargerFirmware"]) < int(state["latestFirmware"]))
+            if state["latestFirmware"] is not None
+            else None
+        ),
         "enabled_default": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
@@ -807,7 +807,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": None,
         "device_class": None,
         "translation_key": "operator",
-    }
+    },
 }
 
 EASEE_EQ_ENTITIES = {
