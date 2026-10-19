@@ -8,13 +8,24 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.device_registry import DeviceEntry
+from homeassistant.helpers.typing import ConfigType
 
 from .const import DOMAIN, MIN_HA_VERSION, PLATFORMS, VERSION
 from .controller import Controller
 from .services import async_setup_services
 
 _LOGGER = logging.getLogger(__name__)
+
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Set up the Easee component."""
+    await async_setup_services(hass)
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
@@ -42,8 +53,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN]["controller"] = controller
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-
-    await async_setup_services(hass)
 
     entry.async_on_unload(entry.add_update_listener(config_entry_update_listener))
 
@@ -99,6 +108,7 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
 
     return True
 
+
 async def async_remove_config_entry_device(
     hass: HomeAssistant, entry: ConfigEntry, device_entry: DeviceEntry
 ) -> bool:
@@ -116,7 +126,10 @@ async def async_remove_config_entry_device(
             if identifier[0] == DOMAIN:
                 for product in products:
                     if product.id == identifier[1]:
-                        _LOGGER.error("Device %s is still present, to delete a device it must first be reomved from site or site must be removed or unmonitored.", identifier[1])
+                        _LOGGER.error(
+                            "Device %s is still present, to delete a device it must first be reomved from site or site must be removed or unmonitored.",
+                            identifier[1],
+                        )
                         return False
 
                 # The device was not found, allow delete
