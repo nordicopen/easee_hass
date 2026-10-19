@@ -689,10 +689,10 @@
       "name": "Smart charging"
     },
     "download_report": {
-      "description": "Download consumption/session report (PDF) from Easee Cloud",
+      "description": "Download consumption/session report from Easee Cloud",
       "fields": {
         "category": {
-          "description": "Report category (default: Charger Detailed)",
+          "description": "Report category to download",
           "name": "Category"
         },
         "device_id": {
@@ -700,8 +700,12 @@
           "name": "Charger"
         },
         "file_path": {
-          "description": "Target file path to save the PDF. Defaults to /media/easee_reports/...",
+          "description": "Target file path to save the report. Defaults to /media/easee_reports/...",
           "name": "File path"
+        },
+        "format": {
+          "description": "File format of the report (PDF, CSV, or Excel XLSX)",
+          "name": "Format"
         },
         "from": {
           "description": "Start of period (UTC). Defaults to first day of previous month.",

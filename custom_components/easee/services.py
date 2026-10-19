@@ -66,10 +66,58 @@ ATTR_PHASE_MODES = {
 ATTR_OCPP_URL = "ocpp_url"
 ATTR_OPERATOR = "operator_id"
 ATTR_CATEGORY = "category"
+ATTR_FORMAT = "format"
 ATTR_FROM = "from"
 ATTR_TO = "to"
 ATTR_FILE_PATH = "file_path"
-DEFAULT_REPORT_CATEGORY = ReportCategory.CHARGER_DETAILED.value
+
+REPORT_CATEGORY_USER_SUMMARY = "user_summary"
+REPORT_CATEGORY_USER_DETAILED = "user_detailed"
+REPORT_CATEGORY_CHARGER_SUMMARY = "charger_summary"
+REPORT_CATEGORY_CHARGER_DETAILED = "charger_detailed"
+REPORT_CATEGORY_KEY_SUMMARY = "key_summary"
+REPORT_CATEGORY_KEY_DETAILED = "key_detailed"
+REPORT_CATEGORY_ENERGY_SUMMARY = "energy_summary"
+
+REPORT_CATEGORIES = [
+    REPORT_CATEGORY_CHARGER_DETAILED,
+    REPORT_CATEGORY_CHARGER_SUMMARY,
+    REPORT_CATEGORY_KEY_DETAILED,
+    REPORT_CATEGORY_KEY_SUMMARY,
+    REPORT_CATEGORY_ENERGY_SUMMARY,
+    REPORT_CATEGORY_USER_DETAILED,
+    REPORT_CATEGORY_USER_SUMMARY,
+]
+
+FORMAT_PDF = "pdf"
+FORMAT_CSV = "csv"
+FORMAT_XLSX = "xlsx"
+REPORT_FORMATS = [FORMAT_PDF, FORMAT_CSV, FORMAT_XLSX]
+DEFAULT_REPORT_FORMAT = FORMAT_PDF
+
+REPORT_CATEGORY_MAP = {
+    (REPORT_CATEGORY_USER_SUMMARY, FORMAT_CSV): ReportCategory.USER_SUMMARY_CSV,
+    (REPORT_CATEGORY_USER_SUMMARY, FORMAT_XLSX): ReportCategory.USER_SUMMARY_XLSX,
+    (REPORT_CATEGORY_USER_SUMMARY, FORMAT_PDF): ReportCategory.USER_SUMMARY_PDF,
+    (REPORT_CATEGORY_USER_DETAILED, FORMAT_CSV): ReportCategory.USER_DETAILED_CSV,
+    (REPORT_CATEGORY_USER_DETAILED, FORMAT_XLSX): ReportCategory.USER_DETAILED_XLSX,
+    (REPORT_CATEGORY_USER_DETAILED, FORMAT_PDF): ReportCategory.USER_DETAILED_PDF,
+    (REPORT_CATEGORY_CHARGER_SUMMARY, FORMAT_CSV): ReportCategory.CHARGER_SUMMARY_CSV,
+    (REPORT_CATEGORY_CHARGER_SUMMARY, FORMAT_XLSX): ReportCategory.CHARGER_SUMMARY_XLSX,
+    (REPORT_CATEGORY_CHARGER_SUMMARY, FORMAT_PDF): ReportCategory.CHARGER_SUMMARY_PDF,
+    (REPORT_CATEGORY_CHARGER_DETAILED, FORMAT_CSV): ReportCategory.CHARGER_DETAILED_CSV,
+    (REPORT_CATEGORY_CHARGER_DETAILED, FORMAT_XLSX): ReportCategory.CHARGER_DETAILED_XLSX,
+    (REPORT_CATEGORY_CHARGER_DETAILED, FORMAT_PDF): ReportCategory.CHARGER_DETAILED_PDF,
+    (REPORT_CATEGORY_KEY_SUMMARY, FORMAT_CSV): ReportCategory.EASEE_KEY_SUMMARY_CSV,
+    (REPORT_CATEGORY_KEY_SUMMARY, FORMAT_XLSX): ReportCategory.EASEE_KEY_SUMMARY_XLSX,
+    (REPORT_CATEGORY_KEY_SUMMARY, FORMAT_PDF): ReportCategory.EASEE_KEY_SUMMARY_PDF,
+    (REPORT_CATEGORY_KEY_DETAILED, FORMAT_CSV): ReportCategory.EASEE_KEY_DETAILED_CSV,
+    (REPORT_CATEGORY_KEY_DETAILED, FORMAT_XLSX): ReportCategory.EASEE_KEY_DETAILED_XLSX,
+    (REPORT_CATEGORY_KEY_DETAILED, FORMAT_PDF): ReportCategory.EASEE_KEY_DETAILED_PDF,
+    (REPORT_CATEGORY_ENERGY_SUMMARY, FORMAT_CSV): ReportCategory.ENERGY_SUMMARY_CSV,
+    (REPORT_CATEGORY_ENERGY_SUMMARY, FORMAT_XLSX): ReportCategory.ENERGY_SUMMARY_XLSX,
+    (REPORT_CATEGORY_ENERGY_SUMMARY, FORMAT_PDF): ReportCategory.ENERGY_SUMMARY_PDF,
+}
 ACTION_COMMAND = "action_command"
 ACTION_START = "start"
 ACTION_STOP = "stop"
@@ -294,9 +342,11 @@ SERVICE_SET_OPERATOR = vol.All(
 )
 
 ext_report = {
-    vol.Optional(ATTR_CATEGORY, default=DEFAULT_REPORT_CATEGORY): vol.All(
-        vol.Coerce(int), vol.In([c.value for c in ReportCategory])
+    vol.Required(ATTR_CATEGORY): vol.Or(
+        vol.In(REPORT_CATEGORIES),
+        vol.In([c.value for c in ReportCategory]),
     ),
+    vol.Required(ATTR_FORMAT): vol.In(REPORT_FORMATS),
     vol.Optional(ATTR_FROM): cv.string,
     vol.Optional(ATTR_TO): cv.string,
     vol.Optional(ATTR_FILE_PATH): cv.string,
@@ -1198,14 +1248,25 @@ async def async_setup_services(hass):  # noqa: C901
             to_str = last_prev_month.strftime("%Y-%m-%dT%H:%M:%SZ")
             month_tag = first_prev_month.strftime("%Y-%m")
 
-        category = int(call.data.get(ATTR_CATEGORY, DEFAULT_REPORT_CATEGORY))
+        # Resolve category and format
+        raw_category = call.data[ATTR_CATEGORY]
+        report_format = call.data.get(ATTR_FORMAT, DEFAULT_REPORT_FORMAT).lower()
+
+        if isinstance(raw_category, str):
+            category_key = raw_category.lower()
+            category_int = REPORT_CATEGORY_MAP.get(
+                (category_key, report_format),
+                ReportCategory.CHARGER_DETAILED_PDF.value,
+            )
+        else:
+            category_int = int(raw_category)
+            category_key = f"cat{category_int}"
 
         # 2. Determine target file path
         target_path = call.data.get(ATTR_FILE_PATH)
         if not target_path:
-            default_filename = f"easee_report_{charger.id}_{month_tag}.pdf"
-            if category != DEFAULT_REPORT_CATEGORY:
-                default_filename = f"easee_report_{charger.id}_{month_tag}_cat{category}.pdf"
+            file_ext = report_format
+            default_filename = f"easee_report_{charger.id}_{month_tag}_{category_key}.{file_ext}"
             if hass.config.is_allowed_path("/media"):
                 target_path = os.path.join("/media", "easee_reports", default_filename)
             else:
@@ -1219,28 +1280,30 @@ async def async_setup_services(hass):  # noqa: C901
             )
 
         _LOGGER.info(
-            "Downloading Easee report: site_id=%s, charger=%s, category=%s, from=%s, to=%s, target=%s",
+            "Downloading Easee report: site_id=%s, charger=%s, category=%s (%s), format=%s, from=%s, to=%s, target=%s",
             site_id,
             charger.id,
-            category,
+            category_key,
+            category_int,
+            report_format,
             from_str,
             to_str,
             target_path,
         )
 
-        # 3. Request PDF from Easee API
+        # 3. Request report from Easee API
         try:
             content = await charger.site.get_report(
                 from_date=dt_from if dt_from is not None else from_str,
                 to_date=dt_to if dt_to is not None else to_str,
-                category=category,
+                category=category_int,
             )
 
         except Exception as ex:
             if isinstance(ex, HomeAssistantError):
                 raise
-            _LOGGER.error("Failed to download Easee report: %s", ex)
-            raise HomeAssistantError(f"Failed to download Easee report: {ex}") from ex
+            _LOGGER.exception("Failed to download Easee report: %s", ex)
+            raise HomeAssistantError(f"Failed to download Easee report: {type(ex).__name__} - {ex}") from ex
 
         if not content:
             raise HomeAssistantError("Received empty report from Easee API")
@@ -1276,7 +1339,9 @@ async def async_setup_services(hass):  # noqa: C901
             "bytes": len(content),
             "site_id": site_id,
             "charger_id": charger.id,
-            "category": category,
+            "category": category_int,
+            "category_name": category_key,
+            "format": report_format,
             "from": from_str,
             "to": to_str,
         }

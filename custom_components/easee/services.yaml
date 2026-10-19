@@ -481,22 +481,37 @@ download_report:
           entity:
             domain: "switch"
     category:
-      required: false
-      default: 11
-      example: 11
+      required: true
+      example: "charger_detailed"
       selector:
         select:
           options:
             - label: "Charger Detailed"
-              value: "11"
+              value: "charger_detailed"
             - label: "Charger Summary"
-              value: "10"
-            - label: "Easee Key Summary"
-              value: "12"
+              value: "charger_summary"
             - label: "Easee Key Detailed"
-              value: "13"
+              value: "key_detailed"
+            - label: "Easee Key Summary"
+              value: "key_summary"
             - label: "Energy Summary"
-              value: "19"
+              value: "energy_summary"
+            - label: "User Detailed"
+              value: "user_detailed"
+            - label: "User Summary"
+              value: "user_summary"
+    format:
+      required: true
+      example: "pdf"
+      selector:
+        select:
+          options:
+            - label: "PDF"
+              value: "pdf"
+            - label: "CSV"
+              value: "csv"
+            - label: "Excel (XLSX)"
+              value: "xlsx"
     from:
       required: false
       example: "2026-09-01T00:00:00Z"
