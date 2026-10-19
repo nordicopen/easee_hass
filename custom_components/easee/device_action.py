@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import voluptuous as vol
+import probatio
 
 from homeassistant.const import (
     ATTR_DEVICE_ID,
@@ -34,8 +34,8 @@ ACTION_TYPES = {
 
 ACTION_SCHEMA = cv.DEVICE_ACTION_BASE_SCHEMA.extend(
     {
-        vol.Required(CONF_TYPE): vol.In(ACTION_TYPES),
-        vol.Required(CONF_DEVICE_ID): str,
+        probatio.Required(CONF_TYPE): probatio.In(ACTION_TYPES),
+        probatio.Required(CONF_DEVICE_ID): str,
     }
 )
 
