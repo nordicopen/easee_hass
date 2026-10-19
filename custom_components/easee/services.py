@@ -4,8 +4,8 @@
 from datetime import timedelta
 import logging
 
-import probatio
 from pyeasee.exceptions import BadRequestException, ForbiddenServiceException
+import voluptuous as vol
 
 from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
@@ -109,8 +109,6 @@ wd_name = [
     "saturday",
     "sunday",
 ]
-
-
 def has_at_least_one(keys):
     """Ensure that at least one key is present."""
 
@@ -118,7 +116,7 @@ def has_at_least_one(keys):
         for k in obj:
             if k in keys:
                 return obj
-        raise probatio.Invalid(f"Must contain one of {keys}")
+        raise vol.Invalid(f"Must contain one of {keys}")
 
     return fkey
 
@@ -127,172 +125,170 @@ target_schema2 = has_at_least_one([CONF_DEVICE_ID, CHARGER_ID])
 target_eq_schema2 = has_at_least_one([CONF_DEVICE_ID, EQUALIZER_ID])
 target_schema3 = has_at_least_one([CONF_DEVICE_ID, CHARGER_ID, CIRCUIT_ID])
 
-exclusive_schema2 = probatio.Schema(
+exclusive_schema2 = vol.Schema(
     {
-        probatio.Exclusive(CONF_DEVICE_ID, GRP1): cv.string,
-        probatio.Exclusive(CHARGER_ID, GRP1): cv.string,
+        vol.Exclusive(CONF_DEVICE_ID, GRP1): cv.string,
+        vol.Exclusive(CHARGER_ID, GRP1): cv.string,
     },
     required=True,
 )
 
-exclusive_eq_schema2 = probatio.Schema(
+exclusive_eq_schema2 = vol.Schema(
     {
-        probatio.Exclusive(CONF_DEVICE_ID, GRP1): cv.string,
-        probatio.Exclusive(EQUALIZER_ID, GRP1): cv.string,
+        vol.Exclusive(CONF_DEVICE_ID, GRP1): cv.string,
+        vol.Exclusive(EQUALIZER_ID, GRP1): cv.string,
     },
     required=True,
 )
 
-exclusive_schema3 = probatio.Schema(
+exclusive_schema3 = vol.Schema(
     {
-        probatio.Exclusive(CONF_DEVICE_ID, GRP1): cv.string,
-        probatio.Exclusive(CHARGER_ID, GRP1): cv.string,
-        probatio.Exclusive(CIRCUIT_ID, GRP1): cv.positive_int,
+        vol.Exclusive(CONF_DEVICE_ID, GRP1): cv.string,
+        vol.Exclusive(CHARGER_ID, GRP1): cv.string,
+        vol.Exclusive(CIRCUIT_ID, GRP1): cv.positive_int,
     },
     required=True,
 )
 
 ext_charger_actions_command = {
-    probatio.Required(ACTION_COMMAND): probatio.In(ACTIONS),
+    vol.Required(ACTION_COMMAND): vol.In(ACTIONS),
 }
-SERVICE_CHARGER_ACTIONS_COMMAND_SCHEMA = probatio.All(
+SERVICE_CHARGER_ACTIONS_COMMAND_SCHEMA = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_charger_actions_command),
 )
 
 ext_charger_enable = {
-    probatio.Required(ATTR_ENABLE): cv.boolean,
+    vol.Required(ATTR_ENABLE): cv.boolean,
 }
 
-SERVICE_CHARGER_ENABLE_SCHEMA = probatio.All(
+SERVICE_CHARGER_ENABLE_SCHEMA = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_charger_enable),
 )
 
 ext_basic_chargeplan = {
-    probatio.Optional(ATTR_CHARGEPLAN_START_DATETIME): cv.datetime,
-    probatio.Optional(ATTR_CHARGEPLAN_STOP_DATETIME): cv.datetime,
-    probatio.Optional(ATTR_CHARGEPLAN_REPEAT): cv.boolean,
-    probatio.Optional(ATTR_SET_CURRENT): cv.positive_int,
+    vol.Optional(ATTR_CHARGEPLAN_START_DATETIME): cv.datetime,
+    vol.Optional(ATTR_CHARGEPLAN_STOP_DATETIME): cv.datetime,
+    vol.Optional(ATTR_CHARGEPLAN_REPEAT): cv.boolean,
+    vol.Optional(ATTR_SET_CURRENT): cv.positive_int,
 }
 
-SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = probatio.All(
+SERVICE_CHARGER_SET_BASIC_CHARGEPLAN_SCHEMA = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_basic_chargeplan),
 )
 
 # Todo: Remove deprecated cv.positive_int
 ext_weekly_chargeplan = {
-    probatio.Required(ATTR_CHARGEPLAN_DAY, default="monday"): probatio.Or(
-        probatio.In(WEEKDAYS), cv.positive_int
+    vol.Required(ATTR_CHARGEPLAN_DAY, default="monday"): vol.Or(
+        vol.In(WEEKDAYS), cv.positive_int
     ),
-    probatio.Optional(ATTR_CHARGEPLAN_START_TIME): cv.time,
-    probatio.Optional(ATTR_CHARGEPLAN_STOP_TIME): cv.time,
-    probatio.Optional(ATTR_SET_CURRENT): cv.positive_int,
+    vol.Optional(ATTR_CHARGEPLAN_START_TIME): cv.time,
+    vol.Optional(ATTR_CHARGEPLAN_STOP_TIME): cv.time,
+    vol.Optional(ATTR_SET_CURRENT): cv.positive_int,
 }
 
-SERVICE_CHARGER_SET_WEEKLY_CHARGEPLAN_SCHEMA = probatio.All(
+SERVICE_CHARGER_SET_WEEKLY_CHARGEPLAN_SCHEMA = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_weekly_chargeplan),
 )
 
 ext_circuit_current = {
     # Todo: Remove deprecation code
-    probatio.Optional(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
-    # probatio.Required(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
-    probatio.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
-    probatio.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
-    probatio.Optional("currentP1"): cv.positive_int,
-    probatio.Optional("currentP2"): cv.positive_int,
-    probatio.Optional("currentP3"): cv.positive_int,
+    vol.Optional(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
+    # vol.Required(ATTR_SET_CURRENTP1, default=DEFAULT_CURRENT): cv.positive_int,
+    vol.Optional(ATTR_SET_CURRENTP2): cv.positive_int,
+    vol.Optional(ATTR_SET_CURRENTP3): cv.positive_int,
+    vol.Optional("currentP1"): cv.positive_int,
+    vol.Optional("currentP2"): cv.positive_int,
+    vol.Optional("currentP3"): cv.positive_int,
 }
 
-SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = probatio.All(
+SERVICE_SET_CIRCUIT_CURRENT_SCHEMA = vol.All(
     target_schema3,
     exclusive_schema3.extend(ext_circuit_current),
 )
 
 ext_ttl = {
-    probatio.Optional(ATTR_TTL, default=0): cv.positive_int,
+    vol.Optional(ATTR_TTL, default=0): cv.positive_int,
 }
 
-SERVICE_SET_CIRCUIT_CURRENT_SCHEMA_TTL = probatio.All(
+SERVICE_SET_CIRCUIT_CURRENT_SCHEMA_TTL = vol.All(
     target_schema3,
     exclusive_schema3.extend(ext_circuit_current).extend(ext_ttl),
 )
 
 ext_current = {
-    probatio.Required(ATTR_SET_CURRENT, default=DEFAULT_CURRENT): probatio.All(
-        cv.positive_int, probatio.Range(min=MIN_CURRENT, max=MAX_CURRENT)
+    vol.Required(ATTR_SET_CURRENT, default=DEFAULT_CURRENT): vol.All(
+        cv.positive_int, vol.Range(min=MIN_CURRENT, max=MAX_CURRENT)
     ),
 }
 
-SERVICE_SET_CHARGER_CURRENT_SCHEMA = probatio.All(
+SERVICE_SET_CHARGER_CURRENT_SCHEMA = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_current),
 )
 
-SERVICE_SET_CHARGER_CURRENT_SCHEMA_TTL = probatio.All(
+SERVICE_SET_CHARGER_CURRENT_SCHEMA_TTL = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_current).extend(ext_ttl),
 )
 
 ext_cost = {
-    probatio.Required(ATTR_COST_PER_KWH): probatio.All(probatio.Coerce(float)),
-    probatio.Optional(ATTR_COST_CURRENCY): cv.string,
-    probatio.Optional(ATTR_COST_VAT): probatio.All(probatio.Coerce(float)),
+    vol.Required(ATTR_COST_PER_KWH): vol.All(vol.Coerce(float)),
+    vol.Optional(ATTR_COST_CURRENCY): cv.string,
+    vol.Optional(ATTR_COST_VAT): vol.All(vol.Coerce(float)),
 }
 
-SERVICE_SET_SITE_CHARGING_COST_SCHEMA = probatio.All(
+SERVICE_SET_SITE_CHARGING_COST_SCHEMA = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_cost),
 )
 # Todo: Remove deprecated cv.positive_int
 ext_access = {
-    probatio.Required(ACCESS_LEVEL): probatio.Or(
-        probatio.In(ACCESS_LEVELS), cv.positive_int
-    ),
+    vol.Required(ACCESS_LEVEL): vol.Or(vol.In(ACCESS_LEVELS), cv.positive_int),
 }
-SERVICE_SET_ACCESS_SCHEMA = probatio.All(
+SERVICE_SET_ACCESS_SCHEMA = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_access),
 )
 
 ext_phase_mode = {
-    probatio.Required(ATTR_PHASE_MODE): probatio.In(ATTR_PHASE_MODES),
+    vol.Required(ATTR_PHASE_MODE): vol.In(ATTR_PHASE_MODES),
 }
-SERVICE_SET_PHASE_MODE = probatio.All(
+SERVICE_SET_PHASE_MODE = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_phase_mode),
 )
 
 ext_surplus_charging = {
-    probatio.Required(ATTR_ENABLE): cv.boolean,
-    probatio.Required(ATTR_SET_CURRENT, default=MIN_CURRENT): probatio.All(
-        cv.positive_int, probatio.Range(min=MIN_CURRENT, max=MAX_CURRENT)
+    vol.Required(ATTR_ENABLE): cv.boolean,
+    vol.Required(ATTR_SET_CURRENT, default=MIN_CURRENT): vol.All(
+        cv.positive_int, vol.Range(min=MIN_CURRENT, max=MAX_CURRENT)
     ),
 }
 
-SERVICE_SET_SURPLUS_CHARGING = probatio.All(
+SERVICE_SET_SURPLUS_CHARGING = vol.All(
     target_eq_schema2,
     exclusive_eq_schema2.extend(ext_surplus_charging),
 )
 
 ext_ocpp_mode = {
-    probatio.Required(ATTR_ENABLE): cv.boolean,
-    probatio.Optional(ATTR_OCPP_URL): cv.string,
+    vol.Required(ATTR_ENABLE): cv.boolean,
+    vol.Optional(ATTR_OCPP_URL): cv.string,
 }
 
 ext_operator = {
-    probatio.Required(ATTR_OPERATOR): cv.positive_int,
+    vol.Required(ATTR_OPERATOR): cv.positive_int,
 }
 
-SERVICE_SET_OCPP = probatio.All(
+SERVICE_SET_OCPP = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_ocpp_mode),
 )
 
-SERVICE_SET_OPERATOR = probatio.All(
+SERVICE_SET_OPERATOR = vol.All(
     target_schema2,
     exclusive_schema2.extend(ext_operator),
 )
@@ -413,9 +409,7 @@ async def async_setup_services(hass):  # noqa: C901
         device_reg = dr.async_get(hass)
         device_entry = device_reg.async_get(call.data[CONF_DEVICE_ID])
         if device_entry is None:
-            raise ServiceValidationError(
-                f"Could not find device_id {call.data[CONF_DEVICE_ID]}"
-            )
+            raise ServiceValidationError(f"Could not find device_id {call.data[CONF_DEVICE_ID]}")
         for ident in device_entry.identifiers:
             for val in ident:
                 if val != DOMAIN:
@@ -683,9 +677,7 @@ async def async_setup_services(hass):  # noqa: C901
             stop_day = wd_name[stop_dt.weekday()]
 
             try:
-                return await function_call(
-                    start_day, stop_day, start_t, stop_t, limit=current
-                )
+                return await function_call(start_day, stop_day, start_t, stop_t, limit=current)
             except BadRequestException as ex:
                 _LOGGER.error(
                     "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
@@ -1081,11 +1073,10 @@ async def async_setup_services(hass):  # noqa: C901
         if url is None:
             url = "ws://127.0.0.1:9000"
 
-        _LOGGER.debug(
-            "Call set ocpp enable %d on charger_id: %s with url %s",
+        _LOGGER.debug("Call set ocpp enable %d on charger_id: %s with url %s",
             enable,
             charger.id,
-            url,
+            url
         )
         if charger:
             function_name = SERVICE_MAP[call.service]
@@ -1123,8 +1114,7 @@ async def async_setup_services(hass):  # noqa: C901
         charger = await async_get_charger(call)
         operator_id = call.data.get(ATTR_OPERATOR)
 
-        _LOGGER.debug(
-            "Call set operator %d on charger_id: %s",
+        _LOGGER.debug("Call set operator %d on charger_id: %s",
             operator_id,
             charger.id,
         )

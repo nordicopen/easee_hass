@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import probatio
+import voluptuous as vol
 
 from homeassistant.const import (
     ATTR_ENTITY_ID,
@@ -26,8 +26,8 @@ CONDITION_TYPES = list(EASEE_STATUS.values())
 
 CONDITION_SCHEMA = cv.DEVICE_CONDITION_BASE_SCHEMA.extend(
     {
-        probatio.Required(CONF_ENTITY_ID): cv.entity_id,
-        probatio.Required(CONF_TYPE): probatio.In(CONDITION_TYPES),
+        vol.Required(CONF_ENTITY_ID): cv.entity_id,
+        vol.Required(CONF_TYPE): vol.In(CONDITION_TYPES),
     }
 )
 
