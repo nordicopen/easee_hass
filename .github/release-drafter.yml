@@ -1,33 +1,42 @@
-name-template: 'Example title - v0.9.74'
-tag-template: 'v0.9.74'
-exclude-labels:
-  - 'skip-changelog'
+name-template: "Example title - v0.9.74"
+tag-template: "v0.9.74"
 categories:
-  - title: 'New Features'
-    labels:
-      - 'feature'
-      - 'enhancement'
-  - title: 'Bug Fixes'
-    labels:
-      - 'fix'
-      - 'bugfix'
-      - 'bug'
-  - title: 'Translation'
-    collapse-after: 2
-    labels:
-      - 'translation'
-  - title: 'Dependencies'
-    collapse-after: 2
-    labels:
-      - 'dependency'
-  - title: 'Code quality and maintenance'
-    labels:
-      - 'maintenance'
-      - 'code quality'
+  - type: "pre-exclude"
+    when:
+      label: "skip-changelog"
 
-  - title: 'Development environment and tools'
-    label: 'dev tools'
-change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+  - title: "New Features"
+    when:
+      labels:
+        - "feature"
+        - "enhancement"
+  - title: "Bug Fixes"
+    when:
+      labels:
+        - "fix"
+        - "bugfix"
+        - "bug"
+  - title: "Translation"
+    collapse-after: 2
+    when:
+      labels:
+        - "translation"
+  - title: "Dependencies"
+    collapse-after: 2
+    when:
+      labels:
+        - "dependency"
+  - title: "Code quality and maintenance"
+    when:
+      labels:
+        - "maintenance"
+        - "code quality"
+
+  - title: "Development environment and tools"
+    when:
+      labels:
+        - "dev tools"
+change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 
 template: |
@@ -53,30 +62,30 @@ template: |
   $CHANGES
 
 autolabeler:
-  - label: 'maintenance'
+  - label: "maintenance"
     files:
-      - '*.md'
+      - "*.md"
 
-  - label: 'dev tools'
+  - label: "dev tools"
     files:
-      - '.github/*'
-      - '.devcontainer.json'
-      - 'links.sh'
-      - 'Makefile'
-      - 'setup.cfg'
-      - 'requirements*.txt'
-      - '.gitignore'
-      - '.pre-commit-config.yaml'
-      - '.pylintrc'
-      - '*.toml'
-  - label: 'bugfix'
+      - ".github/*"
+      - ".devcontainer.json"
+      - "links.sh"
+      - "Makefile"
+      - "setup.cfg"
+      - "requirements*.txt"
+      - ".gitignore"
+      - ".pre-commit-config.yaml"
+      - ".pylintrc"
+      - "*.toml"
+  - label: "bugfix"
     title:
-      - '/fix/i'
-  - label: 'code quality'
+      - "/fix/i"
+  - label: "code quality"
     title:
-      - 'lint'
-  - label: 'translation'
+      - "lint"
+  - label: "translation"
     title:
-      - 'Lokalise:'
+      - "Lokalise:"
     files:
-      - '**/translations/*.json'
+      - "**/translations/*.json"
