@@ -3,19 +3,21 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from aiohttp import ClientConnectionError
+import probatio
 from pyeasee import AuthorizationFailedException, BadRequestException, Easee, Site
-import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
-from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import aiohttp_client, config_validation as cv
-from homeassistant.helpers.typing import ConfigType
 
 from .const import CONF_MONITORED_SITES, DOMAIN, VERSION
 
@@ -34,37 +36,38 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
 
         self.sites = {}
         self.data = {}
-        self.entry = {}
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
+    def async_get_options_flow(config_entry) -> EaseeOptionsFlowHandler:
         """Get the options flow for this handler."""
-        return OptionsFlowHandler(config_entry)
+        return EaseeOptionsFlowHandler(config_entry)
 
-    async def async_step_reauth(self, entry_data) -> FlowResult:
+    async def async_step_reauth(self, entry_data) -> ConfigFlowResult:
         """Perform reauth upon an API authentication error."""
-        self.entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
         return await self.async_step_reauth_confirm()
 
     async def async_step_reauth_confirm(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Dialog that informs the user that reauth is required."""
         errors = {}
+        reauth_entry = self._get_reauth_entry()
         if user_input is not None:
-            new_input = self.entry.data | user_input
+            new_input = reauth_entry.data | user_input
             try:
                 client_session = aiohttp_client.async_get_clientsession(self.hass)
                 easee = Easee(
-                    self.entry.data[CONF_USERNAME],
+                    reauth_entry.data[CONF_USERNAME],
                     user_input[CONF_PASSWORD],
                     client_session,
                     f"easee_hass_{VERSION}",
                 )
                 await easee.connect()
-                self.hass.config_entries.async_update_entry(self.entry, data=new_input)
-                await self.hass.config_entries.async_reload(self.entry.entry_id)
+                self.hass.config_entries.async_update_entry(
+                    reauth_entry, data=new_input
+                )
+                await self.hass.config_entries.async_reload(reauth_entry.entry_id)
                 return self.async_abort(reason="reauth_successful")
             except (AuthorizationFailedException, BadRequestException):
                 errors["base"] = "auth_failure"
@@ -77,12 +80,16 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
 
         return self.async_show_form(
             step_id="reauth_confirm",
-            data_schema=vol.Schema({vol.Required(CONF_PASSWORD): str}),
-            description_placeholders={"username": self.entry.data[CONF_USERNAME]},
+            data_schema=probatio.Schema(
+                {probatio.Required(probatio.Secret(CONF_PASSWORD)): str}
+            ),
+            description_placeholders={"username": reauth_entry.data[CONF_USERNAME]},
             errors=errors,
         )
 
-    async def async_step_user(self, user_input: Optional[ConfigType] = None):
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Handle a flow start."""
         # Supporting a single account.
         entries = self.hass.config_entries.async_entries(DOMAIN)
@@ -136,10 +143,10 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
 
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Required(CONF_USERNAME, default=_default_username): str,
-                    vol.Required(CONF_PASSWORD): str,
+                    probatio.Required(CONF_USERNAME, default=_default_username): str,
+                    probatio.Required(probatio.Secret(CONF_PASSWORD)): str,
                 }
             ),
             errors=errors,
@@ -147,7 +154,7 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
 
     async def async_step_sites(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Select sites to monitor."""
         errors = {}
         if user_input is not None:
@@ -160,9 +167,9 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
 
         return self.async_show_form(
             step_id="sites",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Optional(
+                    probatio.Optional(
                         CONF_MONITORED_SITES, default=self.sites
                     ): cv.multi_select(self.sites)
                 }
@@ -170,20 +177,24 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
             errors=errors,
         )
 
-    async def async_step_import(self, user_input: Optional[ConfigType] = None):
+    async def async_step_import(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Occurs when an entry is setup through config."""
         return await self.async_step_user(user_input)
 
 
-class OptionsFlowHandler(config_entries.OptionsFlow):
+class EaseeOptionsFlowHandler(OptionsFlow):
     """Handle options."""
 
-    def __init__(self, config_entry: ConfigEntry):
+    def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize options flow."""
         self.options = dict(config_entry.options)
         self.prev_options = dict(config_entry.options)
 
-    async def async_step_init(self, user_input=None):
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Manage the options."""
 
         errors = {}
@@ -193,7 +204,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         default_sites = [x["name"] for x in sites]
 
         # Remove entries that are renamed or deleted in Easee cloud
-        for x in self.config_entry.options.get(CONF_MONITORED_SITES):
+        for x in self.config_entry.options.get(CONF_MONITORED_SITES, []):
             if x not in default_sites:
                 self.config_entry.options[CONF_MONITORED_SITES].remove(x)
 
@@ -206,9 +217,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Optional(
+                    probatio.Optional(
                         CONF_MONITORED_SITES,
                         default=self.config_entry.options.get(
                             CONF_MONITORED_SITES, default_sites
