@@ -41,8 +41,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data[DOMAIN] = {}
     hass.data[DOMAIN]["sites_to_remove"] = []
     _LOGGER.debug("Setting up Easee component version %s", VERSION)
-    username = entry.data.get(CONF_USERNAME)
-    password = entry.data.get(CONF_PASSWORD)
+    username = entry.data[CONF_USERNAME]
+    password = entry.data[CONF_PASSWORD]
 
     try:
         controller = Controller(username, password, hass, entry)
@@ -82,27 +82,27 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
     _LOGGER.info("Migrating from version %s", config_entry.version)
 
     if config_entry.version == 1:
-        options = {**config_entry.options}
+        new_options = {**config_entry.options}
         # modify Config Entry data
-        if "monitored_conditions" in options:
-            options.pop("monitored_conditions")
+        if "monitored_conditions" in new_options:
+            new_options.pop("monitored_conditions")
 
-        if "monitored_eq_conditions" in options:
-            options.pop("monitored_eq_conditions")
+        if "monitored_eq_conditions" in new_options:
+            new_options.pop("monitored_eq_conditions")
 
-        config_entry.options = {**options}
-
-        config_entry.version = 2
+        hass.config_entries.async_update_entry(
+            config_entry, options=new_options, version=2
+        )
 
     if config_entry.version == 2:
-        options = {**config_entry.options}
+        new_options = {**config_entry.options}
         # modify Config Entry data
-        if "custom_units" in options:
-            options.pop("custom_units")
+        if "custom_units" in new_options:
+            new_options.pop("custom_units")
 
-        config_entry.options = {**options}
-
-        config_entry.version = 3
+        hass.config_entries.async_update_entry(
+            config_entry, options=new_options, version=3
+        )
 
     _LOGGER.info("Migration to version %s successful", config_entry.version)
 
@@ -127,7 +127,9 @@ async def async_remove_config_entry_device(
                 for product in products:
                     if product.id == identifier[1]:
                         _LOGGER.error(
-                            "Device %s is still present, to delete a device it must first be reomved from site or site must be removed or unmonitored.",
+                            "Device %s is still present, to delete a device it must "
+                            "first be removed from site or site must be removed or "
+                            "unmonitored.",
                             identifier[1],
                         )
                         return False

@@ -17,5 +17,6 @@
   "requirements": [
     "pyeasee==0.8.19"
   ],
+  "single_config_entry": true,
   "version": "0.9.74"
 }

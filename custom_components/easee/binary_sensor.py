@@ -5,7 +5,7 @@ import logging
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, MANUFACTURER, MODEL_EQUALIZER
@@ -28,7 +28,7 @@ class ChargerBinarySensor(ChargerEntity, BinarySensorEntity):
     """Easee charger binary sensor class."""
 
     @property
-    def is_on(self) -> bool:
+    def is_on(self) -> bool | None:
         """Return true if the binary sensor is on."""
         _LOGGER.debug("Getting state of %s", self._entity_name)
         return self._state
@@ -38,7 +38,7 @@ class EqualizerBinarySensor(ChargerEntity, BinarySensorEntity):
     """Easee equalizer binary sensor class."""
 
     @property
-    def is_on(self) -> bool:
+    def is_on(self) -> bool | None:
         """Return true if the binary sensor is on."""
         _LOGGER.debug("Getting state of %s", self._entity_name)
         return self._state

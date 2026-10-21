@@ -5,14 +5,16 @@ from pyeasee import ChargerStreamData, EqualizerStreamData
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
+    EntityCategory,
     Platform,
     UnitOfElectricCurrent,
     UnitOfElectricPotential,
     UnitOfEnergy,
     UnitOfPower,
+    UnitOfReactiveEnergy,
+    UnitOfReactivePower,
     UnitOfTemperature,
 )
-from homeassistant.helpers.entity import EntityCategory
 
 DOMAIN = "easee"
 TIMEOUT = 30
@@ -676,10 +678,10 @@ OPTIONAL_EASEE_ENTITIES = {
         "translation_key": "update_available",
         "device_class": None,
         "state_func": lambda state: (
-            int(state["chargerFirmware"]) < int(state["latestFirmware"])
-        )
-        if state["latestFirmware"] is not None
-        else None,
+            (int(state["chargerFirmware"]) < int(state["latestFirmware"]))
+            if state["latestFirmware"] is not None
+            else None
+        ),
         "enabled_default": False,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
@@ -807,7 +809,7 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": None,
         "device_class": None,
         "translation_key": "operator",
-    }
+    },
 }
 
 EASEE_EQ_ENTITIES = {
@@ -843,14 +845,11 @@ EASEE_EQ_ENTITIES = {
     "import_reactive_power": {
         "key": "state.reactivePowerImport",
         "attrs": [],
-        "units": UnitOfPower.KILO_WATT,
+        "units": UnitOfReactivePower.KILO_VOLT_AMPERE_REACTIVE,
         "convert_units_func": None,
         "suggested_display_precision": 1,
         "translation_key": "import_reactive_power",
-        # TODO
-        # Note, at the time of writing REACTIVE_POWER does not
-        # support kVAr, so we can not use it.
-        "device_class": SensorDeviceClass.POWER,
+        "device_class": SensorDeviceClass.REACTIVE_POWER,
         "state_class": SensorStateClass.MEASUREMENT,
     },
     "export_power": {
@@ -866,14 +865,11 @@ EASEE_EQ_ENTITIES = {
     "export_reactive_power": {
         "key": "state.reactivePowerExport",
         "attrs": [],
-        "units": UnitOfPower.KILO_WATT,
+        "units": UnitOfReactivePower.KILO_VOLT_AMPERE_REACTIVE,
         "convert_units_func": None,
         "suggested_display_precision": 1,
         "translation_key": "export_reactive_power",
-        # TODO
-        # Note, at the time of writing REACTIVE_POWER does not
-        # support kVAr, so we can not use it.
-        "device_class": SensorDeviceClass.POWER,
+        "device_class": SensorDeviceClass.REACTIVE_POWER,
         "state_class": SensorStateClass.MEASUREMENT,
     },
     "voltage": {
@@ -942,13 +938,11 @@ EASEE_EQ_ENTITIES = {
     "import_reactive_energy": {
         "key": "state.cumulativeReactivePowerImport",
         "attrs": [],
-        "units": UnitOfEnergy.KILO_WATT_HOUR,
+        "units": UnitOfReactiveEnergy.KILO_VOLT_AMPERE_REACTIVE_HOUR,
         "convert_units_func": None,
         "suggested_display_precision": 1,
         "translation_key": "import_reactive_energy",
-        # TODO
-        # Note, at the time of writing there is no REACTIVE_ENERGY class
-        "device_class": SensorDeviceClass.ENERGY,
+        "device_class": SensorDeviceClass.REACTIVE_ENERGY,
         "state_class": SensorStateClass.TOTAL_INCREASING,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
@@ -966,13 +960,11 @@ EASEE_EQ_ENTITIES = {
     "export_reactive_energy": {
         "key": "state.cumulativeReactivePowerExport",
         "attrs": [],
-        "units": UnitOfEnergy.KILO_WATT_HOUR,
+        "units": UnitOfReactiveEnergy.KILO_VOLT_AMPERE_REACTIVE_HOUR,
         "convert_units_func": None,
         "suggested_display_precision": 1,
         "translation_key": "export_reactive_energy",
-        # TODO
-        # Note, at the time of writing there is no REACTIVE_ENERGY class
-        "device_class": SensorDeviceClass.ENERGY,
+        "device_class": SensorDeviceClass.REACTIVE_ENERGY,
         "state_class": SensorStateClass.TOTAL_INCREASING,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
