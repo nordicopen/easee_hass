@@ -5,6 +5,7 @@ from pyeasee import ChargerStreamData, EqualizerStreamData
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
+    EntityCategory,
     Platform,
     UnitOfElectricCurrent,
     UnitOfElectricPotential,
@@ -14,7 +15,6 @@ from homeassistant.const import (
     UnitOfReactivePower,
     UnitOfTemperature,
 )
-from homeassistant.helpers.entity import EntityCategory
 
 DOMAIN = "easee"
 TIMEOUT = 30

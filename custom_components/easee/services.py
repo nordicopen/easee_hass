@@ -1,6 +1,5 @@
 """Easee services."""
 
-# pylint: disable=too-many-lines
 from datetime import timedelta
 import logging
 
@@ -109,6 +108,8 @@ wd_name = [
     "saturday",
     "sunday",
 ]
+
+
 def has_at_least_one(keys):
     """Ensure that at least one key is present."""
 
@@ -397,7 +398,7 @@ SERVICE_MAP = {
 }
 
 
-async def async_setup_services(hass):  # noqa: C901
+async def async_setup_services(hass) -> None:  # noqa: C901
     """Set up services for Easee."""
     controller = hass.data[DOMAIN]["controller"]
     chargers = controller.get_chargers()
@@ -409,7 +410,9 @@ async def async_setup_services(hass):  # noqa: C901
         device_reg = dr.async_get(hass)
         device_entry = device_reg.async_get(call.data[CONF_DEVICE_ID])
         if device_entry is None:
-            raise ServiceValidationError(f"Could not find device_id {call.data[CONF_DEVICE_ID]}")
+            raise ServiceValidationError(
+                f"Could not find device_id {call.data[CONF_DEVICE_ID]}"
+            )
         for ident in device_entry.identifiers:
             for val in ident:
                 if val != DOMAIN:
@@ -442,7 +445,7 @@ async def async_setup_services(hass):  # noqa: C901
             raise ServiceValidationError(f"Could not find equalizer_id {equalizer_id}")
         return equalizer
 
-    async def charger_execute_service(call):
+    async def charger_execute_service(call):  # pylint: disable=possibly-unused-variable
         """Execute a service to Easee charging station."""
 
         charger = await async_get_charger(call)
@@ -484,7 +487,7 @@ async def async_setup_services(hass):  # noqa: C901
             f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
         )
 
-    async def charger_execute_action_command(call):
+    async def charger_execute_action_command(call):  # pylint: disable=possibly-unused-variable
         """Execute a service with an action command to Easee charging station."""
 
         enable = call.data.get(ATTR_ENABLE)
@@ -525,7 +528,7 @@ async def async_setup_services(hass):  # noqa: C901
                 return
         raise HomeAssistantError(f"Could not find charger: {charger.id}")
 
-    async def charger_execute_set_phase_mode(call):
+    async def charger_execute_set_phase_mode(call):  # pylint: disable=possibly-unused-variable
         """Execute a service with an action command to Easee charging station."""
 
         phase_mode = ATTR_PHASE_MODES[call.data.get(ATTR_PHASE_MODE)]
@@ -564,7 +567,7 @@ async def async_setup_services(hass):  # noqa: C901
                 return
         raise HomeAssistantError(f"Could not find charger: {charger.id}")
 
-    async def charger_set_schedule(call):
+    async def charger_set_schedule(call):  # pylint: disable=possibly-unused-variable
         """Execute a set schedule call to Easee charging station."""
         charger = await async_get_charger(call)
         # future versions of Easee API will allow multiple schedules, i.e. work-in-progress
@@ -614,7 +617,7 @@ async def async_setup_services(hass):  # noqa: C901
 
         raise HomeAssistantError("Could not find charger.")
 
-    async def charger_set_weekly_schedule(call):
+    async def charger_set_weekly_schedule(call):  # pylint: disable=possibly-unused-variable
         """Execute a set schedule call to Easee charging station."""
         charger = await async_get_charger(call)
         start_time = call.data.get(ATTR_CHARGEPLAN_START_TIME)
@@ -677,10 +680,13 @@ async def async_setup_services(hass):  # noqa: C901
             stop_day = wd_name[stop_dt.weekday()]
 
             try:
-                return await function_call(start_day, stop_day, start_t, stop_t, limit=current)
+                return await function_call(
+                    start_day, stop_day, start_t, stop_t, limit=current
+                )
             except BadRequestException as ex:
                 _LOGGER.error(
-                    "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                    "Bad request: [%s] - Invalid parameters or "
+                    "command not allowed now: %s",
                     str(call.service),
                     ex,
                 )
@@ -703,7 +709,7 @@ async def async_setup_services(hass):  # noqa: C901
 
         raise HomeAssistantError("Could not find charger.")
 
-    async def circuit_execute_set_current(call):
+    async def circuit_execute_set_current(call):  # pylint: disable=possibly-unused-variable
         """Execute a service to set currents for Easee circuit."""
         circuit_id = await async_get_circuit_id(call)
         # Todo: Remove deprecation code
@@ -785,7 +791,7 @@ async def async_setup_services(hass):  # noqa: C901
         if circuit is None:
             raise HomeAssistantError(f"Could not find circuit {circuit_id}")
 
-    async def charger_execute_set_current(call):
+    async def charger_execute_set_current(call):  # pylint: disable=possibly-unused-variable
         """Execute a service to set currents for Easee charger."""
 
         charger = await async_get_charger(call)
@@ -844,7 +850,7 @@ async def async_setup_services(hass):  # noqa: C901
                 f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
             )
 
-    async def charger_execute_set_current_3(call):
+    async def charger_execute_set_current_3(call):  # pylint: disable=possibly-unused-variable
         """Execute a service to set currents for Easee charger."""
 
         charger = await async_get_charger(call)
@@ -925,7 +931,7 @@ async def async_setup_services(hass):  # noqa: C901
                 f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
             )
 
-    async def charger_execute_set_charging_cost(call):
+    async def charger_execute_set_charging_cost(call):  # pylint: disable=possibly-unused-variable
         """Execute a service to set charging cost per kwh for Easee charger site."""
         charger = await async_get_charger(call)
         cost_per_kwh = call.data.get(ATTR_COST_PER_KWH)
@@ -965,7 +971,7 @@ async def async_setup_services(hass):  # noqa: C901
 
         raise HomeAssistantError("Could not find charger")
 
-    async def equalizer_execute_set_surplus_charging(call):
+    async def equalizer_execute_set_surplus_charging(call):  # pylint: disable=possibly-unused-variable
         """Execute a service to set load balancing for a site.
 
         Equalizer is the actual target for API.
@@ -1007,7 +1013,7 @@ async def async_setup_services(hass):  # noqa: C901
 
         raise HomeAssistantError("Could not find equalizer")
 
-    async def charger_execute_set_access(call):
+    async def charger_execute_set_access(call):  # pylint: disable=possibly-unused-variable
         """Execute a service to set access level on a charger."""
         # Todo: Remove deprecation code
         if isinstance(call.data.get(ACCESS_LEVEL), int):
@@ -1063,7 +1069,7 @@ async def async_setup_services(hass):  # noqa: C901
             f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
         )
 
-    async def charger_execute_set_ocpp(call):
+    async def charger_execute_set_ocpp(call):  # pylint: disable=possibly-unused-variable
         """Set the local OCPP configuration of a charger."""
 
         charger = await async_get_charger(call)
@@ -1073,10 +1079,11 @@ async def async_setup_services(hass):  # noqa: C901
         if url is None:
             url = "ws://127.0.0.1:9000"
 
-        _LOGGER.debug("Call set ocpp enable %d on charger_id: %s with url %s",
+        _LOGGER.debug(
+            "Call set ocpp enable %d on charger_id: %s with url %s",
             enable,
             charger.id,
-            url
+            url,
         )
         if charger:
             function_name = SERVICE_MAP[call.service]
@@ -1108,13 +1115,14 @@ async def async_setup_services(hass):  # noqa: C901
                 return
         raise HomeAssistantError(f"Could not find charger: {charger.id}")
 
-    async def charger_execute_set_operator(call):
+    async def charger_execute_set_operator(call):  # pylint: disable=possibly-unused-variable
         """Set the operator of a charger."""
 
         charger = await async_get_charger(call)
         operator_id = call.data.get(ATTR_OPERATOR)
 
-        _LOGGER.debug("Call set operator %d on charger_id: %s",
+        _LOGGER.debug(
+            "Call set operator %d on charger_id: %s",
             operator_id,
             charger.id,
         )

@@ -173,7 +173,7 @@ class CostData:
 class ProductData:
     """Representation product data."""
 
-    def __init__(
+    def __init__(  # noqa: PLR0917
         self,
         product,
         site: Site,
@@ -271,9 +271,7 @@ class ProductData:
 
         self.set_state("operatorID", operator["id"])
         self.set_state("operatorName", operator["name"])
-        _LOGGER.debug(
-            "Operator for %s: %s", self.product.id, operator["name"]
-        )
+        _LOGGER.debug("Operator for %s: %s", self.product.id, operator["name"])
 
     async def async_refresh(self, poll_observations=None):
         """Poll observations."""
@@ -385,7 +383,11 @@ class ProductData:
         except KeyError:
             return
 
-        _LOGGER.debug("%d seconds since last communication from %s", elapsed.total_seconds(), self.product.id)
+        _LOGGER.debug(
+            "%d seconds since last communication from %s",
+            elapsed.total_seconds(),
+            self.product.id,
+        )
 
         if elapsed.total_seconds() > OFFLINE_DELAY:
             if self.state["isOnline"] is True:
@@ -408,7 +410,7 @@ class ProductData:
         self.set_state("signalRConnected", True, False)
         self.set_state("latestPulse", now, False)
         # We do not notify here, value might change inside async_update_observation
-        self.set_state("isOnline", True,  False)
+        self.set_state("isOnline", True, False)
 
         retval = await self.async_update_observation(data_type, data_id, value)
 
@@ -681,8 +683,11 @@ class Controller:
                         self.circuits.append(circuit)
                         chargers = circuit.get_chargers()
                         if chargers is None:
-                            _LOGGER.error("Site %s circuit %s has no chargers, make sure to add in Easee app",
-                                          site.id, circuit.id)
+                            _LOGGER.error(
+                                "Site %s circuit %s has no chargers, make sure to add in Easee app",
+                                site.id,
+                                circuit.id,
+                            )
                         else:
                             for charger in chargers:
                                 if charger.id is not None:
@@ -694,7 +699,10 @@ class Controller:
                                     )
                                     master = False
                                     back_plate = charger["backPlate"]
-                                    if back_plate["id"] == back_plate["masterBackPlateId"]:
+                                    if (
+                                        back_plate["id"]
+                                        == back_plate["masterBackPlateId"]
+                                    ):
                                         master = True
                                     self.chargers.append(charger)
                                     charger_data = ProductData(
@@ -743,7 +751,9 @@ class Controller:
         try:
             await self.async_refresh_equalizers_state()
         except Exception as err:
-            _LOGGER.error("Failed during call to async_refresh_equalizers_state: %s", err)
+            _LOGGER.error(
+                "Failed during call to async_refresh_equalizers_state: %s", err
+            )
         try:
             await asyncio.gather(
                 *[charger.async_cost_refresh() for charger in self.chargers_data]
@@ -755,19 +765,28 @@ class Controller:
                 *[charger.async_firmware_refresh() for charger in self.chargers_data]
             )
         except Exception as err:
-            _LOGGER.error("Failed during call to charger async_firmware_refresh: %s", err)
+            _LOGGER.error(
+                "Failed during call to charger async_firmware_refresh: %s", err
+            )
         try:
             await asyncio.gather(
-                *[equalizer.async_firmware_refresh() for equalizer in self.equalizers_data]
+                *[
+                    equalizer.async_firmware_refresh()
+                    for equalizer in self.equalizers_data
+                ]
             )
         except Exception as err:
-            _LOGGER.error("Failed during call to equalizer async_firmware_refresh: %s", err)
+            _LOGGER.error(
+                "Failed during call to equalizer async_firmware_refresh: %s", err
+            )
         try:
             await asyncio.gather(
                 *[charger.async_operator_refresh() for charger in self.chargers_data]
             )
         except Exception as err:
-            _LOGGER.error("Failed during call to charger async_operator_refresh: %s", err)
+            _LOGGER.error(
+                "Failed during call to charger async_operator_refresh: %s", err
+            )
         try:
             for charger in self.chargers_data:
                 charger.site_notify()
@@ -834,7 +853,12 @@ class Controller:
         for charger_data in self.chargers_data:
             charger_data.set_signalr_state(self.easee.sr_is_connected())
             charger_data.check_latest_pulse()
-            _LOGGER.debug("Check poll for %s polled %s SR %s", charger_data.product.id, charger_data.is_state_polled(), self.easee.sr_is_connected())
+            _LOGGER.debug(
+                "Check poll for %s polled %s SR %s",
+                charger_data.product.id,
+                charger_data.is_state_polled(),
+                self.easee.sr_is_connected(),
+            )
             if charger_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
 
@@ -846,7 +870,12 @@ class Controller:
         for equalizer_data in self.equalizers_data:
             equalizer_data.set_signalr_state(self.easee.sr_is_connected())
             equalizer_data.check_latest_pulse()
-            _LOGGER.debug("Check poll for %s polled %s SR %s", equalizer_data.product.id, equalizer_data.is_state_polled(), self.easee.sr_is_connected())
+            _LOGGER.debug(
+                "Check poll for %s polled %s SR %s",
+                equalizer_data.product.id,
+                equalizer_data.is_state_polled(),
+                self.easee.sr_is_connected(),
+            )
             if equalizer_data.is_state_polled() and self.easee.sr_is_connected():
                 continue
 
@@ -871,7 +900,7 @@ class Controller:
         """Get equalizers."""
         return self.equalizers
 
-    def check_circuit_current(
+    def check_circuit_current(  # noqa: PLR0917
         self,
         circuit_id,
         current_p1,
@@ -913,18 +942,16 @@ class Controller:
                         compare_p3 = compare_p1
 
                 if (
-                    (
-                        compare_p1 != current_p1
-                        or compare_p2 != current_p2
-                        or compare_p3 != current_p3
-                    ) or time_to_live is not None
-                ):
+                    compare_p1 != current_p1
+                    or compare_p2 != current_p2
+                    or compare_p3 != current_p3
+                ) or time_to_live is not None:
                     return charger_data.circuit
 
                 return False
         return None
 
-    def check_charger_current(
+    def check_charger_current(  # noqa: PLR0917
         self,
         charger_id,
         current_p1,
@@ -966,12 +993,10 @@ class Controller:
                         compare_p3 = compare_p1
 
                 if (
-                    (
-                        compare_p1 != current_p1
-                        or compare_p2 != current_p2
-                        or compare_p3 != current_p3
-                    ) or time_to_live is not None
-                ):
+                    compare_p1 != current_p1
+                    or compare_p2 != current_p2
+                    or compare_p3 != current_p3
+                ) or time_to_live is not None:
                     return charger_data.product
 
                 return False
