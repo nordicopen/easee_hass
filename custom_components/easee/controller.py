@@ -75,10 +75,66 @@ SCAN_INTERVAL_STATE_SECONDS = 60
 SCAN_INTERVAL_EQUALIZERS_SECONDS = 20
 SCAN_INTERVAL_SCHEDULES_SECONDS = 600
 
+USER_UPDATE_INTERVAL = 14400
+
 MINIMUM_UPDATE = 0.05
 
 OFFLINE_DELAY = 17 * 60
 
+
+class UserData:
+    """Keeps track of user information."""
+
+    def __init__(
+        self,
+    ):
+        """Initialize the data."""
+        self.sites = {}
+        self.sites_users_dt = {}
+        self.sites_users = {}
+        self.sites_keys = {}
+        self.sites_keys_dt = {}
+
+    async def async_find_key_userid(self, site: Site, keyStr: str):
+        """Look up key and match with user."""
+
+        if keyStr not in self.sites_keys:
+            self.sites_keys[keyStr] = await site.easee.get_userid_from_key(keyStr)
+            self.sites_keys_dt[site.id] = dt_util.now()
+        else:
+            key_td = self.sites_keys_dt[site.id] - dt_util.now()
+            if key_td.total_seconds() > USER_UPDATE_INTERVAL:
+                self.sites_keys[keyStr] = await site.easee.get_userid_from_key(keyStr)
+                self.sites_keys_dt[site.id] = dt_util.now()
+
+        _LOGGER.debug("User id %s from key %s", self.sites_keys[keyStr], keyStr)
+
+        return self.sites_keys[keyStr]
+
+    async def async_find_user_name(self, site : Site, userId: str):
+        """Try to find information about a user."""
+
+        if site.id not in self.sites:
+            self.sites[site.id] = site
+
+        if site.id not in self.sites_users_dt:
+            users = await site.get_users()
+            self.sites_users[site.id] = users["siteUsers"]
+            self.sites_users_dt[site.id] = dt_util.now()
+        else:
+            site_td = self.sites_users_dt[site.id] - dt_util.now()
+            if site_td.total_seconds() > USER_UPDATE_INTERVAL:
+                users = await site.get_users()
+                self.sites_users[site.id] = users["siteUsers"]
+                self.sites_users_dt[site.id] = dt_util.now()
+
+        if self.sites_users[site.id] is not None:
+            for user in self.sites_users[site.id]:
+                if userId == user["userId"]:
+                    _LOGGER.debug("Match %s in %s", userId, user)
+                    return user
+
+        return None
 
 class CostData:
     """Representation of Cost data."""
@@ -177,6 +233,7 @@ class ProductData:
         self,
         product,
         site: Site,
+        user_data: UserData,
         streamdata,
         poll_observations,
         circuit: Circuit = None,
@@ -203,6 +260,7 @@ class ProductData:
         self.master = master
         self.firmware_auth_failure = None
         self.operator_auth_failure = None
+        self.user_data = user_data
 
     def register_for_update(self, name, entity):
         """Register a entity to watch changes."""
@@ -303,7 +361,10 @@ class ProductData:
             value = observation["value"]
             data_type = observation["dataType"]
 
-            await self.async_update_observation(data_type, data_id, value)
+            try:
+                await self.async_update_observation(data_type, data_id, value)
+            except Exception as ex:
+                _LOGGER.error("Error while updating observation: %s", ex)
 
     async def async_schedules_interpret(self, data):
         """Interpret schedule data."""
@@ -410,7 +471,11 @@ class ProductData:
         # We do not notify here, value might change inside async_update_observation
         self.set_state("isOnline", True,  False)
 
-        retval = await self.async_update_observation(data_type, data_id, value)
+        try:
+            retval = await self.async_update_observation(data_type, data_id, value)
+        except Exception as ex:
+            _LOGGER.error("Error while updating observation: %s", ex)
+            retval = False
 
         # Now we are ready to notify any observers
         self.notify("isOnline", self.observers["state"])
@@ -454,11 +519,34 @@ class ProductData:
                     self.set_state("isOnline", False, False)
                 if second == "chargingSession":
                     jsondata = json.loads(value)
-                    self.set_state("sessionId", jsondata["Id"])
-                    self.set_state("sessionAuth", jsondata["Auth"])
-                    self.set_state("sessionTotalEnergy", jsondata["EnergyKwh"])
-                    self.set_state("sessionStart", jsondata["Start"])
-                    self.set_state("sessionStop", jsondata["Stop"])
+                    self.set_state("lastSessionId", jsondata["Id"], False)
+                    self.set_state("lastSessionAuth", jsondata["Auth"], False)
+                    self.set_state("lastSessionTotalEnergy", jsondata["EnergyKwh"], False)
+                    self.set_state("lastSessionStart", jsondata["Start"], False)
+                    self.set_state("lastSessionStop", jsondata["Stop"])
+                    if jsondata["Auth"] != "":
+                        if "userid_" in jsondata["Auth"]:
+                            userid = jsondata["Auth"][7:0]
+                            username = await self.user_data.async_find_user_name(self.site, userid)
+                        else:
+                            userid = await self.user_data.async_find_key_userid(self.site, jsondata["Auth"])
+                            username = await self.user_data.async_find_user_name(self.site, userid)
+                        self.set_state("lassSessionUserId", userid, False)
+                        self.set_state("lastSessionUserName", username)
+                if second == "chargingSessionStart":
+                    jsondata = json.loads(value)
+                    self.set_state("currentSessionId", jsondata["Id"])
+                    self.set_state("currentSessionAuth", jsondata["Auth"])
+                    self.set_state("currentSessionStart", jsondata["Start"])
+                    if jsondata["Auth"] != "":
+                        if "userid_" in jsondata["Auth"]:
+                            userid = jsondata["Auth"][7:0]
+                            username = await self.user_data.async_find_user_name(self.site, userid)
+                        else:
+                            userid = await self.user_data.async_find_key_userid(self.site, jsondata["Auth"])
+                            username = await self.user_data.async_find_user_name(self.site, userid)
+                        self.set_state("currentSessionUserId", userid, False)
+                        self.set_state("currentSessionUserName", username)
                 return True
             elif first == "config":
                 if self.config is None:
@@ -554,6 +642,7 @@ class Controller:
         self.chargers_data: list[ProductData] = []
         self.equalizers: list[Equalizer] = []
         self.equalizers_data: list[ProductData] = []
+        self.user_data = UserData()
         self.binary_sensor_entities = []
         self.button_entities = []
         self.light_entities = []
@@ -604,6 +693,7 @@ class Controller:
             await self.easee.close()
 
         self.hass.data[DOMAIN].pop("controller")
+        self.user_data = None
         collect()
 
     async def async_initialize(self):
@@ -666,6 +756,7 @@ class Controller:
                             equalizer_data = ProductData(
                                 equalizer,
                                 site,
+                                self.user_data,
                                 EqualizerStreamData,
                                 equalizerObservations,
                             )
@@ -700,6 +791,7 @@ class Controller:
                                     charger_data = ProductData(
                                         charger,
                                         site,
+                                        self.user_data,
                                         ChargerStreamData,
                                         chargerObservations,
                                         circuit,
