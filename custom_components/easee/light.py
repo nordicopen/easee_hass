@@ -1,6 +1,7 @@
 """Easee charger light entity."""
 
 import logging
+import math
 
 from pyeasee.exceptions import ForbiddenServiceException
 
@@ -8,23 +9,14 @@ from homeassistant.components.light import ColorMode, LightEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.util.color import brightness_to_value, value_to_brightness
 
 from .const import DOMAIN
 from .entity import ChargerEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-
-def percentage_to_brightness(percent: int | float) -> int:
-    """Convert Easee percentage (0..100) to Home Assistant brightness (0..255)."""
-    return round(percent * 255 / 100)
-
-
-def brightness_to_percentage(brightness: int) -> int:
-    """Convert Home Assistant brightness (1..255) to Easee percentage (0..100)."""
-    if brightness <= 0:
-        return 0
-    return max(1, round(brightness * 100 / 255))
+BRIGHTNESS_SCALE = (1, 100)
 
 
 async def async_setup_entry(
@@ -48,9 +40,9 @@ class ChargerLight(ChargerEntity, LightEntity):
         """Return brightness value 1..255."""
         try:
             percent = self.get_value_from_key("config.ledStripBrightness")
-            if percent is None:
+            if percent is None or percent == 0:
                 return None
-            brightness = percentage_to_brightness(percent)
+            brightness = value_to_brightness(BRIGHTNESS_SCALE, percent)
             _LOGGER.debug("Brightness: %s", brightness)
             return brightness
         except (TypeError, ValueError):
@@ -59,16 +51,18 @@ class ChargerLight(ChargerEntity, LightEntity):
     @property
     def is_on(self) -> bool | None:
         """Return on/off state."""
-        b = self.brightness
-        if b is None:
+        try:
+            percent = self.get_value_from_key("config.ledStripBrightness")
+            if percent is None:
+                return None
+            return percent > 0
+        except (TypeError, ValueError):
             return None
-        return b > 0
 
     async def async_turn_on(self, **kwargs) -> None:
         """Turn on the light."""
-        brightness = kwargs.get("brightness")
-        if brightness is not None:
-            percent = brightness_to_percentage(brightness)
+        if (brightness := kwargs.get("brightness")) is not None:
+            percent = math.ceil(brightness_to_value(BRIGHTNESS_SCALE, brightness))
         else:
             percent = 100
 
