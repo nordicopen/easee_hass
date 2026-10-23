@@ -1,0 +1,703 @@
+{
+  "config": {
+    "abort": {
+      "already_setup": "You can only configure a single Easee connection.",
+      "reauth_successful": "Reauthentication successful."
+    },
+    "error": {
+      "auth_failure": "Unable to connect to Easee. Check your username and password.",
+      "connection_failure": "Unable to connect to Easee. Test again later.",
+      "no_sites": "No monitored sites selected",
+      "no_sites_in_account": "No sites found in this account.",
+      "refused_failure": "Connection refused to Easee. Test again later."
+    },
+    "step": {
+      "reauth_confirm": {
+        "data": {
+          "password": "Password"
+        },
+        "description": "The Easee integration needs to re-authenticate the account {username}.",
+        "title": "Reauthenticate with Easee"
+      },
+      "sites": {
+        "data": {
+          "monitored_sites": "Sites"
+        },
+        "description": "Select sites to monitor",
+        "title": "Easee EV Charger"
+      },
+      "user": {
+        "data": {
+          "password": "Password",
+          "username": "Username"
+        },
+        "description": "Please enter the username and password for your Easee account",
+        "title": "Connect to Easee"
+      }
+    }
+  },
+  "device_automation": {
+    "action_type": {
+      "delete_basic_charge_plan": "Delete basic charge plan",
+      "delete_weekly_charge_plan": "Delete weekly charge plan",
+      "disable_basic_charge_plan": "Disable basic charge plan",
+      "disable_weekly_charge_plan": "Disable weekly charge plan",
+      "enable_basic_charge_plan": "Enable basic charge plan",
+      "enable_weekly_charge_plan": "Enable weekly charge plan",
+      "override_schedule": "Override schedule",
+      "pause": "Pause charging",
+      "reboot": "Reboot charger",
+      "resume": "Resume charging",
+      "start": "Authorize (start) charging",
+      "stop": "Deauthorize (stop) charging",
+      "toggle": "Toggle charging",
+      "update_firmware": "Update firmware"
+    },
+    "condition_type": {
+      "authenticating": "{entity_name} is authenticating",
+      "awaiting_authentication": "{entity_name} is waiting for authentication",
+      "awaiting_authorization": "{entity_name} is waiting for authorization",
+      "awaiting_load_balancing": "{entity_name} is waiting for load balancing",
+      "awaiting_scheduled_start": "{entity_name} is waiting for scheduled start",
+      "awaiting_smart_start": "{entity_name} is waiting for smart start",
+      "awaiting_start": "{entity_name} is awaiting start",
+      "charging": "{entity_name} is charging",
+      "completed": "{entity_name} is completed",
+      "de_authorizing": "{entity_name} is closing authorization",
+      "disconnected": "{entity_name} is car disconnected",
+      "erratic_ev": "{entity_name} is erratic EV",
+      "error": "{entity_name} is error",
+      "error_dead_powerboard": "{entity_name} is error Dead powerboard",
+      "error_overcurrent": "{entity_name} is error Overcurrent",
+      "error_pen_fault": "{entity_name} is error PEN fault",
+      "error_temperature_too_high": "{entity_name} is error Temperature too high",
+      "offline": "{entity_name} is offline",
+      "paused_due_to_equalizer": "{entity_name} is paused due to Equalizer",
+      "ready_to_charge": "{entity_name} is ready to charge",
+      "searching_for_master": "{entity_name} is searching for master",
+      "start_charging": "{entity_name} is start charging",
+      "stop_charging": "{entity_name} is stop charging"
+    },
+    "trigger_type": {
+      "authenticating": "{entity_name} Authenticating",
+      "awaiting_authentication": "{entity_name} Waiting for authentication",
+      "awaiting_authorization": "{entity_name} Waiting for authorization",
+      "awaiting_load_balancing": "{entity_name} Waiting for load balancing",
+      "awaiting_scheduled_start": "{entity_name} Waiting for scheduled start",
+      "awaiting_smart_start": "{entity_name} Waiting for smart start",
+      "awaiting_start": "{entity_name} Awaiting start",
+      "charging": "{entity_name} Charging",
+      "completed": "{entity_name} Completed",
+      "de_authorizing": "{entity_name} Closing authorization",
+      "disconnected": "{entity_name} Car disconnected",
+      "erratic_ev": "{entity_name} Erratic EV",
+      "error": "{entity_name} Error",
+      "error_dead_powerboard": "{entity_name} Error Dead powerboard",
+      "error_overcurrent": "{entity_name} Error Overcurrent",
+      "error_pen_fault": "{entity_name} Error PEN fault",
+      "error_temperature_too_high": "{entity_name} Error Temperature too high",
+      "offline": "{entity_name} Offline",
+      "paused_due_to_equalizer": "{entity_name} Paused due to Equalizer",
+      "ready_to_charge": "{entity_name} Ready to charge",
+      "searching_for_master": "{entity_name} Searching for master",
+      "start_charging": "{entity_name} Start charging",
+      "stop_charging": "{entity_name} Stop charging"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "cable_locked": {
+        "name": "Cable lock"
+      },
+      "online": {
+        "name": "Online"
+      },
+      "update_available": {
+        "name": "Update available"
+      }
+    },
+    "button": {
+      "override_schedule": {
+        "name": "Override schedule"
+      }
+    },
+    "light": {
+      "led_strip": {
+        "name": "LED strip"
+      }
+    },
+    "sensor": {
+      "circuit_current": {
+        "name": "Circuit current"
+      },
+      "cost_day": {
+        "name": "Cost day"
+      },
+      "cost_month": {
+        "name": "Cost month"
+      },
+      "cost_per_kwh": {
+        "name": "Cost per kWh"
+      },
+      "cost_year": {
+        "name": "Cost year"
+      },
+      "current": {
+        "name": "Current"
+      },
+      "dynamic_charger_limit": {
+        "name": "Dynamic charger limit"
+      },
+      "dynamic_circuit_limit": {
+        "name": "Dynamic circuit limit"
+      },
+      "easee_reason_no_current": {
+        "name": "Reason for no current",
+        "state": {
+          "car_not_charging": "EV not charging",
+          "charger_disabled": "Charger disabled",
+          "charger_in_error_state": "Charger in error state",
+          "circuit_fuse_too_low": "Circuit fuse too low",
+          "eq_too_low_current": "Equalizer limit too low",
+          "ev_behaving_erratic": "EV behaving erratic",
+          "illegal_grid_type": "Illegal grid type",
+          "limited_by_cable_rating": "Limited by cable rating",
+          "limited_by_car": "Limited by EV",
+          "limited_by_charger_dynamic_limit": "Limited by charger dynamic limit",
+          "limited_by_charger_max_limit": "Limited by charger max limit",
+          "limited_by_circuit_dynamic_limit": "Limited by circuit dynamic limit",
+          "limited_by_circuit_fuse": "Limited by circuit fuse",
+          "limited_by_circuit_max_limit": "Limited by circuit max limit",
+          "limited_by_equalizer": "Limited by equalizer",
+          "limited_by_load_balancing": "Limited by load balancing",
+          "limited_by_local_adjustment": "Limited by local adjustment",
+          "limited_by_offline_setting": "Limited by offline setting",
+          "limited_by_schedule": "Limited by schedule",
+          "max_charger_current_too_low": "Max charger limit too low",
+          "max_circuit_current_too_low": "Max circuit limit too low",
+          "max_dynamic_charger_current_too_low": "Max dynamic charger limit too low",
+          "max_dynamic_circuit_current_too_low": "Max dynamic circuit limit too low",
+          "max_dynamic_offline_fallback_circuit_current_too_low": "Max dynamic offline fallback circuit limit too low",
+          "no_current_request": "No current request",
+          "none": "None",
+          "not_connected_to_master": "Not connected to master",
+          "not_requesting_current": "Not requesting current",
+          "ok": "OK",
+          "pending_authorization": "Pending authorization",
+          "pending_schedule": "Pending schedule",
+          "phase_not_connected": "Phase not connected",
+          "undefined": "Undefined",
+          "waiting_in_fully": "Waiting in fully",
+          "waiting_in_queue": "Waiting in queue"
+        }
+      },
+      "easee_status": {
+        "name": "Status",
+        "state": {
+          "authenticating": "Authenticating",
+          "awaiting_authentication": "Waiting for authentication",
+          "awaiting_authorization": "Waiting for authorization",
+          "awaiting_load_balancing": "Waiting for load balancing",
+          "awaiting_scheduled_start": "Waiting for scheduled start",
+          "awaiting_smart_start": "Waiting for smart start",
+          "awaiting_start": "Awaiting start",
+          "charging": "Charging",
+          "completed": "Completed",
+          "de_authorizing": "Closing authorization",
+          "disconnected": "Car disconnected",
+          "erratic_ev": "Erratic EV",
+          "error": "Error",
+          "error_dead_powerboard": "Error Dead powerboard",
+          "error_overcurrent": "Error Overcurrent",
+          "error_pen_fault": "Error PEN fault",
+          "error_temperature_too_high": "Error Temperature too high",
+          "offline": "Offline",
+          "paused_due_to_equalizer": "Paused due to Equalizer",
+          "ready_to_charge": "Ready to charge",
+          "searching_for_master": "Searching for master",
+          "start_charging": "Start charging",
+          "stop_charging": "Stop charging"
+        }
+      },
+      "energy_last_hour": {
+        "name": "Energy last hour"
+      },
+      "energy_per_hour": {
+        "name": "Energy per hour"
+      },
+      "equalizer_limit": {
+        "name": "Equalizer limit"
+      },
+      "export_energy": {
+        "name": "Export energy"
+      },
+      "export_power": {
+        "name": "Export power"
+      },
+      "export_reactive_energy": {
+        "name": "Export reactive energy"
+      },
+      "export_reactive_power": {
+        "name": "Export reactive power"
+      },
+      "import_energy": {
+        "name": "Import energy"
+      },
+      "import_power": {
+        "name": "Import power"
+      },
+      "import_reactive_energy": {
+        "name": "Import reactive energy"
+      },
+      "import_reactive_power": {
+        "name": "Import reactive power"
+      },
+      "internal_temperature": {
+        "name": "Internal temperature"
+      },
+      "lifetime_energy": {
+        "name": "Lifetime energy"
+      },
+      "max_charger_limit": {
+        "name": "Max charger limit"
+      },
+      "max_circuit_limit": {
+        "name": "Max circuit limit"
+      },
+      "offline_circuit_limit": {
+        "name": "Offline circuit limit"
+      },
+      "operator": {
+        "name": "Operator"
+      },
+      "output_limit": {
+        "name": "Output limit"
+      },
+      "phase_mode": {
+        "name": "Phase mode",
+        "state": {
+          "auto": "Auto",
+          "single": "Single",
+          "three": "Three"
+        }
+      },
+      "pilot_mode": {
+        "name": "Pilot Mode",
+        "state": {
+          "a": "Car disconnected",
+          "b": "Car connected",
+          "c": "Car charging",
+          "d": "Car needs ventilation",
+          "f": "Fault detected"
+        }
+      },
+      "power": {
+        "name": "Power"
+      },
+      "session_energy": {
+        "name": "Session Energy"
+      },
+      "session_id": {
+        "name": "Session Id"
+      },
+      "voltage": {
+        "name": "Voltage"
+      }
+    },
+    "switch": {
+      "basic_schedule": {
+        "name": "Basic schedule"
+      },
+      "cable_locked_permanently": {
+        "name": "Cable locked permanently"
+      },
+      "idle_current": {
+        "name": "Idle current"
+      },
+      "is_enabled": {
+        "name": "Charger enabled"
+      },
+      "smart_button": {
+        "name": "Touch button enabled"
+      },
+      "smart_charging": {
+        "name": "Smart charging"
+      },
+      "surplus": {
+        "name": "Surplus charging"
+      },
+      "weekly_schedule": {
+        "name": "Weekly schedule"
+      }
+    }
+  },
+  "issues": {
+    "currentpx_deprecation": {
+      "description": "The use of {argument} as phase current is deprecated and will not be accepted in future verions. Please convert your automations and scripts to use {recommendation} instead.",
+      "title": "Use of {argument} in service call"
+    },
+    "deprecated_service": {
+      "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\n\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
+      "title": "Use of deprecated service: {deprecation}"
+    },
+    "numeric_deprecation": {
+      "description": "The use of numeric value for {argument} is deprecated and will not be accepted in future versions. Please convert your automations and scripts to use strings {recommendation} instead.",
+      "title": "Use of numeric value for {argument} in service call"
+    }
+  },
+  "options": {
+    "error": {
+      "no_sites": "No monitored sites selected"
+    },
+    "step": {
+      "init": {
+        "data": {
+          "custom_units": "Custom units",
+          "measured_consumption_days": "Consumption monitoring days",
+          "monitored_conditions": "Charger sensors monitored",
+          "monitored_eq_conditions": "Equalizer sensors monitored",
+          "monitored_sites": "Sites monitored"
+        },
+        "description": "Select options",
+        "title": "Easee EV Charger"
+      }
+    }
+  },
+  "selector": {
+    "access_level": {
+      "options": {
+        "open_for_all": "Open for all",
+        "require_easee_account": "Require Easee account",
+        "whitelist": "Whitelist"
+      }
+    },
+    "action_command": {
+      "options": {
+        "delete_basic_charge_plan": "Delete basic charge plan",
+        "delete_weekly_charge_plan": "Delete weekly charge plan",
+        "disable_basic_charge_plan": "Disable basic charge plan",
+        "disable_weekly_charge_plan": "Disable weekly charge plan",
+        "enable_basic_charge_plan": "Enable basic charge plan",
+        "enable_weekly_charge_plan": "Enable weekly charge plan",
+        "override_schedule": "Override schedule",
+        "pause": "Pause",
+        "reboot": "Reboot charger",
+        "resume": "Resume",
+        "start": "Authorize (start)",
+        "stop": "Deauthorize (stop)",
+        "toggle": "Toggle",
+        "update_firmware": "Update firmware"
+      }
+    },
+    "phase_mode": {
+      "options": {
+        "1_phase": "1 phase mode",
+        "3_phase": "3 phase mode",
+        "auto_phase": "Auto phase mode"
+      }
+    },
+    "weekday": {
+      "options": {
+        "friday": "Friday",
+        "monday": "Monday",
+        "saturday": "Saturday",
+        "sunday": "Sunday",
+        "thursday": "Thursday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday"
+      }
+    }
+  },
+  "services": {
+    "action_command": {
+      "description": "Send command to charger",
+      "fields": {
+        "action_command": {
+          "description": "Select the command to execute",
+          "name": "Command"
+        },
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        }
+      },
+      "name": "Action command"
+    },
+    "set_basic_charge_plan": {
+      "description": "Set basic charge plan",
+      "fields": {
+        "current": {
+          "description": "Maximum current during plan",
+          "name": "Maximum current"
+        },
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        },
+        "repeat": {
+          "description": "Repeat plan",
+          "name": "Repeat plan"
+        },
+        "start_datetime": {
+          "description": "Start time for plan",
+          "name": "Start datetime"
+        },
+        "stop_datetime": {
+          "description": "Stop time for plan",
+          "name": "Stop datetime"
+        }
+      },
+      "name": "Set basic charge plan"
+    },
+    "set_charger_access": {
+      "description": "Select who should be able to charge",
+      "fields": {
+        "access_level": {
+          "description": "Set access to charging",
+          "name": "Access"
+        },
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        }
+      },
+      "name": "Set access to charger"
+    },
+    "set_charger_dynamic_limit": {
+      "description": "Set charger dynamic limit",
+      "fields": {
+        "current": {
+          "description": "Max charging current",
+          "name": "Current"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        },
+        "time_to_live": {
+          "description": "Set time in minutes for the command to live. 0 = indefinitely.",
+          "name": "Time to live"
+        }
+      },
+      "name": "Set charger dynamic limit"
+    },
+    "set_charger_max_limit": {
+      "description": "Set charger max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently).",
+      "fields": {
+        "current": {
+          "description": "Max charging current",
+          "name": "Current"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        }
+      },
+      "name": "Set charger max limit"
+    },
+    "set_charger_ocpp": {
+      "description": "Configure local OCPP enable/disable and URL",
+      "fields": {
+        "device_id": {
+          "description": "Select a device to be controlled",
+          "name": "Target device"
+        },
+        "enable": {
+          "description": "Enable local OCPP mode",
+          "name": "Enable"
+        },
+        "ocpp_url": {
+          "description": "Local OCPP server address",
+          "name": "OCPP URL"
+        }
+      },
+      "name": "Set charger local OCPP mode"
+    },
+    "set_charger_phase_mode": {
+      "description": "Set charger phase mode",
+      "fields": {
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        },
+        "phase_mode": {
+          "description": "Charger phase mode",
+          "name": "Phase mode"
+        }
+      },
+      "name": "Set charger phase mode"
+    },
+    "set_charging_cost": {
+      "description": "Set charging cost per kWh for charger site",
+      "fields": {
+        "cost_per_kwh": {
+          "description": "Cost per kWh",
+          "name": "Cost per kWh"
+        },
+        "currency_id": {
+          "description": "Currency code",
+          "name": "Currency"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        },
+        "vat": {
+          "description": "Value added tax",
+          "name": "VAT"
+        }
+      },
+      "name": "Set charging cost"
+    },
+    "set_circuit_dynamic_limit": {
+      "description": "Set circuit dynamic limit (shared between chargers on that circuit). This service can be used in automations.",
+      "fields": {
+        "current_p1": {
+          "description": "Max charging current",
+          "name": "Current phase 1"
+        },
+        "current_p2": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used.",
+          "name": "Current phase 2"
+        },
+        "current_p3": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used.",
+          "name": "Current phase 3"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        },
+        "time_to_live": {
+          "description": "Set time in minutes for the command to live. 0 = indefinitely.",
+          "name": "Time to live"
+        }
+      },
+      "name": "Set circuit dynamic limit"
+    },
+    "set_circuit_max_limit": {
+      "description": "Set circuit max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently).",
+      "fields": {
+        "current_p1": {
+          "description": "Max charging current",
+          "name": "Current phase 1"
+        },
+        "current_p2": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used.",
+          "name": "Current phase 2"
+        },
+        "current_p3": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used.",
+          "name": "Current phase 3"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        }
+      },
+      "name": "Set circuit max limit"
+    },
+    "set_circuit_offline_limit": {
+      "description": "Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently).",
+      "fields": {
+        "current_p1": {
+          "description": "Max charging current",
+          "name": "Current phase 1"
+        },
+        "current_p2": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used.",
+          "name": "Current phase 2"
+        },
+        "current_p3": {
+          "description": "Max charging current. If disabled, the value of Current phase 1 will be used.",
+          "name": "Current phase 3"
+        },
+        "device_id": {
+          "description": "Select one of the chargers in the circuit that should be controlled.",
+          "name": "Target device"
+        }
+      },
+      "name": "Set circuit offline limit"
+    },
+    "set_operator": {
+      "description": "Configure operator for charger",
+      "fields": {
+        "device_id": {
+          "description": "Select a device to be controlled",
+          "name": "Target device"
+        },
+        "operator_id": {
+          "description": "ID of the selected operator",
+          "name": "Operator ID"
+        }
+      },
+      "name": "Set operator"
+    },
+    "set_surplus_charging": {
+      "description": "Set equalizer surplus charging",
+      "fields": {
+        "current": {
+          "description": "Max additional current from grid",
+          "name": "Current"
+        },
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        },
+        "enable": {
+          "description": "Enable surplus charging",
+          "name": "Enable"
+        }
+      },
+      "name": "Set surplus charging"
+    },
+    "set_weekly_charge_plan": {
+      "description": "Set weekly charge plan",
+      "fields": {
+        "current": {
+          "description": "Maximum current during plan",
+          "name": "Maximum current"
+        },
+        "day": {
+          "description": "Weekday for this schedule",
+          "name": "Weekday"
+        },
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        },
+        "start_time": {
+          "description": "Start time for plan",
+          "name": "Start time"
+        },
+        "stop_time": {
+          "description": "Stop time for plan",
+          "name": "Stop time"
+        }
+      },
+      "name": "Set weekly charge plan"
+    },
+    "smart_charging": {
+      "description": "Enable/disable smart charging",
+      "fields": {
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        },
+        "enable": {
+          "description": "Enable smart charging",
+          "name": "Enable"
+        }
+      },
+      "name": "Smart charging"
+    }
+  },
+  "system_health": {
+    "info": {
+      "component_version": "Version",
+      "connected2stream": "Connected to signalr",
+      "reach_easee_cloud": "Reach Easee Cloud"
+    }
+  },
+  "title": "Easee EV Charger"
+}
