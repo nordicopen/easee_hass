@@ -11,6 +11,11 @@
       "refused_failure": "Conexiune refuzata la Easee. Incercati mai tarziu."
     },
     "step": {
+      "reauth_confirm": {
+        "data": {
+          "password": "Parola"
+        }
+      },
       "sites": {
         "data": {
           "monitored_sites": "Site-uri"
@@ -181,6 +186,11 @@
       "output_limit": {
         "name": "Limita iesire"
       },
+      "pilot_mode": {
+        "state": {
+          "a": "Deconectat"
+        }
+      },
       "power": {
         "name": "Putere"
       },
@@ -228,6 +238,40 @@
         "description": "Selectati optiunile",
         "title": "Easee EV Charger"
       }
+    }
+  },
+  "services": {
+    "set_charger_dynamic_limit": {
+      "fields": {
+        "current": {
+          "name": "Curent"
+        }
+      }
+    },
+    "set_charger_max_limit": {
+      "fields": {
+        "current": {
+          "name": "Curent"
+        }
+      }
+    },
+    "set_charging_cost": {
+      "fields": {
+        "cost_per_kwh": {
+          "description": "Cost pe kWh",
+          "name": "Cost pe kWh"
+        }
+      }
+    },
+    "set_surplus_charging": {
+      "fields": {
+        "current": {
+          "name": "Curent"
+        }
+      }
+    },
+    "smart_charging": {
+      "name": "Incarcare smart"
     }
   },
   "system_health": {

@@ -278,6 +278,11 @@
           "three": "Tre"
         }
       },
+      "pilot_mode": {
+        "state": {
+          "a": "Bilen er koblet fra"
+        }
+      },
       "power": {
         "name": "Strøm"
       },
