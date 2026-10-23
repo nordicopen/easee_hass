@@ -262,6 +262,11 @@
       "output_limit": {
         "name": "Totalbegrensning"
       },
+      "pilot_mode": {
+        "state": {
+          "a": "Frakoblet"
+        }
+      },
       "power": {
         "name": "Effekt"
       },

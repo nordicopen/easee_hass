@@ -31,7 +31,7 @@
           "password": "Password",
           "username": "Username"
         },
-        "description": "Please enter the username and password for your Easee account",
+        "description": "Please enter the username or phone number and password for your Easee account",
         "title": "Connect to Easee"
       }
     }

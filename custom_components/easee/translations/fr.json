@@ -267,6 +267,9 @@
       "offline_circuit_limit": {
         "name": "Limite de circuit hors ligne"
       },
+      "operator": {
+        "name": "Opérateur"
+      },
       "output_limit": {
         "name": "Limite de sortie"
       },
@@ -275,6 +278,13 @@
           "auto": "Automatique",
           "single": "Simple",
           "three": "Trois"
+        }
+      },
+      "pilot_mode": {
+        "state": {
+          "a": "Voiture déconnectée",
+          "b": "Voiture connectée",
+          "c": "Voiture en charge"
         }
       },
       "power": {
@@ -481,7 +491,12 @@
           "name": "Cible"
         },
         "enable": {
+          "description": "Activerle le mode OCPP local",
           "name": "Activer"
+        },
+        "ocpp_url": {
+          "description": "Adresse du serveur OCPP local",
+          "name": "Adresse OCPP"
         }
       }
     },
@@ -595,6 +610,9 @@
       "fields": {
         "device_id": {
           "name": "Cible"
+        },
+        "operator_id": {
+          "name": "ID de l'opérateur"
         }
       }
     },
