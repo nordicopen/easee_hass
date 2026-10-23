@@ -14,7 +14,7 @@
     "step": {
       "reauth_confirm": {
         "data": {
-          "password": "[%key_id:config::step::user::password%]"
+          "password": "[%key_id:config::step::user::data::password%]"
         },
         "description": "The Easee integration needs to re-authenticate the account {username}.",
         "title": "Reauthenticate with Easee"
