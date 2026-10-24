@@ -297,6 +297,9 @@
       "session_energy": {
         "name": "Energi laddningssession"
       },
+      "session_id": {
+        "name": "Sessions-id"
+      },
       "voltage": {
         "name": "Spänning"
       }
@@ -344,7 +347,7 @@
   },
   "options": {
     "error": {
-      "no_sites": "Ingen monitorerad plats vald"
+      "no_sites": "Ingen plats vald"
     },
     "step": {
       "init": {
