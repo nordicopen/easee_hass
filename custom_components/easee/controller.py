@@ -75,10 +75,62 @@ SCAN_INTERVAL_STATE_SECONDS = 60
 SCAN_INTERVAL_EQUALIZERS_SECONDS = 20
 SCAN_INTERVAL_SCHEDULES_SECONDS = 600
 
+USER_UPDATE_INTERVAL = 14400
+
 MINIMUM_UPDATE = 0.05
 
 OFFLINE_DELAY = 17 * 60
 
+
+class UserData:
+    """Keeps track of user information."""
+
+    def __init__(
+        self,
+    ):
+        """Initialize the data."""
+        self.sites_users_dt = {}
+        self.sites_users = {}
+        self.account_keys = None
+
+    async def async_find_key_name(self, site: Site, keyStr: str):
+        """Look up key and match with user."""
+
+        if self.account_keys is None:
+            self.account_keys = await site.easee.get_keys()
+            self.account_keys_dt = dt_util.now()
+        else:
+            key_td = self.account_keys_dt - dt_util.now()
+            if key_td.total_seconds() > USER_UPDATE_INTERVAL:
+                self.account_keys = await site.easee.get_keys()
+                self.account_keys_dt = dt_util.now()
+
+        for key in self.account_keys:
+            _LOGGER.debug("Key %s", key)
+            if key["id"] == keyStr:
+                return key["owner"]
+
+    async def async_find_userid_name(self, site : Site, userId: str):
+        """Try to find information about a user."""
+
+        if site.id not in self.sites_users_dt:
+            users = await site.get_users()
+            self.sites_users[site.id] = users["siteUsers"]
+            self.sites_users_dt[site.id] = dt_util.now()
+        else:
+            site_td = self.sites_users_dt[site.id] - dt_util.now()
+            if site_td.total_seconds() > USER_UPDATE_INTERVAL:
+                users = await site.get_users()
+                self.sites_users[site.id] = users["siteUsers"]
+                self.sites_users_dt[site.id] = dt_util.now()
+
+        if self.sites_users[site.id] is not None:
+            for user in self.sites_users[site.id]:
+                if userId == user["userId"]:
+                    _LOGGER.debug("Match %s in %s", userId, user)
+                    return user
+
+        return None
 
 class CostData:
     """Representation of Cost data."""
@@ -177,6 +229,7 @@ class ProductData:
         self,
         product,
         site: Site,
+        user_data: UserData,
         streamdata,
         poll_observations,
         circuit: Circuit = None,
@@ -203,6 +256,7 @@ class ProductData:
         self.master = master
         self.firmware_auth_failure = None
         self.operator_auth_failure = None
+        self.user_data = user_data
 
     def register_for_update(self, name, entity):
         """Register a entity to watch changes."""
@@ -301,7 +355,10 @@ class ProductData:
             value = observation["value"]
             data_type = observation["dataType"]
 
-            await self.async_update_observation(data_type, data_id, value)
+            try:
+                await self.async_update_observation(data_type, data_id, value)
+            except Exception as ex:
+                _LOGGER.error("Error while updating observation: %s", ex)
 
     async def async_schedules_interpret(self, data):
         """Interpret schedule data."""
@@ -412,7 +469,11 @@ class ProductData:
         # We do not notify here, value might change inside async_update_observation
         self.set_state("isOnline", True, False)
 
-        retval = await self.async_update_observation(data_type, data_id, value)
+        try:
+            retval = await self.async_update_observation(data_type, data_id, value)
+        except Exception as ex:
+            _LOGGER.error("Error while updating observation: %s", ex)
+            retval = False
 
         # Now we are ready to notify any observers
         self.notify("isOnline", self.observers["state"])
@@ -454,13 +515,24 @@ class ProductData:
                     await self.async_cost_refresh()
                 if second == "connectedToCloud" and not value:
                     self.set_state("isOnline", False, False)
-                if second == "chargingSession":
+                if second in { "chargingSession", "chargingSessionStart" }:
+                    which = "last" if second == "chargingSession" else "current"
                     jsondata = json.loads(value)
-                    self.set_state("sessionId", jsondata["Id"])
-                    self.set_state("sessionAuth", jsondata["Auth"])
-                    self.set_state("sessionTotalEnergy", jsondata["EnergyKwh"])
-                    self.set_state("sessionStart", jsondata["Start"])
-                    self.set_state("sessionStop", jsondata["Stop"])
+                    self.set_state(f"{which}SessionId", jsondata["Id"], False)
+                    self.set_state(f"{which}SessionAuth", jsondata["Auth"], False)
+                    self.set_state(f"{which}SessionStart", jsondata["Start"])
+                    if which == "last":
+                        self.set_state(f"{which}SessionTotalEnergy", jsondata["EnergyKwh"], False)
+                        self.set_state(f"{which}SessionStop", jsondata["Stop"])
+                    if jsondata["Auth"] != "":
+                        if "userid_" in jsondata["Auth"]:
+                            userid = jsondata["Auth"][7:0]
+                            username = await self.user_data.async_find_userid_name(self.site, userid)
+                        else:
+                            username = await self.user_data.async_find_key_name(self.site, jsondata["Auth"])
+                            userid = None
+                        self.set_state(f"{which}SessionUserId", userid, False)
+                        self.set_state(f"{which}SessionUserName", username)
                 return True
             elif first == "config":
                 if self.config is None:
@@ -556,6 +628,7 @@ class Controller:
         self.chargers_data: list[ProductData] = []
         self.equalizers: list[Equalizer] = []
         self.equalizers_data: list[ProductData] = []
+        self.user_data = UserData()
         self.binary_sensor_entities = []
         self.button_entities = []
         self.light_entities = []
@@ -606,6 +679,7 @@ class Controller:
             await self.easee.close()
 
         self.hass.data[DOMAIN].pop("controller")
+        self.user_data = None
         collect()
 
     async def async_initialize(self):
@@ -668,6 +742,7 @@ class Controller:
                             equalizer_data = ProductData(
                                 equalizer,
                                 site,
+                                self.user_data,
                                 EqualizerStreamData,
                                 equalizerObservations,
                             )
@@ -708,6 +783,7 @@ class Controller:
                                     charger_data = ProductData(
                                         charger,
                                         site,
+                                        self.user_data,
                                         ChargerStreamData,
                                         chargerObservations,
                                         circuit,
