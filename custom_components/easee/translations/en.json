@@ -145,6 +145,9 @@
       "current": {
         "name": "Current"
       },
+      "current_session_id": {
+        "name": "Current session id"
+      },
       "dynamic_charger_limit": {
         "name": "Dynamic charger limit"
       },
@@ -255,6 +258,9 @@
       "internal_temperature": {
         "name": "Internal temperature"
       },
+      "last_session_id": {
+        "name": "Last session id"
+      },
       "lifetime_energy": {
         "name": "Lifetime energy"
       },
@@ -297,11 +303,8 @@
       "session_energy": {
         "name": "Session Energy"
       },
-      "current_session_id": {
-        "name": "Current session Id"
-      },
-      "last_session_id": {
-        "name": "Last session Id"
+      "session_id": {
+        "name": "Session Id"
       },
       "voltage": {
         "name": "Voltage"

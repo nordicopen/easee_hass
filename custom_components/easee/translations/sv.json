@@ -145,6 +145,9 @@
       "current": {
         "name": "Ström"
       },
+      "current_session_id": {
+        "name": "Nuvarande sessions-id"
+      },
       "dynamic_charger_limit": {
         "name": "Dynamisk laddboxbegränsning"
       },
