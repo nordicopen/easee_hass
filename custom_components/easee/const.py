@@ -423,7 +423,9 @@ OPTIONAL_EASEE_ENTITIES = {
     },
     "phase_mode": {
         "key": "config.phaseMode",
-        "attrs": [],
+        "attrs": [
+            "state.outputPhase",
+        ],
         "units": None,
         "convert_units_func": "map_phase_mode",
         "translation_key": "phase_mode",

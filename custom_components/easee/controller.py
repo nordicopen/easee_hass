@@ -89,33 +89,29 @@ class UserData:
         self,
     ):
         """Initialize the data."""
-        self.sites = {}
         self.sites_users_dt = {}
         self.sites_users = {}
-        self.sites_keys = {}
-        self.sites_keys_dt = {}
+        self.account_keys = None
 
-    async def async_find_key_userid(self, site: Site, keyStr: str):
+    async def async_find_key_name(self, site: Site, keyStr: str):
         """Look up key and match with user."""
 
-        if keyStr not in self.sites_keys:
-            self.sites_keys[keyStr] = await site.easee.get_userid_from_key(keyStr)
-            self.sites_keys_dt[site.id] = dt_util.now()
+        if self.account_keys is None:
+            self.account_keys = await site.easee.get_keys()
+            self.account_keys_dt = dt_util.now()
         else:
-            key_td = self.sites_keys_dt[site.id] - dt_util.now()
+            key_td = self.account_keys_dt - dt_util.now()
             if key_td.total_seconds() > USER_UPDATE_INTERVAL:
-                self.sites_keys[keyStr] = await site.easee.get_userid_from_key(keyStr)
-                self.sites_keys_dt[site.id] = dt_util.now()
+                self.account_keys = await site.easee.get_keys()
+                self.account_keys_dt = dt_util.now()
 
-        _LOGGER.debug("User id %s from key %s", self.sites_keys[keyStr], keyStr)
+        for key in self.account_keys:
+            _LOGGER.debug("Key %s", key)
+            if key["id"] == keyStr:
+                return key["owner"]
 
-        return self.sites_keys[keyStr]
-
-    async def async_find_user_name(self, site : Site, userId: str):
+    async def async_find_userid_name(self, site : Site, userId: str):
         """Try to find information about a user."""
-
-        if site.id not in self.sites:
-            self.sites[site.id] = site
 
         if site.id not in self.sites_users_dt:
             users = await site.get_users()
@@ -517,36 +513,24 @@ class ProductData:
                     await self.async_cost_refresh()
                 if second == "connectedToCloud" and not value:
                     self.set_state("isOnline", False, False)
-                if second == "chargingSession":
+                if second in { "chargingSession", "chargingSessionStart" }:
+                    which = "last" if second == "chargingSession" else "current"
                     jsondata = json.loads(value)
-                    self.set_state("lastSessionId", jsondata["Id"], False)
-                    self.set_state("lastSessionAuth", jsondata["Auth"], False)
-                    self.set_state("lastSessionTotalEnergy", jsondata["EnergyKwh"], False)
-                    self.set_state("lastSessionStart", jsondata["Start"], False)
-                    self.set_state("lastSessionStop", jsondata["Stop"])
+                    self.set_state(f"{which}SessionId", jsondata["Id"], False)
+                    self.set_state(f"{which}SessionAuth", jsondata["Auth"], False)
+                    self.set_state(f"{which}SessionStart", jsondata["Start"])
+                    if which == "last":
+                        self.set_state(f"{which}SessionTotalEnergy", jsondata["EnergyKwh"], False)
+                        self.set_state(f"{which}SessionStop", jsondata["Stop"])
                     if jsondata["Auth"] != "":
                         if "userid_" in jsondata["Auth"]:
                             userid = jsondata["Auth"][7:0]
-                            username = await self.user_data.async_find_user_name(self.site, userid)
+                            username = await self.user_data.async_find_userid_name(self.site, userid)
                         else:
-                            userid = await self.user_data.async_find_key_userid(self.site, jsondata["Auth"])
-                            username = await self.user_data.async_find_user_name(self.site, userid)
-                        self.set_state("lassSessionUserId", userid, False)
-                        self.set_state("lastSessionUserName", username)
-                if second == "chargingSessionStart":
-                    jsondata = json.loads(value)
-                    self.set_state("currentSessionId", jsondata["Id"])
-                    self.set_state("currentSessionAuth", jsondata["Auth"])
-                    self.set_state("currentSessionStart", jsondata["Start"])
-                    if jsondata["Auth"] != "":
-                        if "userid_" in jsondata["Auth"]:
-                            userid = jsondata["Auth"][7:0]
-                            username = await self.user_data.async_find_user_name(self.site, userid)
-                        else:
-                            userid = await self.user_data.async_find_key_userid(self.site, jsondata["Auth"])
-                            username = await self.user_data.async_find_user_name(self.site, userid)
-                        self.set_state("currentSessionUserId", userid, False)
-                        self.set_state("currentSessionUserName", username)
+                            username = await self.user_data.async_find_key_name(self.site, jsondata["Auth"])
+                            userid = None
+                        self.set_state(f"{which}SessionUserId", userid, False)
+                        self.set_state(f"{which}SessionUserName", username)
                 return True
             elif first == "config":
                 if self.config is None:
