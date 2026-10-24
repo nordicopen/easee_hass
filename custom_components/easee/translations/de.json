@@ -281,7 +281,7 @@
       "pilot_mode": {
         "name": "Pilot-Modus",
         "state": {
-          "a": "Kein Fahrzeug",
+          "a": "Kein Fahrzeug verbunden",
           "b": "Fahrzeug verbunden",
           "c": "Fahrzeug lädt",
           "d": "Fahrzeug benötigt Belüftung",
@@ -461,8 +461,8 @@
       "description": "Dynamisches Limit des Ladegeräts festlegen",
       "fields": {
         "current": {
-          "description": "Maximale Ladestromstärke",
-          "name": "Stromstärke"
+          "description": "Maximaler Ladestrom",
+          "name": "Strom"
         },
         "device_id": {
           "description": "Zu kontrollierendes Ladegerät im Stromkreis auswählen.",
@@ -479,11 +479,11 @@
       "description": "Maximale Stromstärke des Ladegeräts festlegen. Vorsicht! Sollte nicht von einer Automatisierung verwendet werden (kann den Flash-Speicher abnutzen, wenn der Wert zu häufig geändert wird).",
       "fields": {
         "current": {
-          "description": "Maximale Ladestromstärke",
-          "name": "Stromstärke"
+          "description": "Maximaler Ladestrom",
+          "name": "Strom"
         },
         "device_id": {
-          "description": "Zu kontrollierendes Ladegerät im Stromkreis auswählen",
+          "description": "Zu kontrollierendes Ladegerät im Stromkreis auswählen.",
           "name": "Zielgerät"
         }
       },
@@ -533,7 +533,7 @@
           "name": "Währung"
         },
         "device_id": {
-          "description": "Wähle das zu kontrollierende Ladegerät in dem Stromkreis",
+          "description": "Zu kontrollierendes Ladegerät im Stromkreis auswählen.",
           "name": "Zielgerät"
         },
         "vat": {
@@ -547,15 +547,15 @@
       "description": "Dynamisches Limit des Stromkreises festlegen (wird von den Ladegeräten in diesem Stromkreis gemeinsam genutzt). Kann in Automatisierungen verwendet werden.",
       "fields": {
         "current_p1": {
-          "description": "Maximale Ladestromstärke",
+          "description": "Maximaler Ladestrom",
           "name": "Stromstärke erste Phase"
         },
         "current_p2": {
-          "description": "Maximaler Ladestrom. Wenn deaktiviert, wird der Wert der ersten Phase verwendet.",
+          "description": "Maximaler Ladestrom. Wenn deaktiviert, wird der Wert von Phase 1 verwendet.",
           "name": "Stromstärke zweite Phase"
         },
         "current_p3": {
-          "description": "Maximaler Ladestrom. Wenn deaktiviert, wird der Wert der ersten Phase verwendet.",
+          "description": "Maximaler Ladestrom. Wenn deaktiviert, wird der Wert von Phase 1 verwendet.",
           "name": "Stromstärke dritte Phase"
         },
         "device_id": {
@@ -595,15 +595,15 @@
       "description": "Fallback Limit des Stromkreises festlegen, wenn das Ladegerät offline ist. Vorsicht!  Sollte nicht von einer Automatisierung verwendet werden (kann den Flash-Speicher abnutzen, wenn der Wert zu häufig geändert wird).",
       "fields": {
         "current_p1": {
-          "description": "Maximale Ladestromstärke",
+          "description": "Maximaler Ladestrom",
           "name": "Stromstärke erste Phase"
         },
         "current_p2": {
-          "description": "Maximaler Ladestrom. Wenn deaktiviert wird der Wert der ersten Phase verwendet.",
+          "description": "Maximaler Ladestrom. Wenn deaktiviert, wird der Wert von Phase 1 verwendet.",
           "name": "Stromstärke zweite Phase"
         },
         "current_p3": {
-          "description": "Maximaler Ladestrom. Wenn deaktiviert wird der Wert der ersten Phase verwendet.",
+          "description": "Maximaler Ladestrom. Wenn deaktiviert, wird der Wert von Phase 1 verwendet.",
           "name": "Stromstärke dritte Phase"
         },
         "device_id": {
@@ -626,15 +626,15 @@
       "fields": {
         "current": {
           "description": "Maximale zusätzliche Stromstärke aus dem Netz",
-          "name": "Stromstärke"
+          "name": "Strom"
         },
         "device_id": {
-          "description": "zu kontrollierendes Gerät wählen",
+          "description": "Zu kontrollierendes Gerät auswählen",
           "name": "Zielgerät"
         },
         "enable": {
           "description": "Überschussladen aktivieren",
-          "name": "aktivieren"
+          "name": "Aktivieren"
         }
       },
       "name": "Überschussladen festlegen"
