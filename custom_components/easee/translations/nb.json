@@ -118,7 +118,7 @@
     },
     "button": {
       "override_schedule": {
-        "name": "Overstyre ladeplan"
+        "name": "Overstyr tidsplan"
       }
     },
     "sensor": {
@@ -320,7 +320,7 @@
   },
   "options": {
     "error": {
-      "no_sites": "Ingen lokasjoner valgt"
+      "no_sites": "Ingen lokasjon valgt"
     },
     "step": {
       "init": {
@@ -332,7 +332,7 @@
           "monitored_sites": "Valgte lokasjoner"
         },
         "description": "Velg innstillinger",
-        "title": "Easee elbillader"
+        "title": "Easee EV Charger"
       }
     }
   },
@@ -352,7 +352,7 @@
         "disable_weekly_charge_plan": "Deaktiver ukentlig ladeplan",
         "enable_basic_charge_plan": "Aktivere grunnleggende ladeplan",
         "enable_weekly_charge_plan": "Aktivere ukentlig ladeplan",
-        "override_schedule": "Overstyre ladeplan",
+        "override_schedule": "Overstyr tidsplan",
         "pause": "Pause",
         "reboot": "Reboot laderen",
         "resume": "Gjenoppta",
@@ -440,7 +440,7 @@
       "description": "Sett laderens dynamiske grense",
       "fields": {
         "current": {
-          "description": "Maks ladestrøm",
+          "description": "Maks strøm ladekurs",
           "name": "Strøm"
         },
         "device_id": {
@@ -458,7 +458,7 @@
       "description": "Sett laderens maksgrense. Forsiktig! Bør ikke brukes av automasjoner (kan slite ut flashminnet dersom verdien endres for ofte).",
       "fields": {
         "current": {
-          "description": "Maks ladestrøm",
+          "description": "Maks strøm ladekurs",
           "name": "Strøm"
         },
         "device_id": {
@@ -474,7 +474,7 @@
           "name": "Målenhet"
         },
         "enable": {
-          "name": "Aktivere"
+          "name": "Aktiver"
         }
       }
     },
@@ -518,19 +518,19 @@
       "description": "Sett ladekursens dynamiske grense (delt mellom laderne på samme kurs). Denne tjeneste kan benyttes i automasjoner.",
       "fields": {
         "current_p1": {
-          "description": "Maks ladestrøm",
+          "description": "Maks strøm ladekurs",
           "name": "Strøm fase 1"
         },
         "current_p2": {
-          "description": "Maks ladestrøm. Hvis deaktivert vil verdien for fase 1 benyttes.",
+          "description": "Maks strøm ladekurs. Dersom deaktivert vil verdien for fase 1 benyttes.",
           "name": "Strøm fase 2"
         },
         "current_p3": {
-          "description": "Maks ladestrøm. Hvis deaktivert vil verdien for fase 1 benyttes.",
+          "description": "Maks strøm ladekurs. Dersom deaktivert vil verdien for fase 1 benyttes.",
           "name": "Strøm fase 3"
         },
         "device_id": {
-          "description": "Velg en av laderne på krusen som skal styres.",
+          "description": "Velg en av laderne på kursen som skal styres.",
           "name": "Målenhet"
         },
         "time_to_live": {
@@ -552,7 +552,7 @@
           "name": "Strøm fase 2"
         },
         "current_p3": {
-          "description": "Max strøm ladekurs. Dersom deaktivert vil verdien for fase 1 benyttes.",
+          "description": "Maks strøm ladekurs. Dersom deaktivert vil verdien for fase 1 benyttes.",
           "name": "Strøm fase 3"
         },
         "device_id": {
@@ -566,15 +566,15 @@
       "description": "Sett kursens offlinegrense som benyttes når laderen er offline (fallback). Forsiktig! Bør ikke benyttes av automasjoner (kan slite ut flashminnet dersom den benyttes for ofte).",
       "fields": {
         "current_p1": {
-          "description": "Max ladestrøm",
+          "description": "Maks strøm ladekurs",
           "name": "Strøm fase 1"
         },
         "current_p2": {
-          "description": "Maks ladestrøm. Dersom deaktivert vil verdien for fase 1 benyttes.",
+          "description": "Maks strøm ladekurs. Dersom deaktivert vil verdien for fase 1 benyttes.",
           "name": "Strøm fase 2"
         },
         "current_p3": {
-          "description": "Maks ladestrøm. Hvis deakivert vil verdien for fase 1 benyttes.",
+          "description": "Maks strøm ladekurs. Dersom deaktivert vil verdien for fase 1 benyttes.",
           "name": "Strøm fase 3"
         },
         "device_id": {
@@ -598,11 +598,11 @@
           "name": "Strøm"
         },
         "device_id": {
-          "description": "Velg enhet som skal styres",
+          "description": "Velg enheten som skal styres",
           "name": "Målenhet"
         },
         "enable": {
-          "name": "Aktivere"
+          "name": "Aktiver"
         }
       }
     },
@@ -636,7 +636,7 @@
       "description": "Aktivere/deaktivere smartlading",
       "fields": {
         "device_id": {
-          "description": "Velg enhet som skal styres",
+          "description": "Velg enheten som skal styres",
           "name": "Målenhet"
         },
         "enable": {
@@ -654,5 +654,5 @@
       "reach_easee_cloud": "Tilkoblet cloud"
     }
   },
-  "title": "Easee elbillader"
+  "title": "Easee EV Charger"
 }

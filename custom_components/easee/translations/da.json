@@ -520,8 +520,8 @@
       "description": "Indstil pris pr. kWh for opladerstedet",
       "fields": {
         "cost_per_kwh": {
-          "description": "Pris pr. kWh",
-          "name": "Pris pr. kWh"
+          "description": "Omkostning pr. kWh",
+          "name": "Omkostning pr. kWh"
         },
         "currency_id": {
           "description": "Valutakode",
@@ -542,7 +542,7 @@
       "description": "Indstil den dynamiske grænse (deles mellem opladere på samme kredsløb). Denne grænse må anvendes til automatisk indstilling.",
       "fields": {
         "current_p1": {
-          "description": "Maksimal opladningsstrøm",
+          "description": "Maksimal strømstyrke",
           "name": "Strømstyrke på fase 1"
         },
         "current_p2": {
