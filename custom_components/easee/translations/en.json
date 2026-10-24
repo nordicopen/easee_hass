@@ -297,8 +297,11 @@
       "session_energy": {
         "name": "Session Energy"
       },
-      "session_id": {
-        "name": "Session Id"
+      "current_session_id": {
+        "name": "Current session Id"
+      },
+      "last_session_id": {
+        "name": "Last session Id"
       },
       "voltage": {
         "name": "Voltage"
