@@ -303,9 +303,6 @@
       "session_energy": {
         "name": "Session Energy"
       },
-      "session_id": {
-        "name": "Session Id"
-      },
       "voltage": {
         "name": "Voltage"
       }

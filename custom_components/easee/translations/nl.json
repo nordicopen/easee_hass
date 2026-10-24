@@ -38,7 +38,7 @@
   },
   "device_automation": {
     "action_type": {
-      "delete_basic_charge_plan": "Laadschema verwijderen",
+      "delete_basic_charge_plan": "Standaard laadschema verwijderen",
       "delete_weekly_charge_plan": "Wekelijks laadschema verwijderen",
       "disable_basic_charge_plan": "Laadschema deactiveren",
       "disable_weekly_charge_plan": "Wekelijks laadschema deactiveren",
@@ -51,7 +51,7 @@
       "start": "Start laden",
       "stop": "Stop laden",
       "toggle": "Laden omschakelen",
-      "update_firmware": "Update firmware"
+      "update_firmware": "Firmware updaten"
     },
     "condition_type": {
       "authenticating": "{entity_name} is bezig met authenticeren",
@@ -284,7 +284,7 @@
       "pilot_mode": {
         "name": "Aanstuurmodus",
         "state": {
-          "a": "Auto losgekoppeld",
+          "a": "Geen auto aangesloten",
           "b": "Auto verbonden",
           "c": "Auto opladen",
           "d": "Auto heeft ventilatie nodig",
@@ -344,7 +344,7 @@
   },
   "options": {
     "error": {
-      "no_sites": "Geen lokaties geselecteerd"
+      "no_sites": "Geen locaties geselecteerd"
     },
     "step": {
       "init": {
@@ -356,7 +356,7 @@
           "monitored_sites": "Lokaties"
         },
         "description": "Selecteer opties",
-        "title": "Easee EV lader"
+        "title": "Easee EV Lader"
       }
     }
   },
@@ -454,7 +454,7 @@
           "name": "Toegang"
         },
         "device_id": {
-          "description": "Selecteer het te bedienen apparaat",
+          "description": "Selecteer apparaat om te gebruiken",
           "name": "Doelapparaat"
         }
       },
@@ -464,11 +464,11 @@
       "description": "Stel de dynamische limiet van de oplader in",
       "fields": {
         "current": {
-          "description": "Max laadstroom",
+          "description": "Maximale laadstroom",
           "name": "Stroom"
         },
         "device_id": {
-          "description": "Selecteer een van de laders in het circuit die moet worden aangestuurd.",
+          "description": "Selecteer een van de laders in het stroomcircuit om te gebruiken.",
           "name": "Doelapparaat"
         },
         "time_to_live": {
@@ -482,11 +482,11 @@
       "description": "Stel de maximale limiet van de lader in. Opgepast! Niet gebruiken voor een automatisering (dit kan extra slijtage in flash geheugen veroorzaken als het te vaak gebeurd).",
       "fields": {
         "current": {
-          "description": "Max laadstroom",
+          "description": "Maximale laadstroom",
           "name": "Stroom"
         },
         "device_id": {
-          "description": "Selecteer een van de laders in het circuit die moet worden aangestuurd.",
+          "description": "Selecteer een van de laders in het stroomcircuit om te gebruiken.",
           "name": "Doelapparaat"
         }
       },
@@ -497,7 +497,7 @@
       "fields": {
         "device_id": {
           "description": "Selecteer het te bedienen apparaat",
-          "name": "Doel apparaat"
+          "name": "Doelapparaat"
         },
         "enable": {
           "description": "Schakel lokale OCPP-modus in",
@@ -514,7 +514,7 @@
       "description": "Stel de fasemodus van de lader in",
       "fields": {
         "device_id": {
-          "description": "Selecteer het apparaat om aan te sturen",
+          "description": "Selecteer apparaat om te gebruiken",
           "name": "Doelapparaat"
         },
         "phase_mode": {
@@ -528,15 +528,15 @@
       "description": "Stel de laadkosten in per kWh voor de opladerlocatie",
       "fields": {
         "cost_per_kwh": {
-          "description": "Prijs per kWh",
-          "name": "Prijs per kWh"
+          "description": "Kosten per kWh",
+          "name": "Kosten per kWh"
         },
         "currency_id": {
           "description": "Valutacode",
           "name": "Munteenheid"
         },
         "device_id": {
-          "description": "Selecteer welke lader gebruikt dient te worden.",
+          "description": "Selecteer een van de laders in het stroomcircuit om te gebruiken.",
           "name": "Doelapparaat"
         },
         "vat": {
@@ -547,10 +547,10 @@
       "name": "Laadtarief instellen"
     },
     "set_circuit_dynamic_limit": {
-      "description": "\nStel dynamische limiet van het circuit in (gedeeld tussen laders op dat circuit). Deze service kan worden gebruikt in automatiseringen.",
+      "description": "Stel dynamische limiet van het circuit in (gedeeld tussen laders op dat circuit). Deze service kan worden gebruikt in automatiseringen.",
       "fields": {
         "current_p1": {
-          "description": "Max laadstroom instellen",
+          "description": "Maximale laadstroom",
           "name": "Stroom fase 1"
         },
         "current_p2": {
@@ -562,7 +562,7 @@
           "name": "Stroom fase 3"
         },
         "device_id": {
-          "description": "Selecteer een van de laders in het circuit die moet worden aangestuurd.",
+          "description": "Selecteer een van de laders in het stroomcircuit om te gebruiken.",
           "name": "Doelapparaat"
         },
         "time_to_live": {
@@ -638,12 +638,12 @@
           "name": "Stroom"
         },
         "device_id": {
-          "description": "Selecteer het te bedienen apparaat",
-          "name": "Doel apparaat"
+          "description": "Selecteer apparaat om te gebruiken",
+          "name": "Doelapparaat"
         },
         "enable": {
           "description": "Slim laden activeren",
-          "name": "Activeren"
+          "name": "Inschakelen"
         }
       },
       "name": "Slim laden instellen"
@@ -696,5 +696,5 @@
       "reach_easee_cloud": "Verbonden met Easee Cloud"
     }
   },
-  "title": "Easee EV lader"
+  "title": "Easee EV Lader"
 }

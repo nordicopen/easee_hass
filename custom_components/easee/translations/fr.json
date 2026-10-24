@@ -51,7 +51,7 @@
       "start": "Commencer la charge",
       "stop": "Arrêter la charge",
       "toggle": "Basculer la charge",
-      "update_firmware": "Mise à jour du firmware"
+      "update_firmware": "Mettre à jour le firmware"
     },
     "condition_type": {
       "authenticating": "{entity_name} est Authentification",
@@ -118,7 +118,7 @@
     },
     "button": {
       "override_schedule": {
-        "name": "Ignorer la Programmation"
+        "name": "Outrepasser la planification"
       }
     },
     "light": {
@@ -337,7 +337,7 @@
   },
   "options": {
     "error": {
-      "no_sites": "Aucun site n'a été sélectionné"
+      "no_sites": "Aucun site surveillé n'a été sélectionné"
     },
     "step": {
       "init": {
@@ -622,7 +622,7 @@
           "name": "Courant"
         },
         "device_id": {
-          "description": "Sélectionner l'équipement à contrôler",
+          "description": "Sélectionnez l'appareil à contrôler",
           "name": "Cible"
         },
         "enable": {
