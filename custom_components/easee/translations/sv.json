@@ -258,6 +258,9 @@
       "internal_temperature": {
         "name": "Intern temperatur"
       },
+      "last_session_id": {
+        "name": "Senaste sessions-id"
+      },
       "lifetime_energy": {
         "name": "Livstidsförbrukning"
       },
@@ -299,9 +302,6 @@
       },
       "session_energy": {
         "name": "Energi laddningssession"
-      },
-      "session_id": {
-        "name": "Sessions-id"
       },
       "voltage": {
         "name": "Spänning"

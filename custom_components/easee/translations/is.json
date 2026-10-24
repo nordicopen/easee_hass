@@ -224,7 +224,7 @@
   },
   "options": {
     "error": {
-      "no_sites": "Engin tengingu valin"
+      "no_sites": "Engin staðsetning valin."
     },
     "step": {
       "init": {
@@ -281,5 +281,5 @@
       "reach_easee_cloud": "Easee skýjaþjónustuna fáanleg"
     }
   },
-  "title": "Easee hleðslustöð"
+  "title": "Easee bílahleðsla"
 }
