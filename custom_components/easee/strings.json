@@ -14,7 +14,7 @@
     "step": {
       "reauth_confirm": {
         "data": {
-          "password": "[%key:config::step::user::data::password%]"
+          "password": "[%key:config::step::user::password%]"
         },
         "description": "The Easee integration needs to re-authenticate the account {username}.",
         "title": "Reauthenticate with Easee"
@@ -38,8 +38,8 @@
   },
   "device_automation": {
     "action_type": {
-      "delete_basic_charge_plan": "[%key_id:479707182%]",
-      "delete_weekly_charge_plan": "[%key_id:479707183%]",
+      "delete_basic_charge_plan": "[%key:selector::action_command::options::delete_basic_charge_plan%]",
+      "delete_weekly_charge_plan": "[%key:selector::action_command::options::delete_weekly_charge_plan%]",
       "disable_basic_charge_plan": "Disable basic charge plan",
       "disable_weekly_charge_plan": "Disable weekly charge plan",
       "enable_basic_charge_plan": "Enable basic charge plan",
@@ -51,7 +51,7 @@
       "start": "Authorize (start) charging",
       "stop": "Deauthorize (stop) charging",
       "toggle": "Toggle charging",
-      "update_firmware": "[%key_id:479707180%]"
+      "update_firmware": "[%key:selector::action_command::options::update_firmware%]"
     },
     "condition_type": {
       "authenticating": "{entity_name} is authenticating",
@@ -118,7 +118,7 @@
     },
     "button": {
       "override_schedule": {
-        "name": "[%key_id:403075888%]"
+        "name": "[%key:device_automation::action_type::override_schedule%]"
       }
     },
     "light": {
@@ -284,7 +284,7 @@
       "pilot_mode": {
         "name": "Pilot Mode",
         "state": {
-          "a": "[%key_id:385829376%]",
+          "a": "[%key:entity::sensor::easee_status::state::disconnected%]",
           "b": "Car connected",
           "c": "Car charging",
           "d": "Car needs ventilation",
@@ -347,7 +347,7 @@
   },
   "options": {
     "error": {
-      "no_sites": "[%key_id:385829306%]"
+      "no_sites": "[%key:config::error::no_sites%]"
     },
     "step": {
       "init": {
@@ -359,7 +359,7 @@
           "monitored_sites": "Sites monitored"
         },
         "description": "Select options",
-        "title": "[%key_id:385829311%]"
+        "title": "[%key:config::step::sites::title%]"
       }
     }
   },
@@ -379,9 +379,9 @@
         "disable_weekly_charge_plan": "Disable weekly charge plan",
         "enable_basic_charge_plan": "Enable basic charge plan",
         "enable_weekly_charge_plan": "Enable weekly charge plan",
-        "override_schedule": "[%key_id:403075888%]",
+        "override_schedule": "[%key:device_automation::action_type::override_schedule%]",
         "pause": "Pause",
-        "reboot": "[%key_id:403075890%]",
+        "reboot": "[%key:device_automation::action_type::reboot%]",
         "resume": "Resume",
         "start": "Authorize (start)",
         "stop": "Deauthorize (stop)",
@@ -417,14 +417,14 @@
           "name": "Command"
         },
         "device_id": {
-          "description": "[%key_id:479707194%]",
-          "name": "[%key_id:479707193%]"
+          "description": "[%key:services::set_basic_charge_plan::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         }
       },
       "name": "Action command"
     },
     "set_basic_charge_plan": {
-      "description": "[%key_id:479707191%]",
+      "description": "[%key:services::set_basic_charge_plan::name%]",
       "fields": {
         "current": {
           "description": "Maximum current during plan",
@@ -457,8 +457,8 @@
           "name": "Access"
         },
         "device_id": {
-          "description": "[%key_id:479707194%]",
-          "name": "[%key_id:479707193%]"
+          "description": "[%key:services::set_basic_charge_plan::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         }
       },
       "name": "Set access to charger"
@@ -467,12 +467,12 @@
       "description": "Set charger dynamic limit",
       "fields": {
         "current": {
-          "description": "[%key_id:479707222%]",
-          "name": "[%key_id:385829326%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::current_p1::description%]",
+          "name": "[%key:entity::sensor::current::name%]"
         },
         "device_id": {
-          "description": "[%key_id:479707220%]",
-          "name": "[%key_id:479707193%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         },
         "time_to_live": {
           "description": "Set time in minutes for the command to live. 0 = indefinitely.",
@@ -485,12 +485,12 @@
       "description": "Set charger max limit. Caution! Should not be used by automation (may wear out flash memory if set too frequently).",
       "fields": {
         "current": {
-          "description": "[%key_id:479707222%]",
-          "name": "[%key_id:385829326%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::current_p1::description%]",
+          "name": "[%key:entity::sensor::current::name%]"
         },
         "device_id": {
-          "description": "[%key_id:479707220%]",
-          "name": "[%key_id:479707193%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         }
       },
       "name": "Set charger max limit"
@@ -500,11 +500,11 @@
       "fields": {
         "device_id": {
           "description": "Select a device to be controlled",
-          "name": "[%key_id:479707193%]"
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         },
         "enable": {
           "description": "Enable local OCPP mode",
-          "name": "[%key_id:479707215%]"
+          "name": "[%key:services::smart_charging::fields::enable::name%]"
         },
         "ocpp_url": {
           "description": "Local OCPP server address",
@@ -517,8 +517,8 @@
       "description": "Set charger phase mode",
       "fields": {
         "device_id": {
-          "description": "[%key_id:479707194%]",
-          "name": "[%key_id:479707193%]"
+          "description": "[%key:services::set_basic_charge_plan::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         },
         "phase_mode": {
           "description": "Charger phase mode",
@@ -531,16 +531,16 @@
       "description": "Set charging cost per kWh for charger site",
       "fields": {
         "cost_per_kwh": {
-          "description": "[%key_id:385829324%]",
-          "name": "[%key_id:385829324%]"
+          "description": "[%key:entity::sensor::cost_per_kwh::name%]",
+          "name": "[%key:entity::sensor::cost_per_kwh::name%]"
         },
         "currency_id": {
           "description": "Currency code",
           "name": "Currency"
         },
         "device_id": {
-          "description": "[%key_id:479707220%]",
-          "name": "[%key_id:479707193%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         },
         "vat": {
           "description": "Value added tax",
@@ -553,20 +553,20 @@
       "description": "Set circuit dynamic limit (shared between chargers on that circuit). This service can be used in automations.",
       "fields": {
         "current_p1": {
-          "description": "[%key_id:479707222%]",
-          "name": "[%key_id:479707221%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::current_p1::description%]",
+          "name": "[%key:services::set_circuit_max_limit::fields::current_p1::name%]"
         },
         "current_p2": {
-          "description": "[%key_id:479707224%]",
-          "name": "[%key_id:479707223%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::current_p2::description%]",
+          "name": "[%key:services::set_circuit_max_limit::fields::current_p2::name%]"
         },
         "current_p3": {
-          "description": "[%key_id:479707224%]",
-          "name": "[%key_id:479707225%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::current_p2::description%]",
+          "name": "[%key:services::set_circuit_max_limit::fields::current_p3::name%]"
         },
         "device_id": {
-          "description": "[%key_id:479707220%]",
-          "name": "[%key_id:479707193%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         },
         "time_to_live": {
           "description": "Set time in minutes for the command to live. 0 = indefinitely.",
@@ -587,12 +587,12 @@
           "name": "Current phase 2"
         },
         "current_p3": {
-          "description": "[%key_id:479707224%]",
+          "description": "[%key:services::set_circuit_max_limit::fields::current_p2::description%]",
           "name": "Current phase 3"
         },
         "device_id": {
           "description": "Select one of the chargers in the circuit that should be controlled.",
-          "name": "[%key_id:479707193%]"
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         }
       },
       "name": "Set circuit max limit"
@@ -601,20 +601,20 @@
       "description": "Set circuit offline limit used if charger is offline (fallback). Caution! Should not be used by automation (may wear out flash memory if set too frequently).",
       "fields": {
         "current_p1": {
-          "description": "[%key_id:479707222%]",
-          "name": "[%key_id:479707221%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::current_p1::description%]",
+          "name": "[%key:services::set_circuit_max_limit::fields::current_p1::name%]"
         },
         "current_p2": {
-          "description": "[%key_id:479707224%]",
-          "name": "[%key_id:479707223%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::current_p2::description%]",
+          "name": "[%key:services::set_circuit_max_limit::fields::current_p2::name%]"
         },
         "current_p3": {
-          "description": "[%key_id:479707224%]",
-          "name": "[%key_id:479707225%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::current_p2::description%]",
+          "name": "[%key:services::set_circuit_max_limit::fields::current_p3::name%]"
         },
         "device_id": {
-          "description": "[%key_id:479707220%]",
-          "name": "[%key_id:479707193%]"
+          "description": "[%key:services::set_circuit_max_limit::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         }
       },
       "name": "Set circuit offline limit"
@@ -624,7 +624,7 @@
       "fields": {
         "device_id": {
           "description": "Select a device to be controlled",
-          "name": "[%key_id:479707193%]"
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         },
         "operator_id": {
           "description": "ID of the selected operator",
@@ -638,15 +638,15 @@
       "fields": {
         "current": {
           "description": "Max additional current from grid",
-          "name": "[%key_id:385829326%]"
+          "name": "[%key:entity::sensor::current::name%]"
         },
         "device_id": {
-          "description": "[%key_id:479707194%]",
-          "name": "[%key_id:479707193%]"
+          "description": "[%key:services::set_basic_charge_plan::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         },
         "enable": {
           "description": "Enable surplus charging",
-          "name": "[%key_id:479707215%]"
+          "name": "[%key:services::smart_charging::fields::enable::name%]"
         }
       },
       "name": "Set surplus charging"
@@ -663,8 +663,8 @@
           "name": "Weekday"
         },
         "device_id": {
-          "description": "[%key_id:479707194%]",
-          "name": "[%key_id:479707193%]"
+          "description": "[%key:services::set_basic_charge_plan::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         },
         "start_time": {
           "description": "Start time for plan",
@@ -681,15 +681,15 @@
       "description": "Enable/disable smart charging",
       "fields": {
         "device_id": {
-          "description": "[%key_id:479707194%]",
-          "name": "[%key_id:479707193%]"
+          "description": "[%key:services::set_basic_charge_plan::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         },
         "enable": {
           "description": "Enable smart charging",
           "name": "Enable"
         }
       },
-      "name": "[%key_id:385829411%]"
+      "name": "[%key:entity::switch::smart_charging::name%]"
     }
   },
   "system_health": {
@@ -699,5 +699,5 @@
       "reach_easee_cloud": "Reach Easee Cloud"
     }
   },
-  "title": "[%key_id:385829311%]"
+  "title": "[%key:config::step::sites::title%]"
 }
