@@ -38,9 +38,9 @@ There are 2 different methods of installing the custom component
 4. Execute the following command: `git clone https://github.com/nordicopen/easee_hass.git easee`
 5. Run `bash links.sh`
 
-## Monitored chargers/equalizers
+## Monitored chargers/Equalizers
 
-Since v0.9.47 the integration only includes the chargers and equalizers that has been added to the Easee official app, rather than showing all that are available to the logged in user. This change was done becuase in larger installations there could be 10s or 100s of chargers listed which in most cases does not make much sense.
+Since v0.9.47 the integration only includes the chargers and Equalizers that has been added to the Easee official app, rather than showing all that are available to the logged in user. This change was done becuase in larger installations there could be 10s or 100s of chargers listed which in most cases does not make much sense.
 So if you do not see all your products in the integration, open the official app and make sure they are listed there first.
 Note also that if no chargers at all are added to the app the error message "No sites found in this account" will be displayed at installation.
 
@@ -114,7 +114,7 @@ If you want to add a new language, please open an issue here in this repo.
 
 The translations are pulled when a new release of the integration is prepared. So you must wait until there is a new release until your look for your updates.
 
-If you want to add new elements that needs translation you should enter them in /translations/en.json and submit a PR. The new keys will appear in Lokalise when the PR is merged.
+If you want to add new elements that needs translation you should enter them in custom_components/easee_hass/strings.json and submit a PR. The new keys will appear in Lokalise when the PR is merged.
 
 ## Attribution, support and cooperation
 
