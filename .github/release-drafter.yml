@@ -26,6 +26,7 @@ categories:
     when:
       labels:
         - "dependency"
+        - "dependencies"
   - title: "Code quality and maintenance"
     when:
       labels:
