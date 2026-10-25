@@ -168,7 +168,7 @@
           "limited_by_circuit_dynamic_limit": "Begrænset af kredsløbets dynamiske grænse",
           "limited_by_circuit_fuse": "Begrænset af hovedsikringen",
           "limited_by_circuit_max_limit": "Begrænset af kredsløbets maksimale grænse",
-          "limited_by_equalizer": "Begrænset af equalizer",
+          "limited_by_equalizer": "Begrænset af Equalizer",
           "limited_by_load_balancing": "Begrænset af belastningsbalancering",
           "limited_by_local_adjustment": "Begrænset af lokal justering",
           "limited_by_offline_setting": "Begrænset af offline-indstilling",
