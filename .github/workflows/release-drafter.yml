@@ -5,8 +5,7 @@ on:
     # branches to consider in the event; optional, defaults to all
     branches:
       - master
-#  pull_request:
-#    types: [opened, reopened, synchronize]
+  workflow_dispatch:
 
 jobs:
   update_release_draft:
