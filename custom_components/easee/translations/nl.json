@@ -168,7 +168,7 @@
           "limited_by_circuit_dynamic_limit": "Dynamisch begrensd door stroomcircuit",
           "limited_by_circuit_fuse": "Begrensd door zekering",
           "limited_by_circuit_max_limit": "Begrensd door maximum limiet stroomcircuit",
-          "limited_by_equalizer": "Begrensd door equalizer",
+          "limited_by_equalizer": "Begrensd door Equalizer",
           "limited_by_load_balancing": "Begrensd door load balancing",
           "limited_by_local_adjustment": "Begrensd door lokale instelling",
           "limited_by_offline_setting": "Begrensd door offline instelling",
@@ -352,7 +352,7 @@
           "custom_units": "Aangepaste eenheden",
           "measured_consumption_days": "Dagen verbruik",
           "monitored_conditions": "Sensoren lader",
-          "monitored_eq_conditions": "Sensoren equalizer",
+          "monitored_eq_conditions": "Sensoren Equalizer",
           "monitored_sites": "Lokaties"
         },
         "description": "Selecteer opties",

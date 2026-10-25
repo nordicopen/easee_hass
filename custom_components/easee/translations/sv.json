@@ -171,7 +171,7 @@
           "limited_by_circuit_dynamic_limit": "Begränsad av dynamisk krets-gräns",
           "limited_by_circuit_fuse": "Begränsad av kretssäkring",
           "limited_by_circuit_max_limit": "Begränsad av max krets-gräns",
-          "limited_by_equalizer": "Begränsad av equalizer",
+          "limited_by_equalizer": "Begränsad av Equalizer",
           "limited_by_load_balancing": "Begränsad av lastbalansering",
           "limited_by_local_adjustment": "Begränsad av lokal justering",
           "limited_by_offline_setting": "Begränsad av offline-läge",
@@ -358,7 +358,7 @@
           "custom_units": "Anpassade enheter",
           "measured_consumption_days": "Förbrukning - antal dagar",
           "monitored_conditions": "Monitorerade laddbox-sensorer",
-          "monitored_eq_conditions": "Monitorerade equalizer-sensorer",
+          "monitored_eq_conditions": "Monitorerade Equalizer-sensorer",
           "monitored_sites": "Monitorerade platser"
         },
         "description": "Välj inställningar",
@@ -637,7 +637,7 @@
       "name": "Ställ in operatör"
     },
     "set_surplus_charging": {
-      "description": "Ställ in equalizer överskottsladdning",
+      "description": "Ställ in Equalizer överskottsladdning",
       "fields": {
         "current": {
           "description": "Max ström från elnätet",

@@ -224,7 +224,7 @@
   },
   "options": {
     "error": {
-      "no_sites": "Niciun site selectat pentru monitorizare"
+      "no_sites": "Nu a fost selectat nici un site de monitorizat"
     },
     "step": {
       "init": {
