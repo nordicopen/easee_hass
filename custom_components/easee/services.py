@@ -1072,7 +1072,7 @@ SERVICE_MAP = {
         "schema": SERVICE_SET_SURPLUS_CHARGING_SCHEMA,
     },
     "set_equalizer_max_continous_current": {
-        "handler": "equalizer_execute_set_max_continous_current",
+        "handler": equalizer_execute_set_max_continous_current,
         "function_call": "set_max_continous_current",
         "schema": SERVICE_SET_MAX_CONTINOUS_CURRENT_SCHEMA,
     },
