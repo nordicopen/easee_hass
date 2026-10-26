@@ -263,7 +263,7 @@ ext_surplus_charging = {
     ),
 }
 
-ext_max_continous_current = {
+ext_max_continuous_current = {
     probatio.Required(ATTR_SET_CURRENT, default=MIN_CURRENT): probatio.All(
         cv.positive_int, probatio.Range(min=MIN_CURRENT, max=MAX_CURRENT)
     ),
@@ -274,9 +274,9 @@ SERVICE_SET_SURPLUS_CHARGING_SCHEMA = probatio.All(
     exclusive_eq_schema2.extend(ext_surplus_charging),
 )
 
-SERVICE_SET_MAX_CONTINOUS_CURRENT_SCHEMA = probatio.All(
+SERVICE_SET_MAX_CONTINUOUS_CURRENT_SCHEMA = probatio.All(
     target_eq_schema2,
-    exclusive_eq_schema2.extend(ext_max_continous_current),
+    exclusive_eq_schema2.extend(ext_max_continuous_current),
 )
 
 ext_ocpp_mode = {
@@ -858,8 +858,8 @@ async def equalizer_execute_set_surplus_charging(call: ServiceCall) -> None:
     raise HomeAssistantError("Could not find equalizer")
 
 
-async def equalizer_execute_set_max_continous_current(call):
-    """Execute a service to set max continous current for a site..
+async def equalizer_execute_set_max_continuous_current(call):
+    """Execute a service to set max continuous current for a site..
 
     Equalizer is the actual target for API.
     """
@@ -1114,10 +1114,10 @@ SERVICE_MAP = {
         "function_call": "set_load_balancing",
         "schema": SERVICE_SET_SURPLUS_CHARGING_SCHEMA,
     },
-    "set_equalizer_max_continous_current": {
-        "handler": equalizer_execute_set_max_continous_current,
-        "function_call": "set_max_continous_current",
-        "schema": SERVICE_SET_MAX_CONTINOUS_CURRENT_SCHEMA,
+    "set_equalizer_max_continuous_limit": {
+        "handler": equalizer_execute_set_max_continuous_current,
+        "function_call": "set_max_continuous_current",
+        "schema": SERVICE_SET_MAX_CONTINUOUS_CURRENT_SCHEMA,
     },
     "set_charger_ocpp": {
         "handler": charger_execute_set_ocpp,
