@@ -431,7 +431,7 @@ set_surplus_charging:
           unit_of_measurement: "A"
           mode: slider
 
-set_equalizer_max_allocated_current:
+set_equalizer_max_continous_current:
   fields:
     device_id:
       required: true

@@ -276,7 +276,7 @@ SERVICE_SET_SURPLUS_CHARGING_SCHEMA = probatio.All(
 
 SERVICE_SET_MAX_CONTINOUS_CURRENT_SCHEMA = probatio.All(
     target_eq_schema2,
-    exclusive_eq_schema2.extend(ext_max_allocated_current),
+    exclusive_eq_schema2.extend(ext_max_continous_current),
 )
 
 ext_ocpp_mode = {
@@ -1071,10 +1071,10 @@ SERVICE_MAP = {
         "function_call": "set_load_balancing",
         "schema": SERVICE_SET_SURPLUS_CHARGING_SCHEMA,
     },
-    "set_equalizer_max_allocated_current": {
-        "handler": "equalizer_execute_set_max_allocated_current",
-        "function_call": "set_max_allocated_current",
-        "schema": SERVICE_SET_MAX_ALLOCATED_CURRENT_SCHEMA,
+    "set_equalizer_max_continous_current": {
+        "handler": "equalizer_execute_set_max_continous_current",
+        "function_call": "set_max_continous_current",
+        "schema": SERVICE_SET_MAX_CONTINOUS_CURRENT_SCHEMA,
     },
     "set_charger_ocpp": {
         "handler": charger_execute_set_ocpp,
