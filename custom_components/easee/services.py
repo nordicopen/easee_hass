@@ -858,6 +858,49 @@ async def equalizer_execute_set_surplus_charging(call: ServiceCall) -> None:
     raise HomeAssistantError("Could not find equalizer")
 
 
+async def equalizer_execute_set_max_continous_current(call):
+    """Execute a service to set max continous current for a site..
+
+    Equalizer is the actual target for API.
+    """
+    equalizer = await _async_get_equalizer(call)
+    current = call.data.get(ATTR_SET_CURRENT)
+    if current is None:
+        current = 0
+
+    _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
+
+    if equalizer:
+        function_name = SERVICE_MAP[call.service]
+        function_call = getattr(equalizer, function_name["function_call"])
+        try:
+            return await function_call(current)
+        except BadRequestException as ex:
+            _LOGGER.error(
+                "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                str(call.service),
+                ex,
+            )
+            return
+        except ForbiddenServiceException as ex:
+            _LOGGER.error(
+                "Forbidden : [%s] - Check your access privileges: %s",
+                str(call.service),
+                ex,
+            )
+            return
+        except Exception as ex:
+            _LOGGER.error(
+                "Failed to execute service %s with data %s: %s",
+                str(call.service),
+                str(call.data),
+                ex,
+            )
+            return
+
+    raise HomeAssistantError("Could not find equalizer")
+
+
 async def charger_execute_set_access(call: ServiceCall) -> None:
     """Execute a service to set access level on a charger."""
 
