@@ -2,7 +2,7 @@
 
 from pyeasee import ChargerStreamData, EqualizerStreamData
 
-from homeassistant.components.binary_sensor import BinarySensorDeviceClass
+from homeassistant.components.binary_sensor.const import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
     EntityCategory,
@@ -31,7 +31,7 @@ PLATFORMS = [
     Platform.SENSOR,
     Platform.SWITCH,
 ]
-EASEE_PRODUCT_CODES = {
+EASEE_PRODUCT_CODES: dict[int, str] = {
     1: "Easee Home",
     100: "Easee Charge",
     2: "Charge Lite",

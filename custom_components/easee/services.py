@@ -295,7 +295,9 @@ async def async_convert_device_id_to_product_id(call: ServiceCall) -> str | None
     device_entry = device_reg.async_get(call.data[CONF_DEVICE_ID])
     if device_entry is None:
         raise ServiceValidationError(
-            f"Could not find device_id {call.data[CONF_DEVICE_ID]}"
+            translation_domain=DOMAIN,
+            translation_key="could_not_find_device_id",
+            translation_placeholders={"device_id": call.data[CONF_DEVICE_ID]},
         )
     for ident in device_entry.identifiers:
         for val in ident:
@@ -313,7 +315,11 @@ async def _async_get_charger(call: ServiceCall) -> Charger:
         charger_id = call.data[CHARGER_ID]
     charger = next((c for c in chargers if c.id == charger_id), None)
     if charger is None:
-        raise ServiceValidationError(f"Could not find charger_id {charger_id}")
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="could_not_find_charger_id",
+            translation_placeholders={"charger_id": str(charger_id)},
+        )
     return charger
 
 
@@ -333,7 +339,11 @@ async def _async_get_equalizer(call: ServiceCall) -> Equalizer:
     equalizers = controller.get_equalizers()
     equalizer = next((e for e in equalizers if e.id == equalizer_id), None)
     if equalizer is None:
-        raise ServiceValidationError(f"Could not find equalizer_id {equalizer_id}")
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="could_not_find_equalizer_id",
+            translation_placeholders={"equalizer_id": str(equalizer_id)},
+        )
     return equalizer
 
 
@@ -376,7 +386,11 @@ async def charger_execute_service(call: ServiceCall) -> None:
             return
 
     raise HomeAssistantError(
-        f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
+        translation_domain=DOMAIN,
+        translation_key="could_not_find_charger_id",
+        translation_placeholders={
+            "charger_id": str(call.data.get(CHARGER_ID, "Unknown"))
+        },
     )
 
 
@@ -419,7 +433,11 @@ async def charger_execute_action_command(call: ServiceCall) -> None:
                 str(call.data),
             )
             return
-    raise HomeAssistantError(f"Could not find charger: {charger.id}")
+    raise HomeAssistantError(
+        translation_domain=DOMAIN,
+        translation_key="could_not_find_charger_id",
+        translation_placeholders={"charger_id": str(charger.id)},
+    )
 
 
 async def charger_execute_set_phase_mode(call: ServiceCall) -> None:
@@ -459,7 +477,11 @@ async def charger_execute_set_phase_mode(call: ServiceCall) -> None:
                 str(call.data),
             )
             return
-    raise HomeAssistantError(f"Could not find charger: {charger.id}")
+    raise HomeAssistantError(
+        translation_domain=DOMAIN,
+        translation_key="could_not_find_charger_id",
+        translation_placeholders={"charger_id": str(charger.id)},
+    )
 
 
 async def charger_set_schedule(call: ServiceCall) -> None:
@@ -510,7 +532,11 @@ async def charger_set_schedule(call: ServiceCall) -> None:
             )
             return
 
-    raise HomeAssistantError("Could not find charger.")
+    raise HomeAssistantError(
+        translation_domain=DOMAIN,
+        translation_key="could_not_find_charger_id",
+        translation_placeholders={"charger_id": str(call.data.get(CHARGER_ID, "Unknown"))},
+    )
 
 
 async def charger_set_weekly_schedule(call: ServiceCall) -> None:
@@ -881,9 +907,10 @@ async def charger_execute_set_access(call: ServiceCall) -> None:
             )
             return
     raise HomeAssistantError(
-        f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
+            translation_domain=DOMAIN,
+        translation_key="could_not_find_charger_id",
+        translation_placeholders={"charger_id": call.data.get(CHARGER_ID, 'Unknown')},
     )
-
 
 async def charger_execute_set_ocpp(call: ServiceCall) -> None:
     """Set the local OCPP configuration of a charger."""
@@ -926,7 +953,11 @@ async def charger_execute_set_ocpp(call: ServiceCall) -> None:
                 str(call.data),
             )
             return
-    raise HomeAssistantError(f"Could not find charger: {charger.id}")
+    raise HomeAssistantError(
+        translation_domain=DOMAIN,
+        translation_key="could_not_find_charger_id",
+        translation_placeholders={"charger_id": str(charger.id)},
+    )
 
 
 async def charger_execute_set_operator(call: ServiceCall) -> None:
@@ -967,7 +998,11 @@ async def charger_execute_set_operator(call: ServiceCall) -> None:
             return
         # Update the operator sensor
 
-    raise HomeAssistantError(f"Could not find charger: {charger.id}")
+    raise HomeAssistantError(
+        translation_domain=DOMAIN,
+        translation_key="could_not_find_charger_id",
+        translation_placeholders={"charger_id": str(charger.id)},
+    )
 
 
 SERVICE_MAP = {

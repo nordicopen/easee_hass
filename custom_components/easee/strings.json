@@ -334,6 +334,17 @@
       }
     }
   },
+  "exceptions": {
+    "could_not_find_device_id": {
+      "message": "Could not find device_id: {device_id}"
+    },
+    "could_not_find_equalizer_id": {
+      "message": "Could not find equalizer_id: {equalizer_id}"
+    },
+    "could_not_find_charger_id": {
+      "message": "Could not find charger_id: {charger_id}"
+    }
+  },
   "issues": {
     "currentpx_deprecation": {
       "description": "The use of {argument} as phase current is deprecated and will not be accepted in future verions. Please convert your automations and scripts to use {recommendation} instead.",

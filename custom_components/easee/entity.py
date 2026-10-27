@@ -9,7 +9,8 @@ import logging
 
 from homeassistant.const import UnitOfEnergy, UnitOfPower
 from homeassistant.helpers import device_registry as dr, entity_registry as er
-from homeassistant.helpers.entity import DeviceInfo, Entity
+from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_registry import async_entries_for_device
 from homeassistant.util import dt as dt_util
 
@@ -89,7 +90,7 @@ convert_units_funcs = {
 class ChargerEntity(Entity):
     """Implementation of Easee charger entity."""
 
-    def __init__(
+    def __init__(  # noqa: PLR0917
         self,
         data,
         name: str,
