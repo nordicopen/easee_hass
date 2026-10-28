@@ -1021,7 +1021,7 @@ class Controller:
                     compare_p1 != current_p1
                     or compare_p2 != current_p2
                     or compare_p3 != current_p3
-                ) or time_to_live is not None:
+                ) or (time_to_live is not None and time_to_live != 0):
                     return charger_data.circuit
 
                 return False
@@ -1072,7 +1072,7 @@ class Controller:
                     compare_p1 != current_p1
                     or compare_p2 != current_p2
                     or compare_p3 != current_p3
-                ) or time_to_live is not None:
+                ) or (time_to_live is not None and time_to_live != 0):
                     return charger_data.product
 
                 return False
