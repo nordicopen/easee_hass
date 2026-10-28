@@ -896,7 +896,7 @@ async def equalizer_execute_set_max_continuous_current(call):
             )
             return
 
-    raise HomeAssistantError("Could not find equalizer")
+    raise HomeAssistantError("Could not find Equalizer")
 
 
 async def charger_execute_set_access(call: ServiceCall) -> None:
