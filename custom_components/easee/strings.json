@@ -237,6 +237,9 @@
       "export_reactive_energy": {
         "name": "Export reactive energy"
       },
+      "max_continuous_limit": {
+        "name": "Max continuous limit"
+      },
       "export_reactive_power": {
         "name": "Export reactive power"
       },
@@ -647,6 +650,20 @@
         "enable": {
           "description": "Enable surplus charging",
           "name": "[%key:services::smart_charging::fields::enable::name%]"
+        }
+      },
+      "name": "Set surplus charging"
+    },
+    "set_max_continuous_limit": {
+      "description": "Set equalizer max continuous limit",
+      "fields": {
+        "current": {
+          "description": "Max continuous limit (site fuse current)",
+          "name": "[%key:entity::sensor::current::name%]"
+        },
+        "device_id": {
+          "description": "[%key:services::set_basic_charge_plan::fields::device_id::description%]",
+          "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         }
       },
       "name": "Set surplus charging"
