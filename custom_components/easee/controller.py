@@ -546,9 +546,12 @@ class ProductData:
                     )
                 if second == "siteStructure":
                     jsondata = json.loads(value)
-                    self.set_config("ratedCurrent", jsondata["ratedCurrent"])
-                    self.set_config("maxContinuousCurrent", jsondata["maxContinuousCurrent"])
-                    self.set_config("maxAllocatedCurrent", jsondata["maxAllocatedCurrent"])
+                    if "ratedCurrent" in jsondata:
+                        self.set_config("ratedCurrent", jsondata["ratedCurrent"])
+                    if "maxContinuousCurrent" in jsondata:
+                        self.set_config("maxContinuousCurrent", jsondata["maxContinuousCurrent"])
+                    if "maxAllocatedCurrent" in jsondata:
+                        self.set_config("maxAllocatedCurrent", jsondata["maxAllocatedCurrent"])
                 return True
             elif first == "schedule":
                 _LOGGER.debug("Schedule update")
