@@ -988,6 +988,18 @@ EASEE_EQ_ENTITIES = {
         "state_class": SensorStateClass.TOTAL_INCREASING,
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
+    "max_xontinuous_limit": {
+        "key": "config.maxContinuousCurrent",
+        "attrs": [
+            "config.ratedCurrent",
+        ],
+        "units": UnitOfElectricCurrent.AMPERE,
+        "convert_units_func": None,
+        "suggested_display_precision": 0,
+        "translation_key": "export_reactive_energy",
+        "device_class": SensorDeviceClass.CURRENT,
+        "entity_category": EntityCategory.DIAGNOSTIC,
+    },
     "temp_max": {
         "key": "state.internalTemperature",
         "attrs": [],

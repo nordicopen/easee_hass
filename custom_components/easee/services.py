@@ -855,7 +855,7 @@ async def equalizer_execute_set_surplus_charging(call: ServiceCall) -> None:
             )
             return
 
-    raise HomeAssistantError("Could not find equalizer")
+    raise HomeAssistantError("Could not find Equalizer")
 
 
 async def equalizer_execute_set_max_continuous_current(call):
