@@ -864,9 +864,7 @@ async def equalizer_execute_set_max_continuous_current(call):
     Equalizer is the actual target for API.
     """
     equalizer = await _async_get_equalizer(call)
-    current = call.data.get(ATTR_SET_CURRENT)
-    if current is None:
-        current = 0
+    current = call.data[ATTR_SET_CURRENT]
 
     _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
