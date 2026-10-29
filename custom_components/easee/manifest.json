@@ -1,6 +1,9 @@
 {
   "domain": "easee",
   "name": "Easee EV charger",
+  "categories": [
+    "energy.ev_charging"
+  ],
   "codeowners": [
     "@tmjo",
     "@olalid",
