@@ -29,7 +29,6 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
     """Easee config flow."""
 
     VERSION = 3
-    CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_PUSH
 
     def __init__(self):
         """Set up the config flow."""
