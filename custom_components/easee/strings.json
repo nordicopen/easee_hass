@@ -334,20 +334,6 @@
       }
     }
   },
-  "issues": {
-    "currentpx_deprecation": {
-      "description": "The use of {argument} as phase current is deprecated and will not be accepted in future verions. Please convert your automations and scripts to use {recommendation} instead.",
-      "title": "Use of {argument} in service call"
-    },
-    "deprecated_service": {
-      "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\n\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
-      "title": "Use of deprecated service: {deprecation}"
-    },
-    "numeric_deprecation": {
-      "description": "The use of numeric value for {argument} is deprecated and will not be accepted in future versions. Please convert your automations and scripts to use strings {recommendation} instead.",
-      "title": "Use of numeric value for {argument} in service call"
-    }
-  },
   "options": {
     "error": {
       "no_sites": "[%key:config::error::no_sites%]"
