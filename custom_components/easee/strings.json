@@ -655,7 +655,7 @@
           "name": "[%key:services::set_basic_charge_plan::fields::device_id::name%]"
         }
       },
-      "name": "Set surplus charging"
+      "name": "Set max contiuous limit"
     },
     "set_weekly_charge_plan": {
       "description": "Set weekly charge plan",
