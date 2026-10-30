@@ -265,7 +265,7 @@ ext_surplus_charging = {
 
 ext_max_continuous_current = {
     probatio.Required(ATTR_SET_CURRENT, default=MIN_CURRENT): probatio.All(
-        cv.positive_int, probatio.Range(min=MIN_CURRENT, max=MAX_CURRENT)
+        cv.positive_int, probatio.Range(min=MIN_CURRENT, max=None)
     ),
 }
 
