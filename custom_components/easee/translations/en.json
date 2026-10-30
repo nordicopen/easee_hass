@@ -171,7 +171,7 @@
           "limited_by_circuit_dynamic_limit": "Limited by circuit dynamic limit",
           "limited_by_circuit_fuse": "Limited by circuit fuse",
           "limited_by_circuit_max_limit": "Limited by circuit max limit",
-          "limited_by_equalizer": "Limited by Equalizer",
+          "limited_by_equalizer": "Limited by equalizer",
           "limited_by_load_balancing": "Limited by load balancing",
           "limited_by_local_adjustment": "Limited by local adjustment",
           "limited_by_offline_setting": "Limited by offline setting",
@@ -269,6 +269,9 @@
       },
       "max_circuit_limit": {
         "name": "Max circuit limit"
+      },
+      "max_continuous_limit": {
+        "name": "Max continuous limit"
       },
       "offline_circuit_limit": {
         "name": "Offline circuit limit"
@@ -622,6 +625,20 @@
       },
       "name": "Set circuit offline limit"
     },
+    "set_max_continuous_limit": {
+      "description": "Set equalizer max continuous limit",
+      "fields": {
+        "current": {
+          "description": "Max continuous limit (site fuse current)",
+          "name": "Current"
+        },
+        "device_id": {
+          "description": "Select device to be controlled",
+          "name": "Target device"
+        }
+      },
+      "name": "Set max contiuous limit"
+    },
     "set_operator": {
       "description": "Configure operator for charger",
       "fields": {
@@ -637,7 +654,7 @@
       "name": "Set operator"
     },
     "set_surplus_charging": {
-      "description": "Set Equalizer surplus charging",
+      "description": "Set equalizer surplus charging",
       "fields": {
         "current": {
           "description": "Max additional current from grid",
