@@ -544,6 +544,14 @@ class ProductData:
                     self.set_config(
                         "surplusChargingCurrent", jsondata["standbycurrent"]
                     )
+                if second == "siteStructure":
+                    jsondata = json.loads(value)
+                    if "ratedCurrent" in jsondata:
+                        self.set_config("ratedCurrent", jsondata["ratedCurrent"])
+                    if "maxContinuousCurrent" in jsondata:
+                        self.set_config("maxContinuousCurrent", jsondata["maxContinuousCurrent"])
+                    if "maxAllocatedCurrent" in jsondata:
+                        self.set_config("maxAllocatedCurrent", jsondata["maxAllocatedCurrent"])
                 return True
             elif first == "schedule":
                 _LOGGER.debug("Schedule update")

@@ -263,9 +263,20 @@ ext_surplus_charging = {
     ),
 }
 
-SERVICE_SET_SURPLUS_CHARGING = probatio.All(
+ext_max_continuous_current = {
+    probatio.Required(ATTR_SET_CURRENT, default=MIN_CURRENT): probatio.All(
+        cv.positive_int, probatio.Range(min=MIN_CURRENT, max=None)
+    ),
+}
+
+SERVICE_SET_SURPLUS_CHARGING_SCHEMA = probatio.All(
     target_eq_schema2,
     exclusive_eq_schema2.extend(ext_surplus_charging),
+)
+
+SERVICE_SET_MAX_CONTINUOUS_CURRENT_SCHEMA = probatio.All(
+    target_eq_schema2,
+    exclusive_eq_schema2.extend(ext_max_continuous_current),
 )
 
 ext_ocpp_mode = {
@@ -844,7 +855,48 @@ async def equalizer_execute_set_surplus_charging(call: ServiceCall) -> None:
             )
             return
 
-    raise HomeAssistantError("Could not find equalizer")
+    raise HomeAssistantError("Could not find Equalizer")
+
+
+async def equalizer_execute_set_max_continuous_current(call):
+    """Execute a service to set max continuous current for a site..
+
+    Equalizer is the actual target for API.
+    """
+    equalizer = await _async_get_equalizer(call)
+    current = call.data[ATTR_SET_CURRENT]
+
+    _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
+
+    if equalizer:
+        function_name = SERVICE_MAP[call.service]
+        function_call = getattr(equalizer, function_name["function_call"])
+        try:
+            return await function_call(current)
+        except BadRequestException as ex:
+            _LOGGER.error(
+                "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+                str(call.service),
+                ex,
+            )
+            return
+        except ForbiddenServiceException as ex:
+            _LOGGER.error(
+                "Forbidden : [%s] - Check your access privileges: %s",
+                str(call.service),
+                ex,
+            )
+            return
+        except Exception as ex:
+            _LOGGER.error(
+                "Failed to execute service %s with data %s: %s",
+                str(call.service),
+                str(call.data),
+                ex,
+            )
+            return
+
+    raise HomeAssistantError("Could not find Equalizer")
 
 
 async def charger_execute_set_access(call: ServiceCall) -> None:
@@ -1058,7 +1110,12 @@ SERVICE_MAP = {
     "set_surplus_charging": {
         "handler": equalizer_execute_set_surplus_charging,
         "function_call": "set_load_balancing",
-        "schema": SERVICE_SET_SURPLUS_CHARGING,
+        "schema": SERVICE_SET_SURPLUS_CHARGING_SCHEMA,
+    },
+    "set_equalizer_max_continuous_limit": {
+        "handler": equalizer_execute_set_max_continuous_current,
+        "function_call": "set_max_continuous_current",
+        "schema": SERVICE_SET_MAX_CONTINUOUS_CURRENT_SCHEMA,
     },
     "set_charger_ocpp": {
         "handler": charger_execute_set_ocpp,
