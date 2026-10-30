@@ -24,6 +24,11 @@ echo "
 # debugpy:
 " >> config/configuration.yaml
 fi
+if ! grep -R "isal:" config/configuration.yaml >> /dev/null;then
+echo "
+isal:
+" >> config/configuration.yaml
+fi
 
 
 # Set the path to custom_components
