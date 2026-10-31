@@ -431,6 +431,27 @@ set_surplus_charging:
           unit_of_measurement: "A"
           mode: slider
 
+set_equalizer_max_continuous_limit:
+  fields:
+    device_id:
+      required: true
+      example: "b40f1f45d28b0891fe8d"
+      selector:
+        device:
+          integration: "easee"
+          model: "Equalizer"
+    current:
+      required: true
+      example: 16
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 63
+          step: 1
+          unit_of_measurement: "A"
+          mode: slider
+
 set_charger_ocpp:
   fields:
     device_id:

@@ -270,6 +270,9 @@
       "max_circuit_limit": {
         "name": "Max kretsbegränsning"
       },
+      "max_continuous_limit": {
+        "name": "Max kontinuerlig gräns"
+      },
       "offline_circuit_limit": {
         "name": "Offline kretsbegränsning"
       },
@@ -621,6 +624,20 @@
         }
       },
       "name": "Ange offlinegräns för krets"
+    },
+    "set_max_continuous_limit": {
+      "description": "Ställ in equalizer max kontinuerlig gräns",
+      "fields": {
+        "current": {
+          "description": "Max kontinuerlig gräns (för huvudsäkring)",
+          "name": "Ström"
+        },
+        "device_id": {
+          "description": "Välj enhet som ska styras",
+          "name": "Målenhet"
+        }
+      },
+      "name": "Ställ in max kontinuerlig gräns"
     },
     "set_operator": {
       "description": "Konfigurera operatör för laddaren",

@@ -544,6 +544,14 @@ class ProductData:
                     self.set_config(
                         "surplusChargingCurrent", jsondata["standbycurrent"]
                     )
+                if second == "siteStructure":
+                    jsondata = json.loads(value)
+                    if "ratedCurrent" in jsondata:
+                        self.set_config("ratedCurrent", jsondata["ratedCurrent"])
+                    if "maxContinuousCurrent" in jsondata:
+                        self.set_config("maxContinuousCurrent", jsondata["maxContinuousCurrent"])
+                    if "maxAllocatedCurrent" in jsondata:
+                        self.set_config("maxAllocatedCurrent", jsondata["maxAllocatedCurrent"])
                 return True
             elif first == "schedule":
                 _LOGGER.debug("Schedule update")
@@ -1021,7 +1029,7 @@ class Controller:
                     compare_p1 != current_p1
                     or compare_p2 != current_p2
                     or compare_p3 != current_p3
-                ) or time_to_live is not None:
+                ) or (time_to_live is not None and time_to_live != 0):
                     return charger_data.circuit
 
                 return False
@@ -1072,7 +1080,7 @@ class Controller:
                     compare_p1 != current_p1
                     or compare_p2 != current_p2
                     or compare_p3 != current_p3
-                ) or time_to_live is not None:
+                ) or (time_to_live is not None and time_to_live != 0):
                     return charger_data.product
 
                 return False
