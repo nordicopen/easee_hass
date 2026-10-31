@@ -810,10 +810,8 @@ async def equalizer_execute_set_surplus_charging(call: ServiceCall) -> None:
     Equalizer is the actual target for API.
     """
     equalizer = await _async_get_equalizer(call)
-    enabled = call.data.get(ATTR_ENABLE)
-    current = call.data.get(ATTR_SET_CURRENT)
-    if current is None:
-        current = 0
+    enabled = call.data[ATTR_ENABLE]
+    current = call.data[ATTR_SET_CURRENT]
 
     _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
@@ -889,11 +887,8 @@ async def charger_execute_set_ocpp(call: ServiceCall) -> None:
     """Set the local OCPP configuration of a charger."""
 
     charger = await _async_get_charger(call)
-    enable = call.data.get(ATTR_ENABLE)
-    url = call.data.get(ATTR_OCPP_URL)
-
-    if url is None:
-        url = "ws://127.0.0.1:9000"
+    enable = call.data[ATTR_ENABLE]
+    url = call.data.get(ATTR_OCPP_URL, "ws://127.0.0.1:9000")
 
     _LOGGER.debug(
         "Call set ocpp enable %d on charger_id: %s with url %s", enable, charger.id, url
@@ -934,7 +929,7 @@ async def charger_execute_set_operator(call: ServiceCall) -> None:
 
     controller = call.hass.data[DOMAIN]["controller"]
     charger = await _async_get_charger(call)
-    operator_id = call.data.get(ATTR_OPERATOR)
+    operator_id = call.data[ATTR_OPERATOR]
 
     _LOGGER.debug(
         "Call set operator %d on charger_id: %s",
