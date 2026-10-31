@@ -18,7 +18,7 @@
     "pyeasee"
   ],
   "requirements": [
-    "pyeasee==0.8.21"
+    "pyeasee==0.8.22"
   ],
   "single_config_entry": true,
   "version": "0.9.74"
