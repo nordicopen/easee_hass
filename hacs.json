@@ -1,6 +1,6 @@
 {
   "name": "Easee EV Charger",
   "filename": "easee.zip",
-  "homeassistant": "2025.7.0",
+  "homeassistant": "2026.10.0",
   "zip_release": true
 }

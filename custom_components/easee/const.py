@@ -19,7 +19,7 @@ from homeassistant.const import (
 DOMAIN = "easee"
 TIMEOUT = 30
 VERSION = "0.9.74"
-MIN_HA_VERSION = "2025.7.0"
+MIN_HA_VERSION = "2026.10.0"
 CONF_MONITORED_SITES = "monitored_sites"
 MANUFACTURER = "Easee"
 MODEL_EQUALIZER = "Equalizer"
