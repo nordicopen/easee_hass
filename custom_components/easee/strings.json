@@ -168,7 +168,7 @@
           "limited_by_circuit_dynamic_limit": "Limited by circuit dynamic limit",
           "limited_by_circuit_fuse": "Limited by circuit fuse",
           "limited_by_circuit_max_limit": "Limited by circuit max limit",
-          "limited_by_equalizer": "Limited by equalizer",
+          "limited_by_equalizer": "Limited by Equalizer",
           "limited_by_load_balancing": "Limited by load balancing",
           "limited_by_local_adjustment": "Limited by local adjustment",
           "limited_by_offline_setting": "Limited by offline setting",
@@ -626,7 +626,7 @@
       "name": "Set operator"
     },
     "set_surplus_charging": {
-      "description": "Set equalizer surplus charging",
+      "description": "Set Equalizer surplus charging",
       "fields": {
         "current": {
           "description": "Max additional current from grid",
@@ -644,7 +644,7 @@
       "name": "Set surplus charging"
     },
     "set_max_continuous_limit": {
-      "description": "Set equalizer max continuous limit",
+      "description": "Set Equalizer max continuous limit",
       "fields": {
         "current": {
           "description": "Max continuous limit (site fuse current)",
