@@ -171,7 +171,7 @@
           "limited_by_circuit_dynamic_limit": "Limited by circuit dynamic limit",
           "limited_by_circuit_fuse": "Limited by circuit fuse",
           "limited_by_circuit_max_limit": "Limited by circuit max limit",
-          "limited_by_equalizer": "Limited by equalizer",
+          "limited_by_equalizer": "Limited by Equalizer",
           "limited_by_load_balancing": "Limited by load balancing",
           "limited_by_local_adjustment": "Limited by local adjustment",
           "limited_by_offline_setting": "Limited by offline setting",
@@ -335,20 +335,6 @@
       "weekly_schedule": {
         "name": "Weekly schedule"
       }
-    }
-  },
-  "issues": {
-    "currentpx_deprecation": {
-      "description": "The use of {argument} as phase current is deprecated and will not be accepted in future verions. Please convert your automations and scripts to use {recommendation} instead.",
-      "title": "Use of {argument} in service call"
-    },
-    "deprecated_service": {
-      "description": "The use of the service **{deprecation}** is deprecated and the service will be removed in the future.\n\nPlease convert your automations and scripts to use **{recommend}** as soon as possible",
-      "title": "Use of deprecated service: {deprecation}"
-    },
-    "numeric_deprecation": {
-      "description": "The use of numeric value for {argument} is deprecated and will not be accepted in future versions. Please convert your automations and scripts to use strings {recommendation} instead.",
-      "title": "Use of numeric value for {argument} in service call"
     }
   },
   "options": {
@@ -626,7 +612,7 @@
       "name": "Set circuit offline limit"
     },
     "set_max_continuous_limit": {
-      "description": "Set equalizer max continuous limit",
+      "description": "Set Equalizer max continuous limit",
       "fields": {
         "current": {
           "description": "Max continuous limit (site fuse current)",
@@ -654,7 +640,7 @@
       "name": "Set operator"
     },
     "set_surplus_charging": {
-      "description": "Set equalizer surplus charging",
+      "description": "Set Equalizer surplus charging",
       "fields": {
         "current": {
           "description": "Max additional current from grid",

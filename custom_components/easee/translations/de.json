@@ -325,20 +325,6 @@
       }
     }
   },
-  "issues": {
-    "currentpx_deprecation": {
-      "description": "Die Nutzung von {argument} als Ladestromstärke ist veraltet und wird in zukünftigen Versionen nicht unterstützt. Bitte ändern Sie Ihre Automatisierungen und Skripte und nutzen {recommendation} stattdessen.",
-      "title": "Benutzung von {argument} im Befehl"
-    },
-    "deprecated_service": {
-      "description": "Der verwendete Dienst **{deprecation}** ist veraltet und wird in Zukunft entfernt werden.\n\nBitte passen Sie Ihre Automatisierungen und Skripte zur Verwendung von **{recommend}** so bald wie möglich an.",
-      "title": "Verwendung eines veralteten Dienstes: {deprecation}"
-    },
-    "numeric_deprecation": {
-      "description": "Die Nutzung numerischer Werte für {argument} ist veraltet und wird in zukünftigen Versionen nicht mehr unterstützt. Bitte ändern Sie Ihre Skripte und Automatisierungen und nutzen stattdessen Strings {recommendation}.",
-      "title": "Nutzung eines numerischen Werts für {argument} in einem Service Call"
-    }
-  },
   "options": {
     "error": {
       "no_sites": "Keine Standorte ausgewählt"
@@ -612,6 +598,17 @@
         }
       },
       "name": "Offline Maximalwert festlegen"
+    },
+    "set_max_continuous_limit": {
+      "fields": {
+        "current": {
+          "name": "Strom"
+        },
+        "device_id": {
+          "description": "Zu kontrollierendes Gerät auswählen",
+          "name": "Zielgerät"
+        }
+      }
     },
     "set_operator": {
       "fields": {

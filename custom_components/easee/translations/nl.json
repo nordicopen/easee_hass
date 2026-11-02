@@ -328,20 +328,6 @@
       }
     }
   },
-  "issues": {
-    "currentpx_deprecation": {
-      "description": "Het gebruik van {argument} als fasestroom is verouderd en zal in toekomstige versies worden verwijderd. Pas je automatiseringen en scripts aan om gebruik te maken van {recommendation}",
-      "title": "Gebruik van {argument} in serviceaanroep"
-    },
-    "deprecated_service": {
-      "description": "Het gebruik van de service **{deprecation}** is verouderd en zal in de toekomst worden verwijderd.\n\nPas je automatiseringen en scripts z.s.m. aan om gebruik te maken van **{recommend}**",
-      "title": "Verouderde service gebruikt: {deprecation}"
-    },
-    "numeric_deprecation": {
-      "description": "Het gebruik van numerieke waarden voor {argument} is verouderd en zal in toekomstige versies worden verwijderd. Pas je automatiseringen en scripts aan om gebruik te maken van strings {recommendation}",
-      "title": "Gebruik van getal voor {argument} in serviceaanroep"
-    }
-  },
   "options": {
     "error": {
       "no_sites": "Geen locaties geselecteerd"

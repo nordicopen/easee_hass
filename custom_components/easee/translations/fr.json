@@ -321,20 +321,6 @@
       }
     }
   },
-  "issues": {
-    "currentpx_deprecation": {
-      "description": "L’utilisation de {argument} comme courant de phase est obsolète et ne sera pas acceptée dans les versions futures. Veuillez convertir vos automatisations et scripts pour utiliser {recommendation} à la place",
-      "title": "Utilisation de {argument} dans l’appel de service"
-    },
-    "deprecated_service": {
-      "description": "L’utilisation du service **{deprecation}** est obsolète et le service sera supprimé à l’avenir.\n\nVeuillez convertir vos automatisations et scripts pour utiliser **{recommend}** dès que possible",
-      "title": "Utilisation d'un service obsolète : {deprecation}"
-    },
-    "numeric_deprecation": {
-      "description": "L’utilisation de la valeur numérique pour {argument} est obsolète et ne sera pas acceptée dans les versions futures. Veuillez convertir vos automatisations et scripts pour utiliser les chaînes {recommendation} à la place.",
-      "title": "Utilisation de la valeur numérique pour {argument} dans l’appel de service"
-    }
-  },
   "options": {
     "error": {
       "no_sites": "Aucun site surveillé n'a été sélectionné"

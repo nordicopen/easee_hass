@@ -304,20 +304,6 @@
       }
     }
   },
-  "issues": {
-    "currentpx_deprecation": {
-      "description": "Bruken av {argument} som fasestrøm er utfaset og vil ikke bli akseptert i framtidige versjoner. Konverter dine automasjoner og script til å benytte {recommendation} isteden.",
-      "title": "Bruken av {argument} i serviceanrop"
-    },
-    "deprecated_service": {
-      "description": "Tjenesten **{deprecation}** er utdatert is deprecated og vil bli fjernet i framtiden.\n\nKonverter dine automasjoner og skript til å bruke **{recommend}** snarest mulig",
-      "title": "Utdatert tjeneste: {deprecation}"
-    },
-    "numeric_deprecation": {
-      "description": "Bruken av numerisk verdi for {argument} er utfaset og vil ikke bli akseptert i framtidige versjoner. Konverter dine automasjoner og script til å bentte strings {recommendation} isteden.",
-      "title": "Bruken av numerisk verdi for {argument} i serviceanrop"
-    }
-  },
   "options": {
     "error": {
       "no_sites": "Ingen lokasjon valgt"
@@ -583,6 +569,17 @@
         }
       },
       "name": "Sett ladekursens offlinegrense"
+    },
+    "set_max_continuous_limit": {
+      "fields": {
+        "current": {
+          "name": "Strøm"
+        },
+        "device_id": {
+          "description": "Velg enheten som skal styres",
+          "name": "Målenhet"
+        }
+      }
     },
     "set_operator": {
       "fields": {
