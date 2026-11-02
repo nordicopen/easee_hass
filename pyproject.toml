@@ -1,5 +1,5 @@
 [tool.bumpver]
-current_version = "0.9.74"
+current_version = "0.9.75"
 version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
 commit_message = "Bump version from {old_version} to {new_version}"
 commit = false
@@ -12,12 +12,11 @@ commit = false
 "custom_components/*/const.py" = ['^VERSION = "{version}"']
 
 ".github/release-drafter.yml" = [
-    "tag-template: 'v{version}'",
-    "name-template: 'Example title - v{version}'",
+    'name-template: "Example title - v{version}"',
+    'tag-template: "v{version}"',
     "v{version}/total",
     "v{version})",
 ]
-
 [tool.pylint."MESSAGES CONTROL"]
 # Copied from homeassistant
 disable = [
