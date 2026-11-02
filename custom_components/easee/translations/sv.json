@@ -337,20 +337,6 @@
       }
     }
   },
-  "issues": {
-    "currentpx_deprecation": {
-      "description": "Användningen av {argument} som fasström är utfasad och kommer inte att accepteras i framtida versioner. Konvertera dina automatiseringar och skript till att använda {recommendation} istället.",
-      "title": "Användning av {argument} i tjänstanrop"
-    },
-    "deprecated_service": {
-      "description": "Tjänsten **{deprecation}** är utfasad och kommer att tas bort i framtiden. \n\nVänligen konvertera automationer och skript till att använda **{recommend}** så snart som möjligt",
-      "title": "Användning av utfasad tjänst: {deprecation}"
-    },
-    "numeric_deprecation": {
-      "description": "Användningen av numeriskt värde för {argument} är utfasad och kommer inte att accepteras i framtida versioner. Konvertera dina automatiseringar och skript till att använda strängar {recommendation} istället.",
-      "title": "Användning av numeriskt värde för {argument} i tjänstanrop"
-    }
-  },
   "options": {
     "error": {
       "no_sites": "Ingen plats vald"

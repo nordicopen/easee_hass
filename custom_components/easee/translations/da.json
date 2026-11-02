@@ -320,20 +320,6 @@
       }
     }
   },
-  "issues": {
-    "currentpx_deprecation": {
-      "description": "Anvendelsen af {argument} som fasens strømstyrke understøttes ikke længere og vil blive fjernet i fremtidige versioner. Ret venligst dine automatiseringer og scripts til at bruge {recommendation} i stedet.",
-      "title": "Brug af {argument} i servicekald"
-    },
-    "deprecated_service": {
-      "description": "Brugen af tjenesten **{deprecation}** er forældet, og tjenesten vil blive fjernet i fremtiden.\n\nRet venligst dine automatiseringer og scripts til at bruge **{recommend}** så hurtigt som muligt",
-      "title": "Brug af forældet tjeneste: {deprecation}"
-    },
-    "numeric_deprecation": {
-      "description": "Anvendelsen af numerisk værdi i {argument} understøttes ikke længere og vil blive fjernet i fremtidige versioner. Ret venligst dine automatiseringer og scripts til at bruge {recommendation} i stedet.",
-      "title": "Brug af numerisk værdi for {argument} i servicekald"
-    }
-  },
   "options": {
     "error": {
       "no_sites": "Ingen overvågede steder er valgt"
@@ -607,6 +593,17 @@
         }
       },
       "name": "Indstil opladerens maksimumgrænse ved offline brug"
+    },
+    "set_max_continuous_limit": {
+      "fields": {
+        "current": {
+          "name": "Strømstyrke"
+        },
+        "device_id": {
+          "description": "Vælg den enhed, der skal styres",
+          "name": "Målenhed"
+        }
+      }
     },
     "set_operator": {
       "fields": {
