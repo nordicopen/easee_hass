@@ -1,5 +1,5 @@
-name-template: "Example title - v0.9.75"
-tag-template: "v0.9.75"
+name-template: "Example title - v2026.11.0"
+tag-template: "v2026.11.0"
 categories:
   - type: "pre-exclude"
     when:
@@ -41,8 +41,8 @@ change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 
 template: |
-  [![Downloads for this release](https://img.shields.io/github/downloads/$OWNER/$REPOSITORY/v0.9.75/total.svg)](
-  https://github.com/$OWNER/$REPOSITORY/releases/v0.9.75)
+  [![Downloads for this release](https://img.shields.io/github/downloads-pre/$OWNER/$REPOSITORY/v2026.11.0/total.svg)](
+  https://github.com/$OWNER/$REPOSITORY/releases/v2026.11.0)
 
 
   <!--

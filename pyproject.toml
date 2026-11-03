@@ -1,7 +1,6 @@
 [tool.bumpver]
-current_version = "0.9.75"
-version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
-commit_message = "Bump version from {old_version} to {new_version}"
+current_version = "2026.11.0"
+version_pattern = "YYYY.MM.PATCH[PYTAGNUM]"
 commit = false
 
 [tool.bumpver.file_patterns]
