@@ -18,3 +18,7 @@ bump_next_beta:
 # Final release bump if beta versions have been released
 bump_final:
 	bumpver update --no-fetch --tag=final
+
+# Show current version
+show_version:
+	bumpver show --no-fetch
