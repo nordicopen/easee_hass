@@ -18,8 +18,12 @@
     "pyeasee"
   ],
   "requirements": [
-    "pyeasee==0.8.22"
+    "pyeasee==0.8.22",
+    "ocpp==2.1.0"
   ],
   "single_config_entry": true,
-  "version": "2026.11.0"
+  "version": "2026.11.0",
+  "dependencies": [
+    "http"
+  ]
 }

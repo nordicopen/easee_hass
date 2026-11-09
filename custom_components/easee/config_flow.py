@@ -13,13 +13,17 @@ from homeassistant import config_entries
 from homeassistant.config_entries import (
     ConfigEntry,
     ConfigFlowResult,
+    ConfigSubentryFlow,
     OptionsFlow,
 )
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.helpers import aiohttp_client, config_validation as cv
+from homeassistant.helpers.selector import TextSelector, TextSelectorConfig
 
 from .const import CONF_MONITORED_SITES, DOMAIN, VERSION
+from .ocpp.config_flow import OcppChargerSubentryFlow
+from .ocpp.const import CONF_ALLOWED_ID_TAGS, SUBENTRY_TYPE_OCPP_CHARGER
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,6 +45,14 @@ class EaseeConfigFlow(config_entries.ConfigFlow):
     def async_get_options_flow(config_entry) -> EaseeOptionsFlowHandler:
         """Get the options flow for this handler."""
         return EaseeOptionsFlowHandler(config_entry)
+
+    @classmethod
+    @callback
+    def async_get_supported_subentry_types(
+        cls, config_entry: ConfigEntry
+    ) -> dict[str, type[ConfigSubentryFlow]]:
+        """Chargers can additionally be connected via local OCPP."""
+        return {SUBENTRY_TYPE_OCPP_CHARGER: OcppChargerSubentryFlow}
 
     async def async_step_reauth(self, entry_data) -> ConfigFlowResult:
         """Perform reauth upon an API authentication error."""
@@ -224,6 +236,10 @@ class EaseeOptionsFlowHandler(OptionsFlow):
                             CONF_MONITORED_SITES, default_sites
                         ),
                     ): cv.multi_select(sites_multi_select),
+                    probatio.Optional(
+                        CONF_ALLOWED_ID_TAGS,
+                        default=self.config_entry.options.get(CONF_ALLOWED_ID_TAGS, []),
+                    ): TextSelector(TextSelectorConfig(multiple=True)),
                 }
             ),
             errors=errors,

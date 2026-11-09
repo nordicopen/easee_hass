@@ -8,21 +8,25 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .const import DOMAIN, MANUFACTURER, MODEL_EQUALIZER
 from .entity import ChargerEntity
+from .ocpp import async_add_ocpp_entities
+from .ocpp.switch import async_setup_ocpp_configuration_switches, ocpp_switches
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddConfigEntryEntitiesCallback
 ) -> None:
     """Set up switch platform."""
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_switch_entities()
     async_add_entities(entities)
+    async_add_ocpp_entities(hass, async_add_entities, ocpp_switches)
+    async_setup_ocpp_configuration_switches(hass, entry, async_add_entities)
     await controller.async_setup_done("switch")
 
 

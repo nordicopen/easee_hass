@@ -114,11 +114,35 @@
       },
       "update_available": {
         "name": "Aktualisierung verfügbar"
+      },
+      "ocpp_connected": {
+        "name": "OCPP verbunden"
+      },
+      "ocpp_transaction": {
+        "name": "OCPP-Ladevorgang aktiv"
+      },
+      "ocpp_charging": {
+        "name": "OCPP lädt"
       }
     },
     "button": {
       "override_schedule": {
         "name": "Zeitplan überschreiben"
+      },
+      "ocpp_soft_reset": {
+        "name": "OCPP-Neustart"
+      },
+      "ocpp_hard_reset": {
+        "name": "OCPP-Hardware-Neustart"
+      },
+      "ocpp_unlock": {
+        "name": "OCPP Kabel entriegeln"
+      },
+      "ocpp_refresh": {
+        "name": "OCPP aktualisieren"
+      },
+      "ocpp_learn_rfid": {
+        "name": "OCPP nächste RFID-Karte anlernen"
       }
     },
     "light": {
@@ -296,6 +320,80 @@
       },
       "voltage": {
         "name": "Spannung"
+      },
+      "ocpp_status": {
+        "name": "OCPP-Status",
+        "state": {
+          "available": "Verfügbar",
+          "preparing": "Vorbereitung",
+          "charging": "Lädt",
+          "suspendedevse": "Pausiert durch Charger",
+          "suspendedev": "Pausiert durch Fahrzeug",
+          "finishing": "Beendet",
+          "reserved": "Reserviert",
+          "unavailable": "Nicht verfügbar",
+          "faulted": "Fehler"
+        }
+      },
+      "ocpp_power": {
+        "name": "OCPP-Leistung"
+      },
+      "ocpp_energy": {
+        "name": "OCPP-Zählerstand"
+      },
+      "ocpp_session_energy": {
+        "name": "OCPP-Energie Ladevorgang"
+      },
+      "ocpp_session_start": {
+        "name": "OCPP-Beginn Ladevorgang"
+      },
+      "ocpp_current_offered": {
+        "name": "OCPP-angebotener Strom"
+      },
+      "ocpp_charging_limit": {
+        "name": "OCPP-Ladelimit"
+      },
+      "ocpp_temperature": {
+        "name": "OCPP-Temperatur"
+      },
+      "ocpp_current_l1": {
+        "name": "OCPP-Strom L1"
+      },
+      "ocpp_current_l2": {
+        "name": "OCPP-Strom L2"
+      },
+      "ocpp_current_l3": {
+        "name": "OCPP-Strom L3"
+      },
+      "ocpp_voltage_l1": {
+        "name": "OCPP-Spannung L1"
+      },
+      "ocpp_voltage_l2": {
+        "name": "OCPP-Spannung L2"
+      },
+      "ocpp_voltage_l3": {
+        "name": "OCPP-Spannung L3"
+      },
+      "ocpp_last_rfid_card": {
+        "name": "OCPP-letzte RFID-Karte"
+      },
+      "ocpp_error_code": {
+        "name": "OCPP-Fehlercode"
+      },
+      "ocpp_vendor_error_code": {
+        "name": "OCPP-Herstellerfehlercode"
+      },
+      "ocpp_transaction_id": {
+        "name": "OCPP-Transaktions-ID"
+      },
+      "ocpp_last_message": {
+        "name": "OCPP-letzte Nachricht"
+      },
+      "ocpp_meter_value_interval": {
+        "name": "OCPP-Messintervall"
+      },
+      "ocpp_firmware": {
+        "name": "OCPP-Firmware"
       }
     },
     "switch": {
@@ -322,6 +420,17 @@
       },
       "weekly_schedule": {
         "name": "wöchentlicher Zeitplan"
+      },
+      "ocpp_available": {
+        "name": "OCPP verfügbar"
+      },
+      "ocpp_charge": {
+        "name": "OCPP laden"
+      }
+    },
+    "number": {
+      "ocpp_max_current": {
+        "name": "OCPP-Maximalstrom"
       }
     }
   },
@@ -336,7 +445,8 @@
           "measured_consumption_days": "Verbrauchsanzeige Tage",
           "monitored_conditions": "Charger Sensoren",
           "monitored_eq_conditions": "Equalizer Sensoren",
-          "monitored_sites": "Standorte"
+          "monitored_sites": "Standorte",
+          "allowed_id_tags": "RFID-Karten mit Ladefreigabe (OCPP)"
         },
         "description": "Optionen wählen",
         "title": "Easee Wallbox"
@@ -675,6 +785,204 @@
         }
       },
       "name": "Smart Charging"
+    },
+    "ocpp_get_configuration": {
+      "name": "OCPP: Konfiguration lesen",
+      "description": "Liest alle Konfigurationsschlüssel oder einen (auch versteckte Easee-Schlüssel wie FreeCharging).",
+      "fields": {
+        "device_id": {
+          "name": "Charger",
+          "description": "Per lokalem OCPP verbundener Charger."
+        },
+        "serial": {
+          "name": "Seriennummer",
+          "description": "Alternativ zum Charger: dessen Seriennummer."
+        },
+        "key": {
+          "name": "Schlüssel",
+          "description": "Nur diesen Schlüssel; leer für alle sichtbaren."
+        }
+      }
+    },
+    "ocpp_change_configuration": {
+      "name": "OCPP: Konfiguration ändern",
+      "description": "Schreibt einen Konfigurationsschlüssel (ChangeConfiguration).",
+      "fields": {
+        "device_id": {
+          "name": "Charger",
+          "description": "Per lokalem OCPP verbundener Charger."
+        },
+        "serial": {
+          "name": "Seriennummer",
+          "description": "Alternativ zum Charger: dessen Seriennummer."
+        },
+        "key": {
+          "name": "Schlüssel",
+          "description": "Konfigurationsschlüssel."
+        },
+        "value": {
+          "name": "Wert",
+          "description": "Neuer Wert als Text."
+        }
+      }
+    },
+    "ocpp_set_charging_profile": {
+      "name": "OCPP: Ladeprofil setzen",
+      "description": "Installiert ein Ladeprofil (SetChargingProfile, bei Easee nur Ampere).",
+      "fields": {
+        "device_id": {
+          "name": "Charger",
+          "description": "Per lokalem OCPP verbundener Charger."
+        },
+        "serial": {
+          "name": "Seriennummer",
+          "description": "Alternativ zum Charger: dessen Seriennummer."
+        },
+        "connector_id": {
+          "name": "Anschluss",
+          "description": "0 = ganzer Charger, 1 = Fahrzeuganschluss."
+        },
+        "charging_profile": {
+          "name": "Ladeprofil",
+          "description": "OCPP-1.6-ChargingProfile-Objekt."
+        }
+      }
+    },
+    "ocpp_clear_charging_profile": {
+      "name": "OCPP: Ladeprofile löschen",
+      "description": "Entfernt Ladeprofile; ohne Kriterien alle.",
+      "fields": {
+        "device_id": {
+          "name": "Charger",
+          "description": "Per lokalem OCPP verbundener Charger."
+        },
+        "serial": {
+          "name": "Seriennummer",
+          "description": "Alternativ zum Charger: dessen Seriennummer."
+        },
+        "profile_id": {
+          "name": "Profil-ID",
+          "description": "Nur dieses Profil."
+        },
+        "connector_id": {
+          "name": "Anschluss",
+          "description": "Nur dieser Anschluss."
+        },
+        "purpose": {
+          "name": "Zweck",
+          "description": "Nur Profile mit diesem Zweck."
+        },
+        "stack_level": {
+          "name": "Stack-Ebene",
+          "description": "Nur diese Ebene."
+        }
+      }
+    },
+    "ocpp_get_composite_schedule": {
+      "name": "OCPP: wirksamen Zeitplan lesen",
+      "description": "Liefert die geltenden Limits (GetCompositeSchedule).",
+      "fields": {
+        "device_id": {
+          "name": "Charger",
+          "description": "Per lokalem OCPP verbundener Charger."
+        },
+        "serial": {
+          "name": "Seriennummer",
+          "description": "Alternativ zum Charger: dessen Seriennummer."
+        },
+        "connector_id": {
+          "name": "Anschluss",
+          "description": "0 = ganzer Charger, 1 = Fahrzeuganschluss."
+        },
+        "duration": {
+          "name": "Dauer",
+          "description": "Zeitraum in Sekunden."
+        }
+      }
+    },
+    "ocpp_trigger_message": {
+      "name": "OCPP: Nachricht anfordern",
+      "description": "Fordert den Charger auf, sofort eine Nachricht zu senden (TriggerMessage).",
+      "fields": {
+        "device_id": {
+          "name": "Charger",
+          "description": "Per lokalem OCPP verbundener Charger."
+        },
+        "serial": {
+          "name": "Seriennummer",
+          "description": "Alternativ zum Charger: dessen Seriennummer."
+        },
+        "message": {
+          "name": "Nachricht",
+          "description": "Zu sendende Nachricht."
+        },
+        "connector_id": {
+          "name": "Anschluss",
+          "description": "Optionaler Anschluss."
+        }
+      }
+    },
+    "ocpp_send_local_list": {
+      "name": "OCPP: lokale Freigabeliste senden",
+      "description": "Karten, die der Charger selbst akzeptiert, solange er Home Assistant nicht erreicht (Easee: max. 10).",
+      "fields": {
+        "device_id": {
+          "name": "Charger",
+          "description": "Per lokalem OCPP verbundener Charger."
+        },
+        "serial": {
+          "name": "Seriennummer",
+          "description": "Alternativ zum Charger: dessen Seriennummer."
+        },
+        "id_tags": {
+          "name": "RFID-Karten",
+          "description": "Karten-IDs."
+        },
+        "version": {
+          "name": "Version",
+          "description": "Listenversion, bei jeder Änderung erhöhen."
+        },
+        "full_update": {
+          "name": "Liste ersetzen",
+          "description": "Liste ersetzen statt ergänzen."
+        }
+      }
+    },
+    "ocpp_get_local_list_version": {
+      "name": "OCPP: Version der lokalen Liste lesen",
+      "description": "Liefert die Version der lokalen Freigabeliste.",
+      "fields": {
+        "device_id": {
+          "name": "Charger",
+          "description": "Per lokalem OCPP verbundener Charger."
+        },
+        "serial": {
+          "name": "Seriennummer",
+          "description": "Alternativ zum Charger: dessen Seriennummer."
+        }
+      }
+    },
+    "ocpp_set_current_limit": {
+      "name": "OCPP: befristetes Stromlimit setzen",
+      "description": "Begrenzt den Charger für die angegebene Dauer; danach gilt wieder der OCPP-Maximalstrom. Gedacht für Regler (z. B. PV-Überschussladen), die das Limit regelmäßig erneuern.",
+      "fields": {
+        "device_id": {
+          "name": "Charger",
+          "description": "Per lokalem OCPP verbundener Charger."
+        },
+        "serial": {
+          "name": "Seriennummer",
+          "description": "Alternativ zum Charger: dessen Seriennummer."
+        },
+        "current": {
+          "name": "Strom",
+          "description": "Limit in Ampere; 0 pausiert das Laden."
+        },
+        "duration": {
+          "name": "Dauer",
+          "description": "Sekunden, bis das Limit ohne Erneuerung abläuft."
+        }
+      }
     }
   },
   "system_health": {
@@ -684,5 +992,158 @@
       "reach_easee_cloud": "Easee Cloud erreichbar"
     }
   },
-  "title": "Easee Wallbox"
+  "title": "Easee Wallbox",
+  "config_subentries": {
+    "ocpp_charger": {
+      "entry_type": "OCPP-Charger",
+      "initiate_flow": {
+        "user": "Charger per lokalem OCPP verbinden",
+        "reconfigure": "OCPP-Adresse ändern"
+      },
+      "step": {
+        "user": {
+          "title": "Charger per lokalem OCPP verbinden",
+          "description": "Der Charger verbindet sich direkt mit Home Assistant (OCPP 1.6). Die Easee-Cloud funktioniert parallel weiter. Wähle den Charger:",
+          "data": {
+            "serial": "Charger"
+          }
+        },
+        "prerequisites": {
+          "title": "Voraussetzungen prüfen – {charger}",
+          "description": "{firmware_check} Firmware {firmware} (mindestens 344)\n{wifi_check} Per WLAN verbunden (über Mobilfunk erreicht der Charger Home Assistant nicht)\n{operator_check} Betreiber des Standorts: {operator} (muss Easee sein; sonst in der Easee-App ändern)\n{circuit_check} Kein dynamisches Stromkreislimit unterhalb der Absicherung\n\nWichtig: Solange OCPP aktiv ist, lädt der Charger erst, wenn Home Assistant die RFID-Karte freigegeben hat. Trage deine Karten in den Optionen der Integration ein (Konfigurieren → RFID-Karten).",
+          "data": {
+            "reset_circuit_limit": "Dynamisches Stromkreislimit auf die Absicherung anheben"
+          },
+          "data_description": {
+            "reset_circuit_limit": "Sonst begrenzt das Stromkreislimit aus der Cloud weiterhin die OCPP-Limits."
+          }
+        },
+        "address": {
+          "title": "Adresse von Home Assistant – {charger}",
+          "description": "Der Charger verbindet sich mit dieser Adresse und hängt /{serial} an. Sie muss aus dem Netz des Chargers erreichbar sein: IP-Adresse oder ein Name, den dein Router auflöst (keine .local-Namen). Port 8123 ist der eigene Port von Home Assistant, es muss nichts weiter freigegeben werden. Die Verbindung ist unverschlüsselt (ws://) mit generiertem Passwort, weil Easee TLS nur mit Zertifikaten einer öffentlichen CA akzeptiert.",
+          "data": {
+            "ocpp_url": "OCPP-Adresse"
+          }
+        },
+        "connection_failed": {
+          "title": "{charger} hat sich nicht verbunden",
+          "description": "Der Charger hat sich nicht innerhalb von 10 Minuten mit {url} verbunden. Mögliche Ursachen: Die Adresse ist aus dem Netz des Chargers nicht erreichbar (Firewall, VLAN, falsche IP), der Name lässt sich nicht auflösen, oder der Charger ist offline. Manchmal dauert es auch länger.",
+          "menu_options": {
+            "connect": "Weiter warten",
+            "address": "Adresse ändern",
+            "rollback": "Abbrechen und Charger wieder nur über die Cloud betreiben",
+            "finish": "Trotzdem speichern (der Charger verbindet sich evtl. später)"
+          }
+        }
+      },
+      "progress": {
+        "wait_for_charger": "OCPP wird für {charger} über die Easee-Cloud eingeschaltet. Warte, bis sich der Charger mit {url} verbindet. Das dauert meist ein paar Minuten (bis zu 10)."
+      },
+      "error": {
+        "invalid_url": "Gib eine URL wie ws://192.168.1.10:8123/api/easee/ocpp ein.",
+        "mdns_host": "Der Charger kann keine .local-Namen auflösen; nutze die IP-Adresse oder einen Namen, den dein Router auflöst.",
+        "wss_not_supported": "wss:// braucht ein Zertifikat einer öffentlichen CA, das Home Assistant meist nicht hat. Nutze ws://.",
+        "wrong_path": "Der Pfad muss /api/easee/ocpp lauten (der Charger hängt seine Seriennummer an).",
+        "ocpp_forbidden": "Die Easee-Cloud hat die Änderung abgelehnt. Nur der Besitzer (oder ein Admin) des Standorts darf OCPP einschalten.",
+        "ocpp_rejected": "Die Easee-Cloud hat die OCPP-Einstellungen abgelehnt.",
+        "cloud_unavailable": "Die Easee-Cloud ist nicht erreichbar. Versuche es später noch einmal.",
+        "integration_not_loaded": "Die Easee-Integration ist nicht geladen."
+      },
+      "abort": {
+        "no_unconfigured_chargers": "Alle Charger sind bereits per OCPP verbunden.",
+        "integration_not_loaded": "Die Easee-Integration ist nicht geladen.",
+        "firmware_too_old": "Firmware {firmware} unterstützt kein lokales OCPP (mindestens 344). Aktualisiere den Charger zuerst in der Easee-App.",
+        "rolled_back": "Abgebrochen. Der Charger läuft wieder nur über die Cloud.",
+        "ocpp_forbidden": "Die Easee-Cloud hat die Änderung abgelehnt. Nur der Besitzer (oder ein Admin) des Standorts darf OCPP ändern.",
+        "ocpp_rejected": "Die Easee-Cloud hat die Änderung abgelehnt.",
+        "cloud_unavailable": "Die Easee-Cloud ist nicht erreichbar. Versuche es später noch einmal."
+      }
+    }
+  },
+  "issues": {
+    "ocpp_disconnected": {
+      "title": "Easee-Charger {serial} ist nicht per OCPP verbunden",
+      "description": "Der Charger ist seit mehr als 15 Minuten nicht mit Home Assistant verbunden. Solange OCPP aktiv ist, kann er ohne Home Assistant keinen Ladevorgang starten. Prüfe, ob er online ist und Home Assistant erreicht, oder wende die Verbindung erneut an.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Verbindung erneut anwenden – {serial}",
+            "description": "Home Assistant schickt diese Adresse und das gespeicherte Passwort über die Easee-Cloud an den Charger. Meist dauert es ein paar Minuten, bis er sich verbindet.",
+            "data": {
+              "ocpp_url": "OCPP-Adresse"
+            }
+          }
+        },
+        "error": {
+          "invalid_url": "Gib eine URL wie ws://192.168.1.10:8123/api/easee/ocpp ein.",
+          "mdns_host": "Der Charger kann keine .local-Namen auflösen; nutze die IP-Adresse oder einen Namen, den dein Router auflöst.",
+          "wss_not_supported": "wss:// braucht ein Zertifikat einer öffentlichen CA, das Home Assistant meist nicht hat. Nutze ws://.",
+          "wrong_path": "Der Pfad muss /api/easee/ocpp lauten (der Charger hängt seine Seriennummer an).",
+          "ocpp_forbidden": "Die Easee-Cloud hat die Änderung abgelehnt. Nur der Besitzer (oder ein Admin) des Standorts darf OCPP einschalten.",
+          "ocpp_rejected": "Die Easee-Cloud hat die OCPP-Einstellungen abgelehnt.",
+          "cloud_unavailable": "Die Easee-Cloud ist nicht erreichbar. Versuche es später noch einmal.",
+          "integration_not_loaded": "Die Easee-Integration ist nicht geladen."
+        },
+        "abort": {
+          "charger_not_configured": "Der Charger ist nicht mehr per OCPP eingerichtet."
+        }
+      }
+    },
+    "ocpp_authentication_failed": {
+      "title": "Easee-Charger {serial} nutzt ein falsches OCPP-Passwort",
+      "description": "Der Charger hat sich mehrfach mit einem nicht passenden Passwort angemeldet. Wende die Verbindung erneut an, um ihm das gespeicherte Passwort zu schicken.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Verbindung erneut anwenden – {serial}",
+            "description": "Home Assistant schickt diese Adresse und das gespeicherte Passwort über die Easee-Cloud an den Charger. Meist dauert es ein paar Minuten, bis er sich verbindet.",
+            "data": {
+              "ocpp_url": "OCPP-Adresse"
+            }
+          }
+        },
+        "error": {
+          "invalid_url": "Gib eine URL wie ws://192.168.1.10:8123/api/easee/ocpp ein.",
+          "mdns_host": "Der Charger kann keine .local-Namen auflösen; nutze die IP-Adresse oder einen Namen, den dein Router auflöst.",
+          "wss_not_supported": "wss:// braucht ein Zertifikat einer öffentlichen CA, das Home Assistant meist nicht hat. Nutze ws://.",
+          "wrong_path": "Der Pfad muss /api/easee/ocpp lauten (der Charger hängt seine Seriennummer an).",
+          "ocpp_forbidden": "Die Easee-Cloud hat die Änderung abgelehnt. Nur der Besitzer (oder ein Admin) des Standorts darf OCPP einschalten.",
+          "ocpp_rejected": "Die Easee-Cloud hat die OCPP-Einstellungen abgelehnt.",
+          "cloud_unavailable": "Die Easee-Cloud ist nicht erreichbar. Versuche es später noch einmal.",
+          "integration_not_loaded": "Die Easee-Integration ist nicht geladen."
+        },
+        "abort": {
+          "charger_not_configured": "Der Charger ist nicht mehr per OCPP eingerichtet."
+        }
+      }
+    },
+    "ocpp_address_changed": {
+      "title": "OCPP-Adresse von Easee-Charger {serial} zeigt nicht mehr auf Home Assistant",
+      "description": "Der Charger verbindet sich mit {url}; die Adresse führt nicht mehr zu diesem Home Assistant (z. B. nach einem IP-Wechsel). Wende eine aktuelle Adresse an.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Verbindung erneut anwenden – {serial}",
+            "description": "Home Assistant schickt diese Adresse und das gespeicherte Passwort über die Easee-Cloud an den Charger. Meist dauert es ein paar Minuten, bis er sich verbindet.",
+            "data": {
+              "ocpp_url": "OCPP-Adresse"
+            }
+          }
+        },
+        "error": {
+          "invalid_url": "Gib eine URL wie ws://192.168.1.10:8123/api/easee/ocpp ein.",
+          "mdns_host": "Der Charger kann keine .local-Namen auflösen; nutze die IP-Adresse oder einen Namen, den dein Router auflöst.",
+          "wss_not_supported": "wss:// braucht ein Zertifikat einer öffentlichen CA, das Home Assistant meist nicht hat. Nutze ws://.",
+          "wrong_path": "Der Pfad muss /api/easee/ocpp lauten (der Charger hängt seine Seriennummer an).",
+          "ocpp_forbidden": "Die Easee-Cloud hat die Änderung abgelehnt. Nur der Besitzer (oder ein Admin) des Standorts darf OCPP einschalten.",
+          "ocpp_rejected": "Die Easee-Cloud hat die OCPP-Einstellungen abgelehnt.",
+          "cloud_unavailable": "Die Easee-Cloud ist nicht erreichbar. Versuche es später noch einmal.",
+          "integration_not_loaded": "Die Easee-Integration ist nicht geladen."
+        },
+        "abort": {
+          "charger_not_configured": "Der Charger ist nicht mehr per OCPP eingerichtet."
+        }
+      }
+    }
+  }
 }
