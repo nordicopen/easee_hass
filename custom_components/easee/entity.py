@@ -173,6 +173,12 @@ class ChargerEntity(Entity):
             controller.equalizer_switch_entities.remove(self)
         ent_reg = er.async_get(self.hass)
         entity_entry = ent_reg.async_get(self.entity_id)
+        if entity_entry is None:
+            # No registry entry under self.entity_id, so there is nothing to clean
+            # up: the entry was removed from the entity registry, or the entity_id
+            # was changed and the entity is removed only to be re-added under the
+            # new entity_id, which must not remove its registry entry or device.
+            return
 
         dev_reg = dr.async_get(self.hass)
         device_entry = dev_reg.async_get(entity_entry.device_id)
