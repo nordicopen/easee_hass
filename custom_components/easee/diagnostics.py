@@ -11,11 +11,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntry
 
 from .const import DOMAIN
+from .ocpp.const import CONF_ALLOWED_ID_TAGS
 from .ocpp.diagnostics import ocpp_diagnostics
 
 TO_REDACT = {
     CONF_PASSWORD,
     CONF_USERNAME,
+    CONF_ALLOWED_ID_TAGS,
 }
 TO_REDACT_DATA = {}
 TO_REDACT_SITES = {

@@ -7,12 +7,15 @@ from dataclasses import dataclass
 import logging
 from typing import Any
 
+from aiohttp import ClientError
 from pyeasee import Easee
 from pyeasee.exceptions import (
+    AuthorizationFailedException,
     BadRequestException,
     ForbiddenServiceException,
     NotFoundException,
     ServerFailureException,
+    TooManyRequestsException,
 )
 
 from .models import Serial
@@ -133,7 +136,16 @@ class EaseeOcppCloud:
             details = await response.json()
         except NotFoundException:
             return OcppCloudConnection(mode=None, url=None)
-        except (ForbiddenServiceException, ServerFailureException) as error:
+        except (
+            AuthorizationFailedException,
+            ForbiddenServiceException,
+            BadRequestException,
+            ServerFailureException,
+            TooManyRequestsException,
+            ClientError,
+            TimeoutError,
+            ValueError,
+        ) as error:
             raise cloud_error(error) from error
         url = (details.get("websocketConnectionArgs") or {}).get("url")
         return OcppCloudConnection(mode=details.get("connectivityMode"), url=url)
@@ -165,9 +177,15 @@ class EaseeOcppCloud:
                 APPLY_CONNECTION_PATH.format(serial=serial), json={"version": version}
             )
         except (
+            AuthorizationFailedException,
             ForbiddenServiceException,
             BadRequestException,
             ServerFailureException,
+            TooManyRequestsException,
+            NotFoundException,
+            ClientError,
+            TimeoutError,
+            ValueError,
             KeyError,
         ) as error:
             raise cloud_error(error) from error

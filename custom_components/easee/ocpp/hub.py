@@ -15,10 +15,15 @@ from homeassistant.util import dt as dt_util
 
 from .authorization import normalised_id_tag
 from .bootstrap import ChargePointBootstrapper
-from .charge_point import CommandFailedError, EaseeChargePoint, IdTagAuthorizer
+from .charge_point import (
+    CommandFailedError,
+    EaseeChargePoint,
+    IdTagAuthorizer,
+    OcppConnection,
+)
 from .const import BOOTSTRAP_DELAY_AFTER_CONNECT, SIGNAL_OCPP_STATE_UPDATED
 from .models import ChargePointState, IdTag, Serial
-from .server import AiohttpOcppConnection, BasicCredentials, ConnectionClosedError
+from .server import BasicCredentials, ConnectionClosedError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -76,8 +81,12 @@ class OcppHub:
             for serial in self._configs
         }
         self._charge_points: dict[Serial, EaseeChargePoint] = {}
-        self._connections: dict[Serial, AiohttpOcppConnection] = {}
+        self._connections: dict[Serial, OcppConnection] = {}
         self._bootstrapped: dict[Serial, EaseeChargePoint] = {}
+        self._bootstrap_tasks: dict[EaseeChargePoint, set[asyncio.Task[None]]] = {}
+        self._bootstrap_runs: dict[EaseeChargePoint, asyncio.Task[None]] = {}
+        self._connection_locks: dict[Serial, asyncio.Lock] = {}
+        self._shutting_down = False
         self._max_current: dict[Serial, float] = {}
         self._store: Store[dict[Serial, float]] = Store(
             hass, STORAGE_VERSION, STORAGE_KEY
@@ -99,6 +108,13 @@ class OcppHub:
         """Return the serials of all configured chargers."""
         return list(self._configs)
 
+    async def async_forget_charger(self, serial: Serial) -> None:
+        """Revoke credentials and close the connection after a setup rollback."""
+        self._configs.pop(serial, None)
+        connection = self._connections.get(serial)
+        if connection is not None:
+            await connection.close()
+
     def config(self, serial: Serial) -> OcppChargerConfig:
         """Return the configuration of a charger."""
         return self._configs[serial]
@@ -115,7 +131,9 @@ class OcppHub:
             return False
         expected = self._configs[serial].password
         user_matches = credentials.login == serial
-        password_matches = hmac.compare_digest(credentials.password, expected)
+        password_matches = hmac.compare_digest(
+            credentials.password.encode("utf-8"), expected.encode("utf-8")
+        )
         return user_matches and password_matches
 
     def record_authentication_failure(self, serial: Serial) -> None:
@@ -154,24 +172,33 @@ class OcppHub:
         charge_point = self.charge_point(serial)
         await ChargePointBootstrapper(charge_point, self.max_current(serial)).refresh()
 
-    async def async_serve(
-        self, serial: Serial, connection: AiohttpOcppConnection
-    ) -> None:
+    async def async_serve(self, serial: Serial, connection: OcppConnection) -> None:
         """Run one websocket connection until it closes."""
-        await self._replace_previous_connection(serial)
-        charge_point = EaseeChargePoint(
-            self._states[serial],
-            connection,
-            self.authorizer,
-            on_state_changed=lambda: self.notify(serial),
-            on_boot=lambda: self._start_bootstrap(serial, force=True),
-        )
-        self._charge_points[serial] = charge_point
-        self._connections[serial] = connection
-        self._mark_connected(serial)
-        self._hass.async_create_background_task(
-            self._bootstrap_after_delay(serial), f"easee_ocpp_bootstrap_{serial}"
-        )
+        # Closing a socket yields to other requests. Serialize replacement so two
+        # simultaneous reconnects cannot leave an untracked connection alive.
+        async with self._connection_locks.setdefault(serial, asyncio.Lock()):
+            if self._shutting_down or not self.knows(serial):
+                await connection.close()
+                return
+            await self._replace_previous_connection(serial)
+            if self._shutting_down or not self.knows(serial):
+                await connection.close()
+                return
+            charge_point = EaseeChargePoint(
+                self._states[serial],
+                connection,
+                self.authorizer,
+                on_state_changed=lambda: self.notify(serial),
+                on_boot=lambda: self._start_bootstrap(serial, force=True),
+            )
+            self._charge_points[serial] = charge_point
+            self._connections[serial] = connection
+            self._mark_connected(serial)
+            task = self._hass.async_create_background_task(
+                self._bootstrap_after_delay(serial, charge_point),
+                f"easee_ocpp_bootstrap_{serial}",
+            )
+            self._bootstrap_tasks[charge_point] = {task}
         try:
             await charge_point.start()
         except ConnectionClosedError as reason:
@@ -181,12 +208,22 @@ class OcppHub:
             _LOGGER.exception(
                 "%s: OCPP message loop failed, closing the connection", serial
             )
-            await connection.close()
         finally:
+            tasks = self._bootstrap_tasks.pop(charge_point, set())
+            for task in tasks:
+                task.cancel()
+            self._bootstrap_runs.pop(charge_point, None)
             self._forget_if_current(serial, charge_point)
+            await connection.close()
+            await asyncio.gather(*tasks, return_exceptions=True)
 
     async def async_shutdown(self) -> None:
         """Close all connections (the chargers reconnect on their own)."""
+        self._shutting_down = True
+        tasks = [task for tasks in self._bootstrap_tasks.values() for task in tasks]
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
         for connection in list(self._connections.values()):
             await connection.close()
 
@@ -222,21 +259,31 @@ class OcppHub:
         self._states[serial].disconnected_since = dt_util.utcnow()
         self.notify(serial)
 
-    async def _bootstrap_after_delay(self, serial: Serial) -> None:
+    async def _bootstrap_after_delay(
+        self, serial: Serial, charge_point: EaseeChargePoint
+    ) -> None:
         await asyncio.sleep(BOOTSTRAP_DELAY_AFTER_CONNECT.total_seconds())
-        self._start_bootstrap(serial, force=False)
+        if self._charge_points.get(serial) is charge_point:
+            self._start_bootstrap(serial, force=False)
 
     @callback
     def _start_bootstrap(self, serial: Serial, force: bool) -> None:
         """Bootstrap once per connection, and again after every real BootNotification."""
         charge_point = self._charge_points.get(serial)
-        if charge_point is None:
+        if charge_point is None or self._shutting_down:
+            return
+        running = self._bootstrap_runs.get(charge_point)
+        if running is not None and not running.done():
             return
         already_done = self._bootstrapped.get(serial) is charge_point
         if already_done and not force:
             return
         self._bootstrapped[serial] = charge_point
         bootstrapper = ChargePointBootstrapper(charge_point, self.max_current(serial))
-        self._hass.async_create_background_task(
+        task = self._hass.async_create_background_task(
             bootstrapper.run(), f"easee_ocpp_bootstrap_run_{serial}"
         )
+        self._bootstrap_runs[charge_point] = task
+        tasks = self._bootstrap_tasks[charge_point]
+        tasks.add(task)
+        task.add_done_callback(tasks.discard)

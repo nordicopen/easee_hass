@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from datetime import datetime
 import logging
+import math
 from typing import Any
 
 from homeassistant.util import dt as dt_util
@@ -24,13 +25,16 @@ IGNORED_CONTEXTS = {"Transaction.Begin"}
 def parse_timestamp(text: str | None) -> datetime:
     """Parse an OCPP timestamp, falling back to now if missing or broken."""
     parsed = dt_util.parse_datetime(text) if text else None
-    return parsed if parsed is not None else dt_util.utcnow()
+    return dt_util.as_utc(parsed) if parsed is not None else dt_util.utcnow()
 
 
 def normalised_value(raw_value: str, unit: str | None) -> float:
     """Return the value in base units (W, Wh, A, V)."""
     value = float(raw_value)
-    return value * 1000 if unit in KILO_UNITS else value
+    value = value * 1000 if unit in KILO_UNITS else value
+    if not math.isfinite(value):
+        raise ValueError("Meter value must be finite")
+    return value
 
 
 def measurement_key(sampled_value: Mapping[str, Any]) -> MeasurementKey:
@@ -55,7 +59,7 @@ def parse_meter_values(
                 value = normalised_value(
                     sampled_value["value"], sampled_value.get("unit")
                 )
-            except (KeyError, ValueError):
+            except (KeyError, TypeError, ValueError, OverflowError):
                 _LOGGER.debug("Ignoring unparsable sampled value %s", sampled_value)
                 continue
             measurements[measurement_key(sampled_value)] = Measurement(value, timestamp)

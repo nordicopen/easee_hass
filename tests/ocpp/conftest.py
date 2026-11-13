@@ -111,11 +111,14 @@ def config_entry(hass: HomeAssistant) -> MockConfigEntry:
 @pytest.fixture
 async def loaded_entry(
     hass: HomeAssistant, config_entry: MockConfigEntry, fake_cloud: type[FakeController]
-) -> MockConfigEntry:
+) -> AsyncIterator[MockConfigEntry]:
     """Set up the integration."""
     assert await hass.config_entries.async_setup(config_entry.entry_id)
     await hass.async_block_till_done()
-    return config_entry
+    yield config_entry
+    await hass.async_block_till_done()
+    await hass.config_entries.async_unload(config_entry.entry_id)
+    await hass.async_block_till_done()
 
 
 @pytest.fixture

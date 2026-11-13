@@ -16,9 +16,9 @@ from .const import DOMAIN, MIN_HA_VERSION, PLATFORMS, VERSION
 from .controller import Controller
 from .ocpp import (
     async_register_ocpp_view,
-    reload_relevant_settings,
     async_setup_ocpp_hub,
     async_unload_ocpp_hub,
+    reload_relevant_settings,
 )
 from .ocpp.services import async_setup_ocpp_services
 from .services import async_setup_services
@@ -88,7 +88,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 async def config_entry_update_listener(hass: HomeAssistant, entry: ConfigEntry):
     """Update listener; a changed RFID whitelist alone needs no reload (it is read live)."""
-    unchanged = hass.data.get(DOMAIN, {}).get(RELOAD_RELEVANT_SETTINGS) == reload_relevant_settings(entry)
+    unchanged = hass.data.get(DOMAIN, {}).get(
+        RELOAD_RELEVANT_SETTINGS
+    ) == reload_relevant_settings(entry)
     if unchanged:
         return
     await hass.config_entries.async_reload(entry.entry_id)

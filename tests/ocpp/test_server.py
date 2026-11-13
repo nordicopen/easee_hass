@@ -23,7 +23,7 @@ ALLOWED_CARD = "ABCD1234"
 
 
 @pytest.fixture
-async def hub(hass: HomeAssistant) -> OcppHub:
+async def hub(hass: HomeAssistant) -> AsyncIterator[OcppHub]:
     """Create a hub for one charger, registered like the integration does it."""
     await async_setup_component(hass, "http", {})
     async_register_ocpp_view(hass)
@@ -32,7 +32,8 @@ async def hub(hass: HomeAssistant) -> OcppHub:
     )
     await ocpp_hub.async_load()
     hass.data[HUB_DATA_KEY] = ocpp_hub
-    return ocpp_hub
+    yield ocpp_hub
+    await ocpp_hub.async_shutdown()
 
 
 @pytest.fixture
@@ -48,17 +49,21 @@ async def charger(hub: OcppHub, hass_client_no_auth) -> AsyncIterator[FakeEaseeC
     loop_task = asyncio.create_task(fake.start())
     yield fake
     loop_task.cancel()
+    await asyncio.gather(loop_task, return_exceptions=True)
     await websocket.close()
 
 
-async def test_wrong_password_is_refused(hub: OcppHub, hass_client_no_auth) -> None:
+@pytest.mark.parametrize("password", ["wrong", "p\u00e4sswort", "\U0001f511"])
+async def test_wrong_password_is_refused(
+    hub: OcppHub, hass_client_no_auth, password: str
+) -> None:
     """A charger with a wrong password gets HTTP 401."""
     client = await hass_client_no_auth()
     with pytest.raises(WSServerHandshakeError) as refused:
         await client.ws_connect(
             f"/api/easee/ocpp/{SERIAL}",
             protocols=("ocpp1.6",),
-            headers=basic_auth(SERIAL, "wrong"),
+            headers=basic_auth(SERIAL, password),
         )
     assert refused.value.status == 401
 

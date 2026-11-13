@@ -234,6 +234,12 @@ class OcppChargerSubentryFlow(ConfigSubentryFlow):
             await self._cloud().disable(self._serial)
         except OcppCloudError as error:
             return self.async_abort(reason=error.reason)
+        if (hub := self._hub()) is not None:
+            await hub.async_forget_charger(self._serial)
+        if self.source == SOURCE_RECONFIGURE:
+            self.hass.config_entries.async_remove_subentry(
+                self._get_entry(), self._get_reconfigure_subentry().subentry_id
+            )
         return self.async_abort(reason="rolled_back")
 
     async def async_step_reconfigure(

@@ -32,6 +32,16 @@ class ConnectionClosedError(Exception):
     """The charger closed the websocket."""
 
 
+class OcppWebSocketResponse(web.WebSocketResponse):
+    """Keep late packets from restarting heartbeats on a closed socket."""
+
+    def _reset_heartbeat(self) -> None:
+        # aiohttp 3.14.5 can schedule a heartbeat reset while its close handshake
+        # is in progress. Guard the reset until aiohttp handles this itself.
+        if not self.closed:
+            super()._reset_heartbeat()
+
+
 class AiohttpOcppConnection:
     """Adapts an aiohttp websocket to the recv/send interface of the ocpp library."""
 
@@ -102,7 +112,7 @@ class OcppWebSocketView(HomeAssistantView):
                 status=401, headers={"WWW-Authenticate": 'Basic realm="easee-ocpp"'}
             )
 
-        websocket = web.WebSocketResponse(
+        websocket = OcppWebSocketResponse(
             protocols=(OCPP_SUBPROTOCOL,),
             heartbeat=WEBSOCKET_PING_INTERVAL.total_seconds(),
         )

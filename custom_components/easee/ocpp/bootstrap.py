@@ -41,12 +41,21 @@ class ChargePointBootstrapper:
     async def run(self) -> None:
         """Run all steps in order."""
         _LOGGER.info("%s: bootstrap started", self._serial)
+        self._charge_point.state.bootstrap_errors.clear()
         await self._configure_measurands()
         await self._negotiate_sample_interval()
         await self._read_configuration()
         await self._apply_max_current()
         await self._request_current_status()
-        _LOGGER.info("%s: bootstrap finished", self._serial)
+        errors = self._charge_point.state.bootstrap_errors
+        if errors:
+            _LOGGER.warning(
+                "%s: bootstrap finished with failed steps: %s",
+                self._serial,
+                ", ".join(errors),
+            )
+        else:
+            _LOGGER.info("%s: bootstrap finished", self._serial)
 
     async def refresh(self) -> None:
         """Re-read everything without changing the configuration."""
@@ -73,8 +82,14 @@ class ChargePointBootstrapper:
             except CommandFailedError:
                 continue
             self._charge_point.state.meter_value_sample_interval = seconds
+            self._charge_point.state.bootstrap_errors.pop(
+                KEY_METER_VALUE_SAMPLE_INTERVAL, None
+            )
             _LOGGER.info("%s: MeterValueSampleInterval %s s", self._serial, seconds)
             return
+        self._charge_point.state.bootstrap_errors[KEY_METER_VALUE_SAMPLE_INTERVAL] = (
+            "No supported sample interval accepted"
+        )
         _LOGGER.warning(
             "%s accepts no MeterValueSampleInterval of %s",
             self._serial,
@@ -117,4 +132,7 @@ class ChargePointBootstrapper:
         try:
             await command
         except CommandFailedError as error:
+            self._charge_point.state.bootstrap_errors[step] = str(error)
             _LOGGER.warning("%s: %s failed: %s", self._serial, step, error)
+        else:
+            self._charge_point.state.bootstrap_errors.pop(step, None)

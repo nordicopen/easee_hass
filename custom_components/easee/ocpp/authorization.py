@@ -84,9 +84,7 @@ class RfidAuthorizer:
             CONF_ALLOWED_ID_TAGS: [*self.allowed_id_tags(), id_tag],
         }
         self._hass.config_entries.async_update_entry(self._entry, options=options)
-        _LOGGER.info(
-            "%s: RFID card %s learned and added to the whitelist", serial, id_tag
-        )
+        _LOGGER.info("%s: RFID card learned and added to the whitelist", serial)
         persistent_notification.async_create(
             self._hass,
             f"RFID card {id_tag} (charger {serial}) was added to the OCPP whitelist.",

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import asyncio
 from datetime import timedelta
+from ipaddress import IPv4Address
 from typing import Any
+from unittest.mock import AsyncMock
 
 from aiohttp import WSServerHandshakeError
 import pytest
@@ -14,7 +16,12 @@ from pytest_homeassistant_custom_component.common import (
 )
 
 from custom_components.easee.const import DOMAIN
-from custom_components.easee.ocpp.const import CONF_OCPP_URL, SUBENTRY_TYPE_OCPP_CHARGER
+from custom_components.easee.diagnostics import async_get_config_entry_diagnostics
+from custom_components.easee.ocpp.const import (
+    CONF_ALLOWED_ID_TAGS,
+    CONF_OCPP_URL,
+    SUBENTRY_TYPE_OCPP_CHARGER,
+)
 from custom_components.easee.ocpp.diagnostics import ocpp_diagnostics
 from custom_components.easee.ocpp.health import (
     ISSUE_ADDRESS_CHANGED,
@@ -91,9 +98,21 @@ async def test_address_of_other_host_raises_an_issue(
     hass.config_entries.async_update_subentry(
         loaded_entry, subentry, data={**subentry.data, CONF_OCPP_URL: NEW_URL}
     )
-    await hass.config_entries.async_reload(loaded_entry.entry_id)
     await hass.async_block_till_done()
 
+    assert has_issue(hass, ISSUE_ADDRESS_CHANGED)
+
+
+async def test_address_change_is_detected_without_a_reload(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A changed HA network address is noticed by the periodic health check."""
+    assert not has_issue(hass, ISSUE_ADDRESS_CHANGED)
+    monkeypatch.setattr(
+        "custom_components.easee.ocpp.health.async_get_enabled_source_ips",
+        AsyncMock(return_value=[IPv4Address("192.168.1.11")]),
+    )
+    await tick(hass)
     assert has_issue(hass, ISSUE_ADDRESS_CHANGED)
 
 
@@ -167,3 +186,12 @@ async def test_diagnostics_hide_secrets(
 
     assert diagnostics["subentries"][0]["ocpp_password"] == "**REDACTED**"
     assert diagnostics["chargers"][OCPP_SERIAL]["connected"] is False
+
+
+async def test_full_diagnostics_hide_the_rfid_whitelist(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry
+) -> None:
+    """Downloading integration diagnostics must not expose cards through options."""
+    hass.data[DOMAIN]["diagnostics"] = []
+    diagnostics = await async_get_config_entry_diagnostics(hass, loaded_entry)
+    assert diagnostics["options"][CONF_ALLOWED_ID_TAGS] == "**REDACTED**"

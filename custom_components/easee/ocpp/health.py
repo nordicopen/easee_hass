@@ -93,6 +93,7 @@ class OcppHealthMonitor:
                 state.authentication_failures >= AUTHENTICATION_FAILURES_FOR_ISSUE
             )
             self._set_issue(ISSUE_AUTHENTICATION_FAILED, serial, too_many_failures)
+        await self._check_addresses()
 
     async def _check_addresses(self) -> None:
         own_addresses = {

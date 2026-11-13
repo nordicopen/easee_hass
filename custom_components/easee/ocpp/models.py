@@ -97,6 +97,7 @@ class ChargePointState:
     unsupported_configuration_keys: set[str] = field(default_factory=set)
     meter_value_sample_interval: int | None = None
     composite_limit_amps: float | None = None
+    bootstrap_errors: dict[str, str] = field(default_factory=dict)
 
     def disconnected_longer_than(self, duration: timedelta, now: datetime) -> bool:
         """Return True if the charger has been offline for at least duration."""

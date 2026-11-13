@@ -26,12 +26,26 @@ async def suggested_ocpp_url(hass: HomeAssistant) -> str:
         host, port = None, DEFAULT_HA_PORT
     if host is None or host.endswith(MDNS_SUFFIX):
         host = await async_get_source_ip(hass)
+    if ":" in host:
+        host = f"[{host}]"
     return f"{SCHEME_PLAIN}://{host}:{port}{OCPP_VIEW_BASE_PATH}"
 
 
 def url_problem(url: str) -> str | None:
     """Return a config flow error key if the charger could not use this URL."""
-    parts = urlsplit(url.strip())
+    try:
+        parts = urlsplit(url.strip())
+        port = parts.port
+    except ValueError:
+        return "invalid_url"
+    if (
+        port == 0
+        or parts.username is not None
+        or parts.password is not None
+        or parts.query
+        or parts.fragment
+    ):
+        return "invalid_url"
     if parts.scheme == SCHEME_TLS:
         # Easee only accepts certificates from a public CA; a self-signed HA certificate fails.
         return "wss_not_supported"

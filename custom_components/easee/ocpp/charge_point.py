@@ -112,6 +112,9 @@ class OcppConnection(Protocol):
     async def send(self, message: str) -> None:
         """Send one text frame."""
 
+    async def close(self) -> None:
+        """Close the transport and wake its receiver."""
+
 
 def ocpp_timestamp(moment: datetime) -> str:
     """Format a timestamp as Easee expects it: UTC with a trailing Z."""
@@ -284,10 +287,10 @@ class EaseeChargePoint(ChargePoint):
             id_tag=id_tag, accepted=allowed, timestamp=dt_util.utcnow()
         )
         if allowed:
-            _LOGGER.info("%s: RFID card %s accepted", self.id, id_tag)
+            _LOGGER.info("%s: RFID authorization accepted", self.id)
         else:
             _LOGGER.warning(
-                "%s: RFID card %s rejected (not on the whitelist)", self.id, id_tag
+                "%s: RFID authorization rejected (not on the whitelist)", self.id
             )
         self._on_state_changed()
         status = (
@@ -390,7 +393,7 @@ class EaseeChargePoint(ChargePoint):
 
     async def clear_charging_profiles(self, **criteria: Any) -> None:
         """Remove charging profiles (all of them without criteria)."""
-        await self.request(call.ClearChargingProfile(**criteria))
+        await self.request_accepted(call.ClearChargingProfile(**criteria))
 
     async def read_composite_limit(
         self, duration: timedelta = timedelta(minutes=1)

@@ -1063,12 +1063,11 @@
   "issues": {
     "ocpp_disconnected": {
       "title": "Easee-Charger {serial} ist nicht per OCPP verbunden",
-      "description": "Der Charger ist seit mehr als 15 Minuten nicht mit Home Assistant verbunden. Solange OCPP aktiv ist, kann er ohne Home Assistant keinen Ladevorgang starten. Prüfe, ob er online ist und Home Assistant erreicht, oder wende die Verbindung erneut an.",
       "fix_flow": {
         "step": {
           "init": {
             "title": "Verbindung erneut anwenden – {serial}",
-            "description": "Home Assistant schickt diese Adresse und das gespeicherte Passwort über die Easee-Cloud an den Charger. Meist dauert es ein paar Minuten, bis er sich verbindet.",
+            "description": "Der Charger ist seit mehr als 15 Minuten nicht mit Home Assistant verbunden. Solange OCPP aktiv ist, kann er ohne Home Assistant keinen Ladevorgang starten. Prüfe, ob er online ist und Home Assistant erreicht, oder wende die Verbindung erneut an.\n\nHome Assistant schickt diese Adresse und das gespeicherte Passwort über die Easee-Cloud an den Charger. Meist dauert es ein paar Minuten, bis er sich verbindet.",
             "data": {
               "ocpp_url": "OCPP-Adresse"
             }
@@ -1091,12 +1090,11 @@
     },
     "ocpp_authentication_failed": {
       "title": "Easee-Charger {serial} nutzt ein falsches OCPP-Passwort",
-      "description": "Der Charger hat sich mehrfach mit einem nicht passenden Passwort angemeldet. Wende die Verbindung erneut an, um ihm das gespeicherte Passwort zu schicken.",
       "fix_flow": {
         "step": {
           "init": {
             "title": "Verbindung erneut anwenden – {serial}",
-            "description": "Home Assistant schickt diese Adresse und das gespeicherte Passwort über die Easee-Cloud an den Charger. Meist dauert es ein paar Minuten, bis er sich verbindet.",
+            "description": "Der Charger hat sich mehrfach mit einem nicht passenden Passwort angemeldet. Wende die Verbindung erneut an, um ihm das gespeicherte Passwort zu schicken.\n\nHome Assistant schickt diese Adresse und das gespeicherte Passwort über die Easee-Cloud an den Charger. Meist dauert es ein paar Minuten, bis er sich verbindet.",
             "data": {
               "ocpp_url": "OCPP-Adresse"
             }
@@ -1119,12 +1117,11 @@
     },
     "ocpp_address_changed": {
       "title": "OCPP-Adresse von Easee-Charger {serial} zeigt nicht mehr auf Home Assistant",
-      "description": "Der Charger verbindet sich mit {url}; die Adresse führt nicht mehr zu diesem Home Assistant (z. B. nach einem IP-Wechsel). Wende eine aktuelle Adresse an.",
       "fix_flow": {
         "step": {
           "init": {
             "title": "Verbindung erneut anwenden – {serial}",
-            "description": "Home Assistant schickt diese Adresse und das gespeicherte Passwort über die Easee-Cloud an den Charger. Meist dauert es ein paar Minuten, bis er sich verbindet.",
+            "description": "Der Charger verbindet sich mit {url}; die Adresse führt nicht mehr zu diesem Home Assistant (z. B. nach einem IP-Wechsel). Wende eine aktuelle Adresse an.\n\nHome Assistant schickt diese Adresse und das gespeicherte Passwort über die Easee-Cloud an den Charger. Meist dauert es ein paar Minuten, bis er sich verbindet.",
             "data": {
               "ocpp_url": "OCPP-Adresse"
             }

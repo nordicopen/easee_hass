@@ -88,7 +88,11 @@ def reload_relevant_settings(entry: ConfigEntry) -> ReloadRelevantSettings:
         for key, value in entry.options.items()
         if key != CONF_ALLOWED_ID_TAGS
     }
-    return (dict(entry.data), options, frozenset(entry.subentries))
+    subentries = {
+        subentry_id: (subentry.subentry_type, dict(subentry.data))
+        for subentry_id, subentry in entry.subentries.items()
+    }
+    return (dict(entry.data), options, subentries)
 
 
 def get_ocpp_hub(hass: HomeAssistant) -> OcppHub | None:

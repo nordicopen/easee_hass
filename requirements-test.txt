@@ -1,0 +1,4 @@
+# The test plugin pins Home Assistant and its matching pytest dependencies.
+pytest-homeassistant-custom-component==0.13.375
+ocpp==2.1.0
+pyeasee==0.8.22

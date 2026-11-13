@@ -15,7 +15,8 @@ from custom_components.easee.ocpp.const import (
     CONF_SERIAL,
     SUBENTRY_TYPE_OCPP_CHARGER,
 )
-from homeassistant.config_entries import SOURCE_USER
+from custom_components.easee.ocpp.server import HUB_DATA_KEY
+from homeassistant.config_entries import SOURCE_RECONFIGURE, SOURCE_USER
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
@@ -125,6 +126,28 @@ async def test_timeout_offers_rollback(
     assert (
         FakeController.easee.stored[CLOUD_ONLY_SERIAL]["connectivityMode"] == "OcppOff"
     )
+    assert not hass.data[HUB_DATA_KEY].knows(CLOUD_ONLY_SERIAL)
+
+
+async def test_reconfigure_rollback_removes_the_subentry(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry
+) -> None:
+    """Going back to cloud only revokes the saved local OCPP configuration too."""
+    subentry_id = next(iter(loaded_entry.subentries))
+    result = dict(
+        await hass.config_entries.subentries.async_init(
+            (loaded_entry.entry_id, SUBENTRY_TYPE_OCPP_CHARGER),
+            context={"source": SOURCE_RECONFIGURE, "subentry_id": subentry_id},
+        )
+    )
+    result = await submit(hass, result, {CONF_OCPP_URL: HA_URL})
+    result = await finish_progress(hass, result)
+    assert result["step_id"] == "connection_failed"
+    result = await submit(hass, result, {"next_step_id": "rollback"})
+    await hass.async_block_till_done(wait_background_tasks=True)
+    assert result["reason"] == "rolled_back"
+    assert subentry_id not in loaded_entry.subentries
+    assert not hass.data[HUB_DATA_KEY].knows(OCPP_SERIAL)
 
 
 @pytest.mark.parametrize(
