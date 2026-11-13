@@ -490,3 +490,261 @@ set_operator:
       selector:
         number:
           min: 1
+
+ocpp_set_current_limit:
+  fields:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    serial:
+      required: false
+      example: "EH123456"
+      selector:
+        text:
+    current:
+      required: true
+      example: 16
+      selector:
+        number:
+          min: 0
+          max: 32
+          unit_of_measurement: A
+    duration:
+      required: false
+      default: 120
+      selector:
+        number:
+          min: 10
+          max: 86400
+          unit_of_measurement: s
+          mode: box
+
+ocpp_get_configuration:
+  fields:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    serial:
+      required: false
+      example: "EH123456"
+      selector:
+        text:
+    key:
+      required: false
+      example: "FreeCharging"
+      selector:
+        text:
+
+ocpp_change_configuration:
+  fields:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    serial:
+      required: false
+      example: "EH123456"
+      selector:
+        text:
+    key:
+      required: true
+      example: "LightIntensity"
+      selector:
+        text:
+    value:
+      required: true
+      example: "50"
+      selector:
+        text:
+
+ocpp_set_charging_profile:
+  fields:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    serial:
+      required: false
+      example: "EH123456"
+      selector:
+        text:
+    connector_id:
+      required: false
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 1
+    charging_profile:
+      required: true
+      example: '{"chargingProfileId": 10, "stackLevel": 2, "chargingProfilePurpose": "ChargePointMaxProfile", "chargingProfileKind": "Absolute", "chargingSchedule": {"chargingRateUnit": "A", "chargingSchedulePeriod": [{"startPeriod": 0, "limit": 10}]}}'
+      selector:
+        object:
+
+ocpp_clear_charging_profile:
+  fields:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    serial:
+      required: false
+      example: "EH123456"
+      selector:
+        text:
+    profile_id:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 1000000
+          mode: box
+    connector_id:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 1
+    purpose:
+      required: false
+      selector:
+        select:
+          options:
+            - ChargePointMaxProfile
+            - TxDefaultProfile
+            - TxProfile
+    stack_level:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 10
+
+ocpp_get_composite_schedule:
+  fields:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    serial:
+      required: false
+      example: "EH123456"
+      selector:
+        text:
+    connector_id:
+      required: false
+      default: 1
+      selector:
+        number:
+          min: 0
+          max: 1
+    duration:
+      required: false
+      default: 3600
+      selector:
+        number:
+          min: 60
+          max: 86400
+          unit_of_measurement: s
+          mode: box
+
+ocpp_trigger_message:
+  fields:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    serial:
+      required: false
+      example: "EH123456"
+      selector:
+        text:
+    message:
+      required: true
+      selector:
+        select:
+          options:
+            - BootNotification
+            - DiagnosticsStatusNotification
+            - FirmwareStatusNotification
+            - Heartbeat
+            - MeterValues
+            - StatusNotification
+    connector_id:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 1
+
+ocpp_send_local_list:
+  fields:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    serial:
+      required: false
+      example: "EH123456"
+      selector:
+        text:
+    id_tags:
+      required: true
+      example: '["ABCD1234"]'
+      selector:
+        text:
+          multiple: true
+    version:
+      required: true
+      example: 1
+      selector:
+        number:
+          min: 1
+          max: 1000000
+          mode: box
+    full_update:
+      required: false
+      default: true
+      selector:
+        boolean:
+
+ocpp_get_local_list_version:
+  fields:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: "easee"
+          entity:
+            domain: "switch"
+    serial:
+      required: false
+      example: "EH123456"
+      selector:
+        text:

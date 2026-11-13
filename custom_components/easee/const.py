@@ -28,8 +28,10 @@ PLATFORMS = [
     Platform.BUTTON,
     Platform.BINARY_SENSOR,
     Platform.LIGHT,
+    Platform.NUMBER,
     Platform.SENSOR,
     Platform.SWITCH,
+    Platform.TEXT,
 ]
 EASEE_PRODUCT_CODES = {
     1: "Easee Home",

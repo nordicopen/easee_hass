@@ -3,6 +3,10 @@ name: PR Autolabeler
 on:
   pull_request:
     types: [opened, reopened, synchronize, edited]
+  # Fork PRs need the base repository's write token. This workflow never checks
+  # out or executes PR code; the action reads label rules through the GitHub API.
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited]
   workflow_dispatch:
 
 permissions:
@@ -11,6 +15,11 @@ permissions:
 
 jobs:
   auto_label:
+    # Keep pull_request for same-repository PRs, and use the trusted event for forks.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository)
     runs-on: ubuntu-latest
     steps:
       - uses: release-drafter/release-drafter/autolabeler@v7

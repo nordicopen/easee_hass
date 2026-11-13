@@ -6,21 +6,24 @@ from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .const import DOMAIN, MANUFACTURER, MODEL_EQUALIZER
 from .entity import ChargerEntity
+from .ocpp import async_add_ocpp_entities
+from .ocpp.binary_sensor import ocpp_binary_sensors
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddConfigEntryEntitiesCallback
 ) -> None:
     """Set up binary sensor platform."""
     controller = hass.data[DOMAIN]["controller"]
     entities = controller.get_binary_sensor_entities()
     async_add_entities(entities)
+    async_add_ocpp_entities(hass, async_add_entities, ocpp_binary_sensors)
     await controller.async_setup_done("binary_sensor")
 
 

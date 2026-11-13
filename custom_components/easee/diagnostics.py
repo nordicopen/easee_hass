@@ -11,10 +11,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntry
 
 from .const import DOMAIN
+from .ocpp.const import CONF_ALLOWED_ID_TAGS
+from .ocpp.diagnostics import ocpp_diagnostics
 
 TO_REDACT = {
     CONF_PASSWORD,
     CONF_USERNAME,
+    CONF_ALLOWED_ID_TAGS,
 }
 TO_REDACT_DATA = {}
 TO_REDACT_SITES = {
@@ -36,6 +39,7 @@ async def async_get_config_entry_diagnostics(
         "account": async_redact_data(config_entry.data, TO_REDACT),
         "options": async_redact_data(config_entry.options, TO_REDACT),
         "sites": async_redact_data(hass.data[DOMAIN]["diagnostics"], TO_REDACT_SITES),
+        "local_ocpp": ocpp_diagnostics(hass, config_entry),
     }
 
     return diagnostics_data
