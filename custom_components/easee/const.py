@@ -264,7 +264,11 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": None,
         "translation_key": "cable_locked",
         "device_class": BinarySensorDeviceClass.LOCK,
-        "state_func": lambda state: not bool(state["cableLocked"]),
+        "state_func": lambda state: (
+            not bool(state["cableLocked"])
+            if state is not None and state.get("cableLocked") is not None
+            else None
+        ),
         "entity_category": EntityCategory.DIAGNOSTIC,
     },
     "cable_locked_permanently": {
@@ -455,7 +459,7 @@ OPTIONAL_EASEE_ENTITIES = {
             "state.inCurrentT5",
         ],
         "units": UnitOfElectricCurrent.AMPERE,
-        "convert_units_func": "None",
+        "convert_units_func": None,
         "suggested_display_precision": 1,
         "translation_key": "current",
         "device_class": SensorDeviceClass.CURRENT,
@@ -698,8 +702,10 @@ OPTIONAL_EASEE_ENTITIES = {
         "translation_key": "update_available",
         "device_class": None,
         "state_func": lambda state: (
-            (int(state["chargerFirmware"]) < int(state["latestFirmware"]))
-            if state["latestFirmware"] is not None
+            int(state["chargerFirmware"]) < int(state["latestFirmware"])
+            if state is not None
+            and state.get("chargerFirmware") is not None
+            and state.get("latestFirmware") is not None
             else None
         ),
         "enabled_default": False,
@@ -719,7 +725,9 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": None,
         "device_class": None,
         "translation_key": "basic_schedule",
-        "state_func": lambda schedule: bool(schedule.isEnabled) or False,
+        "state_func": lambda schedule: (
+            bool(schedule.get("isEnabled")) if schedule else False
+        ),
         "switch_func": "enable_basic_charge_plan",
         "enabled_default": False,
         "entity_category": EntityCategory.CONFIG,
@@ -755,7 +763,9 @@ OPTIONAL_EASEE_ENTITIES = {
         "convert_units_func": None,
         "translation_key": "weekly_schedule",
         "device_class": None,
-        "state_func": lambda weekly_schedule: bool(weekly_schedule.isEnabled) or False,
+        "state_func": lambda weekly_schedule: (
+            bool(weekly_schedule.get("isEnabled")) if weekly_schedule else False
+        ),
         "switch_func": "enable_weekly_charge_plan",
         "enabled_default": False,
         "entity_category": EntityCategory.CONFIG,
@@ -766,7 +776,6 @@ OPTIONAL_EASEE_ENTITIES = {
             "site.costPerKWh",
             "site.costPerKwhExcludeVat",
             "site.vat",
-            "site.costPerKwhExcludeVat",
             "site.currencyId",
         ],
         "units": None,

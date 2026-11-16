@@ -1,2 +1,4 @@
 -r requirements-devcontainer.txt
 homeassistant
+pytest>=8.0.0
+pytest-asyncio>=1.0.0
