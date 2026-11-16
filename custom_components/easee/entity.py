@@ -297,7 +297,9 @@ class ChargerEntity(Entity):
                 elif self._state_key.startswith("weekly_schedule."):
                     self._state = self._state_func(self.data.weekly_schedule)
                 else:
-                    self.get_value_from_key(self._state_key)
+                    raise ValueError(
+                        f"Unsupported key for state_func: {self._state_key}"
+                    )
             else:
                 self._state = self.get_value_from_key(self._state_key)
                 if self._state == "":
