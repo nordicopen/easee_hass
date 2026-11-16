@@ -287,22 +287,27 @@ class ChargerEntity(Entity):
         )
         self._state = None
         try:
-            self._state = self.get_value_from_key(self._state_key)
-            if self._state == "":
-                self._state = None
             if self._state_func is not None:
-                if self._state_key.startswith("state"):
+                if self._state_key.startswith("state."):
                     self._state = self._state_func(self.data.state)
-                if self._state_key.startswith("config"):
+                elif self._state_key.startswith("config."):
                     self._state = self._state_func(self.data.config)
-                if self._state_key.startswith("schedule"):
+                elif self._state_key.startswith("schedule."):
                     self._state = self._state_func(self.data.schedule)
-                if self._state_key.startswith("weekly_schedule"):
+                elif self._state_key.startswith("weekly_schedule."):
                     self._state = self._state_func(self.data.weekly_schedule)
-            if self._convert_units_func is not None:
+                else:
+                    raise ValueError(
+                        f"Unsupported key for state_func: {self._state_key}"
+                    )
+            else:
+                self._state = self.get_value_from_key(self._state_key)
+                if self._state == "":
+                    self._state = None
+            if self._state is not None and self._convert_units_func is not None:
                 self._state = self._convert_units_func(self._state, self._units)
 
         except IndexError as exc:
             raise IndexError(f"Wrong key for entity: {self._state_key}") from exc
         except (AttributeError, KeyError, TypeError):
-            pass
+            self._state = None
