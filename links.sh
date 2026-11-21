@@ -8,12 +8,15 @@ ln -s custom_components/easee/diagnostics.py .
 ln -s custom_components/easee/entity.py .
 ln -s custom_components/easee/light.py .
 ln -s custom_components/easee/manifest.json .
+ln -s custom_components/easee/strings.json .
+ln -s custom_components/easee/icons.json .
 ln -s custom_components/easee/sensor.py .
 ln -s custom_components/easee/services.py .
 ln -s custom_components/easee/services.yaml .
 ln -s custom_components/easee/switch.py .
 ln -s custom_components/easee/system_health.py .
 ln -s custom_components/easee/translations .
+ln -s custom_components/easee/brand .
 ln -s custom_components/easee/device_action.py .
 ln -s custom_components/easee/device_condition.py .
 ln -s custom_components/easee/device_trigger.py .
