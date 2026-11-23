@@ -1,5 +1,8 @@
 lint:
-	ruff check custom_components --fix
+	ruff check custom_components tests --fix
+
+test:
+	pytest
 
 install_dev:
 	pip install -r requirements-dev.txt
