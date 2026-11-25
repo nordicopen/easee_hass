@@ -7,6 +7,7 @@ import json
 import logging
 from random import random
 
+from aiohttp import ClientError
 from pyeasee import (
     Charger,
     ChargerSchedule,
@@ -719,9 +720,12 @@ class Controller:
                 raise ConfigEntryAuthFailed from err
             else:
                 _LOGGER.error("Bad request %s", err)
+        except ClientError as err:
+            _LOGGER.debug("Connection to Easee failed: %s", err)
+            raise ConfigEntryNotReady from err
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.exception("Unexpected error creating device: %s", err)
-            return None
+            raise ConfigEntryNotReady from err
 
         try:
             self.sites: list[Site] = await self.easee.get_account_products()
