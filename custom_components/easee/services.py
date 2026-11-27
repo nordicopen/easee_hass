@@ -306,7 +306,9 @@ async def async_convert_device_id_to_product_id(call: ServiceCall) -> str | None
     device_entry = device_reg.async_get(call.data[CONF_DEVICE_ID])
     if device_entry is None:
         raise ServiceValidationError(
-            f"Could not find device_id {call.data[CONF_DEVICE_ID]}"
+            translation_domain=DOMAIN,
+            translation_key="could_not_find_device_id",
+            translation_placeholders={"device_id": call.data[CONF_DEVICE_ID]},
         )
     for ident in device_entry.identifiers:
         for val in ident:
@@ -319,12 +321,16 @@ async def _async_get_charger(call: ServiceCall) -> Charger:
     controller: Controller = call.hass.data[DOMAIN]["controller"]
     chargers = controller.get_chargers()
     if CONF_DEVICE_ID in call.data:
-        charger_id = await async_convert_device_id_to_product_id(call)
+        charger_id = str(await async_convert_device_id_to_product_id(call))
     else:
-        charger_id = call.data[CHARGER_ID]
+        charger_id = str(call.data[CHARGER_ID])
     charger = next((c for c in chargers if c.id == charger_id), None)
     if charger is None:
-        raise ServiceValidationError(f"Could not find charger_id {charger_id}")
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="could_not_find_charger",
+            translation_placeholders={"charger_id": charger_id},
+        )
     return charger
 
 
@@ -338,13 +344,17 @@ async def _async_get_circuit_id(call: ServiceCall) -> int:
 async def _async_get_equalizer(call: ServiceCall) -> Equalizer:
     controller: Controller = call.hass.data[DOMAIN]["controller"]
     if CONF_DEVICE_ID in call.data:
-        equalizer_id = await async_convert_device_id_to_product_id(call)
+        equalizer_id = str(await async_convert_device_id_to_product_id(call))
     else:
         equalizer_id = call.data[EQUALIZER_ID]
     equalizers = controller.get_equalizers()
     equalizer = next((e for e in equalizers if e.id == equalizer_id), None)
     if equalizer is None:
-        raise ServiceValidationError(f"Could not find equalizer_id {equalizer_id}")
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="could_not_find_equalizer",
+            translation_placeholders={"equalizer_id": equalizer_id},
+        )
     return equalizer
 
 
@@ -352,43 +362,44 @@ async def charger_execute_service(call: ServiceCall) -> None:
     """Execute a service to Easee charging station."""
 
     charger = await _async_get_charger(call)
-    enable = call.data.get(ATTR_ENABLE)
+    enable = call.data[ATTR_ENABLE]
 
     _LOGGER.debug("execute_service: %s %s", str(call.service), str(call.data))
 
-    if charger:
-        function_name = SERVICE_MAP[call.service]
-        function_call = getattr(charger, function_name["function_call"])
-        try:
-            if enable is not None:
-                return await function_call(enable)
-            else:
-                return await function_call()
-        except BadRequestException as ex:
-            _LOGGER.error(
-                "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
-                str(call.service),
-                ex,
-            )
-            return
-        except ForbiddenServiceException as ex:
-            _LOGGER.error(
-                "Forbidden : [%s] - Check your access privileges: %s",
-                str(call.service),
-                ex,
-            )
-            return
-        except Exception:
-            _LOGGER.error(
-                "Failed to execute service: %s with data %s",
-                str(call.service),
-                str(call.data),
-            )
-            return
-
-    raise HomeAssistantError(
-        f"Could not find charger: {call.data.get(CHARGER_ID, 'Unknown')}"
-    )
+    function_name = SERVICE_MAP[call.service]
+    function_call = getattr(charger, function_name["function_call"])
+    try:
+        return await function_call(enable)
+    except BadRequestException as ex:
+        _LOGGER.debug(
+            "Bad request: [%s] - Invalid parameters or command not allowed now: %s",
+            str(call.service),
+            ex,
+        )
+        raise HomeAssistantError(
+            translation_domain=DOMAIN,
+            translation_key="bad_request",
+        ) from ex
+    except ForbiddenServiceException as ex:
+        _LOGGER.debug(
+            "Forbidden : [%s] - Check your access privileges: %s",
+            str(call.service),
+            ex,
+        )
+        raise HomeAssistantError(
+            translation_domain=DOMAIN,
+            translation_key="forbidden_service",
+        ) from ex
+    except Exception as ex:
+        _LOGGER.debug(
+            "Failed to execute service: %s with data %s",
+            str(call.service),
+            str(call.data),
+        )
+        raise HomeAssistantError(
+            translation_domain=DOMAIN,
+            translation_key="failed_to_execute_service",
+        ) from ex
 
 
 async def charger_execute_action_command(call: ServiceCall) -> None:
@@ -856,7 +867,7 @@ async def equalizer_execute_set_surplus_charging(call: ServiceCall) -> None:
     raise HomeAssistantError("Could not find Equalizer")
 
 
-async def equalizer_execute_set_max_continuous_current(call):
+async def equalizer_execute_set_max_continuous_current(call: ServiceCall) -> None:
     """Execute a service to set max continuous current for a site..
 
     Equalizer is the actual target for API.

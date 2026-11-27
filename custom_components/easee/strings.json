@@ -337,6 +337,26 @@
       }
     }
   },
+  "exceptions": {
+    "bad_request": {
+      "message": "Bad request: Invalid parameters or command not allowed now."
+    },
+    "could_not_find_charger": {
+      "message": "Could not find charger with id: {charger_id}."
+    },
+    "could_not_find_device_id": {
+      "message": "Could not find device with device_id: {device_id}."
+    },
+    "could_not_find_equalizer": {
+      "message": "Could not find equalizer with id: {equalizer_id}."
+    },
+    "failed_to_execute_service": {
+      "message": "Failed to execute service."
+    },
+    "forbidden_service": {
+      "message": "Forbidden service: Check your access privileges."
+    }
+  },
   "options": {
     "error": {
       "no_sites": "[%key:config::error::no_sites%]"
